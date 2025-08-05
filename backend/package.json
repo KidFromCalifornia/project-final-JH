@@ -1,20 +1,28 @@
 {
-  "name": "project-final-backend",
+  "name": "stockholm-coffee-club-backend",
   "version": "1.0.0",
-  "description": "Server part of final project",
+  "type": "module",
+  "description": "Server part of final project - Stockholm Coffee Club",
   "scripts": {
-    "start": "babel-node server.js",
-    "dev": "nodemon server.js --exec babel-node"
+    "start": "babel-node src/server.js",
+    "dev": "nodemon src/server.js --exec babel-node",
+    "seed": "babel-node src/utils/seedCafes.js"
   },
-  "author": "",
+  "author": "Jonny Hicks aka Kidfromcalifornia",
   "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.17.9",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-    "express": "^4.17.3",
-    "mongoose": "^8.4.0",
-    "nodemon": "^3.0.1"
+    "dotenv": "^17.2.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.17.0",
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

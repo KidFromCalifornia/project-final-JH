@@ -1,0 +1,78 @@
+import mongoose from "mongoose";
+
+const coffeeExperienceSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    cafe: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cafe",
+      required: true,
+    },
+    coffeeOrigin: {
+      type: String,
+      required: true,
+    },
+    coffeeName: {
+      type: String,
+      required: true,
+    },
+    roastLevel: {
+      type: String,
+      enum: ["light", "medium", "dark"],
+      required: true,
+    },
+    drinkType: {
+      type: String,
+      enum: ["espresso", "filtered coffee", "pour over", "other"],
+      required: true,
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      required: true,
+    },
+    tastingNotes: [
+      {
+        type: String,
+        enum: [
+          "fruity",
+          "floral",
+          "sweet",
+          "nutty",
+          "cocoa",
+          "spices",
+          "roasted",
+          "green",
+          "sour",
+          "other",
+        ],
+      },
+    ],
+    acidity: {
+      type: String,
+      enum: ["light", "medium", "high"],
+    },
+    mouthFeel: {
+      type: String,
+      enum: ["light", "medium", "full"],
+    },
+
+    notes: {
+      type: String,
+      maxlength: 500,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export const CoffeeExperience = mongoose.model(
+  "CoffeeExperience",
+  coffeeExperienceSchema
+);
