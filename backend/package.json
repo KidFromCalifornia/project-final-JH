@@ -6,7 +6,9 @@
   "scripts": {
     "start": "babel-node src/server.js",
     "dev": "nodemon src/server.js --exec babel-node",
-    "seed": "babel-node src/utils/seedCafes.js"
+    "seed": "babel-node src/utils/seedCafes.js",
+    "seed:tastings": "babel-node src/utils/seedTasting.js",
+    "seed:all": "npm run seed && npm run seed:tastings"
   },
   "author": "Jonny Hicks aka Kidfromcalifornia",
   "license": "ISC",

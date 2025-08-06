@@ -1,18 +1,24 @@
 import mongoose from "mongoose";
 
-const coffeeExperienceSchema = new mongoose.Schema(
+const coffeeTastingSchema = new mongoose.Schema(
   {
-    user: {
+    userId: {
+      // Changed from 'user' to 'userId'
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    cafe: {
+    cafeId: {
+      // Changed from 'cafe' to 'cafeId'
       type: mongoose.Schema.Types.ObjectId,
       ref: "Cafe",
       required: true,
     },
     coffeeOrigin: {
+      type: String,
+      required: true,
+    },
+    coffeeOriginRegion: {
       type: String,
       required: true,
     },
@@ -61,10 +67,17 @@ const coffeeExperienceSchema = new mongoose.Schema(
       type: String,
       enum: ["light", "medium", "full"],
     },
-
     notes: {
       type: String,
       maxlength: 500,
+    },
+    isPublic: {
+      type: Boolean,
+      default: true, // Default to public for community engagement
+    },
+    isSeeded: {
+      type: Boolean,
+      default: false, // Real user data defaults to false
     },
   },
   {
@@ -72,7 +85,7 @@ const coffeeExperienceSchema = new mongoose.Schema(
   }
 );
 
-export const CoffeeExperience = mongoose.model(
-  "CoffeeExperience",
-  coffeeExperienceSchema
+export const CoffeeTasting = mongoose.model(
+  "CoffeeTasting",
+  coffeeTastingSchema
 );

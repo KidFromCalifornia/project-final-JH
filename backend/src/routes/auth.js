@@ -50,9 +50,13 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Error in route:", error); // Add logging
     res.status(500).json({
       success: false,
-      error: error.message,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
     });
   }
 });
@@ -99,9 +103,13 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Error in route:", error); // Add logging
     res.status(500).json({
       success: false,
-      error: error.message,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
     });
   }
 });

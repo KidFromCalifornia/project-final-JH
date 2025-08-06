@@ -14,9 +14,13 @@ router.get("/", async (req, res) => {
       data: cafes,
     });
   } catch (error) {
+    console.error("Error in route:", error); // Add logging
     res.status(500).json({
       success: false,
-      error: error.message,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
     });
   }
 });
@@ -36,9 +40,13 @@ router.get("/:id", async (req, res) => {
       data: cafe,
     });
   } catch (error) {
+    console.error("Error in route:", error); // Add logging
     res.status(500).json({
       success: false,
-      error: error.message,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
     });
   }
 });
@@ -59,9 +67,71 @@ router.post("/", authenticateToken, requireAdmin, async (req, res) => {
       data: cafe,
     });
   } catch (error) {
+    console.error("Error in route:", error); // Add logging
     res.status(500).json({
       success: false,
-      error: error.message,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
+    });
+  }
+});
+
+//remove cafe (admin only)
+
+router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const cafe = await Cafe.findByIdAndDelete(req.params.id);
+    if (!cafe) {
+      return res.status(404).json({
+        success: false,
+        error: "Cafe not found",
+      });
+    }
+    res.json({
+      success: true,
+      message: "Cafe deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error in route:", error); // Add logging
+    res.status(500).json({
+      success: false,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
+    });
+  }
+});
+// Update cafe (admin only)
+router.put("/:id", authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const cafe = await Cafe.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!cafe) {
+      return res.status(404).json({
+        success: false,
+        error: "Cafe not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Cafe updated successfully",
+      data: cafe,
+    });
+  } catch (error) {
+    console.error("Error in route:", error); // Add logging
+    res.status(500).json({
+      success: false,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
     });
   }
 });

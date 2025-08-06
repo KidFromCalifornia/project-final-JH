@@ -22,9 +22,13 @@ router.post("/", authenticateToken, async (req, res) => {
       data: submission,
     });
   } catch (error) {
+    console.error("Error in route:", error); // Add logging
     res.status(500).json({
       success: false,
-      error: error.message,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
     });
   }
 });
@@ -43,9 +47,13 @@ router.get("/", authenticateToken, requireAdmin, async (req, res) => {
       data: submissions,
     });
   } catch (error) {
+    console.error("Error in route:", error); // Add logging
     res.status(500).json({
       success: false,
-      error: error.message,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal server error"
+          : error.message, // Hide details in production
     });
   }
 });
@@ -111,9 +119,13 @@ router.put(
         submission: submission,
       });
     } catch (error) {
+      console.error("Error in route:", error); // Add logging
       res.status(500).json({
         success: false,
-        error: error.message,
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Internal server error"
+            : error.message, // Hide details in production
       });
     }
   }
