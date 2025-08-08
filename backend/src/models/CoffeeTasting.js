@@ -3,13 +3,11 @@ import mongoose from "mongoose";
 const coffeeTastingSchema = new mongoose.Schema(
   {
     userId: {
-      // Changed from 'user' to 'userId'
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     cafeId: {
-      // Changed from 'cafe' to 'cafeId'
       type: mongoose.Schema.Types.ObjectId,
       ref: "Cafe",
       required: true,

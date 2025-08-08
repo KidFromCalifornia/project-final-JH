@@ -9,6 +9,9 @@ import authRoutes from "./routes/auth.js";
 import submissionRoutes from "./routes/cafeSubmissions.js";
 import tastingRoutes from "./routes/UserTastings.js";
 
+// Import seed function
+import { seedCafes } from "./utils/seedCafes.js";
+
 dotenv.config();
 connectDB();
 
@@ -33,8 +36,19 @@ app.use("/api/auth", authRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/tastings", tastingRoutes);
 
+// Seed route (for development)
+app.get("/api/seed", async (req, res) => {
+  try {
+    await seedCafes();
+    res.json({ message: "Stockholm cafes seeded successfully! ☕" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Start server
 app.listen(port, () => {
   console.log(`🚀 Server running on http://localhost:${port}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV}`);
+  console.log(`☕ Stockholm Coffee Club API ready!`);
 });

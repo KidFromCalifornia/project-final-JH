@@ -10,7 +10,10 @@ const router = express.Router();
 router.get("/public", async (req, res) => {
   try {
     const publicTastingNotes = await CoffeeTasting.find({ isPublic: true })
-      .populate("cafeId", "name neighborhood")
+      .populate(
+        "cafeId",
+        "name website hasMultipleLocations locations neighborhood"
+      )
       .populate("userId", "username")
       .sort({ createdAt: -1 })
       .limit(20);
@@ -42,7 +45,7 @@ router.get("/public/cafe/:cafeId", async (req, res) => {
       cafeId: cafeId,
       isPublic: true,
     })
-      .populate("cafeId", "name neighborhood")
+      .populate("cafeId", "name website hasMultipleLocations locations")
       .populate("userId", "username")
       .sort({ createdAt: -1 });
 
@@ -72,7 +75,7 @@ router.get("/", authenticateToken, async (req, res) => {
     const userTastingNotes = await CoffeeTasting.find({
       userId: req.user.userId,
     })
-      .populate("cafeId", "name neighborhood")
+      .populate("cafeId", "name website hasMultipleLocations locations")
       .sort({ createdAt: -1 });
 
     res.json({
@@ -82,13 +85,13 @@ router.get("/", authenticateToken, async (req, res) => {
       data: userTastingNotes,
     });
   } catch (error) {
-    console.error("Error in route:", error); // Add logging
+    console.error("Error in route:", error);
     res.status(500).json({
       success: false,
       error:
         process.env.NODE_ENV === "production"
           ? "Internal server error"
-          : error.message, // Hide details in production
+          : error.message,
     });
   }
 });
@@ -107,7 +110,7 @@ router.post("/", authenticateToken, async (req, res) => {
     // Populate the response
     const populatedTastingNote = await CoffeeTasting.findById(
       savedTastingNote._id
-    ).populate("cafeId", "name neighborhood");
+    ).populate("cafeId", "name website hasMultipleLocations locations");
 
     res.status(201).json({
       success: true,
@@ -187,7 +190,7 @@ router.put("/:id", authenticateToken, async (req, res) => {
       req.params.id,
       req.body, // This can include isPublic: true/false
       { new: true, runValidators: true }
-    ).populate("cafeId", "name neighborhood");
+    ).populate("cafeId", "name website hasMultipleLocations locations");
 
     res.json({
       success: true,
@@ -258,7 +261,7 @@ router.get("/admin/all", authenticateToken, async (req, res) => {
     }
 
     const allTastingNotes = await CoffeeTasting.find({})
-      .populate("cafeId", "name neighborhood")
+      .populate("cafeId", "name website hasMultipleLocations locations")
       .populate("userId", "username email")
       .sort({ createdAt: -1 });
 
