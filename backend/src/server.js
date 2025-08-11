@@ -28,6 +28,43 @@ app.get("/", (req, res) => {
   });
 });
 
+// API Documentation endpoint
+app.get("/api", (req, res) => {
+  res.json({
+    message: "Stockholm Coffee Club API Documentation",
+    version: "1.0.0",
+    endpoints: {
+      auth: {
+        "POST /api/auth/register": "Register new user",
+        "POST /api/auth/login": "Login user",
+      },
+      cafes: {
+        "GET /api/cafes": "Get all cafes",
+        "GET /api/cafes/:id": "Get cafe by ID",
+        "POST /api/cafes": "Create new cafe (admin only)",
+      },
+      tastings: {
+        "GET /api/tastings/public": "Get public tasting notes",
+        "GET /api/tastings/public/search": "Search public tastings",
+        "GET /api/tastings": "Get user's tastings (auth required)",
+        "POST /api/tastings": "Create new tasting (auth required)",
+        "PUT /api/tastings/:id": "Update tasting (auth required)",
+        "DELETE /api/tastings/:id": "Delete tasting (auth required)",
+      },
+      submissions: {
+        "GET /api/cafeSubmissions": "Get cafe submissions (admin only)",
+        "POST /api/cafeSubmissions": "Submit new cafe",
+        "PUT /api/cafeSubmissions/:id/approve":
+          "Approve submission (admin only)",
+        "DELETE /api/cafeSubmissions/:id": "Delete submission (admin only)",
+      },
+      utils: {
+        "GET /api/seed": "Seed Stockholm cafes",
+      },
+    },
+  });
+});
+
 // API routes
 app.use("/api/cafes", cafeRoutes);
 app.use("/api/auth", authRoutes);

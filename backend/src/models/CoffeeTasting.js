@@ -14,19 +14,19 @@ const coffeeTastingSchema = new mongoose.Schema(
     },
     cafeNeighborhood: {
       type: String,
-      required: true,
+      required: false,
     },
     coffeeRoaster: {
       type: String,
-      required: true,
+      required: false,
     },
     coffeeOrigin: {
       type: String,
-      required: true,
+      required: false,
     },
     coffeeOriginRegion: {
       type: String,
-      required: true,
+      required: false,
     },
     coffeeName: {
       type: String,
@@ -84,11 +84,11 @@ const coffeeTastingSchema = new mongoose.Schema(
     },
     isPublic: {
       type: Boolean,
-      default: true, // Default to public for community engagement
+      default: true,
     },
     isSeeded: {
       type: Boolean,
-      default: false, // Real user data defaults to false
+      default: false,
     },
   },
   {
