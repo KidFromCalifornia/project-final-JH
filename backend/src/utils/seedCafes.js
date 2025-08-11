@@ -44,7 +44,7 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Stockholm's beloved roastery serving consistently excellent coffee. Known for sustainable sourcing and being a cornerstone of Swedish coffee culture since 2004.",
+      "Stockholm's original specialty roastery serving consistently excellent coffee. Known for sustainable sourcing and being a cornerstone of Swedish coffee culture since 2004.",
     category: ["roaster", "specialty"],
     features: ["pour_over", "takeaway", "breakfast"],
     images: [],
@@ -58,7 +58,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Norrtullsgatan 4, 113 29 Stockholm",
-        neighborhood: "Vasastan",
+        neighborhood: "Norrmalm",
         coordinates: {
           type: "Point",
           coordinates: [18.058, 59.342],
@@ -102,7 +102,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Hagastensvägen 30, 113 48 Stockholm",
-        neighborhood: "Vasastan",
+        neighborhood: "Norrmalm",
         coordinates: {
           type: "Point",
           coordinates: [18.03, 59.35],
@@ -111,9 +111,9 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Specialty coffee bar focusing on careful brewing techniques and creating the perfect cup through patience and precision.",
+      "Thirdwave coffee bar focusing on careful brewing techniques and creating the perfect cup through patience and precision.",
     category: ["thirdwave"],
-    features: ["pour_over", "takeaway"],
+    features: ["pour_over", "takeaway", "vegan_options"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -134,7 +134,7 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Artisanal coffee roastery on Kungsholmen, known for their volcanic approach to roasting and creating explosive flavors in every cup.",
+      "A Cafe & micro roastery on Kungsholmen, known for their focus on small batch Latin American coffee, culture and food.",
     category: ["roaster", "thirdwave"],
     features: ["pour_over", "takeaway"],
     images: [],
@@ -142,7 +142,7 @@ const stockholmCafes = [
     isSeeded: true,
   },
   {
-    name: "Lykke Kaffegård Nytorget",
+    name: "Lykke Kaffegård - Nytorget",
     website: "https://www.lykkenytorget.se/",
     hasMultipleLocations: false,
     locations: [
@@ -157,7 +157,7 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Cozy café at Nytorget serving specialty coffee and Nordic-inspired dishes. Known for their warm atmosphere and quality coffee in the heart of Södermalm.",
+      "Located at Nytorget, this cafe can turn into an all day affair - breakfast in the morning and drinks in the evening. Known for their cozy atmosphere and special live events.",
     category: ["specialty"],
     features: ["breakfast", "lunch", "takeaway", "pastries"],
     images: [],
@@ -171,7 +171,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Fiskshallsvägen 8, 120 44 Stockholm",
-        neighborhood: "Stockholm",
+        neighborhood: "Enskede-Årsta-Vantörs",
         coordinates: {
           type: "Point",
           coordinates: [18.01, 59.29],
@@ -180,7 +180,7 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Unique café and sandwich shop combining excellent coffee with traditional Swedish smörgås culture.",
+      "Unique café and sandwich shop combining excellent coffee with Swedish smörgås culture. A bakehouse first to Stockholm's independent restaurants with a front counter serving delicious sandwiches and fresh bagels.",
     category: ["specialty"],
     features: ["takeaway", "breakfast", "lunch"],
     images: [],
@@ -203,7 +203,7 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Trendy coffee spot known for their modern approach to coffee and sleek Scandinavian design aesthetic.",
+      "Approaching coffee with a minimalist philosophy, Balue focuses on simplicity and quality. A serene spot for coffee lovers who appreciate the art of brewing.",
     category: ["thirdwave"],
     features: ["pour_over", "takeaway"],
     images: [],
@@ -216,17 +216,17 @@ const stockholmCafes = [
     hasMultipleLocations: false,
     locations: [
       {
-        address: "Nybrokajen 7, 111 30 Stockholm",
-        neighborhood: "Skeppsholmen",
+        address: "Hallvägen 9 Slakthusområdet, 12162 Johanneshov",
+        neighborhood: "Enskede-Årsta-Vantörs",
         coordinates: {
           type: "Point",
-          coordinates: [18.085, 59.328],
+          coordinates: [18.085, 59.295],
         },
         isMainLocation: true,
       },
     ],
     description:
-      "Located on the beautiful island of Skeppsholmen, this roastery represents innovative Stockholm coffee culture with waterfront views.",
+      "The OG roastery of Stockholm restaurant scene, fuelling restaurants with their own roasted coffee since 2011. They have been a staple of the restaurant scene in Stockholm for over a decade.",
     category: ["roaster", "thirdwave"],
     features: ["pour_over", "takeaway"],
     images: [],
@@ -249,8 +249,8 @@ const stockholmCafes = [
       },
     ],
     description:
-      "The Coffee Missionary bringing exceptional coffee to Södermalm. A perfect blend of tradition and modern coffee culture.",
-    category: ["specialty"],
+      "In their house, coffee is gospel. Curating a selection of coffee beans from around the world, they focus on the story behind each cup. A stepping stone for those starting their coffee journey.",
+    category: ["specialty", "roaster"],
     features: ["takeaway"],
     images: [],
     isApproved: true,
@@ -263,7 +263,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Frihamnsgatan 24, 115 56 Stockholm",
-        neighborhood: "Frihamnen",
+        neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
           coordinates: [18.107, 59.349],
@@ -272,9 +272,9 @@ const stockholmCafes = [
       },
     ],
     description:
-      "World's most exclusive coffee, roasted on demand. Curated by coffee experts and known for their exceptional quality and unique approach to specialty coffee.",
+      "Sourcing the most exceptional coffees from producers who share our vision for quality and sustainability. Through meticulous roasting, their approach combines skill, science, and storytelling to create coffees that stand out.",
     category: ["roaster", "thirdwave"],
-    features: ["pour_over", "takeaway", "no_coffee_bar"],
+    features: ["no_coffee_bar"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -285,8 +285,8 @@ const stockholmCafes = [
     hasMultipleLocations: false,
     locations: [
       {
-        address: "Bastuhagsvägen 41, Stockholm",
-        neighborhood: "Stockholm",
+        address: "Bastuhagsvägen 41, 113 25 Stockholm",
+        neighborhood: "Norrmalm",
         coordinates: {
           type: "Point",
           coordinates: [18.08, 59.31],
@@ -295,9 +295,9 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Charming seasonal café located on Bastuhagsvägen. Open during summer months with weekend hours (Friday-Sunday 10-18). Ironically named but definitely a destination worth finding.",
+      "Deep in the suburbs, this cafe is a local favorite known for its cozy atmosphere with specialty coffee for those trying to escape the city.",
     category: ["specialty"],
-    features: ["takeaway"],
+    features: ["takeaway", "limited_sitting"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -318,9 +318,9 @@ const stockholmCafes = [
       },
     ],
     description:
-      "A minimal and curated space with strong focus on specialty coffee and craft beer. Perfect fusion of Stockholm's coffee and beer culture.",
+      "A taproom and brewery in Södermalm, Ölkemi offers a unique experience with their own craft beers and a selection of specialty coffee. A perfect spot for those who appreciate both brews.",
     category: ["specialty"],
-    features: ["outdoor_seating", "takeaway"],
+    features: ["outdoor_seating", "takeaway", "lunch"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -331,8 +331,8 @@ const stockholmCafes = [
     hasMultipleLocations: false,
     locations: [
       {
-        address: "Rådmansgatan 57, Stockholm",
-        neighborhood: "Vasastan",
+        address: "Rådmansgatan 57, 113 57 Stockholm",
+        neighborhood: "Norrmalm",
         coordinates: {
           type: "Point",
           coordinates: [18.065, 59.34],
@@ -341,9 +341,9 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Welcoming guests with exceptional coffee and warm hospitality. A neighborhood favorite that treats every visitor like a honored guest.",
+      "Welcoming guests with exceptional coffee and warm hospitality. A neighborhood favorite that treats every visitor like an honored guest.",
     category: ["specialty"],
-    features: ["takeaway", "breakfast"],
+    features: ["takeaway", "breakfast", "lunch"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -411,7 +411,7 @@ const stockholmCafes = [
       },
       {
         address: "Upplandsgatan 18, 113 28 Stockholm",
-        neighborhood: "Vasastan",
+        neighborhood: "Norrmalm",
         coordinates: {
           type: "Point",
           coordinates: [18.058, 59.342],
@@ -455,7 +455,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Exercisplan 4, 111 49 Stockholm",
-        neighborhood: "Skeppsholmen",
+        neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
           coordinates: [18.085, 59.328],
@@ -530,22 +530,10 @@ const stockholmCafes = [
   },
 ];
 
-// Connect to database
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log("🚀 Connected to MongoDB");
-  } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
-    process.exit(1);
-  }
-};
-
-// Seed function
+// Seed function - FIXED VERSION that won't crash your server
 const seedCafes = async () => {
   try {
-    await connectDB();
-
+    // Don't reconnect - server is already connected
     // Clear existing seeded cafes (but keep user-submitted ones)
     await Cafe.deleteMany({ isSeeded: true });
     console.log("🧹 Cleared existing seed data");
@@ -567,19 +555,41 @@ const seedCafes = async () => {
       );
     });
 
-    console.log(
-      "\n🎯 Seed complete! All cafes now match your CafeSubmission.js schema exactly."
-    );
-    process.exit(0);
+    console.log("\n🎯 Seed complete! All cafes now match your schema exactly.");
+
+    // ✅ Return success data instead of process.exit()
+    return {
+      success: true,
+      count: insertedCafes.length,
+      message: "Seeded successfully",
+    };
   } catch (error) {
     console.error("❌ Error seeding cafes:", error);
-    process.exit(1);
+    // ✅ Throw error instead of process.exit(1)
+    throw error;
   }
 };
 
-// Run seeding if called directly
+// Only run direct seeding if called from command line
 if (process.argv[1].includes("seedCafes.js")) {
-  seedCafes();
+  const connectDB = async () => {
+    try {
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log("🚀 Connected to MongoDB");
+    } catch (error) {
+      console.error("❌ MongoDB connection error:", error);
+      process.exit(1);
+    }
+  };
+
+  const runSeed = async () => {
+    await connectDB();
+    await seedCafes();
+    process.exit(0);
+  };
+
+  runSeed();
 }
 
+// ✅ Export function properly for server use
 export { seedCafes };

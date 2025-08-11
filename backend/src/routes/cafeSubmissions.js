@@ -1,8 +1,6 @@
 import express from "express";
 import { Cafe, CafeSubmission } from "../models/Cafe.js";
-import { authenticateToken } from "../middleware/auth.js";
-import { requireAdmin } from "../middleware/admin.js";
-
+import { authenticateToken, requireAdmin } from "../middleware/auth.js";
 const router = express.Router();
 
 // POST create new cafe submission

@@ -8,8 +8,6 @@ import cafeRoutes from "./routes/cafes.js";
 import authRoutes from "./routes/auth.js";
 import submissionRoutes from "./routes/cafeSubmissions.js";
 import tastingRoutes from "./routes/UserTastings.js";
-
-// Import seed function
 import { seedCafes } from "./utils/seedCafes.js";
 
 dotenv.config();
@@ -33,16 +31,47 @@ app.get("/", (req, res) => {
 // API routes
 app.use("/api/cafes", cafeRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/submissions", submissionRoutes);
+app.use("/api/cafeSubmissions", submissionRoutes);
 app.use("/api/tastings", tastingRoutes);
 
-// Seed route (for development)
+app.get("/api/tastings/public", async (req, res) => {
+  try {
+    const { UserTasting } = await import("./models/UserTasting.js");
+
+    const tastings = await UserTasting.find({ isPublic: true })
+      .populate("userId", "username")
+      .populate("cafeId", "name")
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    res.json({
+      success: true,
+      data: tastings,
+      count: tastings.length,
+    });
+  } catch (error) {
+    console.error("Public tastings error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 app.get("/api/seed", async (req, res) => {
   try {
-    await seedCafes();
-    res.json({ message: "Stockholm cafes seeded successfully! ☕" });
+    const result = await seedCafes();
+    res.json({
+      message: "Stockholm cafes seeded successfully! ☕",
+      success: true,
+      count: result.count,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Seed error:", error);
+    res.status(500).json({
+      error: error.message,
+      success: false,
+    });
   }
 });
 

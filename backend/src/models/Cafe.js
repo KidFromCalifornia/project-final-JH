@@ -74,6 +74,7 @@ const cafeSchema = new mongoose.Schema(
           "decaf",
           "no_coffee_bar",
           "limited_sitting",
+          "roaster",
         ],
       },
     ],

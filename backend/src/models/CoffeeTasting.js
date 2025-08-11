@@ -12,6 +12,14 @@ const coffeeTastingSchema = new mongoose.Schema(
       ref: "Cafe",
       required: true,
     },
+    cafeNeighborhood: {
+      type: String,
+      required: true,
+    },
+    coffeeRoaster: {
+      type: String,
+      required: true,
+    },
     coffeeOrigin: {
       type: String,
       required: true,
@@ -24,6 +32,11 @@ const coffeeTastingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    coffeeNeightborhood: {
+      type: String,
+      required: false,
+    },
+
     roastLevel: {
       type: String,
       enum: ["light", "medium", "dark"],
@@ -82,6 +95,14 @@ const coffeeTastingSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+coffeeTastingSchema.index({
+  coffeeName: "text",
+  notes: "text",
+  coffeeOrigin: "text",
+  coffeeRoaster: "text",
+  coffeeOriginRegion: "text",
+});
 
 export const CoffeeTasting = mongoose.model(
   "CoffeeTasting",
