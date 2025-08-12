@@ -15,8 +15,8 @@ export const loginSchema = z.object({
 
 export const tastingSchema = z.object({
   cafeId: z.string().min(1, "Cafe ID is required"),
-  cafeNeighborhood: z.string().min(1, "Cafe neighborhood is required"),
-  coffeeRoaster: z.string().min(1, "Coffee roaster is required"),
+  cafeNeighborhood: z.string().min(),
+  coffeeRoaster: z.string().min(),
   coffeeOrigin: z.string().min(),
   coffeeOriginRegion: z.string().min(),
   coffeeName: z.string().min(1, "Coffee name is required"),
