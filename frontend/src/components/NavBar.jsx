@@ -1,7 +1,8 @@
-const LoginForm = lazy(() => import("./LoginForm"));
 import CafeSearchBar from "./CafeSearchBar";
 import { Link } from "react-router-dom";
-import { Suspense } from "react";
+import { lazy, Suspense } from "react";
+
+const LoginForm = lazy(() => import("./LoginForm"));
 
 const NavBar = ({
   searchResults,

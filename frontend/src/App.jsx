@@ -3,11 +3,11 @@ import { Suspense, useState, useEffect, lazy } from "react";
 import NavBar from "./components/NavBar";
 
 // Lazy load pages for performance
-const HomePage = lazy(() => import("./pages/homePage"));
-const TastingsPage = lazy(() => import("./pages/TastingsPage"));
-const CafePage = lazy(() => import("./pages/CafePage"));
-const UserPage = lazy(() => import("./pages/UserPage"));
-const AdminPage = lazy(() => import("./pages/AdminPage"));
+const HomePage = lazy(() => import("./pages/HomePage.jsx"));
+const TastingsPage = lazy(() => import("./pages/TastingsPage.jsx"));
+const CafePage = lazy(() => import("./pages/CafePage.jsx"));
+const UserPage = lazy(() => import("./pages/UserPage.jsx"));
+const AdminPage = lazy(() => import("./pages/AdminPage.jsx"));
 
 export const App = () => {
   // Global state for authentication
