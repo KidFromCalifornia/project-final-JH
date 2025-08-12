@@ -3,7 +3,7 @@ import { Suspense, useState, useEffect, lazy } from "react";
 import NavBar from "./components/NavBar";
 
 // Lazy load pages for performance
-const HomePage = lazy(() => import("./pages/Homepages.jsx"));
+const HomePage = lazy(() => import("./pages/HomePage.jsx"));
 const TastingsPage = lazy(() => import("./pages/TastingsPage.jsx"));
 const CafePage = lazy(() => import("./pages/CafePage.jsx"));
 const UserPage = lazy(() => import("./pages/UserPage.jsx"));

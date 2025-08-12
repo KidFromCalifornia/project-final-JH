@@ -1,0 +1,28 @@
+nav {
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: rgb(0, 0, 139, 0.8);
+  color: white;
+}
+.nav-right {
+  display: flex;
+  flex-direction: row;
+  margin-right: 1rem;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.nav-left {
+  margin: 1rem;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
