@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.js";
 import submissionRoutes from "./routes/cafeSubmissions.js";
 import tastingRoutes from "./routes/UserTastings.js";
 import { seedCafes } from "./utils/seedCafes.js";
+import metadataRoutes from "./routes/metadata.js";
 
 dotenv.config();
 connectDB();
@@ -70,6 +71,7 @@ app.use("/api/cafes", cafeRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cafeSubmissions", submissionRoutes);
 app.use("/api/tastings", tastingRoutes);
+app.use("/api/metadata", metadataRoutes);
 
 app.get("/api/tastings/public", async (req, res) => {
   try {

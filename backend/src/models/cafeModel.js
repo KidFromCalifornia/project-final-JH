@@ -103,6 +103,7 @@ cafeSchema.index({ "locations.coordinates": "2dsphere" });
 export const Cafe = mongoose.model("Cafe", cafeSchema, "cafes");
 export const CafeSubmission = mongoose.model(
   "CafeSubmission",
+
   cafeSchema,
   "cafesubmissions"
 );
