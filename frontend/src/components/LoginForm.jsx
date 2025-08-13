@@ -68,7 +68,17 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        position: "fixed",
+        backgroundColor: "white",
+        padding: "1rem",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        width: "200px",
+        top: "0",
+        right: "0",
+      }}
+    >
       <button
         type="button"
         aria-label="Close login form"

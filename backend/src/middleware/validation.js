@@ -21,7 +21,7 @@ export const tastingSchema = z.object({
   coffeeOriginRegion: z.string().min(),
   coffeeName: z.string().min(1, "Coffee name is required"),
   roastLevel: z.enum(["light", "medium", "dark"]),
-  drinkType: z.enum(["espresso", "filtered coffee", "pour over", "other"]),
+  brewMethod: z.enum(["espresso", "filtered coffee", "pour over", "other"]),
   rating: z.number().min(1).max(5),
   tastingNotes: z
     .array(

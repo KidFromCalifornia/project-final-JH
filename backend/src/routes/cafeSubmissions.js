@@ -1,5 +1,5 @@
 import express from "express";
-import { Cafe, CafeSubmission } from "../models/Cafe.js";
+import { Cafe, CafeSubmission } from "../models/cafeModel.js";
 import { authenticateToken, requireAdmin } from "../middleware/auth.js";
 const router = express.Router();
 

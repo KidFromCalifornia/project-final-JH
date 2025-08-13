@@ -32,17 +32,13 @@ const coffeeTastingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    coffeeNeightborhood: {
-      type: String,
-      required: false,
-    },
 
     roastLevel: {
       type: String,
       enum: ["light", "medium", "dark"],
       required: true,
     },
-    drinkType: {
+    brewMethod: {
       type: String,
       enum: ["espresso", "filtered coffee", "pour over", "other"],
       required: true,
@@ -53,19 +49,24 @@ const coffeeTastingSchema = new mongoose.Schema(
       max: 5,
       required: true,
     },
-    tastingNotes: [
+    astingNotes: [
       {
         type: String,
         enum: [
           "fruity",
-          "floral",
-          "sweet",
-          "nutty",
-          "cocoa",
-          "spices",
-          "roasted",
           "green",
           "sour",
+          "roasted",
+          "cereal",
+          "spices",
+          "nutty",
+          "cocoa",
+          "sweet",
+          "alcohol",
+          "stale",
+          "earthy",
+          "chemical",
+          "floral",
           "other",
         ],
       },
@@ -76,7 +77,15 @@ const coffeeTastingSchema = new mongoose.Schema(
     },
     mouthFeel: {
       type: String,
-      enum: ["light", "medium", "full"],
+      enum: [
+        "mouth drying",
+        "metallic",
+        "oily",
+        "light",
+        "medium",
+        "full",
+        "other",
+      ],
     },
     notes: {
       type: String,

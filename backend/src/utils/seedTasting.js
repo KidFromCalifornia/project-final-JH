@@ -1,18 +1,13 @@
 import connectDB from "../config/database.js";
-import User from "../models/User.js";
-import Cafe from "../models/Cafe.js";
-import CoffeeTasting from "../models/CoffeeTasting.js";
+import { User } from "../models/User.js";
+import { Cafe } from "../models/cafeModel.js";
+import { CoffeeTasting } from "../models/TastingsModel.js";
 
 const seedTastingNotes = async () => {
   try {
     await connectDB();
     console.log("Connected to database for seeding tasting notes");
 
-    // Clear existing tasting notes only if they are seeded ones
-    await CoffeeTasting.deleteMany({ isSeeded: true });
-    console.log("Cleared existing seeded tasting notes");
-
-    // Get existing users and cafes
     const users = await User.find();
     const cafes = await Cafe.find();
 
@@ -49,10 +44,10 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Yirgacheffe",
         coffeeName: "Kochere Washing Station",
         roastLevel: "light",
-        drinkType: "pour over",
+        brewMethod: "pour over",
         rating: 5,
-        tastingNotes: ["fruity", "floral", "sweet"],
-        acidity: "high",
+        tastingNotes: ["fruity", "floral", "sweet"], // Only use category titles from model
+        acidity: "medium",
         mouthFeel: "light",
         notes:
           "Absolutely incredible! Bright citrus notes with a floral finish.",
@@ -70,7 +65,7 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Huila",
         coffeeName: "Finca El Diviso",
         roastLevel: "medium",
-        drinkType: "espresso",
+        brewMethod: "espresso",
         rating: 4,
         tastingNotes: ["nutty", "cocoa", "sweet"],
         acidity: "medium",
@@ -92,10 +87,10 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Cerrado",
         coffeeName: "Fazenda Santa Ines",
         roastLevel: "medium",
-        drinkType: "cappuccino",
+        brewMethod: "other",
         rating: 4,
-        tastingNotes: ["nutty", "chocolate", "caramel"],
-        acidity: "low",
+        tastingNotes: ["nutty", "cocoa", "sweet"],
+        acidity: "light",
         mouthFeel: "full",
         notes: "Smooth and creamy with milk. Great for a morning cappuccino.",
         isPublic: false,
@@ -112,7 +107,7 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Antigua",
         coffeeName: "La Azotea",
         roastLevel: "medium",
-        drinkType: "other",
+        brewMethod: "other",
         rating: 4,
         tastingNotes: ["cocoa", "spices", "sweet"],
         acidity: "medium",
@@ -134,9 +129,9 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Nyeri",
         coffeeName: "Tegu AA",
         roastLevel: "light",
-        drinkType: "pour over",
+        brewMethod: "pour over",
         rating: 5,
-        tastingNotes: ["fruity", "sweet", "fruity"],
+        tastingNotes: ["fruity", "sweet", "other"],
         acidity: "high",
         mouthFeel: "medium",
         notes:
@@ -157,10 +152,10 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Cajamarca",
         coffeeName: "Organic Highland",
         roastLevel: "medium",
-        drinkType: "americano",
+        brewMethod: "other",
         rating: 3,
         tastingNotes: ["nutty", "sweet", "other"],
-        acidity: "low",
+        acidity: "light",
         mouthFeel: "medium",
         notes: "Simple and clean. Good for an everyday americano.",
         isPublic: true,
@@ -177,10 +172,10 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Sul de Minas",
         coffeeName: "House Blend",
         roastLevel: "medium",
-        drinkType: "other",
+        brewMethod: "filtered coffee",
         rating: 3,
-        tastingNotes: ["chocolate", "nutty", "caramel"],
-        acidity: "low",
+        tastingNotes: ["cocoa", "nutty", "sweet"],
+        acidity: "light",
         mouthFeel: "full",
         notes: "Minimalist approach to coffee. Works well with milk drinks.",
         isPublic: false,
@@ -198,7 +193,7 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Huye",
         coffeeName: "Simbi",
         roastLevel: "light",
-        drinkType: "espresso",
+        brewMethod: "espresso",
         rating: 5,
         tastingNotes: ["fruity", "floral", "sweet"],
         acidity: "high",
@@ -220,7 +215,7 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Santa Barbara",
         coffeeName: "Finca La Florencia",
         roastLevel: "medium",
-        drinkType: "cortado",
+        brewMethod: "filtered coffee",
         rating: 4,
         tastingNotes: ["sweet", "fruity", "other"],
         acidity: "medium",
@@ -240,7 +235,7 @@ const seedTastingNotes = async () => {
         coffeeOriginRegion: "Boquete",
         coffeeName: "Geisha Varietal",
         roastLevel: "light",
-        drinkType: "pour over",
+        brewMethod: "pour over",
         rating: 5,
         tastingNotes: ["floral", "fruity", "other"],
         acidity: "high",
@@ -265,3 +260,6 @@ const seedTastingNotes = async () => {
 };
 
 export default seedTastingNotes;
+if (process.argv[1].includes("seedTasting.js")) {
+  seedTastingNotes().then(() => process.exit(0));
+}

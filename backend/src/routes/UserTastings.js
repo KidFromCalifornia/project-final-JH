@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticateToken } from "../middleware/auth.js";
-import { CoffeeTasting } from "../models/CoffeeTasting.js";
+import { CoffeeTasting } from "../models/TastingsModel.js";
 
 const router = express.Router();
 
@@ -54,7 +54,7 @@ router.get("/public/search", async (req, res) => {
     }
 
     // Filters
-    if (brewMethod) searchCriteria.drinkType = brewMethod;
+    if (brewMethod) searchCriteria.brewMethod = brewMethod;
     if (origin) searchCriteria.coffeeOrigin = { $regex: origin, $options: "i" };
 
     if (minRating || maxRating) {
@@ -341,10 +341,10 @@ router.get("/filter", async (req, res) => {
   const { espresso, filteredCoffee, pourOver, other } = req.query;
   try {
     const filterCriteria = {};
-    if (espresso) filterCriteria.brewMethod = "Espresso";
-    if (filteredCoffee) filterCriteria.brewMethod = "Filtered Coffee";
-    if (pourOver) filterCriteria.brewMethod = "Pour Over";
-    if (other) filterCriteria.brewMethod = "Other";
+    if (espresso) filterCriteria.brewMethod = "espresso";
+    if (filteredCoffee) filterCriteria.brewMethod = "filtered coffee";
+    if (pourOver) filterCriteria.brewMethod = "pour over";
+    if (other) filterCriteria.brewMethod = "other";
 
     const filteredTastings = await CoffeeTasting.find(filterCriteria)
       .populate("cafeId", "name website hasMultipleLocations locations")

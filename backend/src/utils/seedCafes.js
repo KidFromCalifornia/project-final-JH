@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { Cafe } from "../models/Cafe.js";
+import { Cafe } from "../models/cafeModel.js";
 
 dotenv.config();
 
@@ -22,7 +22,7 @@ const stockholmCafes = [
     ],
     description:
       "Stockholm's pioneering third wave coffee roastery. Acclaimed for their exceptional single-origin beans and precise brewing methods that started the specialty coffee movement in Sweden.",
-    category: ["thirdwave", "roaster"],
+    category: "roaster",
     features: ["pour_over", "takeaway"],
     images: [],
     isApproved: true,
@@ -45,7 +45,7 @@ const stockholmCafes = [
     ],
     description:
       "Stockholm's original specialty roastery serving consistently excellent coffee. Known for sustainable sourcing and being a cornerstone of Swedish coffee culture since 2004.",
-    category: ["roaster", "specialty"],
+    category: "roaster",
     features: ["pour_over", "takeaway", "breakfast"],
     images: [],
     isApproved: true,
@@ -89,7 +89,7 @@ const stockholmCafes = [
     ],
     description:
       "Cozy neighborhood favorite known for excellent espresso and warm, welcoming atmosphere. A true local gem that perfectly embodies Stockholm's coffee culture across multiple locations.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["breakfast", "pastries", "takeaway"],
     images: [],
     isApproved: true,
@@ -112,14 +112,14 @@ const stockholmCafes = [
     ],
     description:
       "Thirdwave coffee bar focusing on careful brewing techniques and creating the perfect cup through patience and precision.",
-    category: ["thirdwave"],
+    category: "thirdwave",
     features: ["pour_over", "takeaway", "vegan_options"],
     images: [],
     isApproved: true,
     isSeeded: true,
   },
   {
-    name: "Volca Coffee Roaster",
+    name: "Volca Coffee Roasters",
     website: "https://volcacoffee.se",
     hasMultipleLocations: false,
     locations: [
@@ -135,7 +135,7 @@ const stockholmCafes = [
     ],
     description:
       "A Cafe & micro roastery on Kungsholmen, known for their focus on small batch Latin American coffee, culture and food.",
-    category: ["roaster", "thirdwave"],
+    category: "roaster",
     features: ["pour_over", "takeaway"],
     images: [],
     isApproved: true,
@@ -158,7 +158,7 @@ const stockholmCafes = [
     ],
     description:
       "Located at Nytorget, this cafe can turn into an all day affair - breakfast in the morning and drinks in the evening. Known for their cozy atmosphere and special live events.",
-    category: ["specialty"],
+    category: "roaster",
     features: ["breakfast", "lunch", "takeaway", "pastries"],
     images: [],
     isApproved: true,
@@ -181,7 +181,7 @@ const stockholmCafes = [
     ],
     description:
       "Unique café and sandwich shop combining excellent coffee with Swedish smörgås culture. A bakehouse first to Stockholm's independent restaurants with a front counter serving delicious sandwiches and fresh bagels.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["takeaway", "breakfast", "lunch"],
     images: [],
     isApproved: true,
@@ -204,7 +204,7 @@ const stockholmCafes = [
     ],
     description:
       "Approaching coffee with a minimalist philosophy, Balue focuses on simplicity and quality. A serene spot for coffee lovers who appreciate the art of brewing.",
-    category: ["thirdwave"],
+    category: "thirdwave",
     features: ["pour_over", "takeaway"],
     images: [],
     isApproved: true,
@@ -227,7 +227,7 @@ const stockholmCafes = [
     ],
     description:
       "The OG roastery of Stockholm restaurant scene, fuelling restaurants with their own roasted coffee since 2011. They have been a staple of the restaurant scene in Stockholm for over a decade.",
-    category: ["roaster", "thirdwave"],
+    category: "roaster",
     features: ["pour_over", "takeaway"],
     images: [],
     isApproved: true,
@@ -250,7 +250,7 @@ const stockholmCafes = [
     ],
     description:
       "In their house, coffee is gospel. Curating a selection of coffee beans from around the world, they focus on the story behind each cup. A stepping stone for those starting their coffee journey.",
-    category: ["specialty", "roaster"],
+    category: "specialty",
     features: ["takeaway"],
     images: [],
     isApproved: true,
@@ -273,7 +273,7 @@ const stockholmCafes = [
     ],
     description:
       "Sourcing the most exceptional coffees from producers who share our vision for quality and sustainability. Through meticulous roasting, their approach combines skill, science, and storytelling to create coffees that stand out.",
-    category: ["roaster", "thirdwave"],
+    category: "roaster",
     features: ["no_coffee_bar"],
     images: [],
     isApproved: true,
@@ -296,7 +296,7 @@ const stockholmCafes = [
     ],
     description:
       "Deep in the suburbs, this cafe is a local favorite known for its cozy atmosphere with specialty coffee for those trying to escape the city.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["takeaway", "limited_sitting"],
     images: [],
     isApproved: true,
@@ -319,7 +319,7 @@ const stockholmCafes = [
     ],
     description:
       "A taproom and brewery in Södermalm, Ölkemi offers a unique experience with their own craft beers and a selection of specialty coffee. A perfect spot for those who appreciate both brews.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["outdoor_seating", "takeaway", "lunch"],
     images: [],
     isApproved: true,
@@ -342,7 +342,7 @@ const stockholmCafes = [
     ],
     description:
       "Welcoming guests with exceptional coffee and warm hospitality. A neighborhood favorite that treats every visitor like an honored guest.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["takeaway", "breakfast", "lunch"],
     images: [],
     isApproved: true,
@@ -365,7 +365,7 @@ const stockholmCafes = [
     ],
     description:
       "Unique café concept combining coffee culture with creative community space. A hub for Stockholm's artistic and creative minds.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["takeaway"],
     images: [],
     isApproved: true,
@@ -388,7 +388,7 @@ const stockholmCafes = [
     ],
     description:
       "The Coffee Company bringing serious coffee expertise to central Stockholm. Known for their dedication to the craft of coffee making.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["pour_over", "takeaway"],
     images: [],
     isApproved: true,
@@ -442,7 +442,7 @@ const stockholmCafes = [
     ],
     description:
       "Artisanal bakery serving exceptional bread, pastries, and specialty coffee. Perfect for Swedish fika tradition across multiple Stockholm locations.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["breakfast", "pastries", "takeaway"],
     images: [],
     isApproved: true,
@@ -465,7 +465,7 @@ const stockholmCafes = [
     ],
     description:
       "Located within the Swedish Centre for Architecture and Design, this café combines excellent coffee with stunning design in a unique museum setting.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["takeaway"],
     images: [],
     isApproved: true,
@@ -488,7 +488,7 @@ const stockholmCafes = [
     ],
     description:
       "Not a traditional café but serves specialty coffee with unique offerings. Known for their innovative approach to coffee and creative atmosphere.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["takeaway"],
     images: [],
     isApproved: true,
@@ -522,7 +522,7 @@ const stockholmCafes = [
     ],
     description:
       "Artisanal cookie shop and café serving freshly baked cookies alongside specialty coffee. Known for their creative cookie flavors and cozy atmosphere.",
-    category: ["specialty"],
+    category: "specialty",
     features: ["pastries", "takeaway", "limited_sitting"],
     images: [],
     isApproved: true,
@@ -533,9 +533,12 @@ const stockholmCafes = [
 // Seed function - FIXED VERSION that won't crash your server
 const seedCafes = async () => {
   try {
-    // Don't reconnect - server is already connected
-    // Clear existing seeded cafes (but keep user-submitted ones)
-    await Cafe.deleteMany({ isSeeded: true });
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log("🚀 Connected to MongoDB (seedCafes)");
+    }
+
+    await Cafe.deleteMany({});
     console.log("🧹 Cleared existing seed data");
 
     // Insert new cafes
@@ -583,9 +586,14 @@ if (process.argv[1].includes("seedCafes.js")) {
   };
 
   const runSeed = async () => {
-    await connectDB();
-    await seedCafes();
-    process.exit(0);
+    try {
+      await connectDB();
+      await seedCafes();
+      process.exit(0);
+    } catch (error) {
+      console.error("❌ Seeding failed:", error);
+      process.exit(1);
+    }
   };
 
   runSeed();

@@ -1,5 +1,5 @@
 import express from "express";
-import { Cafe } from "../models/Cafe.js";
+import { Cafe } from "../models/cafeModel.js";
 
 const router = express.Router();
 
@@ -166,7 +166,7 @@ router.get("/search/suggestions", async (req, res) => {
       Cafe.distinct("locations.neighborhood", {
         isApproved: true,
         "locations.neighborhood": { $regex: q, $options: "i" },
-      }).limit(5),
+      }),
     ]);
 
     res.json({

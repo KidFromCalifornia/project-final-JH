@@ -50,13 +50,12 @@ const cafeSchema = new mongoose.Schema(
       type: String,
       maxlength: 1000,
     },
-    category: [
-      {
-        type: String,
-        required: true,
-        enum: ["specialty", "roaster", "thirdwave"],
-      },
-    ],
+    category: {
+      type: String,
+      required: true,
+      enum: ["specialty", "roaster", "thirdwave"],
+    },
+
     features: [
       {
         type: String,
