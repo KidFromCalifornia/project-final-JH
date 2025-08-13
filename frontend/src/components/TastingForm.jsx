@@ -88,10 +88,7 @@ export default function TastingForm({ onSubmit }) {
           ))}
         </select>
       </label>
-      <label>
-        Cafe Neighborhood:
-        <input type="text" value={cafeNeighborhood} readOnly />
-      </label>
+
       <label>
         Coffee Roaster:
         <input
@@ -109,7 +106,7 @@ export default function TastingForm({ onSubmit }) {
         />
       </label>
       <label>
-        Coffee Origin Region:
+        Coffee Region:
         <input
           type="text"
           value={coffeeOriginRegion}
@@ -133,22 +130,21 @@ export default function TastingForm({ onSubmit }) {
       </label>
       <label>
         Roast Level:
-        <select
-          value={roastLevel}
-          onChange={(e) => setRoastLevel(e.target.value)}
+        <input
+          type="range"
+          min="0"
+          max={options.roastLevel?.length ? options.roastLevel.length - 1 : 2}
+          value={options.roastLevel?.indexOf(roastLevel) ?? 1}
+          onChange={(e) =>
+            setRoastLevel(options.roastLevel?.[e.target.value] || "")
+          }
           required
-        >
-          <option value="">Select</option>
-          {options.roastLevel?.map((level) => (
-            <option key={level} value={level}>
-              {level}
-            </option>
-          ))}
-        </select>
+        />
+        <span style={{ marginLeft: "1rem" }}>{roastLevel || "Select"}</span>
       </label>
       <fieldset>
         <legend>Tasting Notes (choose multiple):</legend>
-        {options.tastingNotes?.map((note) => (
+        {(options.tastingNotes || []).map((note) => (
           <label key={note}>
             <input
               type="checkbox"
@@ -161,19 +157,20 @@ export default function TastingForm({ onSubmit }) {
         ))}
       </fieldset>
       <label>
-        Acidity:
-        <select
-          value={acidity}
-          onChange={(e) => setAcidity(e.target.value)}
-          required
-        >
-          <option value="">Select</option>
-          {options.acidity?.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
+        <label>
+          Acidity:
+          <input
+            type="range"
+            min="0"
+            max={options.acidity?.length ? options.acidity.length - 1 : 2}
+            value={options.acidity?.indexOf(acidity) ?? 1}
+            onChange={(e) =>
+              setAcidity(options.acidity?.[e.target.value] || "")
+            }
+            required
+          />
+          <span style={{ marginLeft: "1rem" }}>{acidity || "Select"}</span>
+        </label>
       </label>
       <label>
         Mouth Feel:
@@ -193,13 +190,14 @@ export default function TastingForm({ onSubmit }) {
       <label>
         Rating (1-5):
         <input
-          type="number"
+          type="range"
           min="1"
           max="5"
           value={rating}
           onChange={(e) => setRating(Number(e.target.value))}
           required
         />
+        <span style={{ marginLeft: "1rem" }}>{rating}</span>
       </label>
       <label>
         Notes:

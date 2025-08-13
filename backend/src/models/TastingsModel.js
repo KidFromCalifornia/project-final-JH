@@ -49,7 +49,7 @@ const coffeeTastingSchema = new mongoose.Schema(
       max: 5,
       required: true,
     },
-    astingNotes: [
+    tastingNotes: [
       {
         type: String,
         enum: [

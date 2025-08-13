@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get("/form-options", async (req, res) => {
   // Get enums from schema
-  const enums = {};
   const paths = CoffeeTasting.schema.paths;
   for (const key in paths) {
     if (paths[key].enumValues && paths[key].enumValues.length > 0) {
