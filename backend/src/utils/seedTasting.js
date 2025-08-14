@@ -258,5 +258,5 @@ const seedTastingNotes = async () => {
     console.error("Error seeding tasting notes:", error);
   }
 };
-
+seedTastingNotes();
 export default seedTastingNotes;

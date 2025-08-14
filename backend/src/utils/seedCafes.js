@@ -226,7 +226,7 @@ const stockholmCafes = [
       },
     ],
     description:
-      "The OG roastery of Stockholm restaurant scene, fuelling restaurants with their own roasted coffee since 2011. They have been a staple of the restaurant scene in Stockholm for over a decade.",
+      "The OG roastery of Stockholm restaurant scene, fuelling restaurants with roasted coffee since 2011. They have been a staple of the restaurant scene in Stockholm for over a decade.",
     category: "roaster",
     features: ["pour_over", "takeaway"],
     images: [],
@@ -286,7 +286,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Bastuhagsvägen 41, 113 25 Stockholm",
-        neighborhood: "Norrmalm",
+        neighborhood: "Enskede-Årsta-Vantör",
         coordinates: {
           type: "Point",
           coordinates: [18.08, 59.31],
@@ -355,7 +355,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Bondegatan 64, 116 33 Stockholm",
-        neighborhood: "Södermalm",
+        neighborhood: "ostermalm",
         coordinates: {
           type: "Point",
           coordinates: [18.067, 59.313],

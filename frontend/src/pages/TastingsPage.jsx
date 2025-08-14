@@ -19,7 +19,7 @@ const TastingsPage = () => {
   }, []);
 
   const handleTastingSubmit = (formData) => {
-    post(`${API_URL}/tastings`, {
+    fetch(`${API_URL}/api/tastings`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,9 +35,6 @@ const TastingsPage = () => {
         }
       })
       .catch((error) => console.error("Error submitting tasting:", error));
-
-    // Reset form or show success message
-    setTastings((prev) => []);
 
     console.log("Submitted tasting:", formData);
   };
