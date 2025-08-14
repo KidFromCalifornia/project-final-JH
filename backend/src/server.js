@@ -12,7 +12,6 @@ import { seedCafes } from "./utils/seedCafes.js";
 import metadataRoutes from "./routes/metadata.js";
 
 dotenv.config();
-connectDB();
 
 const port = process.env.PORT || 3001;
 const app = express();
@@ -66,57 +65,43 @@ app.get("/api", (req, res) => {
   });
 });
 
-// API routes
-app.use("/api/cafes", cafeRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/cafeSubmissions", submissionRoutes);
-app.use("/api/tastings", tastingRoutes);
-app.use("/api/metadata", metadataRoutes);
+// Connect to DB and then register routes + start server
+connectDB()
+  .then(() => {
+    // Register routes only after DB connection
+    app.use("/api/cafes", cafeRoutes);
+    app.use("/api/auth", authRoutes);
+    app.use("/api/cafeSubmissions", submissionRoutes);
+    app.use("/api/tastings", tastingRoutes);
+    app.use("/api/metadata", metadataRoutes);
 
-app.get("/api/tastings/public", async (req, res) => {
-  try {
-    const { UserTasting } = await import("./models/UserTasting.js");
-
-    const tastings = await UserTasting.find({ isPublic: true })
-      .populate("userId", "username")
-      .populate("cafeId", "name")
-      .sort({ createdAt: -1 })
-      .limit(20);
-
-    res.json({
-      success: true,
-      data: tastings,
-      count: tastings.length,
+    // Seed endpoint
+    app.get("/api/seed", async (req, res) => {
+      try {
+        const result = await seedCafes();
+        res.json({
+          message: "Stockholm cafes seeded successfully! ☕",
+          success: true,
+          count: result.count,
+        });
+      } catch (error) {
+        console.error("Seed error:", error);
+        res.status(500).json({
+          error: error.message,
+          success: false,
+        });
+      }
     });
-  } catch (error) {
-    console.error("Public tastings error:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
 
-app.get("/api/seed", async (req, res) => {
-  try {
-    const result = await seedCafes();
-    res.json({
-      message: "Stockholm cafes seeded successfully! ☕",
-      success: true,
-      count: result.count,
+    app.listen(port, () => {
+      console.log(`🚀 Server running on http://localhost:${port}`);
+      console.log(`📍 Environment: ${process.env.NODE_ENV}`);
+      console.log(`☕ Stockholm Coffee Club API ready!`);
     });
-  } catch (error) {
-    console.error("Seed error:", error);
-    res.status(500).json({
-      error: error.message,
-      success: false,
-    });
-  }
-});
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
-// Start server
-app.listen(port, () => {
-  console.log(`🚀 Server running on http://localhost:${port}`);
-  console.log(`📍 Environment: ${process.env.NODE_ENV}`);
-  console.log(`☕ Stockholm Coffee Club API ready!`);
-});
+export default connectDB;

@@ -528,76 +528,127 @@ const stockholmCafes = [
     isApproved: true,
     isSeeded: true,
   },
+  {
+    name: "Kissed by Liz",
+    website: "https://kissedbyliz.com",
+    hasMultipleLocations: false,
+    locations: [
+      {
+        address: "*",
+        neighborhood: "*",
+        coordinates: { type: "Point", coordinates: [0, 0] },
+        isMainLocation: true,
+      },
+    ],
+    description:
+      "A specialty coffee roaster focusing on exclusive Colombian nano-lots, offering a unique coffee experience.",
+    category: "roaster",
+    features: ["no_coffee_bar"],
+    isApproved: true,
+    isSeeded: true,
+  },
+  {
+    name: "Nordic Brew Lab",
+    website: "https://nordicbrewlab.com",
+    hasMultipleLocations: false,
+    locations: [
+      {
+        address: "Linnégatan 75, 114 60 Stockholm, Sweden",
+        neighborhood: "Östermalm",
+        coordinates: { type: "Point", coordinates: [18.087, 59.3405] },
+        isMainLocation: true,
+      },
+    ],
+    description:
+      "A specialty coffee shop offering tasting experiences and high-quality coffee equipment.",
+    category: "specialty",
+    features: ["takeaway", "limited_sitting"],
+    isApproved: true,
+    isSeeded: true,
+  },
+  {
+    name: "Cykelcafé Le Mond",
+    website: "https://cykelcafe.se",
+    hasMultipleLocations: false,
+    locations: [
+      {
+        address: "Folkungagatan 67, 116 22 Stockholm, Sweden",
+        neighborhood: "Södermalm",
+        coordinates: { type: "Point", coordinates: [18.072, 59.3135] },
+        isMainLocation: true,
+      },
+    ],
+    description:
+      "A bicycle-themed café offering international brunch, organic ingredients, and a cozy atmosphere inspired by cycling culture.",
+    category: "specialty",
+    features: [
+      "outdoor_seating",
+      "breakfast",
+      "lunch",
+      "takeaway",
+      "vegan_options",
+      "iced_drinks",
+      "pastries",
+      "roaster",
+    ],
+    isApproved: true,
+    isSeeded: true,
+  },
 ];
+const cleanedCafes = stockholmCafes.map((cafe) => ({
+  ...cafe,
+  locations: cafe.locations.map((loc) => ({
+    ...loc,
+    coordinates:
+      typeof loc.coordinates === "object" &&
+      Array.isArray(loc.coordinates.coordinates)
+        ? loc.coordinates
+        : {
+            type: "Point",
+            coordinates: [0, 0], // Default/fallback for "*"
+          },
+  })),
+}));
 
-// Seed function - FIXED VERSION that won't crash your server
+const validCafes = cleanedCafes.filter(
+  (cafe) =>
+    cafe.name &&
+    cafe.name !== "*" &&
+    cafe.category &&
+    cafe.category !== "*" &&
+    Array.isArray(cafe.locations) &&
+    cafe.locations.length > 0
+);
+
 const seedCafes = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URI);
-      console.log("🚀 Connected to MongoDB (seedCafes)");
+      console.log(`🚀 Connected to MongoDB `);
     }
 
     await Cafe.deleteMany({});
     console.log("🧹 Cleared existing seed data");
 
-    // Insert new cafes
-    const insertedCafes = await Cafe.insertMany(stockholmCafes);
+    const insertedCafes = await Cafe.insertMany(validCafes);
     console.log(
-      `🌱 Successfully seeded ${insertedCafes.length} authentic Stockholm Coffee Club cafes!`
+      `🌱 Successfully seeded ${
+        insertedCafes.length
+      } authentic Stockholm Coffee Club cafes!
+${insertedCafes.map((cafe) => cafe.name).join(", ")}`
     );
-
-    // Show what was inserted
-    insertedCafes.forEach((cafe) => {
-      console.log(
-        `   ☕ ${cafe.name} - ${
-          cafe.hasMultipleLocations
-            ? `${cafe.locations.length} locations`
-            : cafe.locations[0].neighborhood
-        }`
-      );
-    });
-
-    console.log("\n🎯 Seed complete! All cafes now match your schema exactly.");
-
-    // ✅ Return success data instead of process.exit()
-    return {
-      success: true,
-      count: insertedCafes.length,
-      message: "Seeded successfully",
-    };
   } catch (error) {
-    console.error("❌ Error seeding cafes:", error);
-    // ✅ Throw error instead of process.exit(1)
-    throw error;
+    console.error("Error seeding cafes:", error);
   }
 };
 
-// Only run direct seeding if called from command line
-if (process.argv[1].includes("seedCafes.js")) {
-  const connectDB = async () => {
-    try {
-      await mongoose.connect(process.env.MONGODB_URI);
-      console.log("🚀 Connected to MongoDB");
-    } catch (error) {
-      console.error("❌ MongoDB connection error:", error);
-      process.exit(1);
-    }
-  };
-
-  const runSeed = async () => {
-    try {
-      await connectDB();
-      await seedCafes();
-      process.exit(0);
-    } catch (error) {
-      console.error("❌ Seeding failed:", error);
-      process.exit(1);
-    }
-  };
-
-  runSeed();
-}
-
-// ✅ Export function properly for server use
+console.log("Total cafes in array:", cleanedCafes.length);
+console.log("Cafes to be seeded:", validCafes.length);
+console.log(
+  "Skipped cafes:",
+  cleanedCafes
+    .filter((cafe) => !validCafes.includes(cafe))
+    .map((cafe) => cafe.name)
+);
+seedCafes();
 export { seedCafes };

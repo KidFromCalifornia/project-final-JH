@@ -28,7 +28,7 @@ const seedTastingNotes = async () => {
       if (cafe && cafe.locations && cafe.locations.length > 0) {
         return cafe.locations[0].neighborhood;
       }
-      return "Södermalm"; // Default fallback
+      return "unavailable"; // Default fallback
     };
 
     const tastingNotesData = [
@@ -260,6 +260,3 @@ const seedTastingNotes = async () => {
 };
 
 export default seedTastingNotes;
-if (process.argv[1].includes("seedTasting.js")) {
-  seedTastingNotes().then(() => process.exit(0));
-}

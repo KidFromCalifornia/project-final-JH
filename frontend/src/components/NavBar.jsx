@@ -23,7 +23,7 @@ const NavBar = ({
           <h1> Stockholms Coffee Club </h1>
         </div>
         <div className="nav-right">
-          <Link to="/">Home</Link>
+          <Link to="/">Map</Link>
           <Link to="/cafes">Cafes</Link>
           <button onClick={() => setShowAddCafe(true)}>Add Cafe</button>
           <Link to="/tastings">Tastings</Link>
