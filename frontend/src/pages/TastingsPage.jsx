@@ -6,22 +6,82 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 const TastingsPage = () => {
   const [tastings, setTastings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingTasting, setEditingTasting] = useState(null);
+  const isLoggedIn = Boolean(localStorage.getItem("userToken"));
+  const [deletingTasting, setDeletingTasting] = useState(null);
 
-  const isLoggedIn = Boolean(localStorage.getItem("userToken")); // <-- checks if user is logged in
+  // Handle deletion of a tasting
+  useEffect(() => {
+    const deleteTasting = async () => {
+      if (!deletingTasting) return;
+
+      const res = await fetch(`${API_URL}/tastings/${deletingTasting._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setTastings((prev) =>
+          prev.filter((t) => t._id !== deletingTasting._id)
+        );
+      } else {
+        console.error("Failed to delete tasting:", data.error);
+      }
+      setDeletingTasting(null);
+    };
+
+    deleteTasting();
+  }, [deletingTasting]);
 
   useEffect(() => {
-    fetch(`${API_URL}/tastings/public`)
-      .then((res) => res.json())
-      .then((data) => {
-        setTastings(data.data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+    const fetchTastings = async () => {
+      setLoading(true);
+      try {
+        // Fetch all public tastings
+        const publicRes = await fetch(`${API_URL}/tastings/public`);
+        const publicData = await publicRes.json();
+        const publicTastings = publicData.data || [];
+
+        let allTastings = publicTastings;
+
+        // If logged in, fetch user's tastings (private + public)
+        if (isLoggedIn) {
+          const userRes = await fetch(`${API_URL}/tastings`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+            },
+          });
+          const userData = await userRes.json();
+          const userTastings = userData.data || [];
+          // Replace public tastings with user's own if they overlap
+          const userIds = new Set(userTastings.map((t) => t._id));
+          allTastings = [
+            ...userTastings,
+            ...publicTastings.filter((t) => !userIds.has(t._id)),
+          ];
+        }
+
+        setTastings(allTastings);
+      } catch {
+        setTastings([]);
+      }
+      setLoading(false);
+    };
+
+    fetchTastings();
+  }, [isLoggedIn]);
 
   const handleTastingSubmit = (formData) => {
-    fetch(`${API_URL}/api/tastings`, {
-      method: "POST",
+    const method = editingTasting ? "PUT" : "POST";
+    const url = editingTasting
+      ? `${API_URL}/tastings/${editingTasting._id}`
+      : `${API_URL}/tastings`;
+
+    fetch(url, {
+      method,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -31,14 +91,19 @@ const TastingsPage = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setTastings((prev) => [data.data, ...prev]);
+          if (editingTasting) {
+            setTastings((prev) =>
+              prev.map((t) => (t._id === editingTasting._id ? data.data : t))
+            );
+            setEditingTasting(null);
+          } else {
+            setTastings((prev) => [data.data, ...prev]);
+          }
         } else {
           console.error("Failed to submit tasting:", data.error);
         }
       })
       .catch((error) => console.error("Error submitting tasting:", error));
-
-    console.log("Submitted tasting:", formData);
   };
 
   if (loading) {
@@ -51,16 +116,19 @@ const TastingsPage = () => {
 
   return (
     <div style={{ maxWidth: 800, margin: "2rem auto", padding: "1rem" }}>
-      <h2> Whatcha Drinking?</h2>
-      {/* Show form or message */}
+      <h2>Coffee Tastings</h2>
+
       {isLoggedIn ? (
-        <TastingForm onSubmit={handleTastingSubmit} />
+        <TastingForm
+          onSubmit={handleTastingSubmit}
+          initialValues={editingTasting || {}}
+        />
       ) : (
         <div style={{ margin: "2rem 0", fontWeight: "bold" }}>
           Please log in to add your own experience
         </div>
       )}
-      {/* Tastings list */}
+
       {tastings.length === 0 ? (
         <p>Nothing to see here 😞</p>
       ) : (
@@ -85,6 +153,31 @@ const TastingsPage = () => {
                 {tasting.userId?.username} •{" "}
                 {new Date(tasting.createdAt).toLocaleDateString()}
               </span>
+              <div
+                hidden={
+                  !isLoggedIn ||
+                  tasting.userId?._id !== localStorage.getItem("userId")
+                }
+                style={{
+                  marginTop: "0.5rem",
+                  color: "#007bff",
+                  cursor: "pointer",
+                }}
+                onClick={() => setEditingTasting(tasting)}
+              >
+                <button
+                  style={{ marginTop: "0.5rem" }}
+                  onClick={() => setDeletingTasting(tasting)}
+                >
+                  Delete
+                </button>
+                <button
+                  style={{ marginTop: "0.5rem" }}
+                  onClick={() => setEditingTasting(tasting)}
+                >
+                  Edit
+                </button>
+              </div>
             </li>
           ))}
         </ul>

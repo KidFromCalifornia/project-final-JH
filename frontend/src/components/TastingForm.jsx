@@ -1,23 +1,36 @@
 import { useState, useEffect } from "react";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
-export default function TastingForm({ onSubmit }) {
+export default function TastingForm({ onSubmit, initialValues = {} }) {
+  const [cafeId, setCafeId] = useState(initialValues.cafeId || "");
+  const [cafeNeighborhood, setCafeNeighborhood] = useState(
+    initialValues.cafeNeighborhood || ""
+  );
+  const [coffeeRoaster, setCoffeeRoaster] = useState(
+    initialValues.coffeeRoaster || ""
+  );
+  const [coffeeOrigin, setCoffeeOrigin] = useState(
+    initialValues.coffeeOrigin || ""
+  );
+  const [coffeeOriginRegion, setCoffeeOriginRegion] = useState(
+    initialValues.coffeeOriginRegion || ""
+  );
+  const [brewMethod, setBrewMethod] = useState(initialValues.brewMethod || "");
+  const [tastingNotes, setTastingNotes] = useState(
+    initialValues.tastingNotes || []
+  );
+  const [acidity, setAcidity] = useState(initialValues.acidity || "");
+  const [mouthFeel, setMouthFeel] = useState(initialValues.mouthFeel || "");
+  const [roastLevel, setRoastLevel] = useState(initialValues.roastLevel || "");
+  const [rating, setRating] = useState(initialValues.rating || 3);
+  const [notes, setNotes] = useState(initialValues.notes || "");
+  const [isPublic, setIsPublic] = useState(
+    initialValues.isPublic !== undefined ? initialValues.isPublic : true
+  );
+  const [fetchError, setFetchError] = useState("");
+  const [coffeeName, setCoffeeName] = useState(initialValues.coffeeName || "");
   const [cafes, setCafes] = useState([]);
   const [options, setOptions] = useState({});
-  const [brewMethod, setBrewMethod] = useState("");
-  const [tastingNotes, setTastingNotes] = useState([]);
-  const [acidity, setAcidity] = useState("");
-  const [mouthFeel, setMouthFeel] = useState("");
-  const [roastLevel, setRoastLevel] = useState("");
-  const [rating, setRating] = useState(3);
-  const [notes, setNotes] = useState("");
-  const [coffeeName, setCoffeeName] = useState("");
-  const [cafeId, setCafeId] = useState("");
-  const [cafeNeighborhood, setCafeNeighborhood] = useState("");
-  const [coffeeRoaster, setCoffeeRoaster] = useState("");
-  const [coffeeOrigin, setCoffeeOrigin] = useState("");
-  const [coffeeOriginRegion, setCoffeeOriginRegion] = useState("");
-  const [isPublic, setIsPublic] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +41,7 @@ export default function TastingForm({ onSubmit }) {
         setOptions(data.enums || {});
       } catch (error) {
         console.error("Error fetching metadata:", error);
+        setFetchError("Failed to load metadata");
       }
     };
     fetchData();
@@ -38,6 +52,7 @@ export default function TastingForm({ onSubmit }) {
     setTastingNotes((prev) =>
       checked ? [...prev, value] : prev.filter((note) => note !== value)
     );
+    if (fetchError) setFetchError("");
   };
 
   const handleCafeChange = (e) => {
@@ -48,6 +63,10 @@ export default function TastingForm({ onSubmit }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (tastingNotes.length === 0) {
+      setFetchError("Please select at least one tasting note.");
+      return;
+    }
     onSubmit({
       coffeeName,
       cafeId,
@@ -68,18 +87,29 @@ export default function TastingForm({ onSubmit }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>
+      {fetchError && (
+        <p style={{ color: "red", marginBottom: "1rem" }}>{fetchError}</p>
+      )}
+      <label htmlFor="coffeeName">
         Coffee Name:
         <input
           type="text"
+          id="coffeeName"
+          name="coffeeName"
           value={coffeeName}
           onChange={(e) => setCoffeeName(e.target.value)}
           required
         />
       </label>
-      <label>
-        Cafe:
-        <select value={cafeId} onChange={handleCafeChange} required>
+      <label htmlFor="cafeId">
+        Where did you taste this coffee?:
+        <select
+          id="cafeId"
+          name="cafeId"
+          value={cafeId}
+          onChange={handleCafeChange}
+          required
+        >
           <option value="">Select Cafe</option>
           {cafes.map((cafe) => (
             <option key={cafe._id} value={cafe._id}>
@@ -88,34 +118,41 @@ export default function TastingForm({ onSubmit }) {
           ))}
         </select>
       </label>
-
-      <label>
+      <label htmlFor="coffeeRoaster">
         Coffee Roaster:
         <input
           type="text"
+          id="coffeeRoaster"
+          name="coffeeRoaster"
           value={coffeeRoaster}
           onChange={(e) => setCoffeeRoaster(e.target.value)}
         />
       </label>
-      <label>
+      <label htmlFor="coffeeOrigin">
         Coffee Origin:
         <input
           type="text"
+          id="coffeeOrigin"
+          name="coffeeOrigin"
           value={coffeeOrigin}
           onChange={(e) => setCoffeeOrigin(e.target.value)}
         />
       </label>
-      <label>
+      <label htmlFor="coffeeOriginRegion">
         Coffee Region:
         <input
           type="text"
+          id="coffeeOriginRegion"
+          name="coffeeOriginRegion"
           value={coffeeOriginRegion}
           onChange={(e) => setCoffeeOriginRegion(e.target.value)}
         />
       </label>
-      <label>
+      <label htmlFor="brewMethod">
         Brew Method:
         <select
+          id="brewMethod"
+          name="brewMethod"
           value={brewMethod}
           onChange={(e) => setBrewMethod(e.target.value)}
           required
@@ -128,13 +165,15 @@ export default function TastingForm({ onSubmit }) {
           ))}
         </select>
       </label>
-      <label>
+      <label htmlFor="roastLevel">
         Roast Level:
         <input
           type="range"
+          id="roastLevel"
+          name="roastLevel"
           min="0"
           max={options.roastLevel?.length ? options.roastLevel.length - 1 : 2}
-          value={options.roastLevel?.indexOf(roastLevel) ?? 1}
+          value={Math.max(options.roastLevel?.indexOf(roastLevel) ?? 0, 0)}
           onChange={(e) =>
             setRoastLevel(options.roastLevel?.[e.target.value] || "")
           }
@@ -148,6 +187,7 @@ export default function TastingForm({ onSubmit }) {
           <label key={note}>
             <input
               type="checkbox"
+              name="tastingNotes"
               value={note}
               checked={tastingNotes.includes(note)}
               onChange={handleTastingNotesChange}
@@ -156,25 +196,25 @@ export default function TastingForm({ onSubmit }) {
           </label>
         ))}
       </fieldset>
-      <label>
-        <label>
-          Acidity:
-          <input
-            type="range"
-            min="0"
-            max={options.acidity?.length ? options.acidity.length - 1 : 2}
-            value={options.acidity?.indexOf(acidity) ?? 1}
-            onChange={(e) =>
-              setAcidity(options.acidity?.[e.target.value] || "")
-            }
-            required
-          />
-          <span style={{ marginLeft: "1rem" }}>{acidity || "Select"}</span>
-        </label>
+      <label htmlFor="acidity">
+        Acidity:
+        <input
+          type="range"
+          id="acidity"
+          name="acidity"
+          min="0"
+          max={options.acidity?.length ? options.acidity.length - 1 : 2}
+          value={options.acidity?.indexOf(acidity) ?? 1}
+          onChange={(e) => setAcidity(options.acidity?.[e.target.value] || "")}
+          required
+        />
+        <span style={{ marginLeft: "1rem" }}>{acidity || "Select"}</span>
       </label>
-      <label>
+      <label htmlFor="mouthFeel">
         Mouth Feel:
         <select
+          id="mouthFeel"
+          name="mouthFeel"
           value={mouthFeel}
           onChange={(e) => setMouthFeel(e.target.value)}
           required
@@ -187,10 +227,12 @@ export default function TastingForm({ onSubmit }) {
           ))}
         </select>
       </label>
-      <label>
+      <label htmlFor="rating">
         Rating (1-5):
         <input
           type="range"
+          id="rating"
+          name="rating"
           min="1"
           max="5"
           value={rating}
@@ -199,18 +241,22 @@ export default function TastingForm({ onSubmit }) {
         />
         <span style={{ marginLeft: "1rem" }}>{rating}</span>
       </label>
-      <label>
+      <label htmlFor="notes">
         Notes:
         <textarea
+          id="notes"
+          name="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           maxLength={500}
         />
       </label>
-      <label>
+      <label htmlFor="isPublic">
         Public:
         <input
           type="checkbox"
+          id="isPublic"
+          name="isPublic"
           checked={isPublic}
           onChange={(e) => setIsPublic(e.target.checked)}
         />
