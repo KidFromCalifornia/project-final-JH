@@ -26,11 +26,12 @@ const seedUsers = async () => {
       console.log("🚀 Connected to MongoDB (seedUsers)");
     }
 
-    await User.deleteMany({});
-    console.log("🧹 Cleared existing users");
+    for (const userData of users) {
+      const user = new User(userData);
+      await user.save();
+    }
 
-    const insertedUsers = await User.insertMany(users);
-    console.log(`🌱 Seeded ${insertedUsers.length} users`);
+    console.log(`🌱 Seeded ${users.length} users`);
   } catch (error) {
     console.error("Error seeding users:", error);
   } finally {

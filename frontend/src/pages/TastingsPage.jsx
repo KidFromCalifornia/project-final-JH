@@ -6,7 +6,8 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 const TastingsPage = () => {
   const [tastings, setTastings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const isLoggedIn = true; // Change this to true when logged in
+
+  const isLoggedIn = Boolean(localStorage.getItem("userToken")); // <-- checks if user is logged in
 
   useEffect(() => {
     fetch(`${API_URL}/tastings/public`)
@@ -23,6 +24,7 @@ const TastingsPage = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
       },
       body: JSON.stringify(formData),
     })

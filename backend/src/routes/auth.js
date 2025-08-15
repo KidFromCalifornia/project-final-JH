@@ -10,25 +10,19 @@ router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if user already exists
+    // Check if user exists
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     });
-
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        error: "User with this email or username already exists",
+        error: "User already exists",
       });
     }
 
-    // Create new user
-    const user = new User({
-      username,
-      email,
-      password, // Will be hashed by the pre-save middleware
-    });
-
+    // Create new user (FIXED)
+    const user = new User({ username, email, password });
     await user.save();
 
     // Create JWT token
@@ -50,13 +44,13 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in route:", error); // Add logging
+    console.error("Error in route:", error);
     res.status(500).json({
       success: false,
       error:
         process.env.NODE_ENV === "production"
           ? "Internal server error"
-          : error.message, // Hide details in production
+          : error.message,
     });
   }
 });
@@ -64,14 +58,17 @@ router.post("/register", async (req, res) => {
 // Login user
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, username, password } = req.body;
 
-    // Find user by email
-    const user = await User.findOne({ email });
+    // Find user by email OR username
+    const user = await User.findOne({
+      $or: [{ email }, { username }],
+    });
+
     if (!user) {
       return res.status(400).json({
         success: false,
-        error: "Invalid credentials",
+        error: "User not found",
       });
     }
 
@@ -103,13 +100,13 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in route:", error); // Add logging
+    console.error("Error in route:", error);
     res.status(500).json({
       success: false,
       error:
         process.env.NODE_ENV === "production"
           ? "Internal server error"
-          : error.message, // Hide details in production
+          : error.message,
     });
   }
 });

@@ -8,10 +8,15 @@ export const registerSchema = z.object({
 });
 
 // User login validation
-export const loginSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(1, "Password is required"),
-});
+export const loginSchema = z
+  .object({
+    email: z.string().email("Invalid email format").optional(),
+    username: z.string().min(1, "Username is required").optional(),
+    password: z.string().min(1, "Password is required"),
+  })
+  .refine((data) => data.email || data.username, {
+    message: "Email or username is required",
+  });
 
 export const tastingSchema = z.object({
   cafeId: z.string().min(1, "Cafe ID is required"),

@@ -4,35 +4,33 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [identifier, setIdentifier] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const trimmedUsername = username.trim();
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
-
     try {
       const endpoint = isSignup ? "/auth/register" : "/auth/login";
+      const trimmedIdentifier = identifier.trim();
+      const trimmedPassword = password.trim();
       const body = isSignup
         ? {
-            username: trimmedUsername,
-            email: trimmedEmail,
+            username: trimmedIdentifier,
+            email: email.trim(),
             password: trimmedPassword,
           }
         : {
-            email: trimmedEmail || trimmedUsername, // Use email for login, fallback to username
+            username: trimmedIdentifier,
+            email: trimmedIdentifier,
             password: trimmedPassword,
           };
-
       const res = await fetch(`${API_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -77,6 +75,7 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
         width: "200px",
         top: "0",
         right: "0",
+        color: "#170351",
       }}
     >
       <button
@@ -111,10 +110,10 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
         <input
           type="text"
           placeholder={isSignup ? "Username" : "Username or Email"}
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
           required
-          aria-label="username"
+          aria-label="username-or-email"
         />
         <br />
 
@@ -156,7 +155,7 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
           disabled={loading}
           style={{
             padding: "0.5rem 1rem",
-            backgroundColor: loading ? "#ccc" : "#8B4513",
+            backgroundColor: loading ? "#ccc" : "#170351",
             color: "white",
             border: "none",
             borderRadius: "4px",
@@ -184,7 +183,7 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
             cursor: "pointer",
             background: "none",
             border: "none",
-            color: "#8B4513",
+            color: "#170351",
             textDecoration: "underline",
           }}
         >
