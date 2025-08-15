@@ -42,7 +42,7 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
       if (res.ok && (data.token || data.accessToken)) {
         const token = data.token || data.accessToken;
         localStorage.setItem("userToken", token);
-        localStorage.setItem("userId", data.user._id);
+        localStorage.setItem("userId", data.user.id);
         localStorage.setItem(
           "username",
           data.user?.username || trimmedUsername

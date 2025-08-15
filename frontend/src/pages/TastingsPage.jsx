@@ -15,7 +15,7 @@ const TastingsPage = () => {
     const deleteTasting = async () => {
       if (!deletingTasting) return;
 
-      const res = await fetch(`${API_URL}/tastings/${deletingTasting._id}`, {
+      const res = await fetch(`${API_URL}/tastings/${deletingTasting.id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -24,9 +24,7 @@ const TastingsPage = () => {
 
       const data = await res.json();
       if (data.success) {
-        setTastings((prev) =>
-          prev.filter((t) => t._id !== deletingTasting._id)
-        );
+        setTastings((prev) => prev.filter((t) => t._id !== deletingTasting.id));
       } else {
         console.error("Failed to delete tasting:", data.error);
       }
@@ -153,10 +151,32 @@ const TastingsPage = () => {
                 {tasting.userId?.username} •{" "}
                 {new Date(tasting.createdAt).toLocaleDateString()}
               </span>
+              {/* DEBUG INFO: Remove after troubleshooting */}
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  color: "#c00",
+                  margin: "0.5rem 0",
+                }}
+              >
+                <div>tasting.userId?._id: {String(tasting.userId?._id)}</div>
+                <div>
+                  localStorage userId: {String(localStorage.getItem("userId"))}
+                </div>
+                <div>isLoggedIn: {String(isLoggedIn)}</div>
+                <div>
+                  Comparison:{" "}
+                  {String(tasting.userId?._id) ===
+                  String(localStorage.getItem("userId"))
+                    ? "MATCH"
+                    : "NO MATCH"}
+                </div>
+              </div>
               <div
                 hidden={
                   !isLoggedIn ||
-                  tasting.userId?._id !== localStorage.getItem("userId")
+                  String(tasting.userId?._id) !==
+                    String(localStorage.getItem("userId"))
                 }
                 style={{
                   marginTop: "0.5rem",

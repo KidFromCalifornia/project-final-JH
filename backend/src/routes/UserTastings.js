@@ -95,8 +95,8 @@ router.get("/", authenticateToken, async (req, res) => {
       userId: req.user.userId,
     })
       .populate("cafeId", "name website hasMultipleLocations locations")
+      .populate("userId", "username _id")
       .sort({ createdAt: -1 });
-
     res.json({
       success: true,
       count: userTastingNotes.length,
