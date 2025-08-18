@@ -46,13 +46,22 @@ const MapPage = () => {
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           {cafes.map((cafe) => {
             const coords = cafe.locations?.[0]?.coordinates?.coordinates;
-            if (coords && coords.length === 2) {
+            // Fix: Only render marker if coordinates are valid numbers
+            if (
+              coords &&
+              coords.length === 2 &&
+              typeof coords[0] === "number" &&
+              typeof coords[1] === "number" &&
+              coords[0] !== 0 &&
+              coords[1] !== 0
+            ) {
+              // Leaflet expects [lat, lng], but your data is [lng, lat]
               return (
                 <Marker key={cafe._id} position={[coords[1], coords[0]]}>
                   <Popup>
                     <strong>{cafe.name}</strong>
                     <br />
-                    {cafe.address}
+                    {cafe.locations?.[0]?.address}
                   </Popup>
                 </Marker>
               );
@@ -90,7 +99,7 @@ const MapPage = () => {
                       </Link>
                     </strong>
                     <br />
-                    <span>{cafe.address}</span>
+                    <span>{cafe.locations?.[0]?.address}</span>
                     <br />
                     <span>
                       <b>Neighborhood:</b>{" "}

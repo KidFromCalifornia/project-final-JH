@@ -1,9 +1,28 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Cafe } from "../models/cafeModel.js";
+import fetch from "node-fetch";
 
 dotenv.config();
 
+const geocodeAddress = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+    address
+  )}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data && data[0]) {
+      return {
+        lon: parseFloat(data[0].lon),
+        lat: parseFloat(data[0].lat),
+      };
+    }
+  } catch (err) {
+    console.error("Geocoding error for address:", address, err);
+  }
+  return null;
+};
 const stockholmCafes = [
   {
     name: "Drop Coffee",
@@ -71,7 +90,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Norrtullsgatan 4, 113 29 Stockholm",
-        neighborhood: "Norrmalm",
+        neighborhood: "Vasastan",
         coordinates: {
           type: "Point",
           coordinates: [18.058, 59.342],
@@ -80,24 +99,24 @@ const stockholmCafes = [
         locationNote: "Original Vasastan location",
       },
       {
-        address: "Kungsgatan 44, 111 35 Stockholm",
-        neighborhood: "Norrmalm",
-        coordinates: {
-          type: "Point",
-          coordinates: [18.065, 59.3325],
-        },
-        isMainLocation: false,
-        locationNote: "Kungsgatan location",
-      },
-      {
-        address: "Södermannagatan 21, 116 40 Stockholm",
+        address: "Skånegatan 76, 116 37 Stockholm",
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.072, 59.314],
+          coordinates: [18.06, 59.32],
         },
         isMainLocation: false,
-        locationNote: "Södermalm location",
+        locationNote: "Skånegatan (Södermalm)",
+      },
+      {
+        address: "Sturegatan 8, 114 35 Stockholm",
+        neighborhood: "Östermalm",
+        coordinates: {
+          type: "Point",
+          coordinates: [18.071, 59.34],
+        },
+        isMainLocation: false,
+        locationNote: "Sturegatan (Östermalm)",
       },
     ],
     description:
@@ -114,11 +133,11 @@ const stockholmCafes = [
     hasMultipleLocations: false,
     locations: [
       {
-        address: "Hagastensvägen 30, 113 48 Stockholm",
-        neighborhood: "Norrmalm",
+        address: "Sedelvägen 35, 129 32 Stockholm",
+        neighborhood: "Hägersten",
         coordinates: {
           type: "Point",
-          coordinates: [18.03, 59.35],
+          coordinates: [17.97, 59.28],
         },
         isMainLocation: true,
       },
@@ -189,7 +208,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Fiskshallsvägen 8, 120 44 Stockholm",
-        neighborhood: "Enskede-Årsta-Vantörs",
+        neighborhood: "Enskede-Årsta-Vantör",
         coordinates: {
           type: "Point",
           coordinates: [18.01, 59.29],
@@ -234,8 +253,8 @@ const stockholmCafes = [
     hasMultipleLocations: false,
     locations: [
       {
-        address: "Hallvägen 9 Slakthusområdet, 12162 Johanneshov",
-        neighborhood: "Enskede-Årsta-Vantörs",
+        address: "Hallvägen 9, Slakthusområdet, 121 62 Johanneshov",
+        neighborhood: "Enskede-Årsta-Vantör",
         coordinates: {
           type: "Point",
           coordinates: [18.085, 59.295],
@@ -307,7 +326,7 @@ const stockholmCafes = [
         neighborhood: "Enskede-Årsta-Vantör",
         coordinates: {
           type: "Point",
-          coordinates: [18.08, 59.31],
+          coordinates: [59.275, 18.048],
         },
         isMainLocation: true,
       },
@@ -380,7 +399,7 @@ const stockholmCafes = [
     locations: [
       {
         address: "Bondegatan 64, 116 33 Stockholm",
-        neighborhood: "ostermalm",
+        neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
           coordinates: [18.067, 59.313],
@@ -505,7 +524,7 @@ const stockholmCafes = [
     description:
       "Artisanal cookie shop and café serving freshly baked cookies alongside specialty coffee. Known for their creative cookie flavors and cozy atmosphere.",
     category: "specialty",
-    features: ["pastries", "takeaway", "pastries", "limited_sitting"],
+    features: ["pastries", "takeaway", "limited_sitting"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -514,18 +533,14 @@ const stockholmCafes = [
     name: "Kissed by Liz",
     website: "https://kissedbyliz.com",
     hasMultipleLocations: false,
-    locations: [
-      {
-        address: "*",
-        neighborhood: "*",
-        coordinates: { type: "Point", coordinates: [0, 0] },
-        isMainLocation: true,
-      },
-    ],
+    // No public retail address found — roastery/brand only, so no placeholder coords.
+    locations: [],
+    isRoasteryOnly: true,
     description:
       "A specialty coffee roaster focusing on exclusive Colombian nano-lots, offering a unique coffee experience.",
     category: "roaster",
     features: ["no_coffee_bar", "roaster_only"],
+    images: [],
     isApproved: true,
     isSeeded: true,
   },
@@ -535,7 +550,7 @@ const stockholmCafes = [
     hasMultipleLocations: false,
     locations: [
       {
-        address: "Linnégatan 75, 114 60 Stockholm, Sweden",
+        address: "Linnégatan 75, 114 60 Stockholm",
         neighborhood: "Östermalm",
         coordinates: { type: "Point", coordinates: [18.087, 59.3405] },
         isMainLocation: true,
@@ -545,6 +560,7 @@ const stockholmCafes = [
       "A specialty coffee shop offering tasting experiences and high-quality coffee equipment.",
     category: "thirdwave",
     features: ["no_coffee_bar", "limited_sitting"],
+    images: [],
     isApproved: true,
     isSeeded: true,
   },
@@ -554,7 +570,7 @@ const stockholmCafes = [
     hasMultipleLocations: false,
     locations: [
       {
-        address: "Folkungagatan 67, 116 22 Stockholm, Sweden",
+        address: "Folkungagatan 67, 116 22 Stockholm",
         neighborhood: "Södermalm",
         coordinates: { type: "Point", coordinates: [18.072, 59.3135] },
         isMainLocation: true,
@@ -573,10 +589,12 @@ const stockholmCafes = [
       "pastries",
       "pour_over",
     ],
+    images: [],
     isApproved: true,
     isSeeded: true,
   },
 ];
+
 const cleanedCafes = stockholmCafes.map((cafe) => ({
   ...cafe,
   locations: cafe.locations.map((loc) => ({
@@ -592,32 +610,78 @@ const cleanedCafes = stockholmCafes.map((cafe) => ({
   })),
 }));
 
+// Only keep cafes with at least one valid location/address
 const validCafes = cleanedCafes.filter(
   (cafe) =>
-    cafe.name &&
-    cafe.name !== "*" &&
-    cafe.category &&
-    cafe.category !== "*" &&
     Array.isArray(cafe.locations) &&
-    cafe.locations.length > 0
+    cafe.locations.length > 0 &&
+    cafe.locations.every(
+      (loc) => loc.address && typeof loc.address === "string"
+    )
 );
+
+const geocodeCafes = async (cafes) => {
+  return Promise.all(
+    cafes.map(async (cafe) => ({
+      ...cafe,
+      locations: await Promise.all(
+        cafe.locations.map(async (loc) => {
+          const coords = loc.coordinates?.coordinates;
+          if (
+            !coords ||
+            coords[0] === 0 ||
+            coords[1] === 0 ||
+            !Array.isArray(coords)
+          ) {
+            const geo = await geocodeAddress(loc.address);
+            if (geo) {
+              return {
+                ...loc,
+                coordinates: {
+                  type: "Point",
+                  coordinates: [geo.lon, geo.lat],
+                },
+              };
+            }
+          }
+          return loc;
+        })
+      ),
+    }))
+  );
+};
 
 const seedCafes = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URI);
-      console.log(`🚀 Connected to MongoDB `);
+      console.log(`🚀 Connected to MongoDB`);
     }
 
-    await Cafe.deleteMany({});
-    console.log("🧹 Cleared existing seed data");
+    // Find existing cafes by name
+    const existingCafeNames = new Set(
+      (await Cafe.find({}, "name")).map((cafe) => cafe.name)
+    );
 
-    const insertedCafes = await Cafe.insertMany(validCafes);
+    // Only keep cafes not already in the database
+    const newCafes = validCafes.filter(
+      (cafe) => !existingCafeNames.has(cafe.name)
+    );
+
+    if (newCafes.length === 0) {
+      console.log("No new cafes to seed. All cafes already exist.");
+      return;
+    }
+
+    const cafesWithGeocodedLocations = await geocodeCafes(newCafes);
+
+    const insertedCafes = await Cafe.insertMany(cafesWithGeocodedLocations);
     console.log(
       `🌱 Successfully seeded ${
         insertedCafes.length
-      } authentic Stockholm Coffee Club cafes!
-${insertedCafes.map((cafe) => cafe.name).join(", ")}`
+      } new Stockholm Coffee Club cafes!\n${insertedCafes
+        .map((cafe) => cafe.name)
+        .join(", ")}`
     );
   } catch (error) {
     console.error("Error seeding cafes:", error);
@@ -632,5 +696,6 @@ console.log(
     .filter((cafe) => !validCafes.includes(cafe))
     .map((cafe) => cafe.name)
 );
+
 seedCafes();
 export { seedCafes };
