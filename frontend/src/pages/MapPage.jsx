@@ -46,7 +46,6 @@ const MapPage = () => {
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           {cafes.map((cafe) => {
             const coords = cafe.locations?.[0]?.coordinates?.coordinates;
-            // Fix: Only render marker if coordinates are valid numbers
             if (
               coords &&
               coords.length === 2 &&
@@ -55,7 +54,7 @@ const MapPage = () => {
               coords[0] !== 0 &&
               coords[1] !== 0
             ) {
-              // Leaflet expects [lat, lng], but your data is [lng, lat]
+              // Leaflet expects [lat, lng], so swap
               return (
                 <Marker key={cafe._id} position={[coords[1], coords[0]]}>
                   <Popup>

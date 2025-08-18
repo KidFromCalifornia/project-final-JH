@@ -2,27 +2,120 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Cafe } from "../models/cafeModel.js";
 import fetch from "node-fetch";
+import fs from "fs/promises";
+import path from "path";
+import { setTimeout as wait } from "timers/promises";
 
+const CACHE_PATH = path.resolve(".geocode-cache.json");
+const USER_AGENT = "StockholmCoffeeClub/1.0 (hello.jonnyhicks@gmail.com)";
+const NOMINATIM_BASE = "https://nominatim.openstreetmap.org/search";
+const DEFAULT_DELAY_MS = 1100;
+
+async function loadCache() {
+  try {
+    const raw = await fs.readFile(CACHE_PATH, "utf8");
+    return JSON.parse(raw);
+  } catch (e) {
+    return {};
+  }
+}
+async function saveCache(cache) {
+  try {
+    await fs.writeFile(CACHE_PATH, JSON.stringify(cache, null, 2), "utf8");
+  } catch (e) {
+    console.warn("Could not write geocode cache:", e.message);
+  }
+}
+const jitter = (n) => n + Math.floor(Math.random() * n);
+
+async function fetchNominatim(address, attempts = 5) {
+  const params = new URLSearchParams({
+    q: address,
+    format: "jsonv2",
+    addressdetails: "0",
+    limit: "1",
+    countrycodes: "se",
+    "accept-language": "sv,en",
+  });
+  const url = `${NOMINATIM_BASE}?${params.toString()}`;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": USER_AGENT,
+          Accept: "application/json",
+        },
+      });
+      if (res.status === 429 || (res.status >= 500 && res.status < 600)) {
+        const backoff = jitter(700 * Math.pow(2, i));
+        await wait(backoff);
+        continue;
+      }
+      const contentType = res.headers.get("content-type") || "";
+      if (!res.ok || !contentType.includes("application/json")) {
+        const body = await res.text();
+        if (body.trim().startsWith("<") && i < attempts - 1) {
+          const backoff = jitter(1000 * Math.pow(2, i));
+          await wait(backoff);
+          continue;
+        }
+        try {
+          return JSON.parse(body);
+        } catch (err) {
+          throw new Error(
+            `Unexpected response for "${address}": status=${res.status}, content-type=${contentType}`
+          );
+        }
+      }
+      const json = await res.json();
+      return json;
+    } catch (err) {
+      if (i < attempts - 1) {
+        const backoff = jitter(800 * Math.pow(2, i));
+        await wait(backoff);
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error(`Nominatim failed for ${address}`);
+}
+
+async function geocodeAddressCached(address, opts = {}) {
+  const { delayMs = DEFAULT_DELAY_MS, cacheObj = null } = opts;
+  const cache = cacheObj || (await loadCache());
+  if (cache[address]) return cache[address];
+  await wait(delayMs);
+  try {
+    const json = await fetchNominatim(address);
+    if (!json || !Array.isArray(json) || json.length === 0) {
+      cache[address] = { success: false, provider: "nominatim", address };
+      await saveCache(cache);
+      return cache[address];
+    }
+    const top = json[0];
+    const lat = parseFloat(top.lat);
+    const lon = parseFloat(top.lon);
+    const item = {
+      success: true,
+      provider: "nominatim",
+      address,
+      lat,
+      lon,
+      display_name: top.display_name || null,
+    };
+    cache[address] = item;
+    await saveCache(cache);
+    return item;
+  } catch (err) {
+    const obj = { success: false, error: String(err), address };
+    cache[address] = obj;
+    await saveCache(cache);
+    throw err;
+  }
+}
 dotenv.config();
 
-const geocodeAddress = async (address) => {
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-    address
-  )}`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data && data[0]) {
-      return {
-        lon: parseFloat(data[0].lon),
-        lat: parseFloat(data[0].lat),
-      };
-    }
-  } catch (err) {
-    console.error("Geocoding error for address:", address, err);
-  }
-  return null;
-};
 const stockholmCafes = [
   {
     name: "Drop Coffee",
@@ -34,7 +127,7 @@ const stockholmCafes = [
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.0649, 59.314],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -64,7 +157,7 @@ const stockholmCafes = [
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.0702, 59.315],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -93,7 +186,7 @@ const stockholmCafes = [
         neighborhood: "Vasastan",
         coordinates: {
           type: "Point",
-          coordinates: [18.058, 59.342],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
         locationNote: "Original Vasastan location",
@@ -103,7 +196,7 @@ const stockholmCafes = [
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.06, 59.32],
+          coordinates: [0, 0],
         },
         isMainLocation: false,
         locationNote: "Skånegatan (Södermalm)",
@@ -113,7 +206,7 @@ const stockholmCafes = [
         neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.071, 59.34],
+          coordinates: [0, 0],
         },
         isMainLocation: false,
         locationNote: "Sturegatan (Östermalm)",
@@ -129,7 +222,7 @@ const stockholmCafes = [
   },
   {
     name: "Slow Hands",
-    website: "https://www.instagram.com/slowhandscoffee/",
+    website: "https://www.instagram.com/slowhandsbar/",
     hasMultipleLocations: false,
     locations: [
       {
@@ -137,7 +230,7 @@ const stockholmCafes = [
         neighborhood: "Hägersten",
         coordinates: {
           type: "Point",
-          coordinates: [17.97, 59.28],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -165,7 +258,7 @@ const stockholmCafes = [
         neighborhood: "Kungsholmen",
         coordinates: {
           type: "Point",
-          coordinates: [18.035, 59.335],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -188,7 +281,7 @@ const stockholmCafes = [
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.072, 59.316],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -211,7 +304,7 @@ const stockholmCafes = [
         neighborhood: "Enskede-Årsta-Vantör",
         coordinates: {
           type: "Point",
-          coordinates: [18.01, 59.29],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -234,7 +327,7 @@ const stockholmCafes = [
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.082, 59.318],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -257,7 +350,7 @@ const stockholmCafes = [
         neighborhood: "Enskede-Årsta-Vantör",
         coordinates: {
           type: "Point",
-          coordinates: [18.085, 59.295],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -280,7 +373,7 @@ const stockholmCafes = [
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.068, 59.316],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -303,7 +396,7 @@ const stockholmCafes = [
         neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.107, 59.349],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -326,7 +419,7 @@ const stockholmCafes = [
         neighborhood: "Enskede-Årsta-Vantör",
         coordinates: {
           type: "Point",
-          coordinates: [59.275, 18.048],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -356,7 +449,7 @@ const stockholmCafes = [
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.07, 59.305],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -379,7 +472,7 @@ const stockholmCafes = [
         neighborhood: "Norrmalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.065, 59.34],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -402,7 +495,7 @@ const stockholmCafes = [
         neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.067, 59.313],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -425,7 +518,7 @@ const stockholmCafes = [
         neighborhood: "Norrmalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.059, 59.335],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -448,7 +541,7 @@ const stockholmCafes = [
         neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.075, 59.335],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
         locationNote: "Flagship store",
@@ -458,7 +551,7 @@ const stockholmCafes = [
         neighborhood: "Norrmalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.058, 59.342],
+          coordinates: [0, 0],
         },
         isMainLocation: false,
         locationNote: "Vasastan location",
@@ -482,7 +575,7 @@ const stockholmCafes = [
         neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.085, 59.328],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
       },
@@ -505,7 +598,7 @@ const stockholmCafes = [
         neighborhood: "Östermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.085, 59.34],
+          coordinates: [0, 0],
         },
         isMainLocation: true,
         locationNote: "Östermalm shop",
@@ -515,7 +608,7 @@ const stockholmCafes = [
         neighborhood: "Södermalm",
         coordinates: {
           type: "Point",
-          coordinates: [18.09, 59.315],
+          coordinates: [0, 0],
         },
         isMainLocation: false,
         locationNote: "Södermalm shop",
@@ -552,7 +645,7 @@ const stockholmCafes = [
       {
         address: "Linnégatan 75, 114 60 Stockholm",
         neighborhood: "Östermalm",
-        coordinates: { type: "Point", coordinates: [18.087, 59.3405] },
+        coordinates: { type: "Point", coordinates: [0, 0] },
         isMainLocation: true,
       },
     ],
@@ -572,7 +665,7 @@ const stockholmCafes = [
       {
         address: "Folkungagatan 67, 116 22 Stockholm",
         neighborhood: "Södermalm",
-        coordinates: { type: "Point", coordinates: [18.072, 59.3135] },
+        coordinates: { type: "Point", coordinates: [0, 0] },
         isMainLocation: true,
       },
     ],
@@ -619,39 +712,38 @@ const validCafes = cleanedCafes.filter(
       (loc) => loc.address && typeof loc.address === "string"
     )
 );
-
-const geocodeCafes = async (cafes) => {
-  return Promise.all(
-    cafes.map(async (cafe) => ({
-      ...cafe,
-      locations: await Promise.all(
-        cafe.locations.map(async (loc) => {
-          const coords = loc.coordinates?.coordinates;
-          if (
-            !coords ||
-            coords[0] === 0 ||
-            coords[1] === 0 ||
-            !Array.isArray(coords)
-          ) {
-            const geo = await geocodeAddress(loc.address);
-            if (geo) {
-              return {
-                ...loc,
-                coordinates: {
-                  type: "Point",
-                  coordinates: [geo.lon, geo.lat],
-                },
-              };
-            }
-          }
-          return loc;
-        })
-      ),
-    }))
-  );
-};
-
+async function geocodeCafesSequential(cafes) {
+  const cache = await loadCache();
+  for (const cafe of cafes) {
+    for (const loc of cafe.locations || []) {
+      const addr = loc.address && loc.address.trim();
+      if (!addr) continue;
+      if (loc.coordinates?.coordinates) continue; // skip if already present
+      try {
+        const res = await geocodeAddressCached(addr, {
+          delayMs: DEFAULT_DELAY_MS,
+          cacheObj: cache,
+        });
+        if (res && res.success) {
+          loc.coordinates = {
+            type: "Point",
+            coordinates: [res.lon, res.lat],
+          };
+          loc.geocodedDisplayName = res.display_name || res.address;
+          console.log(`Geocoded ${addr}: [${res.lon}, ${res.lat}]`);
+        } else {
+          console.warn(`No geocode result for ${addr}`);
+        }
+      } catch (err) {
+        console.error(`Geocoding error for ${addr}:`, err.message || err);
+      }
+      await saveCache(cache);
+    }
+  }
+  return cafes;
+}
 const seedCafes = async () => {
+  await Cafe.deleteMany({});
   try {
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URI);
@@ -672,10 +764,10 @@ const seedCafes = async () => {
       console.log("No new cafes to seed. All cafes already exist.");
       return;
     }
-
-    const cafesWithGeocodedLocations = await geocodeCafes(newCafes);
+    const cafesWithGeocodedLocations = await geocodeCafesSequential(validCafes);
 
     const insertedCafes = await Cafe.insertMany(cafesWithGeocodedLocations);
+
     console.log(
       `🌱 Successfully seeded ${
         insertedCafes.length

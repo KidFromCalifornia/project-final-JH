@@ -25,6 +25,7 @@
     "jwt-decode": "^4.0.0",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.0",
+    "node-fetch": "^3.3.2",
     "zod": "^4.0.14"
   },
   "devDependencies": {
