@@ -186,7 +186,6 @@ const NewCafeForm = ({ onClose }) => {
         onSubmit={handleSubmit}
         style={{
           margin: "0.5rem",
-          color: "#17",
           position: "fixed",
           backgroundColor: "white",
           padding: "1rem",
