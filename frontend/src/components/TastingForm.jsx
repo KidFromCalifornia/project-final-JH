@@ -241,7 +241,7 @@ export default function TastingForm({ onSubmit, initialValues = {} }) {
         />
         <span style={{ marginLeft: "1rem" }}>{rating}</span>
       </label>
-      <label htmlFor="notes">
+      <label labelhtmlFor="notes">
         Notes:
         <textarea
           id="notes"
@@ -249,6 +249,7 @@ export default function TastingForm({ onSubmit, initialValues = {} }) {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           maxLength={500}
+          placeholder="Additional notes about the tasting"
         />
       </label>
       <label htmlFor="isPublic">
@@ -261,7 +262,20 @@ export default function TastingForm({ onSubmit, initialValues = {} }) {
           onChange={(e) => setIsPublic(e.target.checked)}
         />
       </label>
-      <button type="submit">Submit Tasting</button>
+      <button
+        style={{
+          marginTop: "1rem",
+          backgroundColor: "#170351",
+          color: "#fff",
+          padding: "0.5rem 1rem",
+          border: "none",
+          cursor: "pointer",
+        }}
+        type="submit"
+        disabled={!cafeId || !coffeeName || !brewMethod || !roastLevel}
+      >
+        Submit
+      </button>
     </form>
   );
 }

@@ -1,4 +1,5 @@
 import TastingForm from "../components/TastingForm";
+
 import { useEffect, useState } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
@@ -7,32 +8,27 @@ const UserPage = () => {
   const [tastings, setTastings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingTasting, setEditingTasting] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem("userToken")
-  );
+  const [userSubmissions, setUserSubmissions] = useState([]);
+  const [isLoggedIn] = useState(!!localStorage.getItem("userToken"));
+  // Get username from localStorage if available
+  const username = localStorage.getItem("username");
 
   useEffect(() => {
-    const fetchTastings = async () => {
-      setLoading(true);
-      try {
-        if (isLoggedIn) {
-          const userRes = await fetch(`${API_URL}/tastings`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-            },
-          });
-          const userData = await userRes.json();
-          setTastings(userData.data || []);
-        } else {
-          setTastings([]);
-        }
-      } catch {
-        setTastings([]);
+    const fetchUserSubmissions = async () => {
+      if (isLoggedIn) {
+        const res = await fetch(`${API_URL}/cafeSubmissions/my-submissions`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        });
+        const data = await res.json();
+        setUserSubmissions(data.data || []);
+      } else {
+        setUserSubmissions([]);
       }
-      setLoading(false);
     };
 
-    fetchTastings();
+    fetchUserSubmissions();
   }, [isLoggedIn]);
 
   const handleTastingSubmit = (formData) => {
@@ -77,8 +73,28 @@ const UserPage = () => {
 
   return (
     <div style={{ maxWidth: 800, margin: "2rem auto", padding: "1rem" }}>
-      <h2> Whatcha Drinking?</h2>
-      {/* Show form or message */}
+      <h2>{username ? `${username}'s Page` : "User Page"}</h2>
+      <h3>Your Cafe Submissions</h3>
+      {userSubmissions.length === 0 ? (
+        <p>No pending submissions.</p>
+      ) : (
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {userSubmissions.map((sub) => (
+            <li key={sub._id} style={{ marginBottom: "1rem" }}>
+              <strong>{sub.name}</strong>
+              <br />
+              <span>{sub.description}</span>
+              <br />
+              <span style={{ color: "#888", fontSize: "0.9rem" }}>
+                {sub.category} — {sub.isApproved ? "Approved" : "Pending"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h3>Whatcha Drinking?</h3>
+
       {isLoggedIn ? (
         <TastingForm
           onSubmit={handleTastingSubmit}

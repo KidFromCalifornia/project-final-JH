@@ -14,6 +14,7 @@ export const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [showAddCafe, setShowAddCafe] = useState(false);
 
   // State for search (only used on TastingsPage)
   const [searchResults, setSearchResults] = useState([]);
@@ -45,6 +46,8 @@ export const App = () => {
             isLoggedIn={isLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
             setCurrentUser={setCurrentUser}
+            showAddCafe={showAddCafe}
+            setShowAddCafe={setShowAddCafe}
           />
         </header>
 

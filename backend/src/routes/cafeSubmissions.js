@@ -1,10 +1,22 @@
 import express from "express";
 import { Cafe, CafeSubmission } from "../models/cafeModel.js";
 import { authenticateToken, requireAdmin } from "../middleware/auth.js";
+import { cafeSubmissionSchema } from "../middleware/validation.js";
+
 const router = express.Router();
 
 // POST create new cafe submission
+
 router.post("/", authenticateToken, async (req, res) => {
+  // Validate request body
+  const result = cafeSubmissionSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({
+      success: false,
+      error: result.error.errors,
+    });
+  }
+
   try {
     const submissionData = {
       ...req.body,

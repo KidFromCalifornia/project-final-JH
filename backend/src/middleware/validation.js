@@ -4,7 +4,30 @@ import { z } from "zod";
 export const registerSchema = z.object({
   username: z.string().min(5, "Username must be at least 5 characters").max(20),
   email: z.string().email("Invalid email format"),
-  password: z.string().min(8, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+export const cafeSubmissionSchema = z.object({
+  name: z.string().min(1),
+  website: z.string().url().optional(),
+  hasMultipleLocations: z.boolean().optional(),
+  locations: z.array(
+    z.object({
+      address: z.string().min(1),
+      neighborhood: z.string().optional(),
+      locationNote: z.string().optional(),
+      isMainLocation: z.boolean().optional(),
+      coordinates: z
+        .object({
+          type: z.literal("Point"),
+          coordinates: z.array(z.number()).length(2),
+        })
+        .optional(),
+    })
+  ),
+  description: z.string().max(1000).optional(),
+  category: z.enum(["specialty", "roaster", "thirdwave"]),
+  features: z.array(z.string()).min(1),
+  images: z.array(z.string()).optional(),
 });
 
 // User login validation
@@ -18,50 +41,55 @@ export const loginSchema = z
     message: "Email or username is required",
   });
 
-export const tastingSchema = z.object({
-  cafeId: z.string().min(1, "Cafe ID is required"),
-  cafeNeighborhood: z.string().min(),
-  coffeeRoaster: z.string().min(),
-  coffeeOrigin: z.string().min(),
-  coffeeOriginRegion: z.string().min(),
-  coffeeName: z.string().min(1, "Coffee name is required"),
-  roastLevel: z.enum(["light", "medium", "dark"]),
-  brewMethod: z.enum(["espresso", "filtered coffee", "pour over", "other"]),
-  rating: z.number().min(1).max(5),
-  tastingNotes: z
-    .array(
-      z.enum([
-        "fruity",
-        "floral",
-        "sweet",
-        "nutty",
-        "cocoa",
-        "spices",
-        "roasted",
-        "green",
-        "sour",
-        "other",
-      ])
-    )
-    .optional(),
-  acidity: z.enum(["light", "medium", "high"]).optional(),
-  mouthFeel: z.enum(["light", "medium", "full"]).optional(),
-  notes: z.string().max(500).optional(),
-  isPublic: z.boolean().optional(),
+// Cafe validation: locations should be an array of objects
+export const cafeSchema = z.object({
+  name: z.string().min(1, "Cafe name is required"),
+  locations: z.array(
+    z.object({
+      address: z.string().min(1, "Address is required"),
+      isMainLocation: z.boolean().optional(),
+      coordinates: z
+        .object({
+          type: z.literal("Point").optional(),
+          coordinates: z.array(z.number()).length(2).optional(), // [longitude, latitude]
+        })
+        .optional(),
+      neighborhood: z.string().optional(),
+      locationNote: z.string().optional(),
+    })
+  ),
+  category: z.enum(["specialty", "roaster", "thirdwave"]),
+  features: z.array(
+    z.enum([
+      "outdoor_seating",
+      "wheelchair_accessible",
+      "lunch",
+      "pour_over",
+      "takeaway",
+      "vegan_options",
+      "breakfast",
+      "iced_drinks",
+      "pastries",
+      "multi_roaster",
+      "decaf",
+      "no_coffee_bar",
+      "limited_sitting",
+      "roaster_only",
+    ])
+  ),
+  images: z.array(z.string()).optional(),
+  isApproved: z.boolean().optional(),
+  isSeeded: z.boolean().optional(),
+  description: z.string().max(1000).optional(),
+  submittedBy: z.string().optional(),
 });
 
-// Validation middleware
-export const validateRequest = (schema) => {
-  return (req, res, next) => {
-    try {
-      schema.parse(req.body);
-      next();
-    } catch (error) {
-      res.status(400).json({
-        success: false,
-        error: "Validation failed",
-        details: error.errors,
-      });
-    }
-  };
+// Example: Add a generic validation middleware
+export const validateRequest = (schema) => (req, res, next) => {
+  try {
+    req.body = schema.parse(req.body);
+    next();
+  } catch (err) {
+    res.status(400).json({ error: err.errors });
+  }
 };

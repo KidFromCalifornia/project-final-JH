@@ -4,6 +4,52 @@ import { Cafe } from "../models/cafeModel.js";
 const router = express.Router();
 
 // GET all cafes with filtering and search
+
+router.post("/", async (req, res) => {
+  try {
+    // Clean up locations array to avoid empty coordinates arrays
+    const cleanedLocations = (req.body.locations || []).map((loc) => {
+      // Only include coordinates if both latitude and longitude are valid numbers
+      if (
+        loc.coordinates &&
+        Array.isArray(loc.coordinates.coordinates) &&
+        loc.coordinates.coordinates.length === 2 &&
+        typeof loc.coordinates.coordinates[0] === "number" &&
+        typeof loc.coordinates.coordinates[1] === "number"
+      ) {
+        return loc;
+      } else {
+        // Remove coordinates if invalid
+        const { coordinates, ...rest } = loc;
+        return rest;
+      }
+    });
+
+    // Ensure userId is not the string "user"
+    let submittedBy = req.body.userId;
+    if (submittedBy === "user" || !submittedBy) {
+      submittedBy = undefined;
+    }
+
+    const cafe = new Cafe({
+      ...req.body,
+      locations: cleanedLocations,
+      submittedBy,
+    });
+    await cafe.save();
+    res.status(201).json({
+      success: true,
+      data: cafe,
+    });
+  } catch (error) {
+    console.error("Error creating cafe:", error);
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 router.get("/", async (req, res) => {
   try {
     const {

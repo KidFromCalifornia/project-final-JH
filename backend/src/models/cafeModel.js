@@ -23,7 +23,7 @@ const cafeSchema = new mongoose.Schema(
         },
         neighborhood: {
           type: String,
-          required: true,
+          required: false,
         },
         coordinates: {
           type: {
@@ -33,7 +33,7 @@ const cafeSchema = new mongoose.Schema(
           },
           coordinates: {
             type: [Number],
-            required: true,
+            required: false,
           },
         },
         locationNote: {
@@ -73,14 +73,16 @@ const cafeSchema = new mongoose.Schema(
           "decaf",
           "no_coffee_bar",
           "limited_sitting",
-          "roaster",
+          "roaster_only",
         ],
+        required: true,
       },
     ],
     images: [String],
     isApproved: {
       type: Boolean,
       default: false,
+      required: false,
     },
     isSeeded: {
       type: Boolean,

@@ -23,7 +23,14 @@ const stockholmCafes = [
     description:
       "Stockholm's pioneering third wave coffee roastery. Acclaimed for their exceptional single-origin beans and precise brewing methods that started the specialty coffee movement in Sweden.",
     category: "roaster",
-    features: ["pour_over", "takeaway"],
+    features: [
+      "pour_over",
+      "takeaway",
+      "wheelchair_accessible",
+      "vegan_options",
+      "pastries",
+      "lunch",
+    ],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -44,9 +51,15 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Stockholm's original specialty roastery serving consistently excellent coffee. Known for sustainable sourcing and being a cornerstone of Swedish coffee culture since 2004.",
+      "Stockholm's original specialty roastery/ cafe serving consistently excellent coffee. Known for sustainable sourcing and being a cornerstone of Swedish coffee culture since 2004.",
     category: "roaster",
-    features: ["pour_over", "takeaway", "breakfast"],
+    features: [
+      "pour_over",
+      "takeaway",
+      "breakfast",
+      "wheelchair_accessible",
+      "vegan_options",
+    ],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -90,7 +103,7 @@ const stockholmCafes = [
     description:
       "Cozy neighborhood favorite known for excellent espresso and warm, welcoming atmosphere. A true local gem that perfectly embodies Stockholm's coffee culture across multiple locations.",
     category: "specialty",
-    features: ["breakfast", "pastries", "takeaway"],
+    features: ["breakfast", "pastries", "takeaway", "wheelchair_accessible"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -113,7 +126,12 @@ const stockholmCafes = [
     description:
       "Thirdwave coffee bar focusing on careful brewing techniques and creating the perfect cup through patience and precision.",
     category: "thirdwave",
-    features: ["pour_over", "takeaway", "vegan_options"],
+    features: [
+      "pour_over",
+      "takeaway",
+      "vegan_options",
+      "wheelchair_accessible",
+    ],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -180,7 +198,7 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Unique café and sandwich shop combining excellent coffee with Swedish smörgås culture. A bakehouse first to Stockholm's independent restaurants with a front counter serving delicious sandwiches and fresh bagels.",
+      "Unique bakehouse and sandwich shop combining excellent coffee with Swedish smörgås culture. A bakehouse first to Stockholm's independent restaurants with a front counter serving delicious sandwiches and fresh bagels.",
     category: "specialty",
     features: ["takeaway", "breakfast", "lunch"],
     images: [],
@@ -205,7 +223,7 @@ const stockholmCafes = [
     description:
       "Approaching coffee with a minimalist philosophy, Balue focuses on simplicity and quality. A serene spot for coffee lovers who appreciate the art of brewing.",
     category: "thirdwave",
-    features: ["pour_over", "takeaway"],
+    features: ["pour_over", "takeaway", "vegan_options", "pastries"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -228,7 +246,7 @@ const stockholmCafes = [
     description:
       "The OG roastery of Stockholm restaurant scene, fuelling restaurants with roasted coffee since 2011. They have been a staple of the restaurant scene in Stockholm for over a decade.",
     category: "roaster",
-    features: ["pour_over", "takeaway"],
+    features: ["pour_over", "takeaway", "lunch"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -250,8 +268,8 @@ const stockholmCafes = [
     ],
     description:
       "In their house, coffee is gospel. Curating a selection of coffee beans from around the world, they focus on the story behind each cup. A stepping stone for those starting their coffee journey.",
-    category: "specialty",
-    features: ["takeaway"],
+    category: "roaster",
+    features: ["takeaway", "pour_over"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -274,7 +292,7 @@ const stockholmCafes = [
     description:
       "Sourcing the most exceptional coffees from producers who share our vision for quality and sustainability. Through meticulous roasting, their approach combines skill, science, and storytelling to create coffees that stand out.",
     category: "roaster",
-    features: ["no_coffee_bar"],
+    features: ["no_coffee_bar", "roaster_only"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -297,7 +315,14 @@ const stockholmCafes = [
     description:
       "Deep in the suburbs, this cafe is a local favorite known for its cozy atmosphere with specialty coffee for those trying to escape the city.",
     category: "specialty",
-    features: ["takeaway", "limited_sitting"],
+    features: [
+      "takeaway",
+      "limited_sitting",
+      "vegan_options",
+      "pastries",
+      "breakfast",
+      "lunch",
+    ],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -319,7 +344,7 @@ const stockholmCafes = [
     ],
     description:
       "A taproom and brewery in Södermalm, Ölkemi offers a unique experience with their own craft beers and a selection of specialty coffee. A perfect spot for those who appreciate both brews.",
-    category: "specialty",
+    category: "thirdwave",
     features: ["outdoor_seating", "takeaway", "lunch"],
     images: [],
     isApproved: true,
@@ -366,7 +391,7 @@ const stockholmCafes = [
     description:
       "Unique café concept combining coffee culture with creative community space. A hub for Stockholm's artistic and creative minds.",
     category: "specialty",
-    features: ["takeaway"],
+    features: ["takeaway", "vegan_options", "pastries", "breakfast", "lunch"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -419,26 +444,6 @@ const stockholmCafes = [
         isMainLocation: false,
         locationNote: "Vasastan location",
       },
-      {
-        address: "Hornsgatan 78, 118 21 Stockholm",
-        neighborhood: "Södermalm",
-        coordinates: {
-          type: "Point",
-          coordinates: [18.052, 59.316],
-        },
-        isMainLocation: false,
-        locationNote: "Södermalm location",
-      },
-      {
-        address: "Götgatan 22, 116 46 Stockholm",
-        neighborhood: "Södermalm",
-        coordinates: {
-          type: "Point",
-          coordinates: [18.071, 59.318],
-        },
-        isMainLocation: false,
-        locationNote: "Götgatan location",
-      },
     ],
     description:
       "Artisanal bakery serving exceptional bread, pastries, and specialty coffee. Perfect for Swedish fika tradition across multiple Stockholm locations.",
@@ -465,29 +470,6 @@ const stockholmCafes = [
     ],
     description:
       "Located within the Swedish Centre for Architecture and Design, this café combines excellent coffee with stunning design in a unique museum setting.",
-    category: "specialty",
-    features: ["takeaway"],
-    images: [],
-    isApproved: true,
-    isSeeded: true,
-  },
-  {
-    name: "Sponge Cookies",
-    website: "https://spongecookies.com",
-    hasMultipleLocations: false,
-    locations: [
-      {
-        address: "Tjärhovsgatan 19, 116 28 Stockholm",
-        neighborhood: "Södermalm",
-        coordinates: {
-          type: "Point",
-          coordinates: [18.069, 59.3145],
-        },
-        isMainLocation: true,
-      },
-    ],
-    description:
-      "Not a traditional café but serves specialty coffee with unique offerings. Known for their innovative approach to coffee and creative atmosphere.",
     category: "specialty",
     features: ["takeaway"],
     images: [],
@@ -523,7 +505,7 @@ const stockholmCafes = [
     description:
       "Artisanal cookie shop and café serving freshly baked cookies alongside specialty coffee. Known for their creative cookie flavors and cozy atmosphere.",
     category: "specialty",
-    features: ["pastries", "takeaway", "limited_sitting"],
+    features: ["pastries", "takeaway", "pastries", "limited_sitting"],
     images: [],
     isApproved: true,
     isSeeded: true,
@@ -543,7 +525,7 @@ const stockholmCafes = [
     description:
       "A specialty coffee roaster focusing on exclusive Colombian nano-lots, offering a unique coffee experience.",
     category: "roaster",
-    features: ["no_coffee_bar"],
+    features: ["no_coffee_bar", "roaster_only"],
     isApproved: true,
     isSeeded: true,
   },
@@ -561,8 +543,8 @@ const stockholmCafes = [
     ],
     description:
       "A specialty coffee shop offering tasting experiences and high-quality coffee equipment.",
-    category: "specialty",
-    features: ["takeaway", "limited_sitting"],
+    category: "thirdwave",
+    features: ["no_coffee_bar", "limited_sitting"],
     isApproved: true,
     isSeeded: true,
   },
@@ -580,7 +562,7 @@ const stockholmCafes = [
     ],
     description:
       "A bicycle-themed café offering international brunch, organic ingredients, and a cozy atmosphere inspired by cycling culture.",
-    category: "specialty",
+    category: "thirdwave",
     features: [
       "outdoor_seating",
       "breakfast",
@@ -589,7 +571,7 @@ const stockholmCafes = [
       "vegan_options",
       "iced_drinks",
       "pastries",
-      "roaster",
+      "pour_over",
     ],
     isApproved: true,
     isSeeded: true,

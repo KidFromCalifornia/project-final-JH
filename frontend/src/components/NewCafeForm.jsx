@@ -1,0 +1,347 @@
+import React, { useState } from "react";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+
+const CATEGORY_OPTIONS = ["specialty", "roaster", "thirdwave"];
+const FEATURE_OPTIONS = [
+  "outdoor_seating",
+  "wheelchair_accessible",
+  "lunch",
+  "pour_over",
+  "takeaway",
+  "vegan_options",
+  "breakfast",
+  "iced_drinks",
+  "pastries",
+  "multi_roaster",
+  "decaf",
+  "no_coffee_bar",
+  "limited_sitting",
+  "roaster_only",
+];
+
+const NewCafeForm = ({ onClose }) => {
+  const [form, setForm] = useState({
+    name: "",
+    website: "",
+    description: "",
+    category: "",
+    hasMultipleLocations: false,
+    features: [],
+    images: [""],
+    locations: [
+      {
+        address: "",
+        neighborhood: "",
+        locationNote: "",
+        isMainLocation: true,
+      },
+    ],
+  });
+  const [status, setStatus] = useState("");
+
+  // Handle basic field changes
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  // Handle features (multi-select)
+  const handleFeatureChange = (feature) => {
+    setForm((prev) => ({
+      ...prev,
+      features: prev.features.includes(feature)
+        ? prev.features.filter((f) => f !== feature)
+        : [...prev.features, feature],
+    }));
+  };
+
+  // Handle location field changes
+  const handleLocationChange = (e, idx) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => {
+      const locations = [...prev.locations];
+      locations[idx][name] = type === "checkbox" ? checked : value;
+      return { ...prev, locations };
+    });
+  };
+
+  // Geocode address using OpenStreetMap Nominatim
+  const geocodeAddress = async (address) => {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+      address
+    )}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data && data[0]) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon),
+      };
+    }
+    return null;
+  };
+  // Handle image URL changes
+  const handleImageChange = (e, idx) => {
+    const { value } = e.target;
+    setForm((prev) => {
+      const images = [...prev.images];
+      images[idx] = value;
+      return { ...prev, images };
+    });
+  };
+
+  // Add another location
+  const addLocation = () => {
+    setForm((prev) => ({
+      ...prev,
+      locations: [
+        ...prev.locations,
+        {
+          address: "",
+          neighborhood: "",
+          locationNote: "",
+          isMainLocation: false,
+        },
+      ],
+    }));
+  };
+
+  // Remove a location by index
+  const removeLocation = (idx) => {
+    setForm((prev) => ({
+      ...prev,
+      locations: prev.locations.filter((_, i) => i !== idx),
+    }));
+  };
+
+  // Prepare payload for backend and geocode addresses
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("");
+    try {
+      // Geocode each location
+      const locationsWithCoords = await Promise.all(
+        form.locations.map(async (loc) => {
+          const geo = await geocodeAddress(loc.address);
+          return {
+            ...loc,
+            coordinates: geo
+              ? {
+                  type: "Point",
+                  coordinates: [geo.lon, geo.lat],
+                }
+              : undefined,
+          };
+        })
+      );
+
+      const payload = {
+        ...form,
+        locations: locationsWithCoords,
+      };
+      console.log(payload);
+
+      const res = await fetch(`${API_URL}/cafeSubmissions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        setStatus("Cafe added!");
+        setForm({
+          name: "",
+          website: "",
+          description: "",
+          category: "",
+          hasMultipleLocations: false,
+          features: [],
+          images: [""],
+          locations: [
+            {
+              address: "",
+              neighborhood: "",
+              locationNote: "",
+              isMainLocation: true,
+            },
+          ],
+        });
+      } else {
+        setStatus("Error adding cafe.");
+      }
+    } catch {
+      setStatus("Network error.");
+    }
+  };
+
+  return (
+    <>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          margin: "0.5rem",
+          color: "#17",
+          position: "fixed",
+          backgroundColor: "white",
+          padding: "1rem",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          maxWidth: "300px",
+          top: "0",
+          right: "0",
+          color: "#170351",
+        }}
+      >
+        <button
+          type="button"
+          aria-label="Close login form"
+          onClick={onClose}
+          style={{
+            float: "right",
+            cursor: "pointer",
+            background: "none",
+            border: "none",
+            fontSize: "1.5rem",
+          }}
+        >
+          ×
+        </button>
+        <h2>Suggest a Cafe</h2>
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="Name"
+          required
+        />
+        <input
+          name="website"
+          value={form.website}
+          onChange={handleChange}
+          placeholder="Website"
+        />
+        <textarea
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          placeholder="Description"
+          maxLength={1000}
+        />
+        <select
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+          required
+        >
+          <option label="Select Category" value="">
+            Select Category
+          </option>
+          {CATEGORY_OPTIONS.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+
+        <fieldset hidden>
+          <legend>Images</legend>
+          {form.images.map((img, idx) => (
+            <div key={idx}>
+              <input
+                type="text"
+                value={img}
+                onChange={(e) => handleImageChange(e, idx)}
+                placeholder="Image URL"
+              />
+            </div>
+          ))}
+        </fieldset>
+        <fieldset>
+          <legend>Location</legend>
+          {form.locations.map((loc, idx) => (
+            <div
+              key={idx}
+              style={{
+                border: "1px solid #eee",
+                marginBottom: "1rem",
+                padding: "1rem",
+                position: "relative",
+              }}
+            >
+              <input
+                name="address"
+                value={loc.address}
+                onChange={(e) => handleLocationChange(e, idx)}
+                placeholder="Address"
+                required
+              />
+              <input
+                name="neighborhood"
+                value={loc.neighborhood}
+                onChange={(e) => handleLocationChange(e, idx)}
+                placeholder="Neighborhood"
+              />
+              <input
+                name="locationNote"
+                value={loc.locationNote}
+                onChange={(e) => handleLocationChange(e, idx)}
+                placeholder="Location Note"
+              />
+
+              {form.locations.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeLocation(idx)}
+                  style={{
+                    position: "absolute",
+                    top: "0.5rem",
+                    right: "0.5rem",
+                    background: "#eee",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "2rem",
+                    height: "2rem",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                  }}
+                  aria-label="Remove this location"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addLocation}
+            style={{ marginTop: "0.5rem" }}
+          >
+            Add Another Location
+          </button>
+        </fieldset>
+        <fieldset>
+          <legend>Features</legend>
+          {FEATURE_OPTIONS.map((feature) => (
+            <label key={feature} style={{ marginRight: "1rem" }}>
+              <input
+                type="checkbox"
+                checked={form.features.includes(feature)}
+                onChange={() => handleFeatureChange(feature)}
+              />
+              {feature.replace(/_/g, " ")}
+            </label>
+          ))}
+        </fieldset>
+        <button type="submit">Add Cafe</button>
+        {status && <p>{status}</p>}
+      </form>
+    </>
+  );
+};
+
+export default NewCafeForm;

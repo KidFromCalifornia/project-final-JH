@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
 const LoginForm = lazy(() => import("./LoginForm"));
+const AddCafeForm = lazy(() => import("./NewCafeForm"));
 
 const NavBar = ({
   searchResults,
@@ -14,6 +15,7 @@ const NavBar = ({
   isLoggedIn,
   setIsLoggedIn,
   setCurrentUser,
+  showAddCafe,
   setShowAddCafe,
 }) => {
   return (
@@ -25,7 +27,19 @@ const NavBar = ({
         <div className="nav-right">
           <Link to="/">Map</Link>
           <Link to="/cafes">Cafes</Link>
-          <button onClick={() => setShowAddCafe(true)}>Add Cafe</button>
+          {isLoggedIn && (
+            <>
+              {!showAddCafe && (
+                <button onClick={() => setShowAddCafe(true)}>Add Cafe</button>
+              )}
+              <Suspense fallback={<div>Loading...</div>}>
+                {showAddCafe && (
+                  <AddCafeForm onClose={() => setShowAddCafe(false)} />
+                )}
+              </Suspense>
+            </>
+          )}
+
           <Link to="/tastings">Tastings</Link>
           {searchQuery.trim() !== "" && searchResults.length === 0 && (
             <h4 style={{ display: "flex", padding: "0", margin: "0" }}>
