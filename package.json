@@ -5,6 +5,7 @@
     "postinstall": "npm install --prefix backend"
   },
   "dependencies": {
+    "jwt-decode": "^4.0.0",
     "mongodb": "^6.18.0",
     "spacebar": "^13.1.1-dev"
   }

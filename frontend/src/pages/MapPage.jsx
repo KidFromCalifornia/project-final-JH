@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
@@ -33,16 +35,33 @@ const MapPage = () => {
   }
 
   return (
-    <div style={{ maxWidth: 1200, margin: "2rem auto", padding: "1rem" }}>
-      <h2>Stockholm Cafes by Category</h2>
-      <div
-        style={{
-          display: "flex",
-          gap: "2rem",
-          justifyContent: "flex-start",
-          flexWrap: "wrap",
-        }}
-      >
+    <>
+      <h2>Stockholm's Coffee Club</h2>
+      <div style={{ height: "400px", width: "100%", marginBottom: "2rem" }}>
+        <MapContainer
+          center={[59.3293, 18.0686]}
+          zoom={12}
+          style={{ height: "400px", width: "100%", marginBottom: "2rem" }}
+        >
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          {cafes.map((cafe) => {
+            const coords = cafe.locations?.[0]?.coordinates?.coordinates;
+            if (coords && coords.length === 2) {
+              return (
+                <Marker key={cafe._id} position={[coords[1], coords[0]]}>
+                  <Popup>
+                    <strong>{cafe.name}</strong>
+                    <br />
+                    {cafe.address}
+                  </Popup>
+                </Marker>
+              );
+            }
+            return null;
+          })}
+        </MapContainer>
+      </div>
+      <div>
         {Object.entries(grouped).map(([category, cafes]) => (
           <div key={category} style={{ flex: "1 1 250px", minWidth: 250 }}>
             <h3>{category}</h3>
@@ -62,7 +81,14 @@ const MapPage = () => {
                       paddingBottom: "0.5rem",
                     }}
                   >
-                    <strong>{cafe.name}</strong>
+                    <strong>
+                      <Link
+                        style={{ color: "#170351", textDecoration: "none" }}
+                        to={`/cafes/${cafe._id}`}
+                      >
+                        {cafe.name}
+                      </Link>
+                    </strong>
                     <br />
                     <span>{cafe.address}</span>
                     <br />
@@ -81,7 +107,7 @@ const MapPage = () => {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

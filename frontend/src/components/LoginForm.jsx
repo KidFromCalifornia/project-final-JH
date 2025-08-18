@@ -45,10 +45,24 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
         localStorage.setItem("userId", data.user.id);
         localStorage.setItem(
           "username",
-          data.user?.username || trimmedUsername
+          data.user?.username || trimmedIdentifier
         );
+        // Decode token to get role
+        let role = "user";
+        try {
+          // Use jwtDecode for ESM import
+          const { jwtDecode } = await import("jwt-decode");
+          const decoded = jwtDecode(token);
+          role = decoded.role || "user";
+        } catch (err) {
+          // fallback if decode fails
+          role = "user";
+        }
+        localStorage.setItem("userRole", role);
+        localStorage.setItem("admin", role === "admin" ? "true" : "false");
+
         setIsLoggedIn(true);
-        setCurrentUser({ username: data.user?.username || trimmedUsername });
+        setCurrentUser({ username: data.user?.username || trimmedIdentifier });
         setError("");
         onClose();
       } else {

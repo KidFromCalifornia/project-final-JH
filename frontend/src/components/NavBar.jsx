@@ -6,29 +6,45 @@ const LoginForm = lazy(() => import("./LoginForm"));
 const AddCafeForm = lazy(() => import("./NewCafeForm"));
 
 const NavBar = ({
-  searchResults,
-  setSearchResults,
-  searchQuery,
-  setSearchQuery,
-  showLogin,
-  setShowLogin,
-  isLoggedIn,
-  setIsLoggedIn,
-  setCurrentUser,
-  showAddCafe,
-  setShowAddCafe,
+  searchResults = [],
+  setSearchResults = () => {},
+  searchQuery = "",
+  setSearchQuery = () => {},
+  showLogin = false,
+  setShowLogin = () => {},
+  isLoggedIn = false,
+  setIsLoggedIn = () => {},
+  setCurrentUser = () => {},
+  showAddCafe = false,
+  setShowAddCafe = () => {},
 }) => {
+  // Get admin status from localStorage safely
+  let isAdmin = false;
+  if (typeof window !== "undefined" && window.localStorage) {
+    isAdmin = localStorage.getItem("admin") === "true";
+  }
+
   return (
     <>
       <nav>
         <div className="nav-left">
-          <h1> Stockholms Coffee Club </h1>
+          <Link style={{ fontWeight: "bold", color: "white" }} to="/">
+            {" "}
+            Stockholms Coffee Club{" "}
+          </Link>
         </div>
         <div className="nav-right">
           <Link to="/">Map</Link>
-          <Link to="/cafes">Cafes</Link>
+          <Link to="/tastings">Tastings</Link>
+          {searchQuery.trim() !== "" && searchResults.length === 0 && (
+            <h4 style={{ display: "flex", padding: "0", margin: "0" }}>
+              Not found
+            </h4>
+          )}
+
           {isLoggedIn && (
             <>
+              <Link to="/cafes">Cafes</Link>
               {!showAddCafe && (
                 <button onClick={() => setShowAddCafe(true)}>Add Cafe</button>
               )}
@@ -38,13 +54,6 @@ const NavBar = ({
                 )}
               </Suspense>
             </>
-          )}
-
-          <Link to="/tastings">Tastings</Link>
-          {searchQuery.trim() !== "" && searchResults.length === 0 && (
-            <h4 style={{ display: "flex", padding: "0", margin: "0" }}>
-              Not found
-            </h4>
           )}
           <CafeSearchBar
             onResults={setSearchResults}
@@ -59,6 +68,10 @@ const NavBar = ({
                 onClose={() => {
                   setShowLogin(false);
                   setIsLoggedIn(!!localStorage.getItem("userToken"));
+                  // Set admin status if user is admin (example logic)
+                  const userIsAdmin =
+                    localStorage.getItem("userRole") === "admin";
+                  localStorage.setItem("admin", userIsAdmin ? "true" : "false");
                 }}
                 setIsLoggedIn={setIsLoggedIn}
                 setCurrentUser={setCurrentUser}
@@ -70,6 +83,7 @@ const NavBar = ({
               onClick={() => {
                 localStorage.removeItem("userToken");
                 localStorage.removeItem("username");
+                localStorage.removeItem("admin");
                 setIsLoggedIn(false);
                 setShowLogin(false);
               }}
@@ -77,6 +91,7 @@ const NavBar = ({
               Logout
             </button>
           )}
+          {isLoggedIn && isAdmin && <Link to="/admin">Admin</Link>}
         </div>
       </nav>
     </>

@@ -80,7 +80,7 @@ export const App = () => {
                   />
                 }
               />
-              <Route path="/cafes" element={<CafePage />} />
+              <Route path="/cafes/:cafeId" element={<CafePage />} />
               <Route
                 path="/user"
                 element={<UserPage isLoggedIn={isLoggedIn} />}
