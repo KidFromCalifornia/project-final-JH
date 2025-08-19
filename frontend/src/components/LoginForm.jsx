@@ -6,11 +6,15 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [identifier, setIdentifier] = useState("");
+  const error = useCafeStore((state) => state.fetchError);
+  const setError = useCafeStore((state) => state.setFetchError);
+  const loading = useCafeStore((state) => state.loading);
+  const setLoading = useCafeStore((state) => state.setLoading);
+  const setUser = useCafeStore((state) => state.setUser);
+  const setIsLoggedInStore = useCafeStore((state) => state.setIsLoggedIn);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

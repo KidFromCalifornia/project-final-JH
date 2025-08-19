@@ -185,7 +185,6 @@ router.get("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Update tasting note (user's own only) - Can change privacy and other fields
 router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const tastingNote = await CoffeeTasting.findById(req.params.id);

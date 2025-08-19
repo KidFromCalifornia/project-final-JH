@@ -1,25 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+import { useCafeStore } from "../useCafeStore";
 
 const MapPage = () => {
-  const [cafes, setCafes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cafes = useCafeStore((state) => state.cafes);
+  const setCafes = useCafeStore((state) => state.setCafes);
+  const searchResults = useCafeStore((state) => state.searchResults);
+  const loading = cafes.length === 0;
 
   useEffect(() => {
-    fetch(`${API_URL}/cafes`)
-      .then((res) => res.json())
-      .then((data) => {
-        setCafes(data.data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+    if (cafes.length === 0) {
+      fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:3001/api"}/cafes`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setCafes(data.data || []);
+        });
+    }
+  }, [cafes, setCafes]);
+
+  const cafesToShow = searchResults.length > 0 ? searchResults : cafes;
 
   // Group cafes by category
-  const grouped = cafes.reduce((acc, cafe) => {
+  const grouped = cafesToShow.reduce((acc, cafe) => {
     const cat = cafe.category || "Other";
     acc[cat] = acc[cat] || [];
     acc[cat].push(cafe);
@@ -36,7 +41,7 @@ const MapPage = () => {
 
   return (
     <>
-      <h2>Stockholm's Coffee Club</h2>
+      <h1 hidden>Stockholm's Coffee Club</h1>
       <div style={{ height: "400px", width: "100%", marginBottom: "2rem" }}>
         <MapContainer
           center={[59.3293, 18.0686]}
@@ -44,7 +49,7 @@ const MapPage = () => {
           style={{ height: "400px", width: "100%", marginBottom: "2rem" }}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {cafes.map((cafe) => {
+          {cafesToShow.map((cafe) => {
             const coords = cafe.locations?.[0]?.coordinates?.coordinates;
             if (
               coords &&

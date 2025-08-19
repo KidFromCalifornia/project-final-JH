@@ -44,7 +44,6 @@ const NavBar = ({
 
           {isLoggedIn && (
             <>
-              <Link to="/cafes">Cafes</Link>
               {!showAddCafe && (
                 <button onClick={() => setShowAddCafe(true)}>Add Cafe</button>
               )}

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useCafeStore } from "../useCafeStore";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
-export default function TastingForm({ onSubmit, initialValues = {} }) {
+const TastingForm = ({ onSubmit, initialValues = {} }) => {
   const [cafeId, setCafeId] = useState(initialValues.cafeId || "");
+  const [cafeName, setCafeName] = useState(initialValues.cafeName || "");
   const [cafeNeighborhood, setCafeNeighborhood] = useState(
     initialValues.cafeNeighborhood || ""
   );
@@ -27,10 +29,15 @@ export default function TastingForm({ onSubmit, initialValues = {} }) {
   const [isPublic, setIsPublic] = useState(
     initialValues.isPublic !== undefined ? initialValues.isPublic : true
   );
-  const [fetchError, setFetchError] = useState("");
+  // ...existing code...
   const [coffeeName, setCoffeeName] = useState(initialValues.coffeeName || "");
-  const [cafes, setCafes] = useState([]);
-  const [options, setOptions] = useState({});
+  const cafes = useCafeStore((state) => state.cafes);
+  const setCafes = useCafeStore((state) => state.setCafes);
+  const options = useCafeStore((state) => state.options);
+  const setOptions = useCafeStore((state) => state.setOptions);
+  const fetchError = useCafeStore((state) => state.fetchError);
+  const setFetchError = useCafeStore((state) => state.setFetchError);
+  const user = useCafeStore((state) => state.user);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,8 +51,11 @@ export default function TastingForm({ onSubmit, initialValues = {} }) {
         setFetchError("Failed to load metadata");
       }
     };
-    fetchData();
-  }, []);
+    // Only fetch if cafes are not already loaded
+    if (!cafes || cafes.length === 0) {
+      fetchData();
+    }
+  }, [setCafes, setOptions, setFetchError, cafes]);
 
   const handleTastingNotesChange = (e) => {
     const { value, checked } = e.target;
@@ -59,6 +69,9 @@ export default function TastingForm({ onSubmit, initialValues = {} }) {
     const selectedCafe = cafes.find((c) => c._id === e.target.value);
     setCafeId(e.target.value);
     setCafeNeighborhood(selectedCafe ? selectedCafe.neighborhood : "");
+    if (!req.params.id || req.params.id === "undefined") {
+      return res.status(400).json({ error: "Missing or invalid ID" });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -68,6 +81,7 @@ export default function TastingForm({ onSubmit, initialValues = {} }) {
       return;
     }
     onSubmit({
+      cafeName,
       coffeeName,
       cafeId,
       cafeNeighborhood,
@@ -278,4 +292,6 @@ export default function TastingForm({ onSubmit, initialValues = {} }) {
       </button>
     </form>
   );
-}
+};
+
+export default TastingForm;

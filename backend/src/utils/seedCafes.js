@@ -5,11 +5,12 @@ import fetch from "node-fetch";
 import fs from "fs/promises";
 import path from "path";
 import { setTimeout as wait } from "timers/promises";
+dotenv.config();
 
 const CACHE_PATH = path.resolve(".geocode-cache.json");
-const USER_AGENT = "StockholmCoffeeClub/1.0 (hello.jonnyhicks@gmail.com)";
-const NOMINATIM_BASE = "https://nominatim.openstreetmap.org/search";
-const DEFAULT_DELAY_MS = 1100;
+const DEFAULT_DELAY_MS = 1000;
+const OPENCAGE_API_KEY = process.env.OPENCAGE_API_KEY;
+const OPENCAGE_BASE = "https://api.opencagedata.com/geocode/v1/json";
 
 async function loadCache() {
   try {
@@ -28,24 +29,20 @@ async function saveCache(cache) {
 }
 const jitter = (n) => n + Math.floor(Math.random() * n);
 
-async function fetchNominatim(address, attempts = 5) {
+async function fetchOpenCage(address, attempts = 5) {
+  if (!OPENCAGE_API_KEY) throw new Error("Missing OPENCAGE_API_KEY in .env");
   const params = new URLSearchParams({
     q: address,
-    format: "jsonv2",
-    addressdetails: "0",
+    key: OPENCAGE_API_KEY,
+    countrycode: "se",
+    language: "sv,en",
     limit: "1",
-    countrycodes: "se",
-    "accept-language": "sv,en",
+    no_annotations: "1",
   });
-  const url = `${NOMINATIM_BASE}?${params.toString()}`;
+  const url = `${OPENCAGE_BASE}?${params.toString()}`;
   for (let i = 0; i < attempts; i++) {
     try {
-      const res = await fetch(url, {
-        headers: {
-          "User-Agent": USER_AGENT,
-          Accept: "application/json",
-        },
-      });
+      const res = await fetch(url);
       if (res.status === 429 || (res.status >= 500 && res.status < 600)) {
         const backoff = jitter(700 * Math.pow(2, i));
         await wait(backoff);
@@ -78,7 +75,7 @@ async function fetchNominatim(address, attempts = 5) {
       throw err;
     }
   }
-  throw new Error(`Nominatim failed for ${address}`);
+  throw new Error(`OpenCage failed for ${address}`);
 }
 
 async function geocodeAddressCached(address, opts = {}) {
@@ -87,22 +84,37 @@ async function geocodeAddressCached(address, opts = {}) {
   if (cache[address]) return cache[address];
   await wait(delayMs);
   try {
-    const json = await fetchNominatim(address);
-    if (!json || !Array.isArray(json) || json.length === 0) {
-      cache[address] = { success: false, provider: "nominatim", address };
+    const json = await fetchOpenCage(address);
+    if (!json || !json.results || json.results.length === 0) {
+      cache[address] = { success: false, provider: "opencage", address };
       await saveCache(cache);
       return cache[address];
     }
-    const top = json[0];
-    const lat = parseFloat(top.lat);
-    const lon = parseFloat(top.lon);
+    const top = json.results[0];
+    if (
+      !top.geometry ||
+      typeof top.geometry.lat !== "number" ||
+      typeof top.geometry.lng !== "number"
+    ) {
+      cache[address] = {
+        success: false,
+        provider: "opencage",
+        address,
+        error: "Missing geometry in result",
+      };
+      await saveCache(cache);
+      return cache[address];
+    }
+    const lat = top.geometry.lat;
+    const lon = top.geometry.lng;
     const item = {
       success: true,
-      provider: "nominatim",
+      provider: "opencage",
       address,
       lat,
       lon,
-      display_name: top.display_name || null,
+      geometry: top.geometry,
+      display_name: top.formatted || null,
     };
     cache[address] = item;
     await saveCache(cache);
@@ -581,7 +593,7 @@ const stockholmCafes = [
       },
     ],
     description:
-      "Located within the Swedish Centre for Architecture and Design, this café combines excellent coffee with stunning design in a unique museum setting.",
+      "Located next to the Swedish Centre for Architecture and Design, this café combines excellent coffee with stunning design in a unique museum setting.",
     category: "specialty",
     features: ["takeaway"],
     images: [],
@@ -717,8 +729,20 @@ async function geocodeCafesSequential(cafes) {
   for (const cafe of cafes) {
     for (const loc of cafe.locations || []) {
       const addr = loc.address && loc.address.trim();
-      if (!addr) continue;
-      if (loc.coordinates?.coordinates) continue; // skip if already present
+      if (!addr) {
+        // Skip locations missing an address
+        continue;
+      }
+      // Only geocode if coordinates are [0, 0] or missing
+      const coords = loc.coordinates?.coordinates;
+      if (
+        Array.isArray(coords) &&
+        coords.length === 2 &&
+        !(coords[0] === 0 && coords[1] === 0)
+      ) {
+        // Coordinates are present and not [0, 0], skip geocoding
+        continue;
+      }
       try {
         const res = await geocodeAddressCached(addr, {
           delayMs: DEFAULT_DELAY_MS,
@@ -743,12 +767,15 @@ async function geocodeCafesSequential(cafes) {
   return cafes;
 }
 const seedCafes = async () => {
-  await Cafe.deleteMany({});
   try {
     if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGODB_URI);
+      await mongoose.connect(process.env.MONGODB_URI, {
+        serverSelectionTimeoutMS: 30000,
+      });
       console.log(`🚀 Connected to MongoDB`);
     }
+    // Only delete after connection is established
+    await Cafe.deleteMany({}, { maxTimeMS: 60000 });
 
     // Find existing cafes by name
     const existingCafeNames = new Set(

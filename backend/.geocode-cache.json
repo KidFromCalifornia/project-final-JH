@@ -1,0 +1,302 @@
+{
+  "Wollmar Yxkullsgatan 10, 118 50 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Wollmar Yxkullsgatan 10, 118 50 Stockholm",
+    "lat": 59.3168777,
+    "lon": 18.0627109,
+    "geometry": {
+      "lat": 59.3168777,
+      "lng": 18.0627109
+    },
+    "display_name": "Wollmar Yxkullsgatan 10, 118 50 Stockholm, Sverige"
+  },
+  "Swedenborgsgatan 7, 118 48 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Swedenborgsgatan 7, 118 48 Stockholm",
+    "lat": 59.3164939,
+    "lon": 18.0639218,
+    "geometry": {
+      "lat": 59.3164939,
+      "lng": 18.0639218
+    },
+    "display_name": "Emily’s Café, Swedenborgsgatan 7, 118 48 Stockholm, Sverige"
+  },
+  "Norrtullsgatan 4, 113 29 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Norrtullsgatan 4, 113 29 Stockholm",
+    "lat": 59.3421666,
+    "lon": 18.0518939,
+    "geometry": {
+      "lat": 59.3421666,
+      "lng": 18.0518939
+    },
+    "display_name": "Norrtullsgatan 4, 113 29 Stockholm, Sverige"
+  },
+  "Skånegatan 76, 116 37 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Skånegatan 76, 116 37 Stockholm",
+    "lat": 59.3120877,
+    "lon": 18.0788478,
+    "geometry": {
+      "lat": 59.3120877,
+      "lng": 18.0788478
+    },
+    "display_name": "Skånegatan 76, 116 39 Stockholm, Sverige"
+  },
+  "Sturegatan 8, 114 35 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Sturegatan 8, 114 35 Stockholm",
+    "lat": 59.3368571,
+    "lon": 18.0736466,
+    "geometry": {
+      "lat": 59.3368571,
+      "lng": 18.0736466
+    },
+    "display_name": "Sturegatan 8, 106 63 Stockholm, Sverige"
+  },
+  "Sedelvägen 35, 129 32 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Sedelvägen 35, 129 32 Stockholm",
+    "lat": 59.2952723,
+    "lon": 17.9796325,
+    "geometry": {
+      "lat": 59.2952723,
+      "lng": 17.9796325
+    },
+    "display_name": "Slow Hands, Sedelvägen 35, 129 32 Stockholm, Sverige"
+  },
+  "Hantverkargatan 8, 112 21 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Hantverkargatan 8, 112 21 Stockholm",
+    "lat": 59.3286304,
+    "lon": 18.0465157,
+    "geometry": {
+      "lat": 59.3286304,
+      "lng": 18.0465157
+    },
+    "display_name": "Hantverkargatan 8, 111 21 Stockholm, Sverige"
+  },
+  "Nytorget 4, 116 40 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Nytorget 4, 116 40 Stockholm",
+    "lat": 59.3124054,
+    "lon": 18.0827564,
+    "geometry": {
+      "lat": 59.3124054,
+      "lng": 18.0827564
+    },
+    "display_name": "Nytorget, 116 40 Stockholm, Sverige"
+  },
+  "Nackagatan 3, 116 49 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Nackagatan 3, 116 49 Stockholm",
+    "lat": 59.3110989,
+    "lon": 18.0962713,
+    "geometry": {
+      "lat": 59.3110989,
+      "lng": 18.0962713
+    },
+    "display_name": "Nackagatan 3, 116 47 Stockholm, Sverige"
+  },
+  "Hallvägen 9, Slakthusområdet, 121 62 Johanneshov": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Hallvägen 9, Slakthusområdet, 121 62 Johanneshov",
+    "lat": 59.2920039,
+    "lon": 18.0774736,
+    "geometry": {
+      "lat": 59.2920039,
+      "lng": 18.0774736
+    },
+    "display_name": "Stockholm Roast, Hallvägen 9, 121 62 Stockholm, Sverige"
+  },
+  "Götgatan 46, 116 21 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Götgatan 46, 116 21 Stockholm",
+    "lat": 59.3159503,
+    "lon": 18.0723124,
+    "geometry": {
+      "lat": 59.3159503,
+      "lng": 18.0723124
+    },
+    "display_name": "Götgatan 46, 116 20 Stockholm, Sverige"
+  },
+  "Frihamnsgatan 24, 115 56 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Frihamnsgatan 24, 115 56 Stockholm",
+    "lat": 59.3409468,
+    "lon": 18.1165915,
+    "geometry": {
+      "lat": 59.3409468,
+      "lng": 18.1165915
+    },
+    "display_name": "Frihamnsgatan, 115 56 Stockholm, Sverige"
+  },
+  "Bastuhagsvägen 41, 113 25 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Bastuhagsvägen 41, 113 25 Stockholm",
+    "lat": 59.2754937,
+    "lon": 18.0488422,
+    "geometry": {
+      "lat": 59.2754937,
+      "lng": 18.0488422
+    },
+    "display_name": "Kafé Ingenstans, Bastuhagsvägen 41, 122 42 Stockholm, Sverige"
+  },
+  "Rutger Fuchsgatan 5, 116 67 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Rutger Fuchsgatan 5, 116 67 Stockholm",
+    "lat": 59.3073728,
+    "lon": 18.0787841,
+    "geometry": {
+      "lat": 59.3073728,
+      "lng": 18.0787841
+    },
+    "display_name": "Rutger Fuchsgatan 5, 116 67 Stockholm, Sverige"
+  },
+  "Rådmansgatan 57, 113 57 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Rådmansgatan 57, 113 57 Stockholm",
+    "lat": 59.3397312,
+    "lon": 18.0565691,
+    "geometry": {
+      "lat": 59.3397312,
+      "lng": 18.0565691
+    },
+    "display_name": "Rådmansgatan 57, 113 60 Stockholm, Sverige"
+  },
+  "Bondegatan 64, 116 33 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Bondegatan 64, 116 33 Stockholm",
+    "lat": 59.3137508,
+    "lon": 18.0864986,
+    "geometry": {
+      "lat": 59.3137508,
+      "lng": 18.0864986
+    },
+    "display_name": "Bondegatan 64, 116 35 Stockholm, Sverige"
+  },
+  "Torsgatan 47, 113 37 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Torsgatan 47, 113 37 Stockholm",
+    "lat": 59.3416604,
+    "lon": 18.0371578,
+    "geometry": {
+      "lat": 59.3416604,
+      "lng": 18.0371578
+    },
+    "display_name": "Torsgatan 47, 113 37 Stockholm, Sverige"
+  },
+  "Sibyllegatan 2, 114 51 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Sibyllegatan 2, 114 51 Stockholm",
+    "lat": 59.3337201,
+    "lon": 18.0783005,
+    "geometry": {
+      "lat": 59.3337201,
+      "lng": 18.0783005
+    },
+    "display_name": "Scenkonstmuseet, Sibyllegatan 2, 114 51 Stockholm, Sverige"
+  },
+  "Upplandsgatan 18, 113 28 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Upplandsgatan 18, 113 28 Stockholm",
+    "lat": 59.3386493,
+    "lon": 18.0527024,
+    "geometry": {
+      "lat": 59.3386493,
+      "lng": 18.0527024
+    },
+    "display_name": "Upplandsgatan 18, 111 24 Stockholm, Sverige"
+  },
+  "Exercisplan 4, 111 49 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Exercisplan 4, 111 49 Stockholm",
+    "lat": 59.325856,
+    "lon": 18.0843509,
+    "geometry": {
+      "lat": 59.325856,
+      "lng": 18.0843509
+    },
+    "display_name": "Exercisplan 4, 111 49 Stockholm, Sverige"
+  },
+  "Valhallavägen 53, 114 25 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Valhallavägen 53, 114 25 Stockholm",
+    "lat": 59.347354,
+    "lon": 18.0669389,
+    "geometry": {
+      "lat": 59.347354,
+      "lng": 18.0669389
+    },
+    "display_name": "Valhallavägen 53, 100 41 Stockholm, Sverige"
+  },
+  "Renstiernas Gata 20, 116 31 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Renstiernas Gata 20, 116 31 Stockholm",
+    "lat": 59.3150413,
+    "lon": 18.0838689,
+    "geometry": {
+      "lat": 59.3150413,
+      "lng": 18.0838689
+    },
+    "display_name": "Renstiernas Gata 20, 116 30 Stockholm, Sverige"
+  },
+  "Linnégatan 75, 114 60 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Linnégatan 75, 114 60 Stockholm",
+    "lat": 59.3355313,
+    "lon": 18.088955,
+    "geometry": {
+      "lat": 59.3355313,
+      "lng": 18.088955
+    },
+    "display_name": "Linnégatan 75, 114 60 Stockholm, Sverige"
+  },
+  "Folkungagatan 67, 116 22 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Folkungagatan 67, 116 22 Stockholm",
+    "lat": 59.314872,
+    "lon": 18.0777232,
+    "geometry": {
+      "lat": 59.314872,
+      "lng": 18.0777232
+    },
+    "display_name": "Tonari Ramen, Folkungagatan 67, 116 22 Stockholm, Sverige"
+  },
+  "Fiskshallsvägen 8, 120 44 Stockholm": {
+    "success": true,
+    "provider": "opencage",
+    "address": "Fiskshallsvägen 8, 120 44 Stockholm",
+    "lat": 59.3,
+    "lon": 18.05,
+    "geometry": {
+      "lat": 59.3,
+      "lng": 18.05
+    },
+    "display_name": "120 44, Sverige"
+  }
+}

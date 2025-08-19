@@ -1,26 +1,21 @@
-import { useState } from "react";
+import { useCafeStore } from "../useCafeStore";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
-/**
- * @param {function} onResults - callback for search results
- * @param {function} setQuery - callback for query string
- * @param {'cafes'|'tastings'} type - what to search (default: 'cafes')
- */
-const SearchBar = ({ onResults, setQuery, type = "cafes" }) => {
-  const [query, setLocalQuery] = useState("");
+const SearchBar = ({ type = "cafes" }) => {
+  const searchQuery = useCafeStore((state) => state.searchQuery);
+  const setSearchQuery = useCafeStore((state) => state.setSearchQuery);
+  const setSearchResults = useCafeStore((state) => state.setSearchResults);
 
   const handleChange = async (e) => {
     const value = e.target.value;
-    setLocalQuery(value);
-    setQuery && setQuery(value);
+    setSearchQuery(value);
 
     if (value.trim() === "") {
-      onResults([]);
+      setSearchResults([]);
       return;
     }
 
-    // Choose endpoint based on type
     let endpoint = "";
     if (type === "cafes") {
       endpoint = `/cafes?search=${encodeURIComponent(value)}`;
@@ -37,10 +32,9 @@ const SearchBar = ({ onResults, setQuery, type = "cafes" }) => {
       });
       const results = await response.json();
       if (!response.ok) throw new Error("Failed to fetch search results");
-      // For tastings, use results.data; for cafes, use results.data or results
-      onResults(results.data || results);
+      setSearchResults(results.data || results);
     } catch {
-      onResults([]);
+      setSearchResults([]);
     }
   };
 
@@ -49,7 +43,7 @@ const SearchBar = ({ onResults, setQuery, type = "cafes" }) => {
       <input
         type="text"
         placeholder={`Search ${type === "cafes" ? "cafes" : "tastings"}...`}
-        value={query}
+        value={searchQuery}
         onChange={handleChange}
         autoComplete="on"
         role="searchbox"
