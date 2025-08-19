@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+import { authAPI } from "../services/api";
+import { SwalAlertStyles } from "./SwalAlertStyles";
 
 const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
   const [email, setEmail] = useState("");
@@ -21,29 +21,24 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
     setLoading(true);
 
     try {
-      const endpoint = isSignup ? "/auth/register" : "/auth/login";
       const trimmedIdentifier = identifier.trim();
       const trimmedPassword = password.trim();
-      const body = isSignup
-        ? {
-            username: trimmedIdentifier,
-            email: email.trim(),
-            password: trimmedPassword,
-          }
-        : {
-            username: trimmedIdentifier,
-            email: trimmedIdentifier,
-            password: trimmedPassword,
-          };
-      const res = await fetch(`${API_URL}${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      let data;
+      if (isSignup) {
+        data = await authAPI.register({
+          username: trimmedIdentifier,
+          email: email.trim(),
+          password: trimmedPassword,
+        });
+      } else {
+        data = await authAPI.login({
+          username: trimmedIdentifier,
+          email: trimmedIdentifier,
+          password: trimmedPassword,
+        });
+      }
 
-      const data = await res.json();
-
-      if (res.ok && (data.token || data.accessToken)) {
+      if (data.token || data.accessToken) {
         const token = data.token || data.accessToken;
         localStorage.setItem("userToken", token);
         localStorage.setItem("userId", data.user.id);
@@ -191,7 +186,7 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
             : "Login"}
         </button>
       </form>
-      {error && <p style={{ color: "red", marginTop: "0.5rem" }}>{error}</p>}
+      {error && <SwalAlertStyles message={error} type="error" />}
       <p style={{ textAlign: "center", marginTop: "1rem" }}>
         {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
         <button

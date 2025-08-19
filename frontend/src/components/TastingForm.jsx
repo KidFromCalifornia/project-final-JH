@@ -1,36 +1,27 @@
 import { useState, useEffect } from "react";
 import { useCafeStore } from "../useCafeStore";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+import { apiCall } from "../services/api";
+import { SwalAlertStyles } from "./SwalAlertStyles";
 
 const TastingForm = ({ onSubmit, initialValues = {} }) => {
-  const [cafeId, setCafeId] = useState(initialValues.cafeId || "");
-  const [cafeName, setCafeName] = useState(initialValues.cafeName || "");
-  const [cafeNeighborhood, setCafeNeighborhood] = useState(
-    initialValues.cafeNeighborhood || ""
-  );
-  const [coffeeRoaster, setCoffeeRoaster] = useState(
-    initialValues.coffeeRoaster || ""
-  );
-  const [coffeeOrigin, setCoffeeOrigin] = useState(
-    initialValues.coffeeOrigin || ""
-  );
-  const [coffeeOriginRegion, setCoffeeOriginRegion] = useState(
-    initialValues.coffeeOriginRegion || ""
-  );
-  const [brewMethod, setBrewMethod] = useState(initialValues.brewMethod || "");
-  const [tastingNotes, setTastingNotes] = useState(
-    initialValues.tastingNotes || []
-  );
-  const [acidity, setAcidity] = useState(initialValues.acidity || "");
-  const [mouthFeel, setMouthFeel] = useState(initialValues.mouthFeel || "");
-  const [roastLevel, setRoastLevel] = useState(initialValues.roastLevel || "");
-  const [rating, setRating] = useState(initialValues.rating || 3);
-  const [notes, setNotes] = useState(initialValues.notes || "");
-  const [isPublic, setIsPublic] = useState(
-    initialValues.isPublic !== undefined ? initialValues.isPublic : true
-  );
-  // ...existing code...
-  const [coffeeName, setCoffeeName] = useState(initialValues.coffeeName || "");
+  const [form, setForm] = useState({
+    cafeId: initialValues.cafeId || "",
+    cafeName: initialValues.cafeName || "",
+    cafeNeighborhood: initialValues.cafeNeighborhood || "",
+    coffeeRoaster: initialValues.coffeeRoaster || "",
+    coffeeOrigin: initialValues.coffeeOrigin || "",
+    coffeeOriginRegion: initialValues.coffeeOriginRegion || "",
+    brewMethod: initialValues.brewMethod || "",
+    tastingNotes: initialValues.tastingNotes || [],
+    acidity: initialValues.acidity || "",
+    mouthFeel: initialValues.mouthFeel || "",
+    roastLevel: initialValues.roastLevel || "",
+    rating: initialValues.rating || 3,
+    notes: initialValues.notes || "",
+    isPublic:
+      initialValues.isPublic !== undefined ? initialValues.isPublic : true,
+    coffeeName: initialValues.coffeeName || "",
+  });
   const cafes = useCafeStore((state) => state.cafes);
   const setCafes = useCafeStore((state) => state.setCafes);
   const options = useCafeStore((state) => state.options);
@@ -42,8 +33,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_URL}/metadata/form-options`);
-        const data = await response.json();
+        const data = await apiCall("/metadata/form-options");
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
@@ -57,61 +47,55 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
     }
   }, [setCafes, setOptions, setFetchError, cafes]);
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    if (fetchError) setFetchError("");
+  };
+
   const handleTastingNotesChange = (e) => {
     const { value, checked } = e.target;
-    setTastingNotes((prev) =>
-      checked ? [...prev, value] : prev.filter((note) => note !== value)
-    );
+    setForm((prev) => ({
+      ...prev,
+      tastingNotes: checked
+        ? [...prev.tastingNotes, value]
+        : prev.tastingNotes.filter((note) => note !== value),
+    }));
     if (fetchError) setFetchError("");
   };
 
   const handleCafeChange = (e) => {
     const selectedCafe = cafes.find((c) => c._id === e.target.value);
-    setCafeId(e.target.value);
-    setCafeNeighborhood(selectedCafe ? selectedCafe.neighborhood : "");
-    if (!req.params.id || req.params.id === "undefined") {
-      return res.status(400).json({ error: "Missing or invalid ID" });
-    }
+    setForm((prev) => ({
+      ...prev,
+      cafeId: e.target.value,
+      cafeNeighborhood: selectedCafe ? selectedCafe.neighborhood : "",
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (tastingNotes.length === 0) {
+    if (form.tastingNotes.length === 0) {
       setFetchError("Please select at least one tasting note.");
       return;
     }
-    onSubmit({
-      cafeName,
-      coffeeName,
-      cafeId,
-      cafeNeighborhood,
-      coffeeRoaster,
-      coffeeOrigin,
-      coffeeOriginRegion,
-      brewMethod,
-      tastingNotes,
-      acidity,
-      mouthFeel,
-      roastLevel,
-      rating,
-      notes,
-      isPublic,
-    });
+    onSubmit(form);
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {fetchError && (
-        <p style={{ color: "red", marginBottom: "1rem" }}>{fetchError}</p>
-      )}
+      {fetchError && <SwalAlertStyles message={fetchError} type="error" />}
       <label htmlFor="coffeeName">
         Coffee Name:
         <input
           type="text"
           id="coffeeName"
           name="coffeeName"
-          value={coffeeName}
-          onChange={(e) => setCoffeeName(e.target.value)}
+          value={form.coffeeName}
+          onChange={handleChange}
           required
         />
       </label>
@@ -210,27 +194,31 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
           </label>
         ))}
       </fieldset>
-      <label htmlFor="acidity">
-        Acidity:
-        <input
-          type="range"
-          id="acidity"
-          name="acidity"
-          min="0"
-          max={options.acidity?.length ? options.acidity.length - 1 : 2}
-          value={options.acidity?.indexOf(acidity) ?? 1}
-          onChange={(e) => setAcidity(options.acidity?.[e.target.value] || "")}
+      <label htmlFor="cafeId">
+        Where did you taste this coffee?:
+        <select
+          id="cafeId"
+          name="cafeId"
+          value={form.cafeId}
+          onChange={handleCafeChange}
           required
-        />
-        <span style={{ marginLeft: "1rem" }}>{acidity || "Select"}</span>
+        >
+          <option value="">Select a cafe</option>
+          {cafes.map((cafe) => (
+            <option key={cafe._id} value={cafe._id}>
+              {cafe.name}
+            </option>
+          ))}
+        </select>
       </label>
+
       <label htmlFor="mouthFeel">
         Mouth Feel:
         <select
           id="mouthFeel"
           name="mouthFeel"
-          value={mouthFeel}
-          onChange={(e) => setMouthFeel(e.target.value)}
+          value={form.mouthFeel}
+          onChange={handleChange}
           required
         >
           <option value="">Select</option>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+import { cafeAPI } from "../services/api";
+import { SwalAlertStyles } from "./SwalAlertStyles";
 
 const CATEGORY_OPTIONS = ["specialty", "roaster", "thirdwave"];
 const FEATURE_OPTIONS = [
@@ -145,15 +145,8 @@ const NewCafeForm = ({ onClose }) => {
       };
       console.log(payload);
 
-      const res = await fetch(`${API_URL}/cafeSubmissions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
+      const result = await cafeAPI.submitCafe(payload);
+      if (result.success) {
         setStatus("Cafe added!");
         setForm({
           name: "",
@@ -173,7 +166,7 @@ const NewCafeForm = ({ onClose }) => {
           ],
         });
       } else {
-        setStatus("Error adding cafe.");
+        setStatus(result.error || "Error adding cafe.");
       }
     } catch {
       setStatus("Network error.");
@@ -211,6 +204,12 @@ const NewCafeForm = ({ onClose }) => {
           ×
         </button>
         <h2>Suggest a Cafe</h2>
+        {status && (
+          <SwalAlertStyles
+            message={status}
+            type={status.includes("error") ? "error" : "success"}
+          />
+        )}
         <input
           name="name"
           value={form.name}

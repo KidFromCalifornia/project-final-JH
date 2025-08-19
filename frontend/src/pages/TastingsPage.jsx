@@ -1,6 +1,8 @@
 import TastingForm from "../components/TastingForm";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useCafeStore } from "../useCafeStore";
+import { SwalAlertStyles } from "../components/SwalAlertStyles";
+import { tastingAPI } from "../services/api";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
@@ -9,106 +11,87 @@ const TastingsPage = () => {
   const setTastings = useCafeStore((state) => state.setTastings);
   const loading = useCafeStore((state) => state.loading);
   const setLoading = useCafeStore((state) => state.setLoading);
-  const [editingTasting, setEditingTasting] = useState(null);
-  const isLoggedIn = Boolean(localStorage.getItem("userToken"));
-  const [deletingTasting, setDeletingTasting] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const tastingsPerPage = 20;
-
-  useEffect(() => {
-    const deleteTasting = async () => {
-      if (!deletingTasting) return;
-
-      const res = await fetch(`${API_URL}/tastings/${deletingTasting._id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setTastings((prev) =>
-          prev.filter((t) => t._id !== deletingTasting._id)
-        );
-      } else {
-        console.error("Failed to delete tasting:", data.error);
-      }
-      setDeletingTasting(null);
-    };
-
-    deleteTasting();
-  }, [deletingTasting]);
+  const editingTasting = useCafeStore((state) => state.editingTasting);
+  const setEditingTasting = useCafeStore((state) => state.setEditingTasting);
+  const deletingTasting = useCafeStore((state) => state.deletingTasting);
+  const setDeletingTasting = useCafeStore((state) => state.setDeletingTasting);
+  const searchQuery = useCafeStore((state) => state.searchQuery);
+  const setSearchQuery = useCafeStore((state) => state.setSearchQuery);
+  const currentPage = useCafeStore((state) => state.currentPage);
+  const setCurrentPage = useCafeStore((state) => state.setCurrentPage);
+  const tastingsPerPage = useCafeStore((state) => state.tastingsPerPage);
+  const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
 
   useEffect(() => {
     const fetchTastings = async () => {
       setLoading(true);
       try {
-        // Fetch all public tastings
-        const publicRes = await fetch(`${API_URL}/tastings/public`);
-        const publicData = await publicRes.json();
-        const publicTastings = publicData.data || [];
-
-        let allTastings = publicTastings;
-
-        // If logged in, fetch user's tastings (private + public)
+        let allTastings = [];
         if (isLoggedIn) {
-          const userRes = await fetch(`${API_URL}/tastings`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-            },
-          });
-          const userData = await userRes.json();
-          const userTastings = userData.data || [];
-
-          const userIds = new Set(userTastings.map((t) => t._id));
-          allTastings = [
-            ...userTastings,
-            ...publicTastings.filter((t) => !userIds.has(t._id)),
-          ];
+          const userTastings = await tastingAPI.getUserTastings();
+          allTastings = userTastings.data || [];
+        } else {
+          const publicTastings = await tastingAPI.getPublic();
+          allTastings = publicTastings.data || [];
         }
-        console.log("Fetched tastings:", allTastings);
         setTastings(allTastings);
       } catch {
         setTastings([]);
       }
       setLoading(false);
     };
-
     fetchTastings();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, setTastings, setLoading]);
 
-  const handleTastingSubmit = (formData) => {
-    const method = editingTasting ? "PUT" : "POST";
-    const url = editingTasting
-      ? `${API_URL}/tastings/${editingTasting._id}`
-      : `${API_URL}/tastings`;
-
-    fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          if (editingTasting) {
-            setTastings((prev) =>
-              prev.map((t) => (t._id === editingTasting._id ? data.data : t))
-            );
-            setEditingTasting(null);
-          } else {
-            setTastings((prev) => [data.data, ...prev]);
-          }
+  useEffect(() => {
+    const deleteTasting = async () => {
+      if (!deletingTasting) return;
+      try {
+        const result = await tastingAPI.delete(deletingTasting._id);
+        if (result.success) {
+          setTastings((prev) =>
+            prev.filter((t) => t._id !== deletingTasting._id)
+          );
         } else {
-          console.error("Failed to submit tasting:", data.error);
+          setTastings((prev) => [
+            ...prev,
+            { _id: "error", error: result.error },
+          ]);
         }
-      })
-      .catch((error) => console.error("Error submitting tasting:", error));
+      } catch (error) {
+        setTastings((prev) => [
+          ...prev,
+          { _id: "error", error: error.message },
+        ]);
+      }
+      setDeletingTasting(null);
+    };
+    deleteTasting();
+  }, [deletingTasting, setTastings, setDeletingTasting]);
+
+  const handleTastingSubmit = async (formData) => {
+    try {
+      let result;
+      if (editingTasting) {
+        result = await tastingAPI.update(editingTasting._id, formData);
+      } else {
+        result = await tastingAPI.create(formData);
+      }
+      if (result.success) {
+        if (editingTasting) {
+          setTastings((prev) =>
+            prev.map((t) => (t._id === editingTasting._id ? result.data : t))
+          );
+          setEditingTasting(null);
+        } else {
+          setTastings((prev) => [result.data, ...prev]);
+        }
+      } else {
+        setTastings((prev) => [...prev, { _id: "error", error: result.error }]);
+      }
+    } catch (error) {
+      setTastings((prev) => [...prev, { _id: "error", error: error.message }]);
+    }
   };
 
   const normalize = (str) =>
@@ -172,7 +155,7 @@ const TastingsPage = () => {
         </div>
       )}
       {filteredTastings.length === 0 ? (
-        <p>Nothing to see here 😞</p>
+        <SwalAlertStyles message="Nothing to see here 😞" type="info" />
       ) : (
         <>
           <ul
@@ -184,101 +167,109 @@ const TastingsPage = () => {
               flexWrap: "wrap",
             }}
           >
-            {currentTastings.map((tasting) => (
-              <li
-                key={tasting._id}
-                style={{
-                  flex: "1 1 250px",
-                  marginBottom: "1.5rem",
-                  borderBottom: "1px solid #eee",
-                  paddingBottom: "1rem",
-                }}
-              >
-                <h3>{tasting.coffeeName}</h3> at
-                <br />
-                at <em>{tasting.cafeId?.name}</em>
-                <span>
-                  <b>Neighborhood:</b> {tasting.cafeNeighborhood}
-                </span>
-                <br />
-                <span>
-                  <b>Roaster:</b> {tasting.coffeeRoaster}
-                </span>
-                <br />
-                <span>
-                  <b>Origin:</b> {tasting.coffeeOrigin}
-                </span>
-                <br />
-                <span>
-                  <b>Region:</b> {tasting.coffeeOriginRegion}
-                </span>
-                <br />
-                <span>
-                  <b>Brew Method:</b> {tasting.brewMethod}
-                </span>
-                <br />
-                <span>
-                  <b>Roast Level:</b> {tasting.roastLevel}
-                </span>
-                <br />
-                <span>
-                  <b>Tasting Notes:</b>{" "}
-                  {Array.isArray(tasting.tastingNotes)
-                    ? tasting.tastingNotes.join(", ")
-                    : tasting.tastingNotes}
-                </span>
-                <br />
-                <span>
-                  <b>Acidity:</b> {tasting.acidity}
-                </span>
-                <br />
-                <span>
-                  <b>Mouth Feel:</b> {tasting.mouthFeel}
-                </span>
-                <br />
-                <span>
-                  <b>Rating:</b> {tasting.rating}/5
-                </span>
-                <br />
-                <span>
-                  <b>Notes:</b> {tasting.notes}
-                </span>
-                <br />
-                <span>
-                  <b>Public:</b> {tasting.isPublic ? "Yes" : "No"}
-                </span>
-                <br />
-                <span style={{ color: "#888", fontSize: "0.9rem" }}>
-                  {tasting.userId?.username} •{" "}
-                  {new Date(tasting.createdAt).toLocaleDateString()}
-                </span>
-                <div
-                  hidden={
-                    !isLoggedIn ||
-                    String(tasting.userId?._id) !==
-                      String(localStorage.getItem("userId"))
-                  }
+            {currentTastings.map((tasting) =>
+              tasting.error ? (
+                <SwalAlertStyles
+                  key={tasting._id}
+                  message={tasting.error}
+                  type="error"
+                />
+              ) : (
+                <li
+                  key={tasting._id}
                   style={{
-                    marginTop: "0.5rem",
-                    color: "#007bff",
-                    cursor: "pointer",
+                    flex: "1 1 250px",
+                    marginBottom: "1.5rem",
+                    borderBottom: "1px solid #eee",
+                    paddingBottom: "1rem",
                   }}
                 >
-                  <button
-                    style={{ marginTop: "0.5rem" }}
-                    onClick={() => setDeletingTasting(tasting)}
+                  <h3>{tasting.coffeeName}</h3> at
+                  <br />
+                  at <em>{tasting.cafeId?.name}</em>
+                  <span>
+                    <b>Neighborhood:</b> {tasting.cafeNeighborhood}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Roaster:</b> {tasting.coffeeRoaster}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Origin:</b> {tasting.coffeeOrigin}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Region:</b> {tasting.coffeeOriginRegion}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Brew Method:</b> {tasting.brewMethod}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Roast Level:</b> {tasting.roastLevel}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Tasting Notes:</b>{" "}
+                    {Array.isArray(tasting.tastingNotes)
+                      ? tasting.tastingNotes.join(", ")
+                      : tasting.tastingNotes}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Acidity:</b> {tasting.acidity}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Mouth Feel:</b> {tasting.mouthFeel}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Rating:</b> {tasting.rating}/5
+                  </span>
+                  <br />
+                  <span>
+                    <b>Notes:</b> {tasting.notes}
+                  </span>
+                  <br />
+                  <span>
+                    <b>Public:</b> {tasting.isPublic ? "Yes" : "No"}
+                  </span>
+                  <br />
+                  <span style={{ color: "#888", fontSize: "0.9rem" }}>
+                    {tasting.userId?.username} •{" "}
+                    {new Date(tasting.createdAt).toLocaleDateString()}
+                  </span>
+                  <div
+                    hidden={
+                      !isLoggedIn ||
+                      String(tasting.userId?._id) !==
+                        String(localStorage.getItem("userId"))
+                    }
+                    style={{
+                      marginTop: "0.5rem",
+                      color: "#007bff",
+                      cursor: "pointer",
+                    }}
                   >
-                    Delete
-                  </button>
-                  <button
-                    style={{ marginTop: "0.5rem" }}
-                    onClick={() => setEditingTasting(tasting)}
-                  >
-                    Edit
-                  </button>
-                </div>
-              </li>
-            ))}
+                    <button
+                      style={{ marginTop: "0.5rem" }}
+                      onClick={() => setDeletingTasting(tasting)}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      style={{ marginTop: "0.5rem" }}
+                      onClick={() => setEditingTasting(tasting)}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </li>
+              )
+            )}
           </ul>
 
           <div

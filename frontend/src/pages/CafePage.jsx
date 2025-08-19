@@ -1,35 +1,34 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+import { cafeAPI } from "../services/api";
+import { useCafeStore } from "../useCafeStore";
+import { SwalAlertStyles } from "../components/SwalAlertStyles";
 
 const CafePage = () => {
   const { cafeId } = useParams();
   const [cafe, setCafe] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const loading = useCafeStore((state) => state.loading);
+  const setLoading = useCafeStore((state) => state.setLoading);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!cafeId) return;
     setLoading(true);
-    fetch(`${API_URL}/cafes/${cafeId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch cafe");
-        return res.json();
-      })
+    cafeAPI
+      .getById(cafeId)
       .then((data) => {
-        setCafe(data.data); // Use .data because your backend wraps the cafe in a data property
+        setCafe(data.data);
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
+        setError(err.message || "Failed to fetch cafe");
         setLoading(false);
       });
-  }, [cafeId]);
+  }, [cafeId, setLoading]);
 
   if (loading) return <div>Loading cafe...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!cafe) return <div>No cafe found.</div>;
+  if (error) return <SwalAlertStyles message={error} type="error" />;
+  if (!cafe) return <SwalAlertStyles message="No cafe found." type="info" />;
 
   return (
     <div>

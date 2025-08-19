@@ -4,6 +4,7 @@ const cafeSchema = new mongoose.Schema(
   {
     name: {
       type: String,
+      ref: "Cafe",
       required: true,
       trim: true,
     },
@@ -101,11 +102,6 @@ const cafeSchema = new mongoose.Schema(
 
 cafeSchema.index({ "locations.coordinates": "2dsphere" });
 
-// Export both models using the same schema but different collections
-export const Cafe = mongoose.model("Cafe", cafeSchema, "cafes");
-export const CafeSubmission = mongoose.model(
-  "CafeSubmission",
-
-  cafeSchema,
-  "cafesubmissions"
-);
+//
+export const Cafe = mongoose.model("Cafe", cafeSchema);
+export const CafeSubmission = mongoose.model("CafeSubmission", cafeSchema);

@@ -766,7 +766,29 @@ async function geocodeCafesSequential(cafes) {
   }
   return cafes;
 }
+const deepEqual = (a, b) => {
+  // Simple deep equality check for objects/arrays
+  if (a === b) return true;
+  if (typeof a !== typeof b) return false;
+  if (typeof a !== "object" || a === null || b === null) return false;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!deepEqual(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  for (const key of aKeys) {
+    if (!deepEqual(a[key], b[key])) return false;
+  }
+  return true;
+};
+
 const seedCafes = async () => {
+  let success = true;
   try {
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URI, {
@@ -774,36 +796,59 @@ const seedCafes = async () => {
       });
       console.log(`🚀 Connected to MongoDB`);
     }
-    // Only delete after connection is established
-    await Cafe.deleteMany({}, { maxTimeMS: 60000 });
+    // Fetch all cafes from DB
+    const dbCafes = await Cafe.find({}).lean();
+    const dbCafeMap = new Map(dbCafes.map((cafe) => [cafe.name, cafe]));
 
-    // Find existing cafes by name
-    const existingCafeNames = new Set(
-      (await Cafe.find({}, "name")).map((cafe) => cafe.name)
-    );
+    // Only keep cafes with at least one valid location/address
+    const cafesToProcess = validCafes;
+    const cafesToInsert = [];
+    const cafesToUpdate = [];
 
-    // Only keep cafes not already in the database
-    const newCafes = validCafes.filter(
-      (cafe) => !existingCafeNames.has(cafe.name)
-    );
+    for (const cafe of cafesToProcess) {
+      const dbCafe = dbCafeMap.get(cafe.name);
+      if (!dbCafe) {
+        cafesToInsert.push(cafe);
+      } else {
+        // Compare all fields except _id
+        const { _id, ...dbCafeData } = dbCafe;
+        if (!deepEqual(dbCafeData, cafe)) {
+          cafesToUpdate.push({ _id, ...cafe });
+        }
+      }
+    }
 
-    if (newCafes.length === 0) {
-      console.log("No new cafes to seed. All cafes already exist.");
+    if (cafesToInsert.length === 0 && cafesToUpdate.length === 0) {
+      console.log("No new or changed cafes to seed. All cafes are up to date.");
       return;
     }
-    const cafesWithGeocodedLocations = await geocodeCafesSequential(validCafes);
 
-    const insertedCafes = await Cafe.insertMany(cafesWithGeocodedLocations);
-
-    console.log(
-      `🌱 Successfully seeded ${
-        insertedCafes.length
-      } new Stockholm Coffee Club cafes!\n${insertedCafes
-        .map((cafe) => cafe.name)
-        .join(", ")}`
+    // Geocode all cafes to insert/update
+    const cafesWithGeocodedLocations = await geocodeCafesSequential(
+      cafesToInsert.concat(cafesToUpdate)
     );
+
+    // Insert new cafes
+    if (cafesToInsert.length > 0) {
+      const insertedCafes = await Cafe.insertMany(
+        cafesWithGeocodedLocations.slice(0, cafesToInsert.length)
+      );
+      console.log(`🌱 Inserted ${insertedCafes.length} new cafes.`);
+    }
+    // Update changed cafes
+    if (cafesToUpdate.length > 0) {
+      for (let i = 0; i < cafesToUpdate.length; i++) {
+        const cafe = cafesWithGeocodedLocations[cafesToInsert.length + i];
+        await Cafe.findByIdAndUpdate(cafe._id, cafe, { new: true });
+        console.log(`🔄 Updated cafe: ${cafe.name}`);
+      }
+    }
   } catch (error) {
     console.error("Error seeding cafes:", error);
+    success = false;
+  } finally {
+    await mongoose.disconnect();
+    process.exit(success ? 0 : 1);
   }
 };
 

@@ -117,4 +117,5 @@ export const CoffeeTasting = mongoose.model(
   "CoffeeTasting",
   coffeeTastingSchema
 );
+
 export default CoffeeTasting;

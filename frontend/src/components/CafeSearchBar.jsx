@@ -1,6 +1,5 @@
 import { useCafeStore } from "../useCafeStore";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+import { cafeAPI, tastingAPI } from "../services/api";
 
 const SearchBar = ({ type = "cafes" }) => {
   const searchQuery = useCafeStore((state) => state.searchQuery);
@@ -16,22 +15,13 @@ const SearchBar = ({ type = "cafes" }) => {
       return;
     }
 
-    let endpoint = "";
-    if (type === "cafes") {
-      endpoint = `/cafes?search=${encodeURIComponent(value)}`;
-    } else if (type === "tastings") {
-      endpoint = `/tastings/public/search?query=${encodeURIComponent(value)}`;
-    }
-
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const results = await response.json();
-      if (!response.ok) throw new Error("Failed to fetch search results");
+      let results;
+      if (type === "cafes") {
+        results = await cafeAPI.getAll(value);
+      } else if (type === "tastings") {
+        results = await tastingAPI.search(value);
+      }
       setSearchResults(results.data || results);
     } catch {
       setSearchResults([]);

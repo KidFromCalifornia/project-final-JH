@@ -3,7 +3,28 @@ import { User } from "../models/User.js";
 import { Cafe } from "../models/cafeModel.js";
 import { CoffeeTasting } from "../models/TastingsModel.js";
 
+const deepEqual = (a, b) => {
+  if (a === b) return true;
+  if (typeof a !== typeof b) return false;
+  if (typeof a !== "object" || a === null || b === null) return false;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!deepEqual(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  for (const key of aKeys) {
+    if (!deepEqual(a[key], b[key])) return false;
+  }
+  return true;
+};
+
 const seedTastingNotes = async () => {
+  let success = true;
   try {
     await connectDB();
     console.log("Connected to database for seeding tasting notes");
@@ -247,15 +268,55 @@ const seedTastingNotes = async () => {
       },
     ];
 
-    // Create tasting notes
-    const createdTastingNotes = await CoffeeTasting.insertMany(
-      tastingNotesData
+    // Fetch all tasting notes from DB
+    const dbTastings = await CoffeeTasting.find({}).lean();
+    // Use a composite key for matching: userId, cafeId, coffeeName
+    const dbTastingMap = new Map(
+      dbTastings.map((t) => [`${t.userId}_${t.cafeId}_${t.coffeeName}`, t])
     );
-    console.log(
-      `Successfully seeded ${createdTastingNotes.length} tasting notes`
-    );
+
+    const tastingsToInsert = [];
+    const tastingsToUpdate = [];
+
+    for (const note of tastingNotesData) {
+      const key = `${note.userId}_${note.cafeId}_${note.coffeeName}`;
+      const dbNote = dbTastingMap.get(key);
+      if (!dbNote) {
+        tastingsToInsert.push(note);
+      } else {
+        const { _id, ...dbNoteData } = dbNote;
+        if (!deepEqual(dbNoteData, note)) {
+          tastingsToUpdate.push({ _id, ...note });
+        }
+      }
+    }
+
+    if (tastingsToInsert.length === 0 && tastingsToUpdate.length === 0) {
+      console.log(
+        "No new or changed tasting notes to seed. All tasting notes are up to date."
+      );
+      return;
+    }
+
+    // Insert new tasting notes
+    if (tastingsToInsert.length > 0) {
+      const inserted = await CoffeeTasting.insertMany(tastingsToInsert);
+      console.log(`🌱 Inserted ${inserted.length} new tasting notes.`);
+    }
+    // Update changed tasting notes
+    if (tastingsToUpdate.length > 0) {
+      for (const note of tastingsToUpdate) {
+        await CoffeeTasting.findByIdAndUpdate(note._id, note, { new: true });
+        console.log(
+          `🔄 Updated tasting note for user ${note.userId} at cafe ${note.cafeId}`
+        );
+      }
+    }
   } catch (error) {
     console.error("Error seeding tasting notes:", error);
+    success = false;
+  } finally {
+    process.exit(success ? 0 : 1);
   }
 };
 seedTastingNotes();
