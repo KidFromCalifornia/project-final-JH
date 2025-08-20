@@ -1,9 +1,25 @@
 import CafeSearchBar from "./CafeSearchBar";
 import { Link } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import styled from "styled-components";
+import { ButtonDark, ButtonLight } from "./ButtonStyles";
 
 const LoginForm = lazy(() => import("./LoginForm"));
 const AddCafeForm = lazy(() => import("./NewCafeForm"));
+
+const NavBarContainer = styled.nav`
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.navbarBackground};
+  width: ${({ theme }) => theme.containerWidths.large};
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 500;
+`;
 
 const NavBar = ({
   searchResults = [],
@@ -45,7 +61,9 @@ const NavBar = ({
           {isLoggedIn && (
             <>
               {!showAddCafe && (
-                <button onClick={() => setShowAddCafe(true)}>Add Cafe</button>
+                <ButtonLight onClick={() => setShowAddCafe(true)}>
+                  Add Cafe
+                </ButtonLight>
               )}
               <Suspense fallback={<div>Loading...</div>}>
                 {showAddCafe && (
@@ -59,7 +77,7 @@ const NavBar = ({
             setQuery={setSearchQuery}
           />
           {!isLoggedIn && (
-            <button onClick={() => setShowLogin(true)}>Login</button>
+            <ButtonLight onClick={() => setShowLogin(true)}>Login</ButtonLight>
           )}
           {showLogin && (
             <Suspense fallback={<div>Loading...</div>}>

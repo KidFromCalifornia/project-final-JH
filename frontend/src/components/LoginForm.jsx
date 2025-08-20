@@ -3,7 +3,20 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { authAPI } from "../services/api";
 import { SwalAlertStyles } from "./SwalAlertStyles";
 
-const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
+import styled from "styled-components";
+
+const LoginFormContainer = styled.div`
+  position: fixed;
+  background-color: white;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: ${({ theme }) => theme.containerWidths.md};
+  top: 0;
+  left: 0;
+  color: ${({ theme }) => theme.colors.textDark};
+`;
+
+const LoginForm = ({ onClose, setCurrentUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignup, setIsSignup] = useState(false);
@@ -13,8 +26,6 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
   const setError = useCafeStore((state) => state.setFetchError);
   const loading = useCafeStore((state) => state.loading);
   const setLoading = useCafeStore((state) => state.setLoading);
-  const setUser = useCafeStore((state) => state.setUser);
-  const setIsLoggedInStore = useCafeStore((state) => state.setIsLoggedIn);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,18 +91,7 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        backgroundColor: "white",
-        padding: "1rem",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        width: "200px",
-        top: "0",
-        right: "0",
-        color: "#170351",
-      }}
-    >
+    <LoginFormContainer>
       <button
         type="button"
         aria-label="Close login form"
@@ -106,6 +106,7 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
       >
         ×
       </button>
+
       <h2>{isSignup ? "Sign Up" : "Login"}</h2>
       <form onSubmit={handleSubmit}>
         {isSignup && (
@@ -204,7 +205,7 @@ const LoginForm = ({ onClose, setIsLoggedIn, setCurrentUser }) => {
           {isSignup ? "Login" : "Sign Up"}
         </button>
       </p>
-    </div>
+    </LoginFormContainer>
   );
 };
 

@@ -4,6 +4,7 @@ export const theme = {
     secondary: "#184777", // Dark Blue
     accent: "#fde113", // School yellow
     background: "#ebf2fa", // Alice Blue
+    navbarBackground: "#184777", // Dark Blue
     mainText: "#0a1f33", // Oxford Blue
     textLight: "#ebf2fa", // Alice Blue
     error: "#ef6461", // Bittersweet
@@ -24,19 +25,26 @@ export const theme = {
     main: "Proxima Nova, sans-serif",
     heading: "Proxima Nova, sans-serif",
     size: {
-      sm: "16px",
-      md: "24px",
-      lg: "32px",
-      xl: "40px",
+      sm: "1rem",
+      md: "1.5rem",
+      lg: "2rem",
+      xl: "2.5rem",
     },
   },
+  borderRadius: ".5rem",
+  shadow: "0 2px 8px rgba(0,0,0,0.08)",
+
   spacing: {
-    xs: "4px",
-    sm: "8px",
-    md: "16px",
-    lg: "32px",
-    xl: "64px",
+    xs: ".25rem",
+    sm: ".5rem",
+    md: "1rem",
+    lg: "2rem",
+    xl: "4rem",
   },
-  borderRadius: "8px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+  containerWidths: {
+    sm: "10rem",
+    md: "20rem",
+    lg: "25rem",
+    xl: "50rem",
+  },
 };

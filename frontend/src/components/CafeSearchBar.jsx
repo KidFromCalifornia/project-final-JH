@@ -7,12 +7,12 @@ const SearchBarContainer = styled.input`
   border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: ${({ theme }) => theme.borderRadius};
   width: 100%;
-  box-shadow: ${({ theme }) => theme.shadows.sm};
+  box-shadow: ${({ theme }) => theme.shadow};
 
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.colors.accent};
-    box-shadow: inset ${({ theme }) => theme.shadows.sm};
+    box-shadow: inset ${({ theme }) => theme.shadow};
   }
 `;
 

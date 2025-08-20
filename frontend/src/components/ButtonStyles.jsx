@@ -7,7 +7,7 @@ const ButtonDark = styled.button`
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius};
   cursor: pointer;
-  box-shadow: ${({ theme }) => theme.shadows.sm};
+  box-shadow: ${({ theme }) => theme.shadow};
 `;
 
 const ButtonLight = styled.button`
@@ -17,14 +17,14 @@ const ButtonLight = styled.button`
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius};
   cursor: pointer;
-  box-shadow: ${({ theme }) => theme.shadows.sm};
+  box-shadow: ${({ theme }) => theme.shadow};
 
   &:hover {
     transform: scaleY(1.05);
   }
   &:active {
     transform: scaleY(0.95);
-    box-shadow: inset 0 0 5px ${({ theme }) => theme.shadows.sm};
+    box-shadow: inset 0 0 5px ${({ theme }) => theme.shadow};
   }
 `;
 
