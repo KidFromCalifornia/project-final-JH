@@ -1,9 +1,17 @@
-import React from "react";
+import styled from "styled-components";
 
-const CheckboxInput = ({ label, name, checked, onChange, ...props }) => (
-  <label htmlFor={name} style={{ display: "block", marginBottom: "1rem" }}>
-    <input
-      type="checkbox"
+const CheckboxContainer = styled.label`
+  display: block;
+  margin-bottom: 1rem;
+`;
+
+const CheckboxInput = styled.input.attrs({ type: "checkbox" })`
+  margin-right: 0.5rem;
+`;
+
+const Checkbox = ({ label, name, checked, onChange, ...props }) => (
+  <CheckboxContainer htmlFor={name}>
+    <CheckboxInput
       id={name}
       name={name}
       checked={checked}
@@ -12,7 +20,7 @@ const CheckboxInput = ({ label, name, checked, onChange, ...props }) => (
       {...props}
     />
     {label}
-  </label>
+  </CheckboxContainer>
 );
 
-export default CheckboxInput;
+export default Checkbox;

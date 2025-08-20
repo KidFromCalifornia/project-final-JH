@@ -8,7 +8,6 @@ import cafeRoutes from "./routes/cafes.js";
 import authRoutes from "./routes/auth.js";
 import submissionRoutes from "./routes/cafeSubmissions.js";
 import tastingRoutes from "./routes/UserTastings.js";
-import { seedCafes } from "./utils/seedCafes.js";
 import metadataRoutes from "./routes/metadata.js";
 
 dotenv.config();
