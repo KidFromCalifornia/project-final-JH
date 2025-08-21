@@ -1,25 +1,24 @@
 import styled, { keyframes } from "styled-components";
-import SCCLogoText from "../assets/scc_logo_text.svg?svgr";
-import SCCLogoshield from "../assets/scc_shield.svg?svgr";
 
 const LoaderWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 50vh;
-  font-size: 1.2rem;
-  top: 50%;
-  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 `;
 
 const LogoStack = styled.div`
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 300px;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-content: center;
 `;
 
 const spin = keyframes`
@@ -27,31 +26,31 @@ const spin = keyframes`
   100% { transform: rotate(360deg); }
 `;
 
-const SpinningText = styled(SCCLogoText)`
+const SpinningText = styled.img`
   position: absolute;
-  top: 0;
+  top: -10px;
   left: 0;
-  width: 100px;
-  height: 100px;
-  animation: ${spin} 1.2s linear infinite;
+  width: 300px;
+  height: 300px;
+  animation: ${spin} 4.5s linear infinite;
+
   &:hover {
     animation-play-state: paused;
   }
 `;
 
-const LogoShield = styled(SCCLogoshield)`
+const LogoShield = styled.img`
   position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 80px;
-  height: 80px;
+
+  width: 150px;
+  height: 150px;
 `;
 
 const LoadingLogo = () => (
   <LoaderWrapper>
     <LogoStack>
-      <SpinningText />
-      <LogoShield />
+      <SpinningText src="/src/assets/scc_logo_text.svg" alt="Logo Text" />
+      <LogoShield src="/src/assets/scc_shield.svg" alt="Logo Shield" />
     </LogoStack>
     Currently Brewing...
   </LoaderWrapper>

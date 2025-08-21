@@ -82,12 +82,12 @@ export const App = () => {
       <footer hidden>
         <p>© 2025 Stockholm Coffee Club by Jonny Hicks</p>
         <div>
-          <ul class="footer-right">
+          <ul className="footer-right">
             <li>
               <a
                 href="https://github.com/KidFromCalifornia"
                 target="_blank"
-                class="Github"
+                className="Github"
                 alt=" Link to Github"
               ></a>
             </li>
@@ -95,7 +95,7 @@ export const App = () => {
               <a
                 href="https://www.linkedin.com/in/jonathanwhicks/"
                 target="_blank"
-                class="linkedin"
+                className="linkedin"
                 alt=" Link to linkdin"
               ></a>
             </li>
@@ -103,7 +103,7 @@ export const App = () => {
               <a
                 href="https://www.instagram.com/thekidfromcalifornia"
                 target="_blank"
-                class="instagram"
+                className="instagram"
                 alt=" Link to instagram"
               ></a>
             </li>
