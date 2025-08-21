@@ -40,9 +40,10 @@ export const GlobalStyles = createGlobalStyle`
     font-family: ${({ theme }) => theme.fonts.heading};
     margin: 0 0 ${({ theme }) => theme.spacing.sm} 0;
   }
-  .wf-stockholmtype-n7-inactive h1 {
+ 
+.wf-stockholmtype-n7-inactive h1 {
     font-family: Verdana, Arial, sans-serif;
-  }
+}
   a {
     color: ${({ theme }) => theme.colors.primary};
     text-decoration: none;

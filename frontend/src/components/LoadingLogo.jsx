@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
-import { ReactComponent as SCCLogoText } from "../public/scc_logo_text.svg";
-import { ReactComponent as SCCLogoshield } from "../public/image/scc_shield.svg";
+import SCCLogoText from "../assets/scc_logo_text.svg?svgr";
+import SCCLogoshield from "../assets/scc_shield.svg?svgr";
 
 const LoaderWrapper = styled.div`
   display: flex;
