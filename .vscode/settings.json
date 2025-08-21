@@ -1,0 +1,8 @@
+{
+  "editor.linkedEditing": true,
+  "workbench.colorTheme": "Earthbound - Moonside",
+  "workbench.preferredDarkColorTheme": "Default Dark+",
+  "workbench.iconTheme": "vs-seti",
+  "terminal.integrated.tabs.defaultColor": "terminal.ansiGreen",
+  "outline.icons": true
+}

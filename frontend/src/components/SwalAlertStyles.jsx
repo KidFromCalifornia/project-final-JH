@@ -40,12 +40,11 @@ export const showAlert = (options) => {
   return Swal.fire({
     confirmButtonColor: "pink",
     background: options?.theme?.colors?.background || "white",
-    color: options?.theme?.colors?.mainText || "black",
-    fontFamily: options?.theme?.fonts?.main || "Avenir, sans-serif",
-    width: "20rem",
+    color: options?.theme?.colors?.textDark || "black",
+    fontFamily: options?.theme?.fonts?.main || "Avenir,ans-serif",
+    width: options?.theme?.containerWidths?.md || "20rem",
     heightAuto: true,
-    imageUrl:
-      "https://cdn4.iconfinder.com/data/icons/valetine-s-emoji-ii/800/Sad_Big_Eyes-1024.png",
+    imageUrl: "frontend/public/images/spiltCoffee.svg",
     imageWidth: 200,
     icon: "undefined",
     customClass: {
