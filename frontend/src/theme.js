@@ -22,8 +22,8 @@ export const theme = {
   },
 
   fonts: {
-    main: "Proxima Nova, sans-serif",
-    heading: "Proxima Nova, sans-serif",
+    main: "Verdana, Arial, sans-serif",
+    heading: "Stockholm Type, sans-serif",
     size: {
       sm: "1rem",
       md: "1.5rem",

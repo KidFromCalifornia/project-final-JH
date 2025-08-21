@@ -2,23 +2,59 @@ import CafeSearchBar from "./CafeSearchBar";
 import { Link } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import styled from "styled-components";
-import { ButtonDark, ButtonLight } from "./ButtonStyles";
+import { ButtonDark, ButtonLight, NavButton } from "./ButtonStyles";
 
 const LoginForm = lazy(() => import("./LoginForm"));
 const AddCafeForm = lazy(() => import("./NewCafeForm"));
 
 const NavBarContainer = styled.nav`
   display: flex;
-  flex-direction: column;
-  justify-content: start;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.navbarBackground};
+  background-color: ${({ theme }) => theme.colors.secondary};
   width: ${({ theme }) => theme.containerWidths.large};
-  height: 100%;
-  position: fixed;
-  top: 0;
+  height: 25dvh;
+  position: absolute;
+  bottom: 0;
   left: 0;
-  z-index: 500;
+  z-index: 0;
+
+  @media screen and (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    background-color: ${({ theme }) => theme.colors.secondary};
+    width: ${({ theme }) => theme.containerWidths.large};
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+`;
+
+const NavTop = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing.sm};
+`;
+
+const NavBottom = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: ${({ theme }) => theme.spacing.sm};
+`;
+
+const NavLink = styled(ButtonDark)`
+  color: ${({ theme }) => theme.colors.textLight};
+  text-decoration: none;
+  font-weight: bold;
 `;
 
 const NavBar = ({
@@ -42,16 +78,16 @@ const NavBar = ({
 
   return (
     <>
-      <nav>
-        <div className="nav-left">
-          <Link style={{ fontWeight: "bold", color: "white" }} to="/">
+      <NavBarContainer>
+        <NavTop>
+          <NavLink style={{ fontWeight: "bold", color: "white" }} to="/">
             {" "}
             Stockholms Coffee Club{" "}
-          </Link>
-        </div>
-        <div className="nav-right">
-          <Link to="/">Map</Link>
-          <Link to="/tastings">Tastings</Link>
+          </NavLink>
+        </NavTop>
+        <NavBottom>
+          <NavLink to="/">Map</NavLink>
+          <NavLink to="/tastings">Tastings</NavLink>
           {searchQuery.trim() !== "" && searchResults.length === 0 && (
             <h4 style={{ display: "flex", padding: "0", margin: "0" }}>
               Not found
@@ -61,9 +97,9 @@ const NavBar = ({
           {isLoggedIn && (
             <>
               {!showAddCafe && (
-                <ButtonLight onClick={() => setShowAddCafe(true)}>
+                <NavButton onClick={() => setShowAddCafe(true)}>
                   Add Cafe
-                </ButtonLight>
+                </NavButton>
               )}
               <Suspense fallback={<div>Loading...</div>}>
                 {showAddCafe && (
@@ -72,12 +108,9 @@ const NavBar = ({
               </Suspense>
             </>
           )}
-          <CafeSearchBar
-            onResults={setSearchResults}
-            setQuery={setSearchQuery}
-          />
+
           {!isLoggedIn && (
-            <ButtonLight onClick={() => setShowLogin(true)}>Login</ButtonLight>
+            <NavButton onClick={() => setShowLogin(true)}>Login</NavButton>
           )}
           {showLogin && (
             <Suspense fallback={<div>Loading...</div>}>
@@ -96,7 +129,7 @@ const NavBar = ({
             </Suspense>
           )}
           {isLoggedIn && (
-            <button
+            <NavButton
               onClick={() => {
                 localStorage.removeItem("userToken");
                 localStorage.removeItem("username");
@@ -106,11 +139,11 @@ const NavBar = ({
               }}
             >
               Logout
-            </button>
+            </NavButton>
           )}
-          {isLoggedIn && isAdmin && <Link to="/admin">Admin</Link>}
-        </div>
-      </nav>
+          {isLoggedIn && isAdmin && <NavLink to="/admin">Admin</NavLink>}
+        </NavBottom>
+      </NavBarContainer>
     </>
   );
 };

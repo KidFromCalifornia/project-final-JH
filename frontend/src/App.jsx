@@ -32,85 +32,97 @@ export const App = () => {
 
   return (
     <Router>
-      <div
-        style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-      >
-        <header>
-          <NavBar
-            searchResults={searchResults}
-            setSearchResults={setSearchResults}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            showLogin={showLogin}
-            setShowLogin={setShowLogin}
-            isLoggedIn={isLoggedIn}
-            setIsLoggedIn={setIsLoggedIn}
-            setCurrentUser={setCurrentUser}
-            showAddCafe={showAddCafe}
-            setShowAddCafe={setShowAddCafe}
-          />
-        </header>
+      <header>
+        <NavBar
+          searchResults={searchResults}
+          setSearchResults={setSearchResults}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          showLogin={showLogin}
+          setShowLogin={setShowLogin}
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          setCurrentUser={setCurrentUser}
+          showAddCafe={showAddCafe}
+          setShowAddCafe={setShowAddCafe}
+        />
+      </header>
 
-        <main style={{ flex: 1 }}>
-          <Suspense
-            fallback={
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  minHeight: "50vh",
-                  fontSize: "1.2rem",
-                }}
-              >
-                Loading... ☕
-              </div>
-            }
-          >
-            <Routes>
-              <Route path="/" element={<MapPage />} />
-              <Route
-                path="/tastings"
-                element={
-                  <TastingsPage
-                    searchResults={searchResults}
-                    setSearchResults={setSearchResults}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                  />
-                }
-              />
-              <Route path="/cafes/:cafeId" element={<CafePage />} />
-              <Route
-                path="/user"
-                element={<UserPage isLoggedIn={isLoggedIn} />}
-              />
-              <Route
-                path="/admin"
-                element={
-                  <AdminPage
-                    isLoggedIn={isLoggedIn}
-                    currentUser={currentUser}
-                  />
-                }
-              />
-            </Routes>
-          </Suspense>
-        </main>
-
-        <footer
-          style={{
-            padding: "1rem",
-            textAlign: "center",
-            backgroundColor: "#f5f5f5",
-            borderTop: "1px solid #e0e0e0",
-          }}
+      <main style={{ flex: 1 }}>
+        <Suspense
+          fallback={
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "50vh",
+                fontSize: "1.2rem",
+              }}
+            >
+              Loading... ☕
+            </div>
+          }
         >
-          <p style={{ margin: 0, color: "#666" }}>
-            © 2024 Stockholm Coffee Club ☕
-          </p>
-        </footer>
-      </div>
+          <Routes>
+            <Route path="/" element={<MapPage />} />
+            <Route
+              path="/tastings"
+              element={
+                <TastingsPage
+                  searchResults={searchResults}
+                  setSearchResults={setSearchResults}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                />
+              }
+            />
+            <Route path="/cafes/:cafeId" element={<CafePage />} />
+            <Route
+              path="/user"
+              element={<UserPage isLoggedIn={isLoggedIn} />}
+            />
+            <Route
+              path="/admin"
+              element={
+                <AdminPage isLoggedIn={isLoggedIn} currentUser={currentUser} />
+              }
+            />
+          </Routes>
+        </Suspense>
+      </main>
+
+      <footer hidden>
+        <p>© 2025 Stockholm Coffee Club by Jonny Hicks</p>
+        <div>
+          <ul class="footer-right">
+            <li>
+              <a
+                href="https://github.com/KidFromCalifornia"
+                target="_blank"
+                class="Github"
+                alt=" Link to Github"
+              ></a>
+            </li>
+            <li>
+              <a
+                href="https://www.linkedin.com/in/jonathanwhicks/"
+                target="_blank"
+                class="linkedin"
+                alt=" Link to linkdin"
+              ></a>
+            </li>
+            <li>
+              <a
+                href="https://www.instagram.com/thekidfromcalifornia"
+                target="_blank"
+                class="instagram"
+                alt=" Link to instagram"
+              ></a>
+            </li>
+          </ul>
+        </div>
+      </footer>
     </Router>
   );
 };

@@ -6,9 +6,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
-const MONGO_URI =
-  process.env.MONGODB_URI ||
-  "mongodb+srv://hellojonnyhicks:mE5YLVeLG6X1CC1Y@cluster0.5jfbtlp.mongodb.net/stockholmscoffeeclub?retryWrites=true&w=majority&appName=Cluster0";
+const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:3001/api";
 
 import { Cafe } from "../models/cafeModel.js";
 import CoffeeTasting from "../models/TastingsModel.js";
