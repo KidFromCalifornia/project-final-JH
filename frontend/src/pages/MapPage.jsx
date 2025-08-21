@@ -42,7 +42,7 @@ const MapPage = () => {
   return (
     <>
       <h1 hidden>Stockholm's Coffee Club</h1>
-      <div style={{ height: "400px", width: "100%", marginBottom: "2rem" }}>
+      <div>
         <MapContainer
           center={[59.3293, 18.0686]}
           zoom={12}

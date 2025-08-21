@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, useState, useEffect, lazy } from "react";
 import NavBar from "./components/NavBar";
+import LoadingLogo from "./components/LoadingLogo.jsx";
 
 // Lazy load pages for performance
 const MapPage = lazy(() => import("./pages/MapPage.jsx"));
@@ -49,21 +50,7 @@ export const App = () => {
       </header>
 
       <main style={{ flex: 1 }}>
-        <Suspense
-          fallback={
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "50vh",
-                fontSize: "1.2rem",
-              }}
-            >
-              Loading... ☕
-            </div>
-          }
-        >
+        <Suspense fallback={<LoadingLogo />}>
           <Routes>
             <Route path="/" element={<MapPage />} />
             <Route
