@@ -1,61 +1,23 @@
-import CafeSearchBar from "./CafeSearchBar";
 import { Link } from "react-router-dom";
-import { lazy, Suspense } from "react";
-import styled from "styled-components";
-import { ButtonDark, ButtonLight, NavButton } from "./ButtonStyles";
+import { lazy, Suspense, useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Drawer,
+  Button,
+  Box,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const LoginForm = lazy(() => import("./LoginForm"));
 const AddCafeForm = lazy(() => import("./NewCafeForm"));
-
-const NavBarContainer = styled.nav`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.secondary};
-  width: ${({ theme }) => theme.containerWidths.large};
-  height: 25dvh;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 0;
-
-  @media screen and (min-width: 1024px) {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    background-color: ${({ theme }) => theme.colors.secondary};
-    width: ${({ theme }) => theme.containerWidths.large};
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 0;
-  }
-`;
-
-const NavTop = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing.sm};
-`;
-
-const NavBottom = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: ${({ theme }) => theme.spacing.sm};
-`;
-
-const NavLink = styled(ButtonDark)`
-  color: ${({ theme }) => theme.colors.textLight};
-  text-decoration: none;
-  font-weight: bold;
-`;
 
 const NavBar = ({
   searchResults = [],
@@ -70,7 +32,8 @@ const NavBar = ({
   showAddCafe = false,
   setShowAddCafe = () => {},
 }) => {
-  // Get admin status from localStorage safely
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   let isAdmin = false;
   if (typeof window !== "undefined" && window.localStorage) {
     isAdmin = localStorage.getItem("admin") === "true";
@@ -78,72 +41,164 @@ const NavBar = ({
 
   return (
     <>
-      <NavBarContainer>
-        <NavTop>
-          <NavLink style={{ fontWeight: "bold", color: "white" }} to="/">
-            {" "}
-            Stockholms Coffee Club{" "}
-          </NavLink>
-        </NavTop>
-        <NavBottom>
-          <NavLink to="/">Map</NavLink>
-          <NavLink to="/tastings">Tastings</NavLink>
-          {searchQuery.trim() !== "" && searchResults.length === 0 && (
-            <h4 style={{ display: "flex", padding: "0", margin: "0" }}>
-              Not found
-            </h4>
-          )}
-
-          {isLoggedIn && (
-            <>
-              {!showAddCafe && (
-                <NavButton onClick={() => setShowAddCafe(true)}>
+      <AppBar position="fixed" color="primary">
+        <Toolbar>
+          <IconButton
+            edge="end"
+            color="inherit"
+            aria-label="menu"
+            onClick={() => setDrawerOpen(true)}
+            sx={{ ml: "auto" }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <Box sx={{ width: 320, p: 2 }} role="presentation">
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6" fontWeight="bold" color="versoText">
+              <Link
+                to="/"
+                style={{ textDecoration: "none", color: "inherit" }}
+                onClick={() => setDrawerOpen(false)}
+              >
+                Stockholms Coffee Club
+              </Link>
+            </Typography>
+          </Box>
+          <Divider />
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton
+                component={Link}
+                to="/"
+                onClick={() => setDrawerOpen(false)}
+              >
+                <ListItemText primary="Map" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                component={Link}
+                to="/tastings"
+                onClick={() => setDrawerOpen(false)}
+              >
+                <ListItemText primary="Tastings" />
+              </ListItemButton>
+            </ListItem>
+            {isLoggedIn && (
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to="/userpage"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  <ListItemText primary="Userpage" />
+                </ListItemButton>
+              </ListItem>
+            )}
+            {searchQuery.trim() !== "" && searchResults.length === 0 && (
+              <ListItem>
+                <Typography variant="body2" color="error">
+                  Not found
+                </Typography>
+              </ListItem>
+            )}
+            {isLoggedIn && !showAddCafe && (
+              <ListItem>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={() => setShowAddCafe(true)}
+                >
                   Add Cafe
-                </NavButton>
-              )}
+                </Button>
+              </ListItem>
+            )}
+            {isLoggedIn && showAddCafe && (
               <Suspense fallback={<div>Loading...</div>}>
-                {showAddCafe && (
-                  <AddCafeForm onClose={() => setShowAddCafe(false)} />
-                )}
+                <AddCafeForm onClose={() => setShowAddCafe(false)} />
               </Suspense>
-            </>
-          )}
-
-          {!isLoggedIn && (
-            <NavButton onClick={() => setShowLogin(true)}>Login</NavButton>
-          )}
-          {showLogin && (
-            <Suspense fallback={<div>Loading...</div>}>
-              <LoginForm
-                onClose={() => {
-                  setShowLogin(false);
-                  setIsLoggedIn(!!localStorage.getItem("userToken"));
-                  // Set admin status if user is admin (example logic)
-                  const userIsAdmin =
-                    localStorage.getItem("userRole") === "admin";
-                  localStorage.setItem("admin", userIsAdmin ? "true" : "false");
-                }}
-                setIsLoggedIn={setIsLoggedIn}
-                setCurrentUser={setCurrentUser}
-              />
-            </Suspense>
-          )}
-          {isLoggedIn && (
-            <NavButton
-              onClick={() => {
-                localStorage.removeItem("userToken");
-                localStorage.removeItem("username");
-                localStorage.removeItem("admin");
-                setIsLoggedIn(false);
-                setShowLogin(false);
-              }}
-            >
-              Logout
-            </NavButton>
-          )}
-          {isLoggedIn && isAdmin && <NavLink to="/admin">Admin</NavLink>}
-        </NavBottom>
-      </NavBarContainer>
+            )}
+            {!isLoggedIn && (
+              <ListItem>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={() => setShowLogin(true)}
+                >
+                  Login
+                </Button>
+              </ListItem>
+            )}
+            {showLogin && (
+              <Suspense fallback={<div>Loading...</div>}>
+                <LoginForm
+                  onClose={() => {
+                    setShowLogin(false);
+                    setIsLoggedIn(!!localStorage.getItem("userToken"));
+                    const userIsAdmin =
+                      localStorage.getItem("userRole") === "admin";
+                    localStorage.setItem(
+                      "admin",
+                      userIsAdmin ? "true" : "false"
+                    );
+                  }}
+                  setIsLoggedIn={setIsLoggedIn}
+                  setCurrentUser={setCurrentUser}
+                />
+              </Suspense>
+            )}
+            {isLoggedIn && (
+              <ListItem>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  fullWidth
+                  onClick={() => {
+                    localStorage.removeItem("userToken");
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("admin");
+                    setIsLoggedIn(false);
+                    setShowLogin(false);
+                  }}
+                >
+                  Logout
+                </Button>
+              </ListItem>
+            )}
+            {isLoggedIn && isAdmin && (
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to="/admin"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  <ListItemText primary="Admin : Your Page" />
+                </ListItemButton>
+              </ListItem>
+            )}
+            {isLoggedIn && !isAdmin && (
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to="/user"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  <ListItemText primary="Userpage" />
+                </ListItemButton>
+              </ListItem>
+            )}
+          </List>
+        </Box>
+      </Drawer>
     </>
   );
 };

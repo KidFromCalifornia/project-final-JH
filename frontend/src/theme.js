@@ -6,7 +6,7 @@ export const theme = {
     background: "#ebf2fa", // Alice Blue
     navbarBackground: "#184777", // Dark Blue
     mainText: "#0a1f33", // Oxford Blue
-    textLight: "#ebf2fa", // Alice Blue
+    versoText: "#ebf2fa", // Alice Blue
     error: "#ef6461", // Bittersweet
     success: "#7eb77f", // Olivine
   },
@@ -16,7 +16,7 @@ export const theme = {
     accent: "#fde113", // School yellow
     background: "#0a1f33", // Oxford Blue
     mainText: "#ebf2fa", // Alice Blue
-    textVerso: "#0a1f33", // Oxford Blue
+    versoText: "#0a1f33", // Oxford Blue
     error: "#ef6461", // Bittersweet
     success: "#7eb77f", // Olivine
   },

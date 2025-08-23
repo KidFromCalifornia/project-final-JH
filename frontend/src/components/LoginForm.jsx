@@ -2,21 +2,12 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { authAPI } from "../services/api";
 import { SwalAlertStyles } from "./SwalAlertStyles";
+import { useCafeStore } from "../useCafeStore";
 
 import styled from "styled-components";
+import TextInput from "./TextInput";
 
-const LoginFormContainer = styled.div`
-  position: fixed;
-  background-color: white;
-  padding: 1rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: ${({ theme }) => theme.containerWidths.md};
-  top: 0;
-  left: 0;
-  color: ${({ theme }) => theme.colors.textDark};
-`;
-
-const LoginForm = ({ onClose, setCurrentUser }) => {
+const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignup, setIsSignup] = useState(false);
@@ -110,74 +101,51 @@ const LoginForm = ({ onClose, setCurrentUser }) => {
       <h2>{isSignup ? "Sign Up" : "Login"}</h2>
       <form onSubmit={handleSubmit}>
         {isSignup && (
-          <>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              aria-label="email"
-            />
-            <br />
-          </>
+          <TextInput
+            label="Email:"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            type="email"
+            aria-label="email"
+          />
         )}
-        <input
-          type="text"
-          placeholder={isSignup ? "Username" : "Username or Email"}
+        <TextInput
+          label={isSignup ? "Username:" : "Username or Email:"}
+          name="identifier"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
           required
+          type="text"
           aria-label="username-or-email"
         />
-        <br />
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.2rem",
-          }}
-        >
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            aria-label="password"
-            style={{ flex: 1 }}
-          />
-          <button
-            aria-label="Toggle password visibility"
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            style={{
-              cursor: "pointer",
-              background: "none",
-              border: "none",
-              fontSize: "1rem",
-              color: "#666",
-              padding: "0.25rem",
-            }}
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
-        </div>
-        <br />
+        <TextInput
+          label="Password:"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          type={showPassword ? "text" : "password"}
+          aria-label="password"
+        />
         <button
-          type="submit"
-          disabled={loading}
+          aria-label="Toggle password visibility"
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
           style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: loading ? "#ccc" : "#170351",
-            color: "white",
+            cursor: "pointer",
+            background: "none",
             border: "none",
-            borderRadius: "4px",
-            cursor: loading ? "not-allowed" : "pointer",
-            width: "100%",
+            fontSize: "1rem",
+            color: "#666",
+            padding: "0.25rem",
+            marginBottom: "1rem",
           }}
         >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </button>
+        <button type="submit" disabled={loading} className="login-submit-btn">
           {loading
             ? isSignup
               ? "Signing Up..."
@@ -188,25 +156,58 @@ const LoginForm = ({ onClose, setCurrentUser }) => {
         </button>
       </form>
       {error && <SwalAlertStyles message={error} type="error" />}
-      <p style={{ textAlign: "center", marginTop: "1rem" }}>
+      <LoginToggleText>
         {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
         <button
           aria-label="Toggle between login and signup"
           type="button"
           onClick={() => setIsSignup(!isSignup)}
-          style={{
-            cursor: "pointer",
-            background: "none",
-            border: "none",
-            color: "#170351",
-            textDecoration: "underline",
-          }}
+          className="login-toggle-btn"
         >
           {isSignup ? "Login" : "Sign Up"}
         </button>
-      </p>
+      </LoginToggleText>
     </LoginFormContainer>
   );
 };
 
 export default LoginForm;
+
+const LoginFormContainer = styled.div`
+  position: fixed;
+  background-color: white;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: ${({ theme }) => theme.containerWidths.md};
+  top: 0;
+  left: 0;
+  color: ${({ theme }) => theme.colors.textDark};
+
+  .login-submit-btn {
+    padding: 0.5rem 1rem;
+    background-color: #170351;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+  .login-toggle-btn {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #170351;
+    text-decoration: underline;
+    font-size: 1rem;
+  }
+`;
+
+const LoginToggleText = styled.p`
+  text-align: center;
+  margin-top: 1rem;
+`;

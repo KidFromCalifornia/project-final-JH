@@ -1,35 +1,51 @@
 import TastingForm from "../components/TastingForm";
 import { useCafeStore } from "../useCafeStore";
 import { useEffect, useState } from "react";
+import {
+  Container,
+  Box,
+  Typography,
+  List,
+  ListItem,
+  Divider,
+  Button,
+  Alert,
+} from "@mui/material";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 const UserPage = () => {
-  const [tastings, setTastings] = useState([]);
+  // Get global state from store
+  const tastings = useCafeStore((state) => state.tastings);
+  const setTastings = useCafeStore((state) => state.setTastings);
+  const editingTasting = useCafeStore((state) => state.editingTasting);
+  const setEditingTasting = useCafeStore((state) => state.setEditingTasting);
+  const userSubmissions = useCafeStore((state) => state.userSubmissions);
+  const setUserSubmissions = useCafeStore((state) => state.setUserSubmissions);
+  const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
+  const username = useCafeStore((state) => state.username);
+
   const [loading, setLoading] = useState(false);
-  const [editingTasting, setEditingTasting] = useState(null);
-  const [userSubmissions, setUserSubmissions] = useState([]);
-  const [isLoggedIn] = useState(!!localStorage.getItem("userToken"));
-  // Get username from localStorage if available
-  const username = localStorage.getItem("username");
 
   useEffect(() => {
     const fetchUserSubmissions = async () => {
       if (isLoggedIn) {
+        setLoading(true);
         const res = await fetch(`${API_URL}/cafeSubmissions/my-submissions`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+            Authorization: `Bearer ${useCafeStore.getState().userToken}`,
           },
         });
         const data = await res.json();
         setUserSubmissions(data.data || []);
+        setLoading(false);
       } else {
         setUserSubmissions([]);
       }
     };
 
     fetchUserSubmissions();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, setUserSubmissions]);
 
   const handleTastingSubmit = (formData) => {
     const method = editingTasting ? "PUT" : "POST";
@@ -41,7 +57,7 @@ const UserPage = () => {
       method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        Authorization: `Bearer ${useCafeStore.getState().userToken}`,
       },
       body: JSON.stringify(formData),
     })
@@ -65,82 +81,97 @@ const UserPage = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        Loading tastings...
-      </div>
+      <Box textAlign="center" mt={4}>
+        <Typography>Loading tastings...</Typography>
+      </Box>
     );
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: "2rem auto", padding: "1rem" }}>
-      <h2>{username ? `${username}'s Page` : "User Page"}</h2>
-      <h3>Your Cafe Submissions</h3>
+    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        {username ? `${username}'s Page` : "User Page"}
+      </Typography>
+      <Typography variant="h5" gutterBottom>
+        Your Cafe Submissions
+      </Typography>
       {userSubmissions.length === 0 ? (
-        <p>No pending submissions.</p>
+        <Alert severity="info">No pending submissions.</Alert>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <List>
           {userSubmissions.map((sub) => (
-            <li key={sub._id} style={{ marginBottom: "1rem" }}>
-              <strong>{sub.name}</strong>
-              <br />
-              <span>{sub.description}</span>
-              <br />
-              <span style={{ color: "#888", fontSize: "0.9rem" }}>
+            <ListItem
+              key={sub._id}
+              sx={{ flexDirection: "column", alignItems: "flex-start", mb: 2 }}
+            >
+              <Typography variant="subtitle1" fontWeight="bold">
+                {sub.name}
+              </Typography>
+              <Typography variant="body2">{sub.description}</Typography>
+              <Typography variant="caption" color="text.secondary">
                 {sub.category} — {sub.isApproved ? "Approved" : "Pending"}
-              </span>
-            </li>
+              </Typography>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       )}
-
-      <h3>Whatcha Drinking?</h3>
-
+      <Divider sx={{ my: 3 }} />
+      <Typography variant="h5" gutterBottom>
+        Whatcha Drinking?
+      </Typography>
       {isLoggedIn ? (
         <TastingForm
           onSubmit={handleTastingSubmit}
           initialValues={editingTasting || {}}
         />
       ) : (
-        <div style={{ margin: "2rem 0", fontWeight: "bold" }}>
+        <Alert severity="warning" sx={{ my: 2 }}>
           Please log in to add your own experience
-        </div>
+        </Alert>
       )}
-
+      <Divider sx={{ my: 3 }} />
       {tastings.length === 0 ? (
-        <p>Nothing to see here 😞</p>
+        <Alert severity="info">Nothing to see here 😞</Alert>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <List>
           {tastings.map((tasting) => (
-            <li
+            <ListItem
               key={tasting._id}
-              style={{
-                marginBottom: "1.5rem",
+              sx={{
+                flexDirection: "column",
+                alignItems: "flex-start",
+                mb: 2,
                 borderBottom: "1px solid #eee",
-                paddingBottom: "1rem",
+                pb: 2,
               }}
             >
-              <strong>{tasting.coffeeName}</strong> at{" "}
-              <em>{tasting.cafeId?.name}</em>
-              <br />
-              <span>Rating: {tasting.rating}/5</span>
-              <br />
-              <span>{tasting.notes}</span>
-              <br />
-              <span style={{ color: "#888", fontSize: "0.9rem" }}>
+              <Typography variant="subtitle1" fontWeight="bold">
+                {tasting.coffeeName}
+              </Typography>
+              <Typography variant="body2">
+                at <em>{tasting.cafeId?.name}</em>
+              </Typography>
+              <Typography variant="body2">
+                Rating: {tasting.rating}/5
+              </Typography>
+              <Typography variant="body2">{tasting.notes}</Typography>
+              <Typography variant="caption" color="text.secondary">
                 {tasting.userId?.username} •{" "}
                 {new Date(tasting.createdAt).toLocaleDateString()}
-              </span>
-              <button
-                style={{ marginTop: "0.5rem" }}
+              </Typography>
+              <Button
+                size="small"
+                variant="outlined"
+                sx={{ mt: 1 }}
                 onClick={() => setEditingTasting(tasting)}
               >
                 Edit
-              </button>
-            </li>
+              </Button>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       )}
-    </div>
+    </Container>
   );
 };
 

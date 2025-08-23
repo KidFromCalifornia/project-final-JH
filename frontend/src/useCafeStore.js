@@ -29,6 +29,11 @@ export const useCafeStore = create((set) => ({
   isLoggedIn: !!localStorage.getItem("userToken"),
   setIsLoggedIn: (val) => set({ isLoggedIn: val }),
 
+  //user Submissions
+
+  userSubmissions: [],
+  setUserSubmissions: (subs) => set({ userSubmissions: subs }),
+
   // Error state
   fetchError: "",
   setFetchError: (err) => set({ fetchError: err }),

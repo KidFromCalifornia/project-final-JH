@@ -1,59 +1,62 @@
-import styled, { keyframes } from "styled-components";
+import { Box, Typography } from "@mui/material";
 
-const LoaderWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-`;
-
-const LogoStack = styled.div`
-  position: relative;
-  width: 300px;
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-`;
-
-const spin = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-`;
-
-const SpinningText = styled.img`
-  position: absolute;
-  top: -10px;
-  left: 0;
-  width: 300px;
-  height: 300px;
-  animation: ${spin} 4.5s linear infinite;
-
-  &:hover {
-    animation-play-state: paused;
-  }
-`;
-
-const LogoShield = styled.img`
-  position: absolute;
-
-  width: 150px;
-  height: 150px;
-`;
+const spinKeyframes = {
+  "@keyframes spin": {
+    "0%": { transform: "rotate(0deg)" },
+    "100%": { transform: "rotate(360deg)" },
+  },
+};
 
 const LoadingLogo = () => (
-  <LoaderWrapper>
-    <LogoStack>
-      <SpinningText src="/src/assets/scc_logo_text.svg" alt="Logo Text" />
-      <LogoShield src="/src/assets/scc_shield.svg" alt="Logo Shield" />
-    </LogoStack>
-    Currently Brewing...
-  </LoaderWrapper>
+  <Box
+    display="flex"
+    flexDirection="column"
+    alignItems="center"
+    justifyContent="center"
+    minHeight="100vh"
+  >
+    <Box
+      sx={{
+        position: "relative",
+        width: 300,
+        height: 300,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        ...spinKeyframes,
+      }}
+    >
+      <Box
+        component="img"
+        src="/src/assets/scc_logo_text.svg"
+        alt="Logo Text"
+        sx={{
+          position: "absolute",
+          top: -10,
+          left: 0,
+          width: 300,
+          height: 300,
+          animation: "spin 4.5s linear infinite",
+          "&:hover": {
+            animationPlayState: "paused",
+          },
+        }}
+      />
+      <Box
+        component="img"
+        src="/src/assets/scc_shield.svg"
+        alt="Logo Shield"
+        sx={{
+          position: "absolute",
+          width: 150,
+          height: 150,
+        }}
+      />
+    </Box>
+    <Typography variant="h6" mt={2}>
+      Currently Brewing...
+    </Typography>
+  </Box>
 );
 
 export default LoadingLogo;

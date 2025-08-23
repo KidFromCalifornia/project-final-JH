@@ -1,4 +1,5 @@
 import React from "react";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 const SelectInput = ({
   label,
@@ -9,25 +10,30 @@ const SelectInput = ({
   required = false,
   ...props
 }) => (
-  <label htmlFor={name} style={{ display: "block", marginBottom: "1rem" }}>
-    {label}
-    <select
+  <FormControl fullWidth margin="normal" required={required}>
+    <InputLabel id={`${name}-label`}>{label}</InputLabel>
+    <Select
+      labelId={`${name}-label`}
       id={name}
       name={name}
       value={value}
+      label={label}
       onChange={onChange}
-      required={required}
-      style={{ marginLeft: "0.5rem", padding: "0.25rem" }}
       {...props}
     >
-      <option value="">Select</option>
-      {options.map((opt) => (
-        <option key={opt} value={opt}>
-          {opt}
-        </option>
-      ))}
-    </select>
-  </label>
+      {options.map((opt) =>
+        typeof opt === "object" ? (
+          <MenuItem key={opt.value} value={opt.value}>
+            {opt.label}
+          </MenuItem>
+        ) : (
+          <MenuItem key={opt} value={opt}>
+            {opt}
+          </MenuItem>
+        )
+      )}
+    </Select>
+  </FormControl>
 );
 
 export default SelectInput;

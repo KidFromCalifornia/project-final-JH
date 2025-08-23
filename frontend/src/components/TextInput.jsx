@@ -1,4 +1,5 @@
 import React from "react";
+import { TextField } from "@mui/material";
 
 const TextInput = ({
   label,
@@ -8,19 +9,17 @@ const TextInput = ({
   required = false,
   ...props
 }) => (
-  <label htmlFor={name} style={{ display: "block", marginBottom: "1rem" }}>
-    {label}
-    <input
-      type="text"
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
-      required={required}
-      style={{ marginLeft: "0.5rem", padding: "0.25rem" }}
-      {...props}
-    />
-  </label>
+  <TextField
+    label={label}
+    name={name}
+    value={value}
+    onChange={onChange}
+    required={required}
+    fullWidth
+    margin="normal"
+    variant="outlined"
+    {...props}
+  />
 );
 
 export default TextInput;

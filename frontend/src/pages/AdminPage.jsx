@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Box, Typography, Button, Paper, Divider } from "@mui/material";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 const AdminPage = () => {
@@ -28,9 +29,20 @@ const AdminPage = () => {
   }, [isAdmin]);
 
   if (!isAdmin) {
-    return <div>Access denied. Admins only.</div>;
+    return (
+      <Box textAlign="center" mt={4}>
+        <Typography variant="h6" color="error">
+          Access denied. Admins only.
+        </Typography>
+      </Box>
+    );
   }
-  if (loading) return <div>Loading Approval data...</div>;
+  if (loading)
+    return (
+      <Box textAlign="center" mt={4}>
+        <Typography variant="h6">Loading Approval data...</Typography>
+      </Box>
+    );
 
   const handleEditCafe = (cafeId) => {
     // Implement edit cafe logic
@@ -55,49 +67,130 @@ const AdminPage = () => {
   };
 
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
-      <section>
-        <h3>Edit Cafes</h3>
+    <Box maxWidth="md" mx="auto" mt={4}>
+      <Typography variant="h4" gutterBottom>
+        Admin Dashboard
+      </Typography>
+      <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Edit Cafes
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
         {cafes.map((cafe) => (
-          <div key={cafe._id}>
-            <strong>{cafe.name}</strong>
-            <p>{cafe.address}</p>
-            <p>{cafe.description}</p>
-            <p>{cafe.features?.join(", ")}</p>
-            <button onClick={() => handleEditCafe(cafe._id)}>Edit</button>
-            <button onClick={() => handleDeleteCafe(cafe._id)}>Delete</button>
-          </div>
+          <Box
+            key={cafe._id}
+            mb={2}
+            p={2}
+            border={1}
+            borderColor="grey.200"
+            borderRadius={2}
+          >
+            <Typography variant="subtitle1" fontWeight="bold">
+              {cafe.name}
+            </Typography>
+            <Typography variant="body2">{cafe.address}</Typography>
+            <Typography variant="body2">{cafe.description}</Typography>
+            <Typography variant="body2">{cafe.features?.join(", ")}</Typography>
+            <Box mt={1}>
+              <Button
+                variant="outlined"
+                size="small"
+                sx={{ mr: 1 }}
+                onClick={() => handleEditCafe(cafe._id)}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                size="small"
+                onClick={() => handleDeleteCafe(cafe._id)}
+              >
+                Delete
+              </Button>
+            </Box>
+          </Box>
         ))}
-      </section>
-
-      <section>
-        <h3>Approve/Edit Cafe Submissions</h3>
+      </Paper>
+      <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Approve/Edit Cafe Submissions
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
         {submissions.map((sub) => (
-          <div key={sub._id}>
-            <strong>{sub.name}</strong>
-            <button onClick={() => handleApproveSubmission(sub._id)}>
-              Approve
-            </button>
-            <button onClick={() => handleEditSubmission(sub._id)}>Edit</button>
-            <button onClick={() => handleDeleteSubmission(sub._id)}>
-              Delete
-            </button>
-          </div>
+          <Box
+            key={sub._id}
+            mb={2}
+            p={2}
+            border={1}
+            borderColor="grey.200"
+            borderRadius={2}
+          >
+            <Typography variant="subtitle1" fontWeight="bold">
+              {sub.name}
+            </Typography>
+            <Box mt={1}>
+              <Button
+                variant="contained"
+                color="success"
+                size="small"
+                sx={{ mr: 1 }}
+                onClick={() => handleApproveSubmission(sub._id)}
+              >
+                Approve
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                sx={{ mr: 1 }}
+                onClick={() => handleEditSubmission(sub._id)}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                size="small"
+                onClick={() => handleDeleteSubmission(sub._id)}
+              >
+                Delete
+              </Button>
+            </Box>
+          </Box>
         ))}
-      </section>
-      <section>
-        <h3>Delete Tasting Notes</h3>
+      </Paper>
+      <Paper elevation={2} sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Delete Tasting Notes
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
         {tastings.map((tasting) => (
-          <div key={tasting._id}>
-            <strong>{tasting.cafeName}</strong> - {tasting.note}
-            <button onClick={() => handleDeleteTasting(tasting._id)}>
-              Delete
-            </button>
-          </div>
+          <Box
+            key={tasting._id}
+            mb={2}
+            p={2}
+            border={1}
+            borderColor="grey.200"
+            borderRadius={2}
+          >
+            <Typography variant="subtitle1" fontWeight="bold">
+              {tasting.cafeName}
+            </Typography>
+            <Typography variant="body2">{tasting.note}</Typography>
+            <Box mt={1}>
+              <Button
+                variant="outlined"
+                color="error"
+                size="small"
+                onClick={() => handleDeleteTasting(tasting._id)}
+              >
+                Delete
+              </Button>
+            </Box>
+          </Box>
         ))}
-      </section>
-    </div>
+      </Paper>
+    </Box>
   );
 };
 

@@ -1,6 +1,5 @@
 import { useCafeStore } from "../useCafeStore";
 import { cafeAPI, tastingAPI } from "../services/api";
-import styled from "styled-components";
 
 const SearchBarContainer = styled.input`
   padding: 0.5rem 1rem;

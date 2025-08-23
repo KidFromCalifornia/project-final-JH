@@ -5,11 +5,11 @@
    version="1.1"
    id="svg182"
    width="1181.8754"
-   height="1167.1782"
-   viewBox="0 0 1181.8754 1167.1782"
+   height="1167.1781"
+   viewBox="0 0 1181.8754 1167.1781"
    sodipodi:docname="scc_color.svg"
    inkscape:version="1.2 (dc2aeda, 2022-05-15)"
-   inkscape:export-filename="scc_logo_text.svg"
+   inkscape:export-filename="../../src/assets/scc_logo.text.svg"
    inkscape:export-xdpi="4.4526634"
    inkscape:export-ydpi="4.4526634"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -18,6 +18,18 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
      id="defs186">
+    <rect
+       x="22.288181"
+       y="1292.7146"
+       width="1188.703"
+       height="284.79343"
+       id="rect1049" />
+    <rect
+       x="34.670506"
+       y="1324.9086"
+       width="1203.5618"
+       height="183.25839"
+       id="rect993" />
     <clipPath
        clipPathUnits="userSpaceOnUse"
        id="clipPath198">
@@ -36,15 +48,15 @@
      inkscape:pagecheckerboard="1"
      inkscape:deskcolor="#505050"
      showgrid="false"
-     inkscape:zoom="0.40380144"
-     inkscape:cx="516.34288"
-     inkscape:cy="915.0537"
-     inkscape:window-width="1792"
-     inkscape:window-height="1067"
+     inkscape:zoom="0.33890881"
+     inkscape:cx="631.43829"
+     inkscape:cy="823.2303"
+     inkscape:window-width="1280"
+     inkscape:window-height="1120"
      inkscape:window-x="0"
-     inkscape:window-y="25"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g194"
+     inkscape:current-layer="g9674"
      showguides="true" />
   <g
      id="g190"

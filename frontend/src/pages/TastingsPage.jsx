@@ -3,6 +3,16 @@ import { useEffect } from "react";
 import { useCafeStore } from "../useCafeStore";
 import { SwalAlertStyles } from "../components/SwalAlertStyles";
 import { tastingAPI } from "../services/api";
+import {
+  Container,
+  Box,
+  Typography,
+  List,
+  ListItem,
+  Divider,
+  Button,
+  Alert,
+} from "@mui/material";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
@@ -128,169 +138,103 @@ const TastingsPage = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        Loading tastings...
-      </div>
+      <Box textAlign="center" mt={4}>
+        <Typography>Loading tastings...</Typography>
+      </Box>
     );
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: "2rem auto", padding: "1rem" }}>
-      <h2>Coffee Tastings</h2>
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search tastings by coffee, cafe, or notes..."
-        style={{ marginBottom: "1rem", width: "100%", padding: "0.5rem" }}
-      />
+    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Tastings
+      </Typography>
+      <Box mb={2}>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search tastings by coffee, cafe, or notes..."
+          style={{ width: "100%", padding: "0.5rem" }}
+        />
+      </Box>
       {isLoggedIn ? (
         <TastingForm
           onSubmit={handleTastingSubmit}
           initialValues={editingTasting || {}}
         />
       ) : (
-        <div style={{ margin: "2rem 0", fontWeight: "bold" }}>
-          Please log in to add your own experience
-        </div>
+        <Box textAlign="center" mt={2}>
+          <Typography>Please log in to add your own experience</Typography>
+        </Box>
       )}
       {filteredTastings.length === 0 ? (
-        <SwalAlertStyles message="Nothing to see here 😞" type="info" />
+        <Alert severity="info">No tastings found.</Alert>
       ) : (
         <>
-          <ul
-            style={{
-              listStyle: "none",
-              padding: 0,
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-            }}
-          >
-            {currentTastings.map((tasting) =>
-              tasting.error ? (
-                <SwalAlertStyles
-                  key={tasting._id}
-                  message={tasting.error}
-                  type="error"
-                />
-              ) : (
-                <li
-                  key={tasting._id}
-                  style={{
-                    flex: "1 1 250px",
-                    marginBottom: "1.5rem",
-                    borderBottom: "1px solid #eee",
-                    paddingBottom: "1rem",
-                  }}
-                >
-                  <h3>{tasting.coffeeName}</h3> at
-                  <br />
+          <List>
+            {currentTastings.map((tasting) => (
+              <ListItem
+                key={tasting._id}
+                sx={{
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  mb: 2,
+                  borderBottom: "1px solid #eee",
+                  pb: 2,
+                }}
+              >
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {tasting.coffeeName}
+                </Typography>
+                <Typography variant="body2">
                   at <em>{tasting.cafeId?.name}</em>
-                  <span>
-                    <b>Neighborhood:</b> {tasting.cafeNeighborhood}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Roaster:</b> {tasting.coffeeRoaster}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Origin:</b> {tasting.coffeeOrigin}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Region:</b> {tasting.coffeeOriginRegion}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Brew Method:</b> {tasting.brewMethod}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Roast Level:</b> {tasting.roastLevel}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Tasting Notes:</b>{" "}
-                    {Array.isArray(tasting.tastingNotes)
-                      ? tasting.tastingNotes.join(", ")
-                      : tasting.tastingNotes}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Acidity:</b> {tasting.acidity}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Mouth Feel:</b> {tasting.mouthFeel}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Rating:</b> {tasting.rating}/5
-                  </span>
-                  <br />
-                  <span>
-                    <b>Notes:</b> {tasting.notes}
-                  </span>
-                  <br />
-                  <span>
-                    <b>Public:</b> {tasting.isPublic ? "Yes" : "No"}
-                  </span>
-                  <br />
-                  <span style={{ color: "#888", fontSize: "0.9rem" }}>
-                    {tasting.userId?.username} •{" "}
-                    {new Date(tasting.createdAt).toLocaleDateString()}
-                  </span>
-                  <div
-                    hidden={
-                      !isLoggedIn ||
-                      String(tasting.userId?._id) !==
-                        String(localStorage.getItem("userId"))
-                    }
-                    style={{
-                      marginTop: "0.5rem",
-                      color: "#007bff",
-                      cursor: "pointer",
-                    }}
+                </Typography>
+                <Typography variant="body2">
+                  Rating: {tasting.rating}/5
+                </Typography>
+                <Typography variant="body2">{tasting.notes}</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {tasting.userId?.username} •{" "}
+                  {new Date(tasting.createdAt).toLocaleDateString()}
+                </Typography>
+                {isLoggedIn && (
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    sx={{ mt: 1 }}
+                    onClick={() => setEditingTasting(tasting)}
                   >
-                    <button
-                      style={{ marginTop: "0.5rem" }}
-                      onClick={() => setDeletingTasting(tasting)}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      style={{ marginTop: "0.5rem" }}
-                      onClick={() => setEditingTasting(tasting)}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                </li>
-              )
-            )}
-          </ul>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "1rem",
-            }}
-          >
-            <button
+                    Edit
+                  </Button>
+                )}
+                {isLoggedIn && (
+                  <Button
+                    size="small"
+                    color="error"
+                    sx={{ mt: 1, ml: 1 }}
+                    onClick={() => setDeletingTasting(tasting)}
+                  >
+                    Delete
+                  </Button>
+                )}
+              </ListItem>
+            ))}
+          </List>
+          <Box display="flex" justifyContent="center" mt={2}>
+            <Button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              style={{ marginRight: "1rem" }}
+              variant="outlined"
+              sx={{ mx: 2 }}
             >
               Previous
-            </button>
-            <span>
+            </Button>
+            <Typography sx={{ mx: 2 }}>
               Page {currentPage} of{" "}
               {Math.ceil(filteredTastings.length / tastingsPerPage)}
-            </span>
-            <button
+            </Typography>
+            <Button
               onClick={() =>
                 setCurrentPage((prev) =>
                   prev < Math.ceil(filteredTastings.length / tastingsPerPage)
@@ -303,14 +247,15 @@ const TastingsPage = () => {
                   Math.ceil(filteredTastings.length / tastingsPerPage) ||
                 filteredTastings.length === 0
               }
-              style={{ marginLeft: "1rem" }}
+              variant="outlined"
+              sx={{ mx: 2 }}
             >
               Next
-            </button>
-          </div>
+            </Button>
+          </Box>
         </>
       )}
-    </div>
+    </Container>
   );
 };
 

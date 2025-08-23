@@ -1,50 +1,25 @@
-import styled from "styled-components";
-
-const AlertDiv = styled.div`
-  background: ${({ theme }) => theme.colors.background};
-  color: ${({ theme, type }) =>
-    type === "success"
-      ? theme.colors.success
-      : type === "error"
-      ? theme.colors.error
-      : type === "warning"
-      ? theme.colors.error
-      : theme.colors.primary};
-  border: 1px solid
-    ${({ theme, type }) =>
-      type === "success"
-        ? theme.colors.success
-        : type === "error"
-        ? theme.colors.error
-        : type === "warning"
-        ? theme.colors.error
-        : theme.colors.primary};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  padding: ${({ theme }) => theme.spacing.md};
-  margin: ${({ theme }) => theme.spacing.md} 0;
-  font-family: ${({ theme }) => theme.fonts.main};
-  box-shadow: ${({ theme }) => theme.boxShadow};
-`;
+import { Alert } from "@mui/material";
 
 export const SwalAlertStyles = ({ message, type = "info" }) => {
   return (
-    <AlertDiv type={type} role="alert">
+    <Alert severity={type} sx={{ my: 2 }}>
       {message}
-    </AlertDiv>
+    </Alert>
   );
 };
 
+// SweetAlert modal logic remains unchanged below
 import Swal from "sweetalert2";
 
 export const showAlert = (options) => {
   return Swal.fire({
-    confirmButtonColor: "pink",
+    confirmButtonColor: options?.theme?.colors?.primary || "#3085d6",
     background: options?.theme?.colors?.background || "white",
     color: options?.theme?.colors?.textDark || "black",
     fontFamily: options?.theme?.fonts?.main || "Avenir,ans-serif",
     width: options?.theme?.containerWidths?.md || "20rem",
     heightAuto: true,
-    imageUrl: "frontend/public/images/spiltCoffee.svg",
+    imageUrl: "frontend/assets/images/spiltCoffee.svg",
     imageWidth: 200,
     icon: "undefined",
     customClass: {

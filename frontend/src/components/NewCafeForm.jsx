@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { cafeAPI } from "../services/api";
 import { SwalAlertStyles } from "./SwalAlertStyles";
+import TextInput from "./TextInput";
+import SelectInput from "./SelectInput";
+import CheckboxInput from "./CheckboxInput";
 
 const CATEGORY_OPTIONS = ["specialty", "roaster", "thirdwave"];
 const FEATURE_OPTIONS = [
@@ -210,41 +213,34 @@ const NewCafeForm = ({ onClose }) => {
             type={status.includes("error") ? "error" : "success"}
           />
         )}
-        <input
+        <TextInput
+          label="Name:"
           name="name"
           value={form.name}
           onChange={handleChange}
-          placeholder="Name"
           required
         />
-        <input
+        <TextInput
+          label="Website:"
           name="website"
           value={form.website}
           onChange={handleChange}
-          placeholder="Website"
         />
-        <textarea
+        <TextInput
+          label="Description:"
           name="description"
           value={form.description}
           onChange={handleChange}
-          placeholder="Description"
           maxLength={1000}
         />
-        <select
+        <SelectInput
+          label="Category:"
           name="category"
           value={form.category}
           onChange={handleChange}
+          options={CATEGORY_OPTIONS}
           required
-        >
-          <option label="Select Category" value="">
-            Select Category
-          </option>
-          {CATEGORY_OPTIONS.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+        />
 
         <fieldset hidden>
           <legend>Images</legend>
@@ -271,24 +267,24 @@ const NewCafeForm = ({ onClose }) => {
                 position: "relative",
               }}
             >
-              <input
+              <TextInput
+                label="Address:"
                 name="address"
                 value={loc.address}
                 onChange={(e) => handleLocationChange(e, idx)}
-                placeholder="Address"
                 required
               />
-              <input
+              <TextInput
+                label="Neighborhood:"
                 name="neighborhood"
                 value={loc.neighborhood}
                 onChange={(e) => handleLocationChange(e, idx)}
-                placeholder="Neighborhood"
               />
-              <input
+              <TextInput
+                label="Location Note:"
                 name="locationNote"
                 value={loc.locationNote}
                 onChange={(e) => handleLocationChange(e, idx)}
-                placeholder="Location Note"
               />
 
               {form.locations.length > 1 && (
@@ -325,14 +321,13 @@ const NewCafeForm = ({ onClose }) => {
         <fieldset>
           <legend>Features</legend>
           {FEATURE_OPTIONS.map((feature) => (
-            <label key={feature} style={{ marginRight: "1rem" }}>
-              <input
-                type="checkbox"
-                checked={form.features.includes(feature)}
-                onChange={() => handleFeatureChange(feature)}
-              />
-              {feature.replace(/_/g, " ")}
-            </label>
+            <CheckboxInput
+              key={feature}
+              label={feature.replace(/_/g, " ")}
+              name={feature}
+              checked={form.features.includes(feature)}
+              onChange={() => handleFeatureChange(feature)}
+            />
           ))}
         </fieldset>
         <button type="submit">Add Cafe</button>

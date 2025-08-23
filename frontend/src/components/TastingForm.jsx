@@ -2,6 +2,17 @@ import { useState, useEffect } from "react";
 import { useCafeStore } from "../useCafeStore";
 import { apiCall } from "../services/api";
 import { SwalAlertStyles } from "./SwalAlertStyles";
+import {
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Button,
+  MenuItem,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+} from "@mui/material";
 
 const TastingForm = ({ onSubmit, initialValues = {} }) => {
   const [form, setForm] = useState({
@@ -88,196 +99,182 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
   return (
     <form onSubmit={handleSubmit}>
       {fetchError && <SwalAlertStyles message={fetchError} type="error" />}
-      <label htmlFor="coffeeName">
-        Coffee Name:
-        <input
-          type="text"
-          id="coffeeName"
-          name="coffeeName"
-          value={form.coffeeName}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label htmlFor="cafeId">
-        Where did you taste this coffee?:
-        <select
-          id="cafeId"
-          name="cafeId"
-          value={cafeId}
-          onChange={handleCafeChange}
-          required
-        >
-          <option value="">Select Cafe</option>
-          {cafes.map((cafe) => (
-            <option key={cafe._id} value={cafe._id}>
-              {cafe.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label htmlFor="coffeeRoaster">
-        Coffee Roaster:
-        <input
-          type="text"
-          id="coffeeRoaster"
-          name="coffeeRoaster"
-          value={coffeeRoaster}
-          onChange={(e) => setCoffeeRoaster(e.target.value)}
-        />
-      </label>
-      <label htmlFor="coffeeOrigin">
-        Coffee Origin:
-        <input
-          type="text"
-          id="coffeeOrigin"
-          name="coffeeOrigin"
-          value={coffeeOrigin}
-          onChange={(e) => setCoffeeOrigin(e.target.value)}
-        />
-      </label>
-      <label htmlFor="coffeeOriginRegion">
-        Coffee Region:
-        <input
-          type="text"
-          id="coffeeOriginRegion"
-          name="coffeeOriginRegion"
-          value={coffeeOriginRegion}
-          onChange={(e) => setCoffeeOriginRegion(e.target.value)}
-        />
-      </label>
-      <label htmlFor="brewMethod">
-        Brew Method:
-        <select
-          id="brewMethod"
-          name="brewMethod"
-          value={brewMethod}
-          onChange={(e) => setBrewMethod(e.target.value)}
-          required
-        >
-          <option value="">Select</option>
-          {options.brewMethod?.map((method) => (
-            <option key={method} value={method}>
-              {method}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label htmlFor="roastLevel">
-        Roast Level:
-        <input
+      <TextField
+        label="Coffee Name"
+        name="coffeeName"
+        value={form.coffeeName}
+        onChange={handleChange}
+        required
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        select
+        label="Where did you taste this coffee?"
+        name="cafeId"
+        value={form.cafeId}
+        onChange={handleCafeChange}
+        required
+        fullWidth
+        margin="normal"
+      >
+        <MenuItem value="">Select a cafe</MenuItem>
+        {cafes.map((cafe) => (
+          <MenuItem key={cafe._id} value={cafe._id}>
+            {cafe.name}
+          </MenuItem>
+        ))}
+      </TextField>
+      <TextField
+        label="Coffee Roaster"
+        name="coffeeRoaster"
+        value={form.coffeeRoaster}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Coffee Origin"
+        name="coffeeOrigin"
+        value={form.coffeeOrigin}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Coffee Region"
+        name="coffeeOriginRegion"
+        value={form.coffeeOriginRegion}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        select
+        label="Brew Method"
+        name="brewMethod"
+        value={form.brewMethod}
+        onChange={handleChange}
+        required
+        fullWidth
+        margin="normal"
+      >
+        <MenuItem value="">Select</MenuItem>
+        {(options.brewMethod || []).map((method) => (
+          <MenuItem key={method} value={method}>
+            {method}
+          </MenuItem>
+        ))}
+      </TextField>
+      <FormControl fullWidth margin="normal">
+        <FormLabel>Roast Level</FormLabel>
+        <TextField
           type="range"
-          id="roastLevel"
           name="roastLevel"
-          min="0"
+          min={0}
           max={options.roastLevel?.length ? options.roastLevel.length - 1 : 2}
-          value={Math.max(options.roastLevel?.indexOf(roastLevel) ?? 0, 0)}
+          value={Math.max(options.roastLevel?.indexOf(form.roastLevel) ?? 0, 0)}
           onChange={(e) =>
-            setRoastLevel(options.roastLevel?.[e.target.value] || "")
+            setForm((prev) => ({
+              ...prev,
+              roastLevel: options.roastLevel?.[e.target.value] || "",
+            }))
           }
           required
         />
-        <span style={{ marginLeft: "1rem" }}>{roastLevel || "Select"}</span>
-      </label>
-      <fieldset>
-        <legend>Tasting Notes (choose multiple):</legend>
-        {(options.tastingNotes || []).map((note) => (
-          <label key={note}>
-            <input
-              type="checkbox"
-              name="tastingNotes"
-              value={note}
-              checked={tastingNotes.includes(note)}
-              onChange={handleTastingNotesChange}
+        <FormHelperText>{form.roastLevel || "Select"}</FormHelperText>
+      </FormControl>
+      <FormControl component="fieldset" margin="normal">
+        <FormLabel component="legend">
+          Tasting Notes (choose multiple):
+        </FormLabel>
+        <FormGroup row>
+          {(options.tastingNotes || []).map((note) => (
+            <FormControlLabel
+              key={note}
+              control={
+                <Checkbox
+                  name="tastingNotes"
+                  value={note}
+                  checked={form.tastingNotes.includes(note)}
+                  onChange={handleTastingNotesChange}
+                />
+              }
+              label={note}
             />
-            {note}
-          </label>
-        ))}
-      </fieldset>
-      <label htmlFor="cafeId">
-        Where did you taste this coffee?:
-        <select
-          id="cafeId"
-          name="cafeId"
-          value={form.cafeId}
-          onChange={handleCafeChange}
-          required
-        >
-          <option value="">Select a cafe</option>
-          {cafes.map((cafe) => (
-            <option key={cafe._id} value={cafe._id}>
-              {cafe.name}
-            </option>
           ))}
-        </select>
-      </label>
+        </FormGroup>
+      </FormControl>
+      {/* Duplicate cafe select removed, handled above with MUI TextField */}
 
-      <label htmlFor="mouthFeel">
-        Mouth Feel:
-        <select
-          id="mouthFeel"
-          name="mouthFeel"
-          value={form.mouthFeel}
+      <TextField
+        select
+        label="Mouth Feel"
+        name="mouthFeel"
+        value={form.mouthFeel}
+        onChange={handleChange}
+        required
+        fullWidth
+        margin="normal"
+      >
+        <MenuItem value="">Select</MenuItem>
+        {(options.mouthFeel || []).map((feel) => (
+          <MenuItem key={feel} value={feel}>
+            {feel}
+          </MenuItem>
+        ))}
+      </TextField>
+      <FormControl fullWidth margin="normal">
+        <FormLabel>Rating (1-5)</FormLabel>
+        <TextField
+          type="range"
+          name="rating"
+          min={1}
+          max={5}
+          value={form.rating}
           onChange={handleChange}
           required
-        >
-          <option value="">Select</option>
-          {options.mouthFeel?.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label htmlFor="rating">
-        Rating (1-5):
-        <input
-          type="range"
-          id="rating"
-          name="rating"
-          min="1"
-          max="5"
-          value={rating}
-          onChange={(e) => setRating(Number(e.target.value))}
-          required
         />
-        <span style={{ marginLeft: "1rem" }}>{rating}</span>
-      </label>
-      <label labelhtmlFor="notes">
-        Notes:
-        <textarea
-          id="notes"
-          name="notes"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          maxLength={500}
-          placeholder="Additional notes about the tasting"
-        />
-      </label>
-      <label htmlFor="isPublic">
-        Public:
-        <input
-          type="checkbox"
-          id="isPublic"
-          name="isPublic"
-          checked={isPublic}
-          onChange={(e) => setIsPublic(e.target.checked)}
-        />
-      </label>
-      <button
-        style={{
-          marginTop: "1rem",
-          backgroundColor: "#170351",
-          color: "#fff",
-          padding: "0.5rem 1rem",
-          border: "none",
-          cursor: "pointer",
-        }}
+        <FormHelperText>{form.rating}</FormHelperText>
+      </FormControl>
+      <TextField
+        label="Notes"
+        name="notes"
+        value={form.notes}
+        onChange={handleChange}
+        multiline
+        rows={3}
+        fullWidth
+        margin="normal"
+        inputProps={{ maxLength: 500 }}
+        placeholder="Additional notes about the tasting"
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            id="isPublic"
+            name="isPublic"
+            checked={form.isPublic}
+            onChange={handleChange}
+          />
+        }
+        label="Public"
+      />
+      <Button
         type="submit"
-        disabled={!cafeId || !coffeeName || !brewMethod || !roastLevel}
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 2 }}
+        disabled={
+          !form.cafeId ||
+          !form.coffeeName ||
+          !form.brewMethod ||
+          !form.roastLevel
+        }
       >
         Submit
-      </button>
+      </Button>
     </form>
   );
 };
