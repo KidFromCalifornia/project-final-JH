@@ -72,18 +72,26 @@ const MapPage = () => {
   });
 
   return (
-    <Box sx={{ width: "100%", height: "100vh", position: "relative" }}>
+    <Box
+      sx={{
+        width: { xs: "100vw", sm: "100%" },
+        height: { xs: "100vh", sm: "100vh" },
+        position: "relative",
+        left: { xs: 0, sm: "auto" },
+        top: { xs: 0, sm: "auto" },
+      }}
+    >
       <Typography hidden variant="h1">
         Stockholm's Coffee Club Map
       </Typography>
-      {/* Geotag button overlays MobileBottomNav on mobile, fixed above nav on desktop */}
+      {/* Geotag button only visible on desktop */}
       <Box
         sx={{
           position: "fixed",
           zIndex: 1301,
           right: 24,
-          bottom: { xs: 72, sm: 24 }, // 72px for mobile nav height, 24px for desktop
-          display: "flex",
+          bottom: 24,
+          display: { xs: "none", sm: "flex" },
           alignItems: "center",
         }}
       >
@@ -100,7 +108,7 @@ const MapPage = () => {
           latitude: 59.3293,
           zoom: 12,
         }}
-        style={{ width: "100%", height: "100vh" }}
+        style={{ width: "100vw", height: "100vh" }}
         mapStyle={themeMode === "dark" ? MAP_STYLE_DARK : MAP_STYLE_LIGHT}
       >
         {/* Café Markers with coordinate checks */}
@@ -132,10 +140,6 @@ const MapPage = () => {
           return null;
         })}
 
-        {/* GTFS Stops removed */}
-
-        {/* User location with coordinate check */}
-        {/* User location with coordinate check and toggle */}
         {showUserPin &&
           userLocation &&
           typeof userLocation.lng === "number" &&

@@ -153,7 +153,7 @@ const NavBar = ({
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: { xs: "none", sm: "flex" } }}>
       <CssBaseline />
       <AppBar
         position="fixed"

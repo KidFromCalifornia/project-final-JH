@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, useState, useEffect, lazy } from "react";
 import NavBar from "./components/NavBar";
 import LoadingLogo from "./components/LoadingLogo.jsx";
+import MobileBottomNav from "./components/MobileBottomNav.jsx";
 
 // Lazy load pages for performance
 const MapPage = lazy(() => import("./pages/MapPage.jsx"));
@@ -79,6 +80,8 @@ export const App = () => {
           </Routes>
         </Suspense>
       </main>
+
+      <MobileBottomNav />
 
       <footer hidden>
         <p>© 2025 Stockholm Coffee Club by Jonny Hicks</p>
