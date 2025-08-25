@@ -1,35 +1,49 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { styled, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import FilterDropdown from "./FilterDropdown";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import { ListItemButton } from "@mui/material";
-import { useCafeStore } from "../useCafeStore";
+import {
+  Box,
+  Drawer as MuiDrawer,
+  AppBar as MuiAppBar,
+  Toolbar,
+  List,
+  CssBaseline,
+  Typography,
+  Divider,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+} from "@mui/material";
 
 // import components
 import FilterDropdown from "./FilterDropdown";
+import { useCafeStore } from "../useCafeStore";
+import LoginForm from "./LoginForm";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
 
 // Import Icons
-import LoginIcon from "@mui/icons-material/Login";
-import DoorFrontIcon from "@mui/icons-material/DoorFront";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import {
+  Login as LoginIcon,
+  Logout as LogoutIcon,
+  DoorFront as DoorFrontIcon,
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  RateReview as RateReviewIcon,
+  Map as MapIcon,
+  AddLocation as AddLocationIcon,
+  Storefront as StorefrontIcon,
+  TravelExplore as TravelExploreIcon,
+  ForkRight,
+} from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import RateReviewIcon from "@mui/icons-material/RateReview";
-import MapIcon from "@mui/icons-material/Map";
-import AddLocationIcon from "@mui/icons-material/AddLocation";
+import sccLogoMono from "../assets/scc_logo_mono.svg";
+import Switch from "@mui/material/Switch";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 const drawerWidth = 320;
 const drawerHeight = "100%";
@@ -61,12 +75,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
   ...theme.mixins.toolbar,
+  color: theme.palette.text.primary,
 }));
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  background: theme.palette.background.default,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -113,8 +129,12 @@ const NavBar = ({
 }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  // Get unique categories from cafes data
-  // Use all cafes if searchResults is empty, so categories always show
+  const themeMode = useCafeStore((state) => state.themeMode);
+  const setThemeMode = useCafeStore((state) => state.setThemeMode);
+  const darkMode = themeMode === "dark";
+  const handleToggleDarkMode = () => {
+    setThemeMode(darkMode ? "light" : "dark");
+  };
   const allCafes = useCafeStore ? useCafeStore((state) => state.cafes) : [];
   const cafes = searchResults.length > 0 ? searchResults : allCafes;
   const categories = Array.from(
@@ -135,30 +155,68 @@ const NavBar = ({
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} color="secondary">
+      <AppBar
+        position="fixed"
+        open={open}
+        color={darkMode ? "primary" : "secondary"}
+      >
         <Toolbar>
           <IconButton
-            color="inherit"
+            // color prop removed; use sx for color if needed
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             sx={{ marginRight: 5, ...(open && { display: "none" }) }}
           >
-            <MenuIcon />
+            <MenuIcon color="light" />
           </IconButton>
 
-          <Typography variant="h6" noWrap component="div">
-            Stockholms Coffee Club
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Link label="map" to="/" aligncontent="center">
+              <img
+                src={sccLogoMono}
+                alt="SCC Logo"
+                style={{ height: 25, marginRight: 12 }}
+              />
+            </Link>
+            <Typography
+              variant="h2"
+              noWrap
+              component="div"
+              fontWeight={700}
+              sx={{
+                color: darkMode
+                  ? theme.palette.primary.main
+                  : theme.palette.light.main,
+                flexGrow: 1,
+              }}
+              aria-hidden="true"
+            >
+              Stockholms Coffee Club
+            </Typography>
+          </Box>
+
+          {/* Dark mode toggle on right side */}
+          <Box sx={{ display: "flex", alignItems: "center", float: "right" }}>
+            <IconButton sx={{ ml: 2 }}>
+              {darkMode ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton>
+            <Switch
+              checked={darkMode}
+              onChange={handleToggleDarkMode}
+              // color prop removed; use sx for color if needed
+              inputProps={{ "aria-label": "toggle dark mode" }}
+            />
+          </Box>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open} color="secondary">
+      <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
+              <ChevronRightIcon color="light" />
             ) : (
-              <ChevronLeftIcon />
+              <ChevronLeftIcon color="light" />
             )}
           </IconButton>
         </DrawerHeader>
@@ -167,7 +225,7 @@ const NavBar = ({
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton component={Link} to="/">
               <ListItemIcon>
-                <MapIcon />
+                <MapIcon color="light" />
               </ListItemIcon>
               <ListItemText primary="Map" />
             </ListItemButton>
@@ -175,7 +233,7 @@ const NavBar = ({
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton component={Link} to="/tastings">
               <ListItemIcon>
-                <RateReviewIcon />
+                <RateReviewIcon color="light" />
               </ListItemIcon>
               <ListItemText primary="Tastings" />
             </ListItemButton>
@@ -184,7 +242,7 @@ const NavBar = ({
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton onClick={() => setShowAddCafe(true)}>
                 <ListItemIcon>
-                  <AddLocationIcon />{" "}
+                  <AddLocationIcon color="light" />
                 </ListItemIcon>
                 <ListItemText primary="Add Cafe" />
               </ListItemButton>
@@ -194,7 +252,7 @@ const NavBar = ({
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton component={Link} to="/admin">
                 <ListItemIcon>
-                  <AdminPanelSettingsIcon />
+                  <AdminPanelSettingsIcon color="light" />
                 </ListItemIcon>
                 <ListItemText primary="Admin" />
               </ListItemButton>
@@ -204,7 +262,7 @@ const NavBar = ({
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton component={Link} to="/user">
                 <ListItemIcon>
-                  <DoorFrontIcon />
+                  <DoorFrontIcon color="light" />
                 </ListItemIcon>
                 <ListItemText primary="Userpage" />
               </ListItemButton>
@@ -217,7 +275,7 @@ const NavBar = ({
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton onClick={() => setShowLogin(true)}>
                 <ListItemIcon>
-                  <LoginIcon />
+                  <LoginIcon color="light" />
                 </ListItemIcon>
                 <ListItemText primary="Login" />
               </ListItemButton>
@@ -235,19 +293,43 @@ const NavBar = ({
                 }}
               >
                 <ListItemIcon>
-                  <InboxIcon />
+                  <LogoutIcon color="light" />
                 </ListItemIcon>
                 <ListItemText primary="Logout" />
               </ListItemButton>
             </ListItem>
           )}
         </List>
+        <Dialog
+          open={showLogin}
+          onClose={() => setShowLogin(false)}
+          maxWidth="xs"
+          fullWidth
+        >
+          <DialogContent sx={{ p: 0 }}>
+            <LoginForm
+              onClose={() => setShowLogin(false)}
+              setCurrentUser={setCurrentUser}
+              setIsLoggedIn={setIsLoggedIn}
+            />
+          </DialogContent>
+        </Dialog>
         <Divider />
         <FilterDropdown
-          label="Filter by location type"
+          label="Filter by Cafe Type"
           options={categories}
           value={searchQuery}
           onChange={setSearchQuery}
+          iconComponent={<StorefrontIcon color="light" />}
+        />
+        <FilterDropdown
+          label="Filter by neighborhood"
+          options={Array.from(
+            new Set(cafes.map((cafe) => cafe.neighborhood).filter(Boolean))
+          )}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          iconComponent={<TravelExploreIcon color="light" />}
         />
         {/* <FilterDropdown
           label="Filter by neighborhood"

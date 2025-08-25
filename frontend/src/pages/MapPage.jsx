@@ -1,12 +1,20 @@
-import { useState } from "react";
-import { Box, Typography } from "@mui/material";
-
+import { useEffect, useState } from "react";
+//Import MUI
+import { Box, Typography, IconButton, Paper } from "@mui/material";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { useTheme } from "@mui/material/styles";
+//import map
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibregl from "maplibre-gl";
+import { Map, Marker, Popup } from "@vis.gl/react-maplibre";
+
+// import assets & components
 import { getCustomIcon } from "../components/CustomCafeIcon";
 import { useCafeStore } from "../useCafeStore";
+import { MAP_STYLE_LIGHT, MAP_STYLE_DARK } from "../mapStyles";
 import UserPinSvg from "../assets/User_Pin.svg";
-import { useTheme } from "@mui/material/styles";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
 
 const MapPage = () => {
   const theme = useTheme();
@@ -15,42 +23,34 @@ const MapPage = () => {
   const setCafes = useCafeStore((state) => state.setCafes);
   const searchResults = useCafeStore((state) => state.searchResults);
   const userLocation = useCafeStore((state) => state.user?.location);
+  const themeMode = useCafeStore((state) => state.themeMode);
+  const [showUserPin, setShowUserPin] = useState(false);
+  const setUser = useCafeStore((state) => state.setUser);
+
+  // Geotag: set user location and center map
+  const handleGeotag = () => {
+    if (showUserPin) {
+      setShowUserPin(false);
+      setUser({ location: null });
+    } else {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            setUser({ location: { lat: latitude, lng: longitude } });
+            setShowUserPin(true);
+          },
+          (err) => {
+            alert("Could not get your location");
+          }
+        );
+      } else {
+        alert("Geolocation not supported");
+      }
+    }
+  };
   // Local state
   const [selectedCafe, setSelectedCafe] = useState(null);
-  const [showTransport, setShowTransport] = useState(false);
-  const [gtfsStops, setGtfsStops] = useState([]);
-
-  // GTFS stops caching logic
-  useEffect(() => {
-    const GTFS_KEY = "gtfs_stops";
-    const GTFS_TIMESTAMP_KEY = "gtfs_stops_timestamp";
-    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-    const now = Date.now();
-    const cached = localStorage.getItem(GTFS_KEY);
-    const cachedTime = localStorage.getItem(GTFS_TIMESTAMP_KEY);
-    if (cached && cachedTime && now - cachedTime < ONE_WEEK_MS) {
-      setGtfsStops(JSON.parse(cached));
-    } else {
-      fetch(
-        `https://api.trafiklab.se/v2/gtfs/stops?key=${
-          import.meta.env.VITE_GTFS_API_KEY
-        }`
-      )
-        .then((res) => {
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-          return res.json();
-        })
-        .then((data) => {
-          const stops = data.stops || data;
-          setGtfsStops(stops);
-          localStorage.setItem(GTFS_KEY, JSON.stringify(stops));
-          localStorage.setItem(GTFS_TIMESTAMP_KEY, now);
-        })
-        .catch((err) => {
-          console.error("GTFS fetch error:", err);
-        });
-    }
-  }, []);
 
   // Fetch cafes if not loaded
   useEffect(() => {
@@ -66,83 +66,119 @@ const MapPage = () => {
   }, [cafes, setCafes]);
 
   const cafesToShow = searchResults.length > 0 ? searchResults : cafes;
+  // Debug: log cafe coordinates
+  cafesToShow.forEach((cafe) => {
+    const loc = cafe.locations?.[0];
+  });
 
   return (
-    <Box sx={{ width: "100%", height: "100vh" }}>
-      <Typography variant="h4" sx={{ p: 2, fontWeight: "bold" }}>
+    <Box sx={{ width: "100%", height: "100vh", position: "relative" }}>
+      <Typography hidden variant="h1">
         Stockholm's Coffee Club Map
       </Typography>
+      {/* Geotag button overlays MobileBottomNav on mobile, fixed above nav on desktop */}
+      <Box
+        sx={{
+          position: "fixed",
+          zIndex: 1301,
+          right: 24,
+          bottom: { xs: 72, sm: 24 }, // 72px for mobile nav height, 24px for desktop
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Paper elevation={3}>
+          <IconButton onClick={handleGeotag} size="large">
+            <MyLocationIcon />
+          </IconButton>
+        </Paper>
+      </Box>
       <Map
         mapLib={maplibregl}
         initialViewState={{
-          longitude: userLocation?.lng || 18.0686,
-          latitude: userLocation?.lat || 59.3293,
+          longitude: 18.0686,
+          latitude: 59.3293,
           zoom: 12,
         }}
-        style={{ width: "100%", height: "calc(100vh - 56px)" }}
-        mapStyle="https://api.maptiler.com/maps/0198dc89-072a-795c-919e-84fefe62bc97/style.json?key=a82bxq3OIw2AzmMU9SKn"
+        style={{ width: "100%", height: "100vh" }}
+        mapStyle={themeMode === "dark" ? MAP_STYLE_DARK : MAP_STYLE_LIGHT}
       >
-        {/* Café Markers */}
-        {cafesToShow.map((cafe) => (
-          <Marker
-            key={cafe._id}
-            longitude={cafe.location?.coordinates?.[0]}
-            latitude={cafe.location?.coordinates?.[1]}
-            onClick={() => setSelectedCafe(cafe)}
-          >
-            <img
-              src={getCustomIcon(cafe.category, theme)}
-              alt={cafe.category || "Cafe"}
-              style={{ width: 32, height: 32, cursor: "pointer" }}
-            />
-          </Marker>
-        ))}
+        {/* Café Markers with coordinate checks */}
+        {cafesToShow.map((cafe) => {
+          const coords = cafe.locations?.[0]?.coordinates?.coordinates;
+          if (
+            Array.isArray(coords) &&
+            coords.length === 2 &&
+            typeof coords[0] === "number" &&
+            typeof coords[1] === "number" &&
+            !isNaN(coords[0]) &&
+            !isNaN(coords[1])
+          ) {
+            return (
+              <Marker
+                key={cafe._id}
+                longitude={coords[0]}
+                latitude={coords[1]}
+                onClick={() => setSelectedCafe(cafe)}
+              >
+                <img
+                  src={getCustomIcon(cafe.category, theme)}
+                  alt={cafe.category || "Cafe"}
+                  style={{ width: 32, height: 32, cursor: "pointer" }}
+                />
+              </Marker>
+            );
+          }
+          return null;
+        })}
 
-        {/* GTFS Stops (optional toggle) */}
-        {showTransport &&
-          gtfsStops.map((stop) => (
-            <Marker
-              key={stop.stop_id}
-              longitude={stop.stop_lon}
-              latitude={stop.stop_lat}
+        {/* GTFS Stops removed */}
+
+        {/* User location with coordinate check */}
+        {/* User location with coordinate check and toggle */}
+        {showUserPin &&
+          userLocation &&
+          typeof userLocation.lng === "number" &&
+          typeof userLocation.lat === "number" &&
+          !isNaN(userLocation.lng) &&
+          !isNaN(userLocation.lat) && (
+            <Marker longitude={userLocation.lng} latitude={userLocation.lat}>
+              <img
+                src={UserPinSvg}
+                alt="User Location"
+                style={{ width: 32, height: 32, cursor: "pointer" }}
+              />
+            </Marker>
+          )}
+
+        {/* Popup for cafés with coordinate check */}
+        {selectedCafe &&
+          Array.isArray(
+            selectedCafe.locations?.[0]?.coordinates?.coordinates
+          ) &&
+          selectedCafe.locations[0].coordinates.coordinates.length === 2 &&
+          typeof selectedCafe.locations[0].coordinates.coordinates[0] ===
+            "number" &&
+          typeof selectedCafe.locations[0].coordinates.coordinates[1] ===
+            "number" &&
+          !isNaN(selectedCafe.locations[0].coordinates.coordinates[0]) &&
+          !isNaN(selectedCafe.locations[0].coordinates.coordinates[1]) && (
+            <Popup
+              longitude={selectedCafe.locations[0].coordinates.coordinates[0]}
+              latitude={selectedCafe.locations[0].coordinates.coordinates[1]}
+              onClose={() => setSelectedCafe(null)}
+              closeOnClick={false}
             >
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography variant="body2" sx={{ fontSize: 20 }}>
-                  🚌
+              <Box>
+                <Typography variant="h6" fontWeight="bold">
+                  {selectedCafe.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {selectedCafe.locations[0].address}
                 </Typography>
               </Box>
-            </Marker>
-          ))}
-
-        {/* User location */}
-        {userLocation && (
-          <Marker longitude={userLocation.lng} latitude={userLocation.lat}>
-            <img
-              src={UserPinSvg}
-              alt="User Location"
-              style={{ width: 32, height: 32, cursor: "pointer" }}
-            />
-          </Marker>
-        )}
-
-        {/* Popup for cafés */}
-        {selectedCafe && (
-          <Popup
-            longitude={selectedCafe.location?.coordinates?.[0]}
-            latitude={selectedCafe.location?.coordinates?.[1]}
-            onClose={() => setSelectedCafe(null)}
-            closeOnClick={false}
-          >
-            <Box>
-              <Typography variant="h6" fontWeight="bold">
-                {selectedCafe.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {selectedCafe.address}
-              </Typography>
-            </Box>
-          </Popup>
-        )}
+            </Popup>
+          )}
       </Map>
     </Box>
   );

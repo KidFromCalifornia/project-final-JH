@@ -1,24 +1,26 @@
 export const theme = {
   colors: {
-    primary: "hsla(210, 67%, 44%, 1.00)", // Azel
-    secondary: "hsla(210, 66%, 28%, 1.00)", // Dark Blue
-    accent: "#fde113", // School yellow
-    background: "hsla(212, 60%, 95%, 1.00)", // Alice Blue
-    navbarBackground: "#184777", // Dark Blue
-    mainText: "rgba(10, 31, 51, 1)", // Oxford Blue
+    primary: "#2570bbff", // Azel (main brand blue)
+    secondary: "#184777ff", // Deep Blue
+    accent: "#fde113ff", // School Yellow
+    light: "#f0f4ffff", // Very light Alice Blue
+    navbarBackground: "#184777ff", // Match secondary for unity
+    mainText: "#0a1f33ff", // Oxford Blue
     versoText: "#ebf2fa", // Alice Blue
     error: "#ef6461", // Bittersweet
-    success: "hsla(121, 28%, 61%, 1.00)", // Olivine
+    success: "#7eb77fff", // Slightly darker Olivine for readability
   },
+
   colorsDarkmode: {
-    primary: "#184777", // Dark Blue
-    secondary: "#2570bb", // Azel
-    accent: "hsla(53, 98%, 53%, 1.00)", // School yellow
-    background: "#0a1f33ff", // Oxford Blue
-    mainText: "#ebf2fa", // Alice Blue
-    versoText: "#0a1f33", // Oxford Blue
+    primary: "#1c4e7d", // Muted Azel (for subtle contrast in dark mode)
+    secondary: "#0a1f33", // Oxford Blue (background support)
+    accent: "#fde112ff", // School Yellow (kept vibrant for focus)
+    light: "#1c4e7d", // Muted Azel reused for consistency
+    background: "#0a1f33", // Oxford Blue (true dark mode base)
+    mainText: "#ebf2fa", // Alice Blue (light readable text)
+    versoText: "#0a1f33", // Oxford Blue (reverse text for highlights)
     error: "#ef6461", // Bittersweet
-    success: "#7eb77f", // Olivine
+    success: "#7eb77f", // Olivine (kept softer for dark mode)
   },
 
   fonts: {

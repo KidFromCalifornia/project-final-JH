@@ -1,6 +1,12 @@
 import { create } from "zustand";
 
 export const useCafeStore = create((set) => ({
+  // Theme mode state
+  themeMode: localStorage.getItem("themeMode") || "light",
+  setThemeMode: (mode) => {
+    localStorage.setItem("themeMode", mode);
+    set({ themeMode: mode });
+  },
   // Cafe and search state
   cafes: [],
   setCafes: (cafes) => set({ cafes }),
@@ -12,7 +18,7 @@ export const useCafeStore = create((set) => ({
   // Tastings state
   tastings: [],
   setTastings: (tastings) => set({ tastings }),
-  loading: true,
+  loading: false,
   setLoading: (loading) => set({ loading }),
   editingTasting: null,
   setEditingTasting: (tasting) => set({ editingTasting: tasting }),
