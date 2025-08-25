@@ -1,23 +1,25 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { MapContainer, Marker, Popup, useMap } from "react-leaflet";
+import { useState } from "react";
+import { Box, Typography } from "@mui/material";
+
+import "maplibre-gl/dist/maplibre-gl.css";
+import maplibregl from "maplibre-gl";
+import { getCustomIcon } from "../components/CustomCafeIcon";
 import { useCafeStore } from "../useCafeStore";
-import userPinSvg from "../assets/User_Pin.svg";
-import { Box, Typography, CircularProgress, Button } from "@mui/material";
-import { getCustomIcon, getGeotagIcon } from "../components/CustomCafeIcon";
-import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
+import UserPinSvg from "../assets/User_Pin.svg";
 import { useTheme } from "@mui/material/styles";
-import "leaflet/dist/leaflet.css";
-import { Global } from "@emotion/react";
-import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
-import { TileLayer } from "react-leaflet";
 
 const MapPage = () => {
-  const [userLocation, setUserLocation] = useState(null);
   const theme = useTheme();
+  // Zustand store
+  const cafes = useCafeStore((state) => state.cafes);
+  const setCafes = useCafeStore((state) => state.setCafes);
+  const searchResults = useCafeStore((state) => state.searchResults);
+  const userLocation = useCafeStore((state) => state.user?.location);
+  // Local state
+  const [selectedCafe, setSelectedCafe] = useState(null);
   const [showTransport, setShowTransport] = useState(false);
-
   const [gtfsStops, setGtfsStops] = useState([]);
+
   // GTFS stops caching logic
   useEffect(() => {
     const GTFS_KEY = "gtfs_stops";
@@ -50,29 +52,7 @@ const MapPage = () => {
     }
   }, []);
 
-  function MapTilerVectorTiles() {
-    const map = useMap();
-    useEffect(() => {
-      const mtLayer = new MaptilerLayer({
-        apiKey: "a82bxq3OIw2AzmMU9SKn",
-        style:
-          "https://api.maptiler.com/maps/0198dc89-072a-795c-919e-84fefe62bc97/style.json?key=a82bxq3OIw2AzmMU9SKn",
-      });
-      mtLayer.addTo(map);
-      return () => {
-        map.removeLayer(mtLayer);
-      };
-    }, [map]);
-    return null;
-  }
-
-  // Store
-  const cafes = useCafeStore((state) => state.cafes);
-  const setCafes = useCafeStore((state) => state.setCafes);
-  const searchResults = useCafeStore((state) => state.searchResults);
-  const loading = cafes.length === 0;
-
-  // Fetch cafes
+  // Fetch cafes if not loaded
   useEffect(() => {
     if (cafes.length === 0) {
       fetch(
@@ -87,240 +67,84 @@ const MapPage = () => {
 
   const cafesToShow = searchResults.length > 0 ? searchResults : cafes;
 
-  // Helper: Render cafe markers
-  const renderCafeMarkers = () =>
-    cafesToShow.map((cafe) => {
-      const coords = cafe.locations?.[0]?.coordinates?.coordinates;
-      if (
-        coords &&
-        coords.length === 2 &&
-        typeof coords[0] === "number" &&
-        typeof coords[1] === "number" &&
-        coords[0] !== 0 &&
-        coords[1] !== 0
-      ) {
-        const hood = cafe.locations?.[0]?.neighborhood || "Unavailable";
-        return (
+  return (
+    <Box sx={{ width: "100%", height: "100vh" }}>
+      <Typography variant="h4" sx={{ p: 2, fontWeight: "bold" }}>
+        Stockholm's Coffee Club Map
+      </Typography>
+      <Map
+        mapLib={maplibregl}
+        initialViewState={{
+          longitude: userLocation?.lng || 18.0686,
+          latitude: userLocation?.lat || 59.3293,
+          zoom: 12,
+        }}
+        style={{ width: "100%", height: "calc(100vh - 56px)" }}
+        mapStyle="https://api.maptiler.com/maps/0198dc89-072a-795c-919e-84fefe62bc97/style.json?key=a82bxq3OIw2AzmMU9SKn"
+      >
+        {/* Café Markers */}
+        {cafesToShow.map((cafe) => (
           <Marker
             key={cafe._id}
-            position={[coords[1], coords[0]]}
-            icon={getCustomIcon(cafe.category, theme)}
+            longitude={cafe.location?.coordinates?.[0]}
+            latitude={cafe.location?.coordinates?.[1]}
+            onClick={() => setSelectedCafe(cafe)}
           >
-            <Popup minWidth={300} maxWidth={400}>
-              <Typography variant="h6" fontWeight="bold">
-                {cafe.name}
-              </Typography>
-              <Typography variant="subtitle2" color="text.secondary">
-                {hood}
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                {cafe.locations?.[0]?.address}
-              </Typography>
-              <Typography variant="body2">
-                <b>Neighborhood:</b> {hood}
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                {cafe.description}
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                <a
-                  href={cafe.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    color: theme.palette.primary.main,
-                    textDecoration: "none",
-                  }}
-                >
-                  {cafe.website}
-                </a>
-              </Typography>
-            </Popup>
+            <img
+              src={getCustomIcon(cafe.category, theme)}
+              alt={cafe.category || "Cafe"}
+              style={{ width: 32, height: 32, cursor: "pointer" }}
+            />
           </Marker>
-        );
-      }
-      return null;
-    });
+        ))}
 
-  // Helper: Render GTFS stop markers
-  const renderGtfsStopMarkers = () =>
-    gtfsStops.map((stop) => {
-      // GTFS stops usually have stop_lat and stop_lon
-      const lat = stop.stop_lat || stop.Latitude;
-      const lon = stop.stop_lon || stop.Longitude;
-      if (lat && lon) {
-        return (
-          <Marker
-            key={stop.stop_id || stop.StopPointNumber}
-            position={[lat, lon]}
-            // You can use a custom icon for stops if desired
-          >
-            <Popup>
-              <Typography variant="subtitle2" fontWeight="bold">
-                {stop.stop_name || stop.StopPointName}
-              </Typography>
-            </Popup>
-          </Marker>
-        );
-      }
-      return null;
-    });
-
-  // Floating buttons component
-  const handleFindLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
-      },
-      (error) => {
-        console.error("Error getting user location:", error);
-      }
-    );
-  };
-  const FloatingMapButtons = ({ onFindLocation }) => (
-    <Box
-      sx={{
-        position: "absolute",
-        top: 16,
-        right: 16,
-        zIndex: 1000,
-        display: "flex",
-        gap: 2,
-      }}
-    >
-      <Button
-        variant="contained"
-        onClick={() => setShowTransport((prev) => !prev)}
-        sx={{
-          backgroundColor: "#002147", // Oxford blue
-          color: "#fff",
-          minWidth: 0,
-          width: 48,
-          height: 48,
-          borderRadius: "50%",
-          boxShadow: 3,
-          "&:hover": { backgroundColor: "#00112b" },
-        }}
-      >
-        <DirectionsBusIcon />
-      </Button>
-      <Button
-        variant="outlined"
-        onClick={onFindLocation}
-        sx={{
-          backgroundColor: "#fff",
-          color: "#002147",
-          minWidth: 0,
-          width: 48,
-          height: 48,
-          borderRadius: "50%",
-          boxShadow: 3,
-          border: "2px solid #002147",
-          ml: 1,
-          "&:hover": { backgroundColor: "#e6e6e6" },
-        }}
-      >
-        📍
-      </Button>
-    </Box>
-  );
-
-  // Loading state
-  if (loading) {
-    return (
-      <Box textAlign="center" mt={4}>
-        <CircularProgress />
-        <Typography variant="h6" mt={2}>
-          Loading map...
-        </Typography>
-        <Typography variant="body2">
-          Please wait while we fetch the latest data.
-        </Typography>
-      </Box>
-    );
-  }
-
-  // Main render
-  return (
-    <>
-      {/* Global style override to imprve assaiblity  */}
-      <Global
-        styles={{
-          ".leaflet-popup-close-button": {
-            width: "24px",
-            height: "24px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 0,
-            top: "8px",
-            right: "8px",
-            fontSize: "1.5rem",
-            lineHeight: "24px",
-            margin: "0.5rem",
-          },
-          ".leaflet-popup-close-button span": {
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "1.5rem",
-            lineHeight: "24px",
-            color: "#002147",
-          },
-        }}
-      />
-
-      <Typography hidden variant="h1">
-        Stockholm's Coffee Club
-      </Typography>
-      <Box>
-        {/* Map with floating buttons overlays */}
-        <Box
-          sx={{
-            position: "relative",
-            height: "calc(100dvh - 64px)",
-            width: "calc(100% - 64px)",
-            mb: 0,
-            pt: 0,
-            mt: "64px", // Move map down by AppBar height
-            ml: { xs: 0, md: "64px" },
-          }}
-        >
-          <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
-            <FloatingMapButtons onFindLocation={handleFindLocation} />
-            <MapContainer
-              center={
-                userLocation
-                  ? [userLocation.lat, userLocation.lng]
-                  : [59.3293, 18.0686]
-              }
-              zoom={12}
-              style={{ height: "100%", width: "100%" }}
+        {/* GTFS Stops (optional toggle) */}
+        {showTransport &&
+          gtfsStops.map((stop) => (
+            <Marker
+              key={stop.stop_id}
+              longitude={stop.stop_lon}
+              latitude={stop.stop_lat}
             >
-              <MapTilerVectorTiles />
-              {renderCafeMarkers()}
-              {showTransport && renderGtfsStopMarkers()}
-              {/* User geotag marker */}
-              {userLocation && (
-                <Marker
-                  position={[userLocation.lat, userLocation.lng]}
-                  icon={getGeotagIcon(theme, userPinSvg)}
-                >
-                  <Popup>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      You are here
-                    </Typography>
-                  </Popup>
-                </Marker>
-              )}
-            </MapContainer>
-          </Box>
-        </Box>
-      </Box>
-    </>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography variant="body2" sx={{ fontSize: 20 }}>
+                  🚌
+                </Typography>
+              </Box>
+            </Marker>
+          ))}
+
+        {/* User location */}
+        {userLocation && (
+          <Marker longitude={userLocation.lng} latitude={userLocation.lat}>
+            <img
+              src={UserPinSvg}
+              alt="User Location"
+              style={{ width: 32, height: 32, cursor: "pointer" }}
+            />
+          </Marker>
+        )}
+
+        {/* Popup for cafés */}
+        {selectedCafe && (
+          <Popup
+            longitude={selectedCafe.location?.coordinates?.[0]}
+            latitude={selectedCafe.location?.coordinates?.[1]}
+            onClose={() => setSelectedCafe(null)}
+            closeOnClick={false}
+          >
+            <Box>
+              <Typography variant="h6" fontWeight="bold">
+                {selectedCafe.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {selectedCafe.address}
+              </Typography>
+            </Box>
+          </Popup>
+        )}
+      </Map>
+    </Box>
   );
 };
 

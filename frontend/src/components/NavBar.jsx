@@ -15,6 +15,9 @@ import ListItemText from "@mui/material/ListItemText";
 import { ListItemButton } from "@mui/material";
 import { useCafeStore } from "../useCafeStore";
 
+// import components
+import FilterDropdown from "./FilterDropdown";
+
 // Import Icons
 import LoginIcon from "@mui/icons-material/Login";
 import DoorFrontIcon from "@mui/icons-material/DoorFront";
