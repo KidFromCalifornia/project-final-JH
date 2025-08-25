@@ -46,6 +46,7 @@ export const App = () => {
           setCurrentUser={setCurrentUser}
           showAddCafe={showAddCafe}
           setShowAddCafe={setShowAddCafe}
+          style={{ flex: 1 }}
         />
       </header>
 

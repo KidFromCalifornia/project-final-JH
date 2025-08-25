@@ -1,49 +1,78 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, Marker, Popup, useMap } from "react-leaflet";
 import { useCafeStore } from "../useCafeStore";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  CardActionArea,
-  Grid,
-  CircularProgress,
-} from "@mui/material";
-import L from "leaflet";
-import { muiTheme } from "../muiTheme";
+import userPinSvg from "../assets/User_Pin.svg";
+import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import { getCustomIcon, getGeotagIcon } from "../components/CustomCafeIcon";
+import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
+import { useTheme } from "@mui/material/styles";
+import "leaflet/dist/leaflet.css";
+import { Global } from "@emotion/react";
+import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
+import { TileLayer } from "react-leaflet";
 
 const MapPage = () => {
-  // Use muiTheme directly for colors
+  const [userLocation, setUserLocation] = useState(null);
+  const theme = useTheme();
+  const [showTransport, setShowTransport] = useState(false);
 
-  function getIconSvg(color) {
-    const svg = `<svg width="32" height="32" viewBox="0 0 24 24" fill="${color}" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.3856 23.789L11.3831 23.7871L11.3769 23.7822L11.355 23.765C11.3362 23.7501 11.3091 23.7287 11.2742 23.7008C11.2046 23.6451 11.1039 23.5637 10.9767 23.4587C10.7224 23.2488 10.3615 22.944 9.92939 22.5599C9.06662 21.793 7.91329 20.7041 6.75671 19.419C5.60303 18.1371 4.42693 16.639 3.53467 15.0528C2.64762 13.4758 2 11.7393 2 10C2 7.34784 3.05357 4.8043 4.92893 2.92893C6.8043 1.05357 9.34784 0 12 0C14.6522 0 17.1957 1.05357 19.0711 2.92893C20.9464 4.8043 22 7.34784 22 10C22 11.7393 21.3524 13.4758 20.4653 15.0528C19.5731 16.639 18.397 18.1371 17.2433 19.419C16.0867 20.7041 14.9334 21.793 14.0706 22.5599C13.6385 22.944 13.2776 23.2488 13.0233 23.4587C12.8961 23.5637 12.7954 23.6451 12.7258 23.7008C12.6909 23.7287 12.6638 23.7501 12.645 23.765L12.6231 23.7822L12.6169 23.7871L12.615 23.7885C12.615 23.7885 12.6139 23.7894 12 23L12.6139 23.7894C12.2528 24.0702 11.7467 24.0699 11.3856 23.789ZM12 23L11.3856 23.789C11.3856 23.789 11.3861 23.7894 12 23ZM15 10C15 11.6569 13.6569 13 12 13C10.3431 13 9 11.6569 9 10C9 8.34315 10.3431 7 12 7C13.6569 7 15 8.34315 15 10Z" /></svg>`;
-    return encodeURIComponent(svg);
+  const [gtfsStops, setGtfsStops] = useState([]);
+  // GTFS stops caching logic
+  useEffect(() => {
+    const GTFS_KEY = "gtfs_stops";
+    const GTFS_TIMESTAMP_KEY = "gtfs_stops_timestamp";
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    const cached = localStorage.getItem(GTFS_KEY);
+    const cachedTime = localStorage.getItem(GTFS_TIMESTAMP_KEY);
+    if (cached && cachedTime && now - cachedTime < ONE_WEEK_MS) {
+      setGtfsStops(JSON.parse(cached));
+    } else {
+      fetch(
+        `https://api.trafiklab.se/v2/gtfs/stops?key=${
+          import.meta.env.VITE_GTFS_API_KEY
+        }`
+      )
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          const stops = data.stops || data;
+          setGtfsStops(stops);
+          localStorage.setItem(GTFS_KEY, JSON.stringify(stops));
+          localStorage.setItem(GTFS_TIMESTAMP_KEY, now);
+        })
+        .catch((err) => {
+          console.error("GTFS fetch error:", err);
+        });
+    }
+  }, []);
+
+  function MapTilerVectorTiles() {
+    const map = useMap();
+    useEffect(() => {
+      const mtLayer = new MaptilerLayer({
+        apiKey: "a82bxq3OIw2AzmMU9SKn",
+        style:
+          "https://api.maptiler.com/maps/0198dc89-072a-795c-919e-84fefe62bc97/style.json?key=a82bxq3OIw2AzmMU9SKn",
+      });
+      mtLayer.addTo(map);
+      return () => {
+        map.removeLayer(mtLayer);
+      };
+    }, [map]);
+    return null;
   }
 
-  function getCategoryColor(category) {
-    if (category === "thirdwave")
-      return muiTheme.palette.accent?.main || muiTheme.palette.secondary.main;
-    if (category === "speciality") return muiTheme.palette.primary.main;
-    if (category === "roaster") return muiTheme.palette.error.main;
-    return muiTheme.palette.secondary.main;
-  }
-
-  function getCustomIcon(category) {
-    const color = getCategoryColor(category);
-    return L.icon({
-      iconUrl: "data:image/svg+xml," + getIconSvg(color),
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32],
-    });
-  }
+  // Store
   const cafes = useCafeStore((state) => state.cafes);
   const setCafes = useCafeStore((state) => state.setCafes);
   const searchResults = useCafeStore((state) => state.searchResults);
   const loading = cafes.length === 0;
 
+  // Fetch cafes
   useEffect(() => {
     if (cafes.length === 0) {
       fetch(
@@ -58,13 +87,146 @@ const MapPage = () => {
 
   const cafesToShow = searchResults.length > 0 ? searchResults : cafes;
 
-  const grouped = cafesToShow.reduce((acc, cafe) => {
-    const cat = cafe.category || "Other";
-    acc[cat] = acc[cat] || [];
-    acc[cat].push(cafe);
-    return acc;
-  }, {});
+  // Helper: Render cafe markers
+  const renderCafeMarkers = () =>
+    cafesToShow.map((cafe) => {
+      const coords = cafe.locations?.[0]?.coordinates?.coordinates;
+      if (
+        coords &&
+        coords.length === 2 &&
+        typeof coords[0] === "number" &&
+        typeof coords[1] === "number" &&
+        coords[0] !== 0 &&
+        coords[1] !== 0
+      ) {
+        const hood = cafe.locations?.[0]?.neighborhood || "Unavailable";
+        return (
+          <Marker
+            key={cafe._id}
+            position={[coords[1], coords[0]]}
+            icon={getCustomIcon(cafe.category, theme)}
+          >
+            <Popup minWidth={300} maxWidth={400}>
+              <Typography variant="h6" fontWeight="bold">
+                {cafe.name}
+              </Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                {hood}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {cafe.locations?.[0]?.address}
+              </Typography>
+              <Typography variant="body2">
+                <b>Neighborhood:</b> {hood}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {cafe.description}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                <a
+                  href={cafe.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: theme.palette.primary.main,
+                    textDecoration: "none",
+                  }}
+                >
+                  {cafe.website}
+                </a>
+              </Typography>
+            </Popup>
+          </Marker>
+        );
+      }
+      return null;
+    });
 
+  // Helper: Render GTFS stop markers
+  const renderGtfsStopMarkers = () =>
+    gtfsStops.map((stop) => {
+      // GTFS stops usually have stop_lat and stop_lon
+      const lat = stop.stop_lat || stop.Latitude;
+      const lon = stop.stop_lon || stop.Longitude;
+      if (lat && lon) {
+        return (
+          <Marker
+            key={stop.stop_id || stop.StopPointNumber}
+            position={[lat, lon]}
+            // You can use a custom icon for stops if desired
+          >
+            <Popup>
+              <Typography variant="subtitle2" fontWeight="bold">
+                {stop.stop_name || stop.StopPointName}
+              </Typography>
+            </Popup>
+          </Marker>
+        );
+      }
+      return null;
+    });
+
+  // Floating buttons component
+  const handleFindLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ lat: latitude, lng: longitude });
+      },
+      (error) => {
+        console.error("Error getting user location:", error);
+      }
+    );
+  };
+  const FloatingMapButtons = ({ onFindLocation }) => (
+    <Box
+      sx={{
+        position: "absolute",
+        top: 16,
+        right: 16,
+        zIndex: 1000,
+        display: "flex",
+        gap: 2,
+      }}
+    >
+      <Button
+        variant="contained"
+        onClick={() => setShowTransport((prev) => !prev)}
+        sx={{
+          backgroundColor: "#002147", // Oxford blue
+          color: "#fff",
+          minWidth: 0,
+          width: 48,
+          height: 48,
+          borderRadius: "50%",
+          boxShadow: 3,
+          "&:hover": { backgroundColor: "#00112b" },
+        }}
+      >
+        <DirectionsBusIcon />
+      </Button>
+      <Button
+        variant="outlined"
+        onClick={onFindLocation}
+        sx={{
+          backgroundColor: "#fff",
+          color: "#002147",
+          minWidth: 0,
+          width: 48,
+          height: 48,
+          borderRadius: "50%",
+          boxShadow: 3,
+          border: "2px solid #002147",
+          ml: 1,
+          "&:hover": { backgroundColor: "#e6e6e6" },
+        }}
+      >
+        📍
+      </Button>
+    </Box>
+  );
+
+  // Loading state
   if (loading) {
     return (
       <Box textAlign="center" mt={4}>
@@ -79,111 +241,87 @@ const MapPage = () => {
     );
   }
 
+  // Main render
   return (
-    <Box>
-      <Typography variant="h3" align="center" gutterBottom sx={{ mt: 2 }}>
+    <>
+      {/* Global style override to imprve assaiblity  */}
+      <Global
+        styles={{
+          ".leaflet-popup-close-button": {
+            width: "24px",
+            height: "24px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 0,
+            top: "8px",
+            right: "8px",
+            fontSize: "1.5rem",
+            lineHeight: "24px",
+            margin: "0.5rem",
+          },
+          ".leaflet-popup-close-button span": {
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "1.5rem",
+            lineHeight: "24px",
+            color: "#002147",
+          },
+        }}
+      />
+
+      <Typography hidden variant="h1">
         Stockholm's Coffee Club
       </Typography>
-      {/* Map */}
-      <Box sx={{ height: "50dvh", width: "100%", mb: 4 }}>
-        <MapContainer
-          center={[59.3293, 18.0686]}
-          zoom={12}
-          style={{ height: "100%", width: "100%" }}
+      <Box>
+        {/* Map with floating buttons overlays */}
+        <Box
+          sx={{
+            position: "relative",
+            height: "calc(100dvh - 64px)",
+            width: "calc(100% - 64px)",
+            mb: 0,
+            pt: 0,
+            mt: "64px", // Move map down by AppBar height
+            ml: { xs: 0, md: "64px" },
+          }}
         >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {cafesToShow.map((cafe) => {
-            const coords = cafe.locations?.[0]?.coordinates?.coordinates;
-            if (
-              coords &&
-              coords.length === 2 &&
-              typeof coords[0] === "number" &&
-              typeof coords[1] === "number" &&
-              coords[0] !== 0 &&
-              coords[1] !== 0
-            ) {
-              return (
+          <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
+            <FloatingMapButtons onFindLocation={handleFindLocation} />
+            <MapContainer
+              center={
+                userLocation
+                  ? [userLocation.lat, userLocation.lng]
+                  : [59.3293, 18.0686]
+              }
+              zoom={12}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <MapTilerVectorTiles />
+              {renderCafeMarkers()}
+              {showTransport && renderGtfsStopMarkers()}
+              {/* User geotag marker */}
+              {userLocation && (
                 <Marker
-                  key={cafe._id}
-                  position={[coords[1], coords[0]]}
-                  icon={getCustomIcon(cafe.category)}
+                  position={[userLocation.lat, userLocation.lng]}
+                  icon={getGeotagIcon(theme, userPinSvg)}
                 >
                   <Popup>
                     <Typography variant="subtitle1" fontWeight="bold">
-                      {cafe.name}
+                      You are here
                     </Typography>
-                    <Typography variant="body2">{cafe.category}</Typography>
-                    <Typography variant="body2">{cafe.feature}</Typography>
                   </Popup>
                 </Marker>
-              );
-            }
-            return null;
-          })}
-        </MapContainer>
+              )}
+            </MapContainer>
+          </Box>
+        </Box>
       </Box>
-      {/* Cards */}
-      <Grid container spacing={3} sx={{ mt: 2, justifyContent: "center" }}>
-        {Object.entries(grouped).map(([category, cafesInCategory]) => (
-          <Grid
-            key={category}
-            sx={{ flex: 1, minWidth: 300, maxWidth: 400, m: 1 }}
-          >
-            <Typography
-              variant="h5"
-              align="center"
-              sx={{ textTransform: "capitalize", mb: 2 }}
-            >
-              {category}
-            </Typography>
-            <Grid container spacing={2} direction="column">
-              {[...cafesInCategory]
-                .sort((a, b) => {
-                  const hoodA = a.locations?.[0]?.neighborhood || "Unavailable";
-                  const hoodB = b.locations?.[0]?.neighborhood || "Unavailable";
-                  return hoodA.localeCompare(hoodB);
-                })
-                .map((cafe) => {
-                  const hood =
-                    cafe.locations?.[0]?.neighborhood || "Unavailable";
-                  return (
-                    <Grid key={cafe._id} sx={{ mb: 2 }}>
-                      <Card variant="outlined">
-                        <CardActionArea
-                          component={Link}
-                          to={`/cafes/${cafe._id}`}
-                        >
-                          <CardContent>
-                            <Typography variant="h6">{cafe.name}</Typography>
-                            <Typography
-                              variant="subtitle2"
-                              color="text.secondary"
-                            >
-                              {hood}
-                            </Typography>
-                            <Typography variant="body2" sx={{ mt: 1 }}>
-                              {cafe.locations?.[0]?.address}
-                            </Typography>
-                            <Typography variant="body2">
-                              <b>Neighborhood:</b> {hood}
-                            </Typography>
-                            <Typography variant="body2" sx={{ mt: 1 }}>
-                              {cafe.description}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
-                    </Grid>
-                  );
-                })}
-            </Grid>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+    </>
   );
 };
-
-// Styled-components
 
 export default MapPage;

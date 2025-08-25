@@ -1,3 +1,13 @@
+import { styled } from "@mui/material/styles";
+
+const StyledRating = styled(Rating)({
+  "& .MuiRating-iconFilled": {
+    color: "#ff6d75",
+  },
+  "& .MuiRating-iconHover": {
+    color: "#ff3d47",
+  },
+});
 import { useState, useEffect } from "react";
 import { useCafeStore } from "../useCafeStore";
 import { apiCall } from "../services/api";
@@ -12,7 +22,10 @@ import {
   FormControl,
   FormLabel,
   FormHelperText,
+  Rating,
 } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 const TastingForm = ({ onSubmit, initialValues = {} }) => {
   const [form, setForm] = useState({
@@ -225,17 +238,34 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         ))}
       </TextField>
       <FormControl fullWidth margin="normal">
-        <FormLabel>Rating (1-5)</FormLabel>
-        <TextField
-          type="range"
+        <FormLabel component="legend">Custom icon and color</FormLabel>
+        <Rating
           name="rating"
-          min={1}
-          max={5}
           value={form.rating}
-          onChange={handleChange}
-          required
+          precision={0.5}
+          icon={<FavoriteIcon fontSize="inherit" />}
+          emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+          onChange={(e, value) =>
+            setForm((prev) => ({ ...prev, rating: value }))
+          }
         />
-        <FormHelperText>{form.rating}</FormHelperText>
+        <FormHelperText>
+          {form.rating ? `${form.rating} Hearts` : "Select rating"}
+        </FormHelperText>
+      </FormControl>
+      <FormControl fullWidth margin="normal">
+        <FormLabel component="legend">10 stars</FormLabel>
+        <Rating
+          name="customized-10"
+          value={form.rating}
+          max={10}
+          onChange={(e, value) =>
+            setForm((prev) => ({ ...prev, rating: value }))
+          }
+        />
+        <FormHelperText>
+          {form.rating ? `${form.rating} Stars` : "Select rating"}
+        </FormHelperText>
       </FormControl>
       <TextField
         label="Notes"

@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { cafeAPI } from "../services/api";
 import { SwalAlertStyles } from "./SwalAlertStyles";
-import TextInput from "./TextInput";
-import SelectInput from "./SelectInput";
-import CheckboxInput from "./CheckboxInput";
+import {
+  TextField,
+  Select,
+  MenuItem,
+  Checkbox,
+  FormControlLabel,
+  Button,
+} from "@mui/material";
 
 const CATEGORY_OPTIONS = ["specialty", "roaster", "thirdwave"];
 const FEATURE_OPTIONS = [
@@ -213,33 +218,51 @@ const NewCafeForm = ({ onClose }) => {
             type={status.includes("error") ? "error" : "success"}
           />
         )}
-        <TextInput
-          label="Name:"
+        <TextField
+          label="Name"
           name="name"
           value={form.name}
           onChange={handleChange}
           required
+          fullWidth
+          margin="normal"
         />
-        <TextInput
-          label="Website:"
+        <TextField
+          label="Website"
           name="website"
           value={form.website}
           onChange={handleChange}
+          fullWidth
+          margin="normal"
         />
-        <TextInput
-          label="Description:"
+        <TextField
+          label="Description"
           name="description"
           value={form.description}
           onChange={handleChange}
-          maxLength={1000}
+          inputProps={{ maxLength: 1000 }}
+          fullWidth
+          margin="normal"
         />
-        <SelectInput
-          label="Category:"
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          options={CATEGORY_OPTIONS}
-          required
+        <FormControlLabel
+          control={
+            <Select
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              required
+              fullWidth
+              displayEmpty
+            >
+              <MenuItem value="">Select Category</MenuItem>
+              {CATEGORY_OPTIONS.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                </MenuItem>
+              ))}
+            </Select>
+          }
+          label="Category"
         />
 
         <fieldset hidden>
@@ -267,24 +290,30 @@ const NewCafeForm = ({ onClose }) => {
                 position: "relative",
               }}
             >
-              <TextInput
-                label="Address:"
+              <TextField
+                label="Address"
                 name="address"
                 value={loc.address}
                 onChange={(e) => handleLocationChange(e, idx)}
                 required
+                fullWidth
+                margin="normal"
               />
-              <TextInput
-                label="Neighborhood:"
+              <TextField
+                label="Neighborhood"
                 name="neighborhood"
                 value={loc.neighborhood}
                 onChange={(e) => handleLocationChange(e, idx)}
+                fullWidth
+                margin="normal"
               />
-              <TextInput
-                label="Location Note:"
+              <TextField
+                label="Location Note"
                 name="locationNote"
                 value={loc.locationNote}
                 onChange={(e) => handleLocationChange(e, idx)}
+                fullWidth
+                margin="normal"
               />
 
               {form.locations.length > 1 && (
@@ -321,16 +350,28 @@ const NewCafeForm = ({ onClose }) => {
         <fieldset>
           <legend>Features</legend>
           {FEATURE_OPTIONS.map((feature) => (
-            <CheckboxInput
+            <FormControlLabel
               key={feature}
+              control={
+                <Checkbox
+                  name={feature}
+                  checked={form.features.includes(feature)}
+                  onChange={() => handleFeatureChange(feature)}
+                />
+              }
               label={feature.replace(/_/g, " ")}
-              name={feature}
-              checked={form.features.includes(feature)}
-              onChange={() => handleFeatureChange(feature)}
             />
           ))}
         </fieldset>
-        <button type="submit">Add Cafe</button>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Add Cafe
+        </Button>
         {status && <p>{status}</p>}
       </form>
     </>

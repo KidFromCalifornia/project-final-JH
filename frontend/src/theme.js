@@ -1,20 +1,20 @@
 export const theme = {
   colors: {
-    primary: "#2570bb", // Azel
-    secondary: "#184777", // Dark Blue
+    primary: "hsla(210, 67%, 44%, 1.00)", // Azel
+    secondary: "hsla(210, 66%, 28%, 1.00)", // Dark Blue
     accent: "#fde113", // School yellow
-    background: "#ebf2fa", // Alice Blue
+    background: "hsla(212, 60%, 95%, 1.00)", // Alice Blue
     navbarBackground: "#184777", // Dark Blue
-    mainText: "#0a1f33", // Oxford Blue
+    mainText: "rgba(10, 31, 51, 1)", // Oxford Blue
     versoText: "#ebf2fa", // Alice Blue
     error: "#ef6461", // Bittersweet
-    success: "#7eb77f", // Olivine
+    success: "hsla(121, 28%, 61%, 1.00)", // Olivine
   },
   colorsDarkmode: {
     primary: "#184777", // Dark Blue
     secondary: "#2570bb", // Azel
-    accent: "#fde113", // School yellow
-    background: "#0a1f33", // Oxford Blue
+    accent: "hsla(53, 98%, 53%, 1.00)", // School yellow
+    background: "#0a1f33ff", // Oxford Blue
     mainText: "#ebf2fa", // Alice Blue
     versoText: "#0a1f33", // Oxford Blue
     error: "#ef6461", // Bittersweet
@@ -34,13 +34,7 @@ export const theme = {
   borderRadius: ".5rem",
   shadow: "0 2px 8px rgba(0,0,0,0.08)",
 
-  spacing: {
-    xs: ".25rem",
-    sm: ".5rem",
-    md: "1rem",
-    lg: "2rem",
-    xl: "4rem",
-  },
+  spacing: 8,
   containerWidths: {
     sm: "10rem",
     md: "20rem",
