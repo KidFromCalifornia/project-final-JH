@@ -1,132 +1,229 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCafeStore } from "../useCafeStore";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import MenuIcon from "@mui/icons-material/Menu";
-import MapIcon from "@mui/icons-material/Map";
-import RateReviewIcon from "@mui/icons-material/RateReview";
-import AddLocationIcon from "@mui/icons-material/AddLocation";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import DoorFrontIcon from "@mui/icons-material/DoorFront";
-import LoginIcon from "@mui/icons-material/Login";
-import LogoutIcon from "@mui/icons-material/Logout";
+import Fab from "@mui/material/Fab";
+import Box from "@mui/material/Box";
+import {
+  Login as LoginIcon,
+  Logout as LogoutIcon,
+  DoorFront as DoorFrontIcon,
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  RateReview as RateReviewIcon,
+  Map as MapIcon,
+  AddLocation as AddLocationIcon,
+  Storefront as StorefrontIcon,
+  TravelExplore as TravelExploreIcon,
+  AccountCircle as AccountCircleIcon,
+  MyLocation as MyLocationIcon,
+} from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import TextField from "@mui/material/TextField";
+import FilterDropdown from "./FilterDropdown";
+
 const MobileBottomNav = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
   const setIsLoggedIn = useCafeStore((state) => state.setIsLoggedIn);
+  const cafes = useCafeStore((state) => state.cafes);
+  const categories = Array.from(
+    new Set(cafes.map((cafe) => cafe.category).filter(Boolean))
+  );
   let isAdmin = false;
+  // Search dialog state
+  const [searchOpen, setSearchOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   if (typeof window !== "undefined" && window.localStorage) {
     isAdmin = localStorage.getItem("admin") === "true";
   }
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
 
+  // Navigation handler
   const handleNav = (path) => {
     navigate(path);
-    setDrawerOpen(false);
+  };
+
+  // Geotag handler for MapPage
+  const handleGeotag = () => {
+    // Dispatch a custom event for MapPage to listen for geotag
+    window.dispatchEvent(new Event("triggerGeotag"));
   };
 
   return (
-    <AppBar
-      position="fixed"
-      color="primary"
-      sx={{
-        top: "auto",
-        bottom: 0,
-        display: { xs: "flex", sm: "none" },
-        zIndex: 1200,
-      }}
-    >
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        <IconButton
-          edge="start"
-          color="inherit"
-          onClick={() => setDrawerOpen(true)}
+    <React.Fragment>
+      <AppBar
+        position="fixed"
+        color="primary"
+        sx={{
+          top: "auto",
+          bottom: 0,
+          width: "100vw",
+          height: 56,
+          display: { xs: "flex", sm: "none" },
+          zIndex: 1200,
+          borderRadius: 0,
+        }}
+      >
+        <Toolbar
+          sx={{
+            minHeight: 56,
+            px: 1,
+            justifyContent: "center",
+            overflowX: "auto",
+            gap: 0.5,
+          }}
         >
-          <MenuIcon />
-        </IconButton>
-        <Drawer
-          anchor="bottom"
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          sx={{ zIndex: 1300 }}
-        >
-          <List>
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => handleNav("/")}>
-                <ListItemIcon>
-                  <MapIcon />
-                </ListItemIcon>
-                <ListItemText primary="Map" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => handleNav("/tastings")}>
-                <ListItemIcon>
-                  <RateReviewIcon />
-                </ListItemIcon>
-                <ListItemText primary="Tastings" />
-              </ListItemButton>
-            </ListItem>
-            {isLoggedIn &&
-              (isAdmin ? (
-                <ListItem disablePadding>
-                  <ListItemButton onClick={() => handleNav("/admin")}>
-                    <ListItemIcon>
-                      <AdminPanelSettingsIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Admin" />
-                  </ListItemButton>
-                </ListItem>
-              ) : (
-                <ListItem disablePadding>
-                  <ListItemButton onClick={() => handleNav("/user")}>
-                    <ListItemIcon>
-                      <DoorFrontIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="User" />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            {isLoggedIn && (
-              <ListItem disablePadding>
-                <ListItemButton
-                  onClick={() => {
-                    localStorage.removeItem("userToken");
-                    localStorage.removeItem("username");
-                    localStorage.removeItem("admin");
-                    setIsLoggedIn(false);
-                    handleNav("/");
-                  }}
-                >
-                  <ListItemIcon>
-                    <LogoutIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Logout" />
-                </ListItemButton>
-              </ListItem>
+          <IconButton
+            color="inherit"
+            size="large"
+            sx={{ p: 1 }}
+            onClick={() => handleNav("/tastings")}
+          >
+            <RateReviewIcon fontSize="medium" />
+          </IconButton>
+          <FilterDropdown
+            aria-label="Filter by Cafe Type"
+            options={categories}
+            value={searchQuery}
+            onChange={setSearchQuery}
+            iconComponent={<StorefrontIcon fontSize="medium" color="light" />}
+            sx={{ minWidth: 40 }}
+          />
+          <FilterDropdown
+            aria-label="Filter by neighborhood"
+            options={Array.from(
+              new Set(cafes.map((cafe) => cafe.neighborhood).filter(Boolean))
             )}
-            {!isLoggedIn && (
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => handleNav("/login")}>
-                  <ListItemIcon>
-                    <LoginIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Login" />
-                </ListItemButton>
-              </ListItem>
-            )}
-          </List>
-        </Drawer>
-      </Toolbar>
-    </AppBar>
+            value={searchQuery}
+            onChange={setSearchQuery}
+            iconComponent={
+              <TravelExploreIcon fontSize="medium" color="light" />
+            }
+            sx={{ minWidth: 40 }}
+          />
+          <IconButton
+            color="inherit"
+            size="large"
+            sx={{ p: 1 }}
+            onClick={() => setSearchOpen(true)}
+          >
+            <SearchIcon fontSize="medium" />
+          </IconButton>
+          {isLoggedIn && isAdmin && (
+            <IconButton
+              color="inherit"
+              size="large"
+              sx={{ p: 1 }}
+              onClick={() => handleNav("/admin")}
+            >
+              <AdminPanelSettingsIcon fontSize="medium" />
+            </IconButton>
+          )}
+          {isLoggedIn && !isAdmin && (
+            <IconButton
+              color="inherit"
+              size="large"
+              sx={{ p: 1 }}
+              onClick={() => handleNav("/user")}
+            >
+              <DoorFrontIcon fontSize="medium" />
+            </IconButton>
+          )}
+          {isLoggedIn ? (
+            <IconButton
+              color="inherit"
+              size="large"
+              sx={{ p: 1 }}
+              onClick={() => {
+                localStorage.removeItem("userToken");
+                localStorage.removeItem("username");
+                localStorage.removeItem("admin");
+                setIsLoggedIn(false);
+                handleNav("/");
+              }}
+            >
+              <LogoutIcon fontSize="medium" />
+            </IconButton>
+          ) : (
+            <IconButton
+              color="inherit"
+              size="large"
+              sx={{ p: 1 }}
+              onClick={() => handleNav("/login")}
+            >
+              <LoginIcon fontSize="medium" />
+            </IconButton>
+          )}
+
+          <Dialog
+            open={searchOpen}
+            onClose={() => setSearchOpen(false)}
+            maxWidth="xs"
+            fullWidth
+          >
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Search Cafes"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </DialogContent>
+          </Dialog>
+        </Toolbar>
+      </AppBar>
+      {isLoggedIn &&
+        (location.pathname === "/" ? (
+          <Fab
+            color="primary"
+            aria-label="geotag"
+            onClick={handleGeotag}
+            sx={{
+              position: "fixed",
+              zIndex: 1301,
+              bottom: 80,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 56,
+              height: 56,
+              boxShadow: 3,
+              display: { xs: "flex", sm: "none" },
+            }}
+          >
+            <MyLocationIcon fontSize="large" />
+          </Fab>
+        ) : (
+          <Fab
+            color="primary"
+            aria-label="back to map"
+            onClick={() => handleNav("/")}
+            sx={{
+              position: "fixed",
+              zIndex: 1301,
+              bottom: 80,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 56,
+              height: 56,
+              boxShadow: 3,
+              display: { xs: "flex", sm: "none" },
+            }}
+          >
+            <MapIcon fontSize="large" />
+          </Fab>
+        ))}
+    </React.Fragment>
   );
 };
 

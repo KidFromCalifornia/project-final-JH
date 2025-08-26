@@ -1,1 +1,0 @@
-import{j as s}from"./index-DgWt6i1n.js";import{T as m}from"./SwalAlertStyles-BvpRlSlr.js";const x=({label:t,name:r,value:o,onChange:a,required:e=!1,...i})=>s.jsx(m,{label:t,name:r,value:o,onChange:a,required:e,fullWidth:!0,margin:"normal",variant:"outlined",...i});export{x as T};

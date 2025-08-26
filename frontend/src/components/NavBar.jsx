@@ -36,7 +36,7 @@ import {
   AddLocation as AddLocationIcon,
   Storefront as StorefrontIcon,
   TravelExplore as TravelExploreIcon,
-  ForkRight,
+  AccountCircle as AccountCircleIcon,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -204,9 +204,18 @@ const NavBar = ({
             <Switch
               checked={darkMode}
               onChange={handleToggleDarkMode}
-              // color prop removed; use sx for color if needed
               inputProps={{ "aria-label": "toggle dark mode" }}
             />
+            {isLoggedIn && (
+              <IconButton
+                component={Link}
+                to="/user"
+                sx={{ ml: 2 }}
+                aria-label="User Page"
+              >
+                <AccountCircleIcon />
+              </IconButton>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
