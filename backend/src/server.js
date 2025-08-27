@@ -1,3 +1,7 @@
+// Health check endpoint for Render
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
+});
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";

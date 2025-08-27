@@ -12,4 +12,28 @@ export default defineConfig({
       },
     }),
   ],
+
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/react")) {
+            return "react";
+          }
+          if (id.includes("node_modules/@mui")) {
+            return "mui";
+          }
+          if (id.includes("node_modules/maplibre-gl")) {
+            return "maplibre";
+          }
+          if (id.includes("node_modules/zustand")) {
+            return "zustand";
+          }
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
 });
