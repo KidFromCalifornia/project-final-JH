@@ -14,7 +14,7 @@ const getCustomIcon = (category, theme, themeMode) => {
     case "specialty":
       color =
         themeMode === "dark"
-          ? theme.palette.light?.main || theme.palette.primary.main
+          ? theme.palette.light.main
           : theme.palette.primary.main;
       break;
     case "roaster":
@@ -28,11 +28,29 @@ const getCustomIcon = (category, theme, themeMode) => {
 
   switch (category) {
     case "thirdwave":
-      return <SvgIcon component={ThirdWavePinIcon} {...iconProps} />;
+      return (
+        <SvgIcon
+          component={ThirdWavePinIcon}
+          {...iconProps}
+          filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
+        />
+      );
     case "specialty":
-      return <SvgIcon component={SpecialtyPinIcon} {...iconProps} />;
+      return (
+        <SvgIcon
+          component={SpecialtyPinIcon}
+          {...iconProps}
+          filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
+        />
+      );
     case "roaster":
-      return <SvgIcon component={RoasterPinIcon} {...iconProps} />;
+      return (
+        <SvgIcon
+          component={RoasterPinIcon}
+          {...iconProps}
+          filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
+        />
+      );
     default:
       return <SvgIcon component={PinIcon} {...iconProps} />;
   }

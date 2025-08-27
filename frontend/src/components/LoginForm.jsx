@@ -88,14 +88,16 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
 
   return (
     <Box
-      bgcolor="inherited"
       sx={{
         position: "fixed",
         width: { xs: "90vw", sm: 400 },
         top: 0,
         left: 0,
         zIndex: 1300,
-        backgroundColor: "light",
+        borderRadius: 2,
+        boxShadow: 3,
+        padding: 2,
+        bgcolor: (theme) => theme.palette.background.paper,
       }}
     >
       <IconButton
@@ -108,7 +110,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
       <Typography variant="h2" sx={{ mb: 2 }}>
         {isSignup ? "Sign Up" : "Login"}
       </Typography>
-      <Box component="form" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         {isSignup && (
           <TextField
             label="Email"
@@ -133,7 +135,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           margin="normal"
           autoComplete="username"
         />
-        <Box sx={{ position: "relative" }}>
+        <div style={{ position: "relative" }}>
           <TextField
             label="Password"
             name="password"
@@ -144,7 +146,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             fullWidth
             margin="normal"
             autoComplete="current-password"
-            sx={{}}
           />
           <IconButton
             aria-label="Toggle password visibility"
@@ -154,12 +155,10 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </IconButton>
-        </Box>
+        </div>
         <Button
           type="submit"
           disabled={loading}
-          variant="contained"
-          fullWidth
           sx={{
             mt: 2,
             mb: 1,
@@ -167,14 +166,19 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            padding: 2,
+            boxShadow: 2,
           }}
         >
           {loading ? (
-            <CircularProgress size={20} sx={{ color: "secondary.main" }} />
+            <CircularProgress
+              size={20}
+              sx={{ color: (theme) => theme.palette.secondary.main }}
+            />
           ) : null}
           {!loading && (isSignup ? "Sign Up" : "Login")}
         </Button>
-      </Box>
+      </form>
       {error && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {error}
@@ -187,7 +191,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           type="button"
           onClick={() => setIsSignup(!isSignup)}
           variant="text"
-          color="primary"
+          sx={{ padding: 3 }}
         >
           {isSignup ? "Login" : "Sign Up"}
         </Button>
@@ -195,5 +199,4 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
     </Box>
   );
 };
-
 export default LoginForm;

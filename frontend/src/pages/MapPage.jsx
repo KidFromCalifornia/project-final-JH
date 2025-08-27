@@ -13,7 +13,7 @@ import { MAP_STYLE_LIGHT, MAP_STYLE_DARK } from "../mapStyles";
 import GeotagPinIcon from "../assets/geotagPinIcon.svg";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import GeotagFab from "../components/GeotagFab";
-npm;
+
 const MapPage = () => {
   const theme = useTheme();
   const cafes = useCafeStore((state) => state.cafes);
@@ -107,6 +107,7 @@ const MapPage = () => {
                 longitude={coords[0]}
                 latitude={coords[1]}
                 onClick={() => setSelectedCafe(cafe)}
+                sx={{ boxShadow: 3 }}
               >
                 {getCustomIcon(cafe.category, theme, themeMode)}
               </Marker>

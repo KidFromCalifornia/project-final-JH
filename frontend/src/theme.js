@@ -13,9 +13,9 @@ export const theme = {
 
   colorsDarkmode: {
     primary: "#1c4e7d", // Muted Azel (for subtle contrast in dark mode)
-    secondary: "#0a1f33", // Oxford Blue (background support)
+    secondary: "rgba(10, 31, 51, 1)", // Oxford Blue (background support)
     accent: "#fde112ff", // School Yellow (kept vibrant for focus)
-    light: "#1c4e7d", // Muted Azel reused for consistency
+    light: "#ebf2fa", // Muted Azel reused for consistency
     background: "#0a1f33", // Oxford Blue (true dark mode base)
     mainText: "#ebf2fa", // Alice Blue (light readable text)
     versoText: "#0a1f33", // Oxford Blue (reverse text for highlights)
