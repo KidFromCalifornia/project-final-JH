@@ -130,7 +130,6 @@ const NavBar = ({
   const [open, setOpen] = React.useState(false);
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
-  const setSearchResultsStore = useCafeStore((state) => state.setSearchResults);
   const darkMode = themeMode === "dark";
   const navIconColor = theme.palette.light.main;
   const handleToggleDarkMode = () => {
@@ -153,25 +152,17 @@ const NavBar = ({
     isAdmin = localStorage.getItem("admin") === "true";
   }
 
-  // Independent filter state
-  const [cafeTypeQuery, setCafeTypeQuery] = React.useState("");
-  const [neighborhoodQuery, setNeighborhoodQuery] = React.useState("");
-
-  // Filter function
-  const filteredCafes = cafes.filter((cafe) => {
-    const typeMatch = cafeTypeQuery === "" || cafe.category === cafeTypeQuery;
-    const neighborhoodMatch =
-      neighborhoodQuery === "" ||
-      cafe.locations?.[0]?.neighborhood === neighborhoodQuery;
-    return typeMatch && neighborhoodMatch;
-  });
+  // Use store filters instead of local state
+  const cafeTypeQuery = useCafeStore((state) => state.cafeTypeFilter);
+  const neighborhoodQuery = useCafeStore((state) => state.neighborhoodFilter);
+  const setCafeTypeQuery = useCafeStore((state) => state.setCafeTypeFilter);
+  const setNeighborhoodQuery = useCafeStore((state) => state.setNeighborhoodFilter);
+  const filteredCafes = useCafeStore((state) => state.filteredCafes);
 
   // Expose filtered cafes to parent
   React.useEffect(() => {
     onFilteredCafes(filteredCafes);
-    // Also update global store so MapPage reacts to filters
-    setSearchResultsStore(filteredCafes);
-  }, [filteredCafes, onFilteredCafes, setSearchResultsStore]);
+  }, [filteredCafes, onFilteredCafes]);
 
   // If you want to pass filteredCafes to children, do so here
 

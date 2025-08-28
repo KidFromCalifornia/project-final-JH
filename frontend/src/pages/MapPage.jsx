@@ -13,6 +13,7 @@ const MapPage = () => {
   const cafes = useCafeStore((state) => state.cafes);
   const setCafes = useCafeStore((state) => state.setCafes);
   const searchResults = useCafeStore((state) => state.searchResults);
+  const filteredCafes = useCafeStore((state) => state.filteredCafes);
   const userLocation = useCafeStore((state) => state.user?.location);
   const themeMode = useCafeStore((state) => state.themeMode);
   const [showUserPin, setShowUserPin] = useState(false);
@@ -47,7 +48,14 @@ const MapPage = () => {
     }
   }, [cafes, setCafes]);
 
-  const cafesToShow = searchResults.length > 0 ? searchResults : cafes;
+  // Check if any filters are active
+  const cafeTypeFilter = useCafeStore((state) => state.cafeTypeFilter);
+  const neighborhoodFilter = useCafeStore((state) => state.neighborhoodFilter);
+  const hasActiveFilters = cafeTypeFilter || neighborhoodFilter;
+
+  // Priority: searchResults > filteredCafes (when filters active) > cafes
+  const cafesToShow = searchResults.length > 0 ? searchResults : 
+                     hasActiveFilters ? filteredCafes : cafes;
 
   return (
     <Box

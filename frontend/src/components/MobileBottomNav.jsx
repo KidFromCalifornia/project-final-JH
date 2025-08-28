@@ -17,6 +17,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
+import MenuItem from "@mui/material/MenuItem";
 import FilterDropdown from "./FilterDropdown";
 import LoginForm from "./LoginForm";
 import NewCafeForm from "./NewCafeForm";
@@ -57,6 +58,13 @@ const MobileBottomNav = () => {
   const darkMode = themeMode === "dark";
   const navIconColor = theme.palette.light?.main || "#fff";
 
+  // Use store filters instead of local state
+  const cafeTypeQuery = useCafeStore((state) => state.cafeTypeFilter);
+  const neighborhoodQuery = useCafeStore((state) => state.neighborhoodFilter);
+  const setCafeTypeQuery = useCafeStore((state) => state.setCafeTypeFilter);
+  const setNeighborhoodQuery = useCafeStore((state) => state.setNeighborhoodFilter);
+  const clearFilters = useCafeStore((state) => state.clearFilters);
+
   const categories = Array.from(
     new Set(cafes.map((cafe) => cafe.category).filter(Boolean))
   );
@@ -72,15 +80,14 @@ const MobileBottomNav = () => {
     isAdmin = localStorage.getItem("admin") === "true";
   }
 
-  // Local UI state
+  // Local UI state (remove filter state as it's now in store)
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [showLogin, setShowLogin] = React.useState(false);
   const [showAddCafe, setShowAddCafe] = React.useState(false);
-  const [cafeTypeQuery, setCafeTypeQuery] = React.useState("");
-  const [neighborhoodQuery, setNeighborhoodQuery] = React.useState("");
   const [filterDrawerOpen, setFilterDrawerOpen] = React.useState(false);
+
 
   // Ensure only one drawer can be open at a time
   const openDrawer = (drawerType) => {
@@ -386,28 +393,101 @@ const MobileBottomNav = () => {
               <KeyboardArrowDownIcon sx={{ color: navIconColor }} />
             </IconButton>
           </ListItem>
-
-          <ListItem disablePadding>
-              <FilterDropdown
-          label="Filter by Cafe Type"
-          options={categories}
-          value={cafeTypeQuery}
-          onChange={setCafeTypeQuery}
-          iconComponent={<StorefrontIcon sx={{ color: navIconColor }} />}
-        />
-     
-          </ListItem>
-
-          <ListItem disablePadding>
-              <FilterDropdown
-          label="Filter by neighborhood"
-          options={neighborhoods}
-          value={neighborhoodQuery}
-          onChange={setNeighborhoodQuery}
-          iconComponent={<TravelExploreIcon sx={{ color: navIconColor }} />}
-        />
-          </ListItem>
         </List>
+
+        {/* Filter controls using TextField selects for mobile */}
+        <Box sx={{ px: 2, py: 2 }}>
+          <TextField
+            select
+            fullWidth
+            label="Filter by Cafe Type"
+            value={cafeTypeQuery}
+            onChange={(e) => {
+              setCafeTypeQuery(e.target.value);
+            }}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                color: 'inherit',
+              },
+              '& .MuiInputLabel-root': {
+                color: 'inherit',
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(255, 255, 255, 0.5)',
+              },
+            }}
+            InputProps={{
+              startAdornment: <StorefrontIcon sx={{ color: navIconColor, mr: 1 }} />,
+            }}
+          >
+            <MenuItem value="">All Types</MenuItem>
+            {categories.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </MenuItem>
+            ))}
+          </TextField>
+          
+          <TextField
+            select
+            fullWidth
+            label="Filter by Neighborhood"
+            value={neighborhoodQuery}
+            onChange={(e) => {
+              setNeighborhoodQuery(e.target.value);
+            }}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                color: 'inherit',
+              },
+              '& .MuiInputLabel-root': {
+                color: 'inherit',
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(255, 255, 255, 0.5)',
+              },
+            }}
+            InputProps={{
+              startAdornment: <TravelExploreIcon sx={{ color: navIconColor, mr: 1 }} />,
+            }}
+          >
+            <MenuItem value="">All Neighborhoods</MenuItem>
+            {neighborhoods.map((neighborhood) => (
+              <MenuItem key={neighborhood} value={neighborhood}>
+                {neighborhood.charAt(0).toUpperCase() + neighborhood.slice(1)}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          {/* Clear filters button */}
+          {(cafeTypeQuery || neighborhoodQuery) && (
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <IconButton 
+                onClick={() => {
+                  clearFilters();
+                  closeDrawers();
+                }}
+                sx={{ 
+                  color: navIconColor,
+                  border: `1px solid ${navIconColor}`,
+                  borderRadius: 1,
+                  px: 2,
+                  fontSize: '0.875rem'
+                }}
+              >
+                Clear Filters
+              </IconButton>
+            </Box>
+          )}
+        </Box>
       </Drawer>
 
       {/* Login dialog */}

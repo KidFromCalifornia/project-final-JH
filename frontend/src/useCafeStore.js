@@ -1,6 +1,23 @@
 import { create } from "zustand";
 import { tastingAPI } from "./services/api.js";
 
+// Helper function to apply filters
+const applyFilters = (cafes, cafeTypeFilter, neighborhoodFilter) => {
+  if (!cafes) return [];
+  
+  let filtered = cafes;
+  
+  if (cafeTypeFilter && cafeTypeFilter !== 'all') {
+    filtered = filtered.filter(cafe => cafe.category === cafeTypeFilter);
+  }
+  
+  if (neighborhoodFilter && neighborhoodFilter !== 'all') {
+    filtered = filtered.filter(cafe => cafe.locations?.[0]?.neighborhood === neighborhoodFilter);
+  }
+  
+  return filtered;
+};
+
 export const useCafeStore = create((set) => ({
   // Theme mode state
   themeMode: localStorage.getItem("themeMode") || "light",
@@ -10,11 +27,34 @@ export const useCafeStore = create((set) => ({
   },
   // Cafe and search state
   cafes: [],
-  setCafes: (cafes) => set({ cafes }),
+  setCafes: (cafes) => set((state) => {
+    // When cafes are updated, recalculate filtered cafes if filters are active
+    const filteredCafes = (state.cafeTypeFilter || state.neighborhoodFilter) 
+      ? applyFilters(cafes, state.cafeTypeFilter, state.neighborhoodFilter)
+      : state.filteredCafes;
+    return { cafes, filteredCafes };
+  }),
   searchQuery: "",
   setSearchQuery: (query) => set({ searchQuery: query }),
   searchResults: [],
   setSearchResults: (results) => set({ searchResults: results }),
+
+  // Filter state
+  cafeTypeFilter: '',
+  neighborhoodFilter: '',
+  filteredCafes: [],
+  
+  setCafeTypeFilter: (filter) => set((state) => {
+    const filteredCafes = applyFilters(state.cafes, filter, state.neighborhoodFilter);
+    return { cafeTypeFilter: filter, filteredCafes };
+  }),
+  
+  setNeighborhoodFilter: (filter) => set((state) => {
+    const filteredCafes = applyFilters(state.cafes, state.cafeTypeFilter, filter);
+    return { neighborhoodFilter: filter, filteredCafes };
+  }),
+  
+  clearFilters: () => set({ cafeTypeFilter: '', neighborhoodFilter: '', filteredCafes: [] }),
 
   // Tastings state
   tastings: [],
