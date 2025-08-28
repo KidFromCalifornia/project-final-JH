@@ -1,13 +1,102 @@
-# Final Project
+# Stockholm Coffee Club 
 
-Replace this readme with your own information about your project.
+A comprehensive fullstack application for discovering and reviewing Stockholm's specialty coffee scene. Built with React, Node.js, and MongoDB, featuring interactive maps, user authentication, and a sophisticated coffee tasting note system.
 
-Start by briefly describing the assignment in a sentence or two. Keep it short and to the point.
+## The Problem
 
-## The problem
+Stockholm has an incredible coffee culture, but finding the best specialty coffee shops can be challenging for both locals and visitors. This application solves that by providing:
 
-Describe how you approached to problem, and what tools and techniques you used to solve it. How did you plan? What technologies did you use? If you had more time, what would be next?
+- **Interactive map** of Stockholm's coffee shops with category filtering
+- **Community-driven reviews** through coffee tasting notes
+- **User authentication** with personal profiles and admin management
+- **Mobile-first responsive design** for on-the-go coffee discovery
+
+## Tech Stack
+
+### Frontend
+- **React 18** with lazy loading and Suspense
+- **Material-UI v5** for design system and theming
+- **Zustand** for global state management
+- **MapLibre GL JS** for interactive maps
+- **React Router** for navigation
+- **SweetAlert2** for enhanced notifications
+
+### Backend
+- **Node.js** with Express framework
+- **MongoDB** with Mongoose ODM
+- **JWT authentication** with bcryptjs
+- **Role-based access control** (admin/user)
+- **RESTful API** design with proper error handling
+
+### Key Features
+- 🗺️ Interactive map with custom icons and geolocation
+- ☕ Coffee tasting notes with rating system
+- 👥 User authentication and profiles
+- 🔍 Advanced filtering and search functionality
+- 🌓 Light/dark theme support
+- 📱 Mobile-responsive design
+- 👑 Admin panel for content management
+
+## Installation & Setup
+
+```bash
+# Clone the repository
+git clone [your-repo-url]
+cd project-final-JH-1
+
+# Backend setup
+cd backend
+npm install
+# Create .env file with your MongoDB connection string and JWT secret
+npm run dev
+
+# Frontend setup
+cd ../frontend
+npm install
+npm run dev
+```
+
+## API Documentation
+
+### Authentication Endpoints
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+
+### Cafe Endpoints
+- `GET /api/cafes` - Get all approved cafes
+- `GET /api/cafes/:id` - Get cafe by ID
+- `POST /api/cafes` - Create new cafe (admin only)
+
+### Tasting Endpoints
+- `GET /api/tastings/public` - Get public tasting notes
+- `GET /api/tastings` - Get user's tastings (auth required)
+- `POST /api/tastings` - Create new tasting (auth required)
+
+### Submission Endpoints
+- `POST /api/cafeSubmissions` - Submit new cafe for approval
+- `GET /api/cafeSubmissions` - Get submissions (admin only)
+
+## Approach & Planning
+
+I approached this project with a mobile-first mindset, focusing on the core user journey of discovering coffee shops in Stockholm. The architecture separates concerns cleanly:
+
+1. **State Management**: Zustand provides a clean alternative to Context API
+2. **UI/UX**: Material-UI ensures consistency and accessibility
+3. **Maps**: MapLibre offers professional mapping without vendor lock-in
+4. **Authentication**: JWT tokens with role-based permissions
+5. **Database**: MongoDB's flexibility handles varied cafe data structures
+
+## Future Enhancements
+
+Given more time, I would add:
+- Real-time notifications for new cafe approvals
+- Social features (following users, sharing tastings)
+- Advanced analytics dashboard for admins
+- Integration with coffee shop APIs for live hours/menu data
+- Push notifications for nearby coffee recommendations
 
 ## View it live
 
-Every project should be deployed somewhere. Be sure to include the link to the deployed project so that the viewer can click around and see what it's all about.
+- **Frontend**: [Your deployed frontend URL]
+- **Backend**: [Your deployed backend URL]
+- **GitHub**: [Your repository URL]

@@ -60,13 +60,41 @@ const CafePage = () => {
         <Typography variant="h4" gutterBottom>
           {cafe.name}
         </Typography>
-        <Typography variant="body1"  gutterBottom>
-          {cafe.address}
-        </Typography>
+        
+        {/* Multiple Locations Display */}
+        {cafe.hasMultipleLocations && cafe.locations?.length > 1 ? (
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Locations:
+            </Typography>
+            {cafe.locations.map((location, index) => (
+              <Box key={index} sx={{ mb: 1, pl: 1, borderLeft: '2px solid', borderLeftColor: 'primary.main' }}>
+                {location.locationNote && (
+                  <Typography variant="subtitle2" color="primary" fontWeight="500">
+                    {location.locationNote}
+                  </Typography>
+                )}
+                <Typography variant="body1">
+                  {location.address}
+                </Typography>
+                {location.neighborhood && (
+                  <Typography variant="body2" color="text.secondary">
+                    {location.neighborhood}
+                  </Typography>
+                )}
+              </Box>
+            ))}
+          </Box>
+        ) : (
+          <Typography variant="body1" gutterBottom>
+            {cafe.locations?.[0]?.address}
+          </Typography>
+        )}
+        
         <Typography variant="body2" sx={{ mb: 2 }}>
           {cafe.description}
         </Typography>
-        <Typography variant="body2" >
+        <Typography variant="body2">
           {cafe.features?.join(", ")}
         </Typography>
       </Paper>

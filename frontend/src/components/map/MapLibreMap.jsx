@@ -22,26 +22,29 @@ export default function MapLibreMap({
       mapStyle={themeMode === "dark" ? MAP_STYLE_DARK : MAP_STYLE_LIGHT}
     >
       {/* Café markers */}
-      {cafesToShow.map((cafe) => {
-        const coords = cafe.locations?.[0]?.coordinates?.coordinates;
-        if (
-          Array.isArray(coords) &&
-          coords.length === 2 &&
-          coords.every(Number.isFinite)
-        ) {
-          return (
-            <Marker
-              key={cafe._id}
-              longitude={coords[0]}
-              latitude={coords[1]}
-              onClick={() => setSelectedCafe(cafe)}
-              sx={{ boxShadow: 3 }}
-            >
-              {getCustomIcon(cafe.category, theme, themeMode)}
-            </Marker>
-          );
-        }
-        return null;
+      {cafesToShow.flatMap((cafe) => {
+        // Create markers for ALL locations of each cafe
+        return cafe.locations?.map((location, locationIndex) => {
+          const coords = location.coordinates?.coordinates;
+          if (
+            Array.isArray(coords) &&
+            coords.length === 2 &&
+            coords.every(Number.isFinite)
+          ) {
+            return (
+              <Marker
+                key={`${cafe._id}-${locationIndex}`}
+                longitude={coords[0]}
+                latitude={coords[1]}
+                onClick={() => setSelectedCafe({ ...cafe, selectedLocationIndex: locationIndex })}
+                sx={{ boxShadow: 3 }}
+              >
+                {getCustomIcon(cafe.category, theme, themeMode)}
+              </Marker>
+            );
+          }
+          return null;
+        }).filter(Boolean) || [];
       })}
 
       {/* User location marker */}
@@ -55,26 +58,42 @@ export default function MapLibreMap({
         )}
 
       {/* Popup for selected cafe */}
-      {selectedCafe &&
-        Array.isArray(
-          selectedCafe.locations?.[0]?.coordinates?.coordinates
-        ) && (
-          <Popup
-            longitude={selectedCafe.locations[0].coordinates.coordinates[0]}
-            latitude={selectedCafe.locations[0].coordinates.coordinates[1]}
-            onClose={() => setSelectedCafe(null)}
-            closeOnClick={false}
-          >
-            <Box>
-              <Typography variant="h6" fontWeight="bold">
-                {selectedCafe.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {selectedCafe.locations[0].address}
-              </Typography>
-            </Box>
-          </Popup>
-        )}
+      {selectedCafe && (() => {
+        const locationIndex = selectedCafe.selectedLocationIndex || 0;
+        const selectedLocation = selectedCafe.locations?.[locationIndex];
+        const coords = selectedLocation?.coordinates?.coordinates;
+        
+        if (Array.isArray(coords) && coords.length === 2) {
+          return (
+            <Popup
+              longitude={coords[0]}
+              latitude={coords[1]}
+              onClose={() => setSelectedCafe(null)}
+              closeOnClick={false}
+            >
+              <Box>
+                <Typography variant="h6" fontWeight="bold">
+                  {selectedCafe.name}
+                </Typography>
+                {selectedCafe.hasMultipleLocations && selectedLocation.locationNote && (
+                  <Typography variant="body2" color="primary" fontWeight="500">
+                    {selectedLocation.locationNote}
+                  </Typography>
+                )}
+                <Typography variant="body2" color="text.secondary">
+                  {selectedLocation.address}
+                </Typography>
+                {selectedLocation.neighborhood && (
+                  <Typography variant="body2" color="text.secondary">
+                    {selectedLocation.neighborhood}
+                  </Typography>
+                )}
+              </Box>
+            </Popup>
+          );
+        }
+        return null;
+      })()}
     </Map>
   );
 }
