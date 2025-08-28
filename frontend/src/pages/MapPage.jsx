@@ -2,11 +2,12 @@ import React, { useEffect, useState, Suspense } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import GeotagFab from "../components/GeotagFab";
-import { useCafeStore } from "../useCafeStore";
-import { getCustomIcon } from "../components/customMapIcon";
+import GeotagFab from "../components/map/GeotagFab";
+import MapLegend from "../components/map/MapLegend";
+import { useCafeStore } from "../stores/useCafeStore";
+import { getCustomIcon } from "../components/map/MapIcons";
 
-const MapLibreMap = React.lazy(() => import("../components/MapLibreMap"));
+const MapLibreMap = React.lazy(() => import("../components/map/MapLibreMap"));
 
 const MapPage = () => {
   const theme = useTheme();
@@ -53,7 +54,7 @@ const MapPage = () => {
   const neighborhoodFilter = useCafeStore((state) => state.neighborhoodFilter);
   const hasActiveFilters = cafeTypeFilter || neighborhoodFilter;
 
-  // Priority: searchResults > filteredCafes (when filters active) > cafes
+  
   const cafesToShow = searchResults.length > 0 ? searchResults : 
                      hasActiveFilters ? filteredCafes : cafes;
 
@@ -86,6 +87,8 @@ const MapPage = () => {
           right: { xs: "auto", sm: 30 },
         }}
       />
+
+      <MapLegend />
 
       <Suspense fallback={<div>Loading map...</div>}>
         <MapLibreMap

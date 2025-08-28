@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, useState, useEffect, lazy } from "react";
-import NavBar from "./components/NavBar";
-import LoadingLogo from "./components/LoadingLogo.jsx";
-import MobileBottomNav from "./components/MobileBottomNav.jsx";
+import NavBar from "./components/layout/NavBar";
+import LoadingLogo from "./components/common/LoadingLogo.jsx";
+import MobileBottomNav from "./components/layout/MobileBottomNav.jsx";
 
 // Lazy load pages for performance
 const MapPage = lazy(() => import("./pages/MapPage.jsx"));
@@ -11,7 +11,7 @@ const CafePage = lazy(() => import("./pages/CafePage.jsx"));
 const UserPage = lazy(() => import("./pages/UserPage.jsx"));
 const AdminPage = lazy(() => import("./pages/AdminPage.jsx"));
 
-export const App = () => {
+const App = () => {
   // Global state for authentication
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -26,11 +26,14 @@ export const App = () => {
   useEffect(() => {
     const token = localStorage.getItem("userToken");
     const username = localStorage.getItem("username");
+    console.log("App loading - token:", !!token, "username:", username); // Debug log
     if (token && username) {
       setIsLoggedIn(true);
       setCurrentUser({ username });
     }
   }, []);
+
+  console.log("App render - showLogin:", showLogin, "isLoggedIn:", isLoggedIn); // Debug log
 
   return (
     <Router>
@@ -79,6 +82,10 @@ export const App = () => {
             />
           </Routes>
         </Suspense>
+        {/* Debug info */}
+        <div style={{ position: 'fixed', bottom: 10, right: 10, background: 'rgba(0,0,0,0.8)', color: 'white', padding: '5px', fontSize: '12px', zIndex: 9999 }}>
+          Login: {showLogin ? 'true' : 'false'} | LoggedIn: {isLoggedIn ? 'true' : 'false'}
+        </div>
       </main>
 
       <MobileBottomNav />
@@ -126,3 +133,5 @@ export const App = () => {
     </Router>
   );
 };
+
+export default App;

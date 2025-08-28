@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { cafeAPI } from "../services/api";
-import { useCafeStore } from "../useCafeStore";
-import { showAlert } from "../components/SwalAlertStyles";
+import { useCafeStore } from "../stores/useCafeStore";
+import { showAlert } from "../styles/SwalAlertStyles";
 import { Box, Typography, Paper, Alert, CircularProgress } from "@mui/material";
 
 const CafePage = () => {
@@ -60,13 +60,13 @@ const CafePage = () => {
         <Typography variant="h4" gutterBottom>
           {cafe.name}
         </Typography>
-        <Typography variant="body1" color="text.secondary" gutterBottom>
+        <Typography variant="body1"  gutterBottom>
           {cafe.address}
         </Typography>
         <Typography variant="body2" sx={{ mb: 2 }}>
           {cafe.description}
         </Typography>
-        <Typography variant="body2" color="primary">
+        <Typography variant="body2" >
           {cafe.features?.join(", ")}
         </Typography>
       </Paper>

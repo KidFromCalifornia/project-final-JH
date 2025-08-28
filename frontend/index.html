@@ -5,6 +5,22 @@
     <link rel="icon" type="image/svg+xml" href="scc_cup.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jonny Hicks' Stockholm Coffee Club</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://font.stockholm.se" crossorigin>
+    <link rel="dns-prefetch" href="https://font.stockholm.se">
+    
+    <!-- Optimize CSS delivery -->
+    <style>
+      /* Critical CSS - prevent FOUC */
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        background-color: #fafafa;
+      }
+      #root { min-height: 100vh; }
+      /* Stockholm Type font faces will be loaded by fontLoader.js */
+    </style>
   </head>
   <body>
     <div id="root"></div>

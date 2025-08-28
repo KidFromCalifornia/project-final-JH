@@ -1,19 +1,18 @@
-import TastingForm from "../components/TastingForm";
+import TastingForm from "../components/forms/TastingForm";
 import { useEffect } from "react";
-import { useCafeStore } from "../useCafeStore";
+import { useCafeStore } from "../stores/useCafeStore";
 import {
   Container,
   Box,
   Typography,
   Button,
   Alert,
-  Grid,
   Tooltip,
   useTheme,
-  Paper,
 } from "@mui/material";
-import CafeSearchBar from "../components/CafeSearchBar";
-import FlipTastingCard from "../components/FlipTastingCard";
+import Grid from "@mui/material/Grid";
+import CafeSearchBar from "../components/common/CafeSearchBar";
+import FlipTastingCard from "../components/common/FlipTastingCard";
 import { tastingAPI } from "../services/api";
 
 const TastingsPage = () => {
@@ -126,47 +125,66 @@ const TastingsPage = () => {
   const totalPages = Math.ceil(filteredTastings.length / tastingsPerPage);
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h1" hidden gutterBottom>
         Coffee Tasting Page
       </Typography>
-      {isLoggedIn ? (
-        <TastingForm
-          onSubmit={handleTastingSubmit}
-          initialValues={editingTasting || {}}
-        />
-      ) : (
-        <Box sx={{ textAlign: "center" }} mt={2}>
-          <Typography variant="h2">
-            Please log in to add your own experience
-          </Typography>
-        </Box>
-      )}
-      <CafeSearchBar setSearchQuery={setSearchQuery} type="tastings" />
+      
+      {/* Form Section */}
+      <Box sx={{ mb: 4 }}>
+        {isLoggedIn ? (
+          <TastingForm
+            onSubmit={handleTastingSubmit}
+            initialValues={editingTasting || {}}
+          />
+        ) : (
+          <Box sx={{ textAlign: "center", py: 4, mb: 4 }}>
+            <Typography variant="h4" color="text.secondary" gutterBottom>
+              Share Your Coffee Experience
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Please log in to add your own tasting notes and experiences
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
+      {/* Search Section */}
+      <Box sx={{ mb: 3 }}>
+        <CafeSearchBar setSearchQuery={setSearchQuery} type="tastings" />
+      </Box>
+
+      {/* Results Section */}
       {filteredTastings.length === 0 ? (
-        <Alert severity="info">No tastings found.</Alert>
+        <Alert severity="info" sx={{ mt: 2 }}>
+          No tastings found. {searchQuery && "Try adjusting your search terms."}
+        </Alert>
       ) : (
-        <>
+        <Box>
+          <Typography variant="h6" sx={{ mb: 3 }}>
+            {filteredTastings.length} tasting{filteredTastings.length !== 1 ? 's' : ''} found
+          </Typography>
+          
           <Grid
-            xs={12}
-            sm={6}
-            md={4}
             container
             spacing={3}
-            justifyContent="center"
+            justifyContent="flex-start"
             alignItems="stretch"
+            sx={{ mt: 2 }}
           >
             {currentTastings.length === 0 ? (
-              <Typography
-                variant="body2"
-                color="themetext.secondary"
-                sx={{ mt: 2 }}
-              >
-                No tasting cards to display.
-              </Typography>
+              <Grid item xs={12}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textAlign: 'center', py: 4 }}
+                >
+                  No tasting cards to display.
+                </Typography>
+              </Grid>
             ) : (
               currentTastings.map((tasting) => (
-                <Grid item key={tasting._id} xs={12} sm={6} md={4}>
+                <Grid item key={tasting._id} xs={12} sm={6} md={4} lg={3}>
                   <FlipTastingCard
                     tasting={tasting}
                     isLoggedIn={isLoggedIn}
@@ -177,38 +195,48 @@ const TastingsPage = () => {
               ))
             )}
           </Grid>
-          <Box display="flex" padding={2} justifyContent="center" mt={2}>
-            <Tooltip title="Go to previous page" arrow>
-              <Button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                variant="outlined"
-                sx={{ mx: 2 }}
-              >
-                Previous
-              </Button>
-            </Tooltip>
-            <Typography sx={{ mx: 2 }}>
-              Page {currentPage} of {totalPages}
-            </Typography>
-            <Tooltip title="Go to next page" arrow>
-              <Button
-                onClick={() =>
-                  setCurrentPage((prev) =>
-                    prev < totalPages ? prev + 1 : prev
-                  )
-                }
-                disabled={
-                  currentPage === totalPages || filteredTastings.length === 0
-                }
-                variant="outlined"
-                sx={{ mx: 2 }}
-              >
-                Next
-              </Button>
-            </Tooltip>
-          </Box>
-        </>
+          
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Box display="flex" justifyContent="center" alignItems="center" mt={4} mb={2}>
+              <Tooltip title="Go to previous page" arrow>
+                <span>
+                  <Button
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    variant="outlined"
+                    sx={{ mx: 1 }}
+                  >
+                    Previous
+                  </Button>
+                </span>
+              </Tooltip>
+              
+              <Typography variant="body2" sx={{ mx: 3 }}>
+                Page {currentPage} of {totalPages}
+              </Typography>
+              
+              <Tooltip title="Go to next page" arrow>
+                <span>
+                  <Button
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        prev < totalPages ? prev + 1 : prev
+                      )
+                    }
+                    disabled={
+                      currentPage === totalPages || filteredTastings.length === 0
+                    }
+                    variant="outlined"
+                    sx={{ mx: 1 }}
+                  >
+                    Next
+                  </Button>
+                </span>
+              </Tooltip>
+            </Box>
+          )}
+        </Box>
       )}
     </Container>
   );

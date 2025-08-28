@@ -1,5 +1,5 @@
-import TastingForm from "../components/TastingForm";
-import { useCafeStore } from "../useCafeStore";
+import TastingForm from "../components/forms/TastingForm";
+import { useCafeStore } from "../stores/useCafeStore";
 import { useEffect, useState } from "react";
 import {
   Container,
