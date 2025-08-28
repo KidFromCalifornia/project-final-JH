@@ -71,7 +71,7 @@ const MapPage = () => {
           width: 56,
           height: 56,
           boxShadow: 3,
-          bottom: { xs: 80, sm: "auto" },
+          bottom: { xs: 40, sm: "auto" }, // Overlap with AppBar (56px - 16px = 40px overlap)
           left: { xs: "50%", sm: "auto" },
           transform: { xs: "translateX(-50%)", sm: "none" },
           top: { xs: "auto", sm: 75 },

@@ -380,6 +380,7 @@ const NavBar = ({
             </ListItem>
           )}
         </List>
+        {/* log in */}
         <Dialog
           open={showLogin}
           onClose={() => setShowLogin(false)}
@@ -394,6 +395,7 @@ const NavBar = ({
             />
           </DialogContent>
         </Dialog>
+        {/* add new cafe only visible when logged in */}
         <Dialog
           open={showAddCafe}
           onClose={() => setShowAddCafe(false)}
@@ -432,12 +434,6 @@ const NavBar = ({
           onChange={setNeighborhoodQuery}
           iconComponent={<TravelExploreIcon sx={{ color: navIconColor }} />}
         />
-        {/* <FilterDropdown
-          label="Filter by neighborhood"
-          options={location.neighborhood}
-          value={searchQuery}
-          onChange={setSearchQuery}
-        /> */}
       </Drawer>
     </Box>
   );
