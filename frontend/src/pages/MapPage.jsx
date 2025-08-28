@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense } from "react";
-import { Box, Typography, SvgIcon } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import GeotagFab from "../components/GeotagFab";
@@ -89,7 +89,6 @@ const MapPage = () => {
           selectedCafe={selectedCafe}
           setSelectedCafe={setSelectedCafe}
           getCustomIcon={getCustomIcon}
-          GeotagPinIcon={getCustomIcon}
         />
       </Suspense>
     </Box>

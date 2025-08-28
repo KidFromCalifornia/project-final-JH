@@ -2,7 +2,7 @@ import { Map, Marker, Popup } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibregl from "maplibre-gl";
 import { MAP_STYLE_LIGHT, MAP_STYLE_DARK } from "../mapStyles";
-import { Box, Typography, SvgIcon } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 export default function MapLibreMap({
   cafesToShow,
@@ -13,7 +13,6 @@ export default function MapLibreMap({
   selectedCafe,
   setSelectedCafe,
   getCustomIcon,
-  GeotagPinIcon,
 }) {
   return (
     <Map
@@ -51,15 +50,7 @@ export default function MapLibreMap({
         Number.isFinite(userLocation.lng) &&
         Number.isFinite(userLocation.lat) && (
           <Marker longitude={userLocation.lng} latitude={userLocation.lat}>
-            <SvgIcon
-              component={GeotagPinIcon}
-              sx={{
-                width: 32,
-                height: 32,
-                color: theme.palette.success.main,
-              }}
-              inheritViewBox
-            />
+            {getCustomIcon("geotag", theme, themeMode)}
           </Marker>
         )}
 

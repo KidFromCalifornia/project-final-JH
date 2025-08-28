@@ -1,17 +1,7 @@
-import { styled } from "@mui/material/styles";
-
-const StyledRating = styled(Rating)({
-  "& .MuiRating-iconFilled": {
-    color: "#ff6d75",
-  },
-  "& .MuiRating-iconHover": {
-    color: "#ff3d47",
-  },
-});
 import { useState, useEffect } from "react";
 import { useCafeStore } from "../useCafeStore";
 import { apiCall } from "../services/api";
-import { SwalAlertStyles } from "./SwalAlertStyles";
+import { SwalAlertStyles, showAlert } from "./SwalAlertStyles";
 import {
   TextField,
   Checkbox,
@@ -62,7 +52,12 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         setOptions(data.enums || {});
       } catch (error) {
         console.error("Error fetching metadata:", error);
-        setFetchError("Failed to load metadata");
+        setFetchError("");
+        showAlert({
+          title: "We couldn't load form options",
+          text: "We couldn't reach the server. Please try again.",
+          icon: "error",
+        });
       }
     };
     // Only fetch if cafes are not already loaded

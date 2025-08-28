@@ -4,13 +4,13 @@ import { authAPI } from "../services/api";
 import { useCafeStore } from "../useCafeStore";
 import {
   Box,
-  Alert,
   TextField,
   Typography,
   IconButton,
   CircularProgress,
   Button,
 } from "@mui/material";
+import { showAlert } from "./SwalAlertStyles";
 
 const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
@@ -72,15 +72,21 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         setError("");
         onClose();
       } else {
-        setError(
+        const message =
           data.error ||
-            data.message ||
-            (isSignup ? "Signup failed. Try again." : "Invalid credentials")
-        );
+          data.message ||
+          (isSignup ? "Signup failed. Try again." : "Invalid credentials");
+        // User-caused error → show inline MUI alert
+        setError(message);
       }
     } catch (error) {
       console.error("Auth error:", error);
-      setError(isSignup ? "Signup failed. Try again." : "Invalid credentials");
+      setError("");
+      showAlert({
+        title: isSignup ? "Unable to sign up" : "Unable to log in",
+        text: "We couldn't reach the server. Please try again.",
+        icon: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -89,14 +95,10 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   return (
     <Box
       sx={{
-        position: "fixed",
         width: { xs: "90vw", sm: 400 },
         top: 0,
         left: 0,
-        zIndex: 1300,
-        borderRadius: 2,
-        boxShadow: 3,
-        padding: 2,
+
         bgcolor: (theme) => theme.palette.background.paper,
       }}
     >
@@ -180,9 +182,11 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         </Button>
       </form>
       {error && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {error}
-        </Alert>
+        <Box sx={{ mt: 2 }}>
+          <Typography color={(theme) => theme.palette.error.main}>
+            {error}
+          </Typography>
+        </Box>
       )}
       <Typography align="center" sx={{ mt: 2 }}>
         {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}

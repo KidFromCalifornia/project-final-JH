@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useCafeStore } from "../useCafeStore";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
+import { useTheme } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Fab from "@mui/material/Fab";
 import Box from "@mui/material/Box";
@@ -29,6 +30,7 @@ import TextField from "@mui/material/TextField";
 import FilterDropdown from "./FilterDropdown";
 
 const MobileBottomNav = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
@@ -86,14 +88,22 @@ const MobileBottomNav = () => {
             sx={{ p: 1 }}
             onClick={() => handleNav("/tastings")}
           >
-            <RateReviewIcon fontSize="medium" />
+            <RateReviewIcon
+              fontSize="medium"
+              sx={{ color: theme.palette.light.main }}
+            />
           </IconButton>
           <FilterDropdown
             aria-label="Filter by Cafe Type"
             options={categories}
             value={searchQuery}
             onChange={setSearchQuery}
-            iconComponent={<StorefrontIcon fontSize="medium" color="light" />}
+            iconComponent={
+              <StorefrontIcon
+                fontSize="medium"
+                sx={{ color: theme.palette.light.main }}
+              />
+            }
             sx={{ minWidth: 40 }}
           />
           <FilterDropdown
@@ -104,7 +114,10 @@ const MobileBottomNav = () => {
             value={searchQuery}
             onChange={setSearchQuery}
             iconComponent={
-              <TravelExploreIcon fontSize="medium" color="light" />
+              <TravelExploreIcon
+                fontSize="medium"
+                sx={{ color: theme.palette.light.main }}
+              />
             }
             sx={{ minWidth: 40 }}
           />
@@ -114,7 +127,10 @@ const MobileBottomNav = () => {
             sx={{ p: 1 }}
             onClick={() => setSearchOpen(true)}
           >
-            <SearchIcon fontSize="medium" />
+            <SearchIcon
+              fontSize="medium"
+              sx={{ color: theme.palette.light.main }}
+            />
           </IconButton>
           {isLoggedIn && isAdmin && (
             <IconButton
@@ -123,7 +139,10 @@ const MobileBottomNav = () => {
               sx={{ p: 1 }}
               onClick={() => handleNav("/admin")}
             >
-              <AdminPanelSettingsIcon fontSize="medium" />
+              <AdminPanelSettingsIcon
+                fontSize="medium"
+                sx={{ color: theme.palette.light.main }}
+              />
             </IconButton>
           )}
           {isLoggedIn && !isAdmin && (
@@ -133,7 +152,10 @@ const MobileBottomNav = () => {
               sx={{ p: 1 }}
               onClick={() => handleNav("/user")}
             >
-              <DoorFrontIcon fontSize="medium" />
+              <DoorFrontIcon
+                fontSize="medium"
+                sx={{ color: theme.palette.light.main }}
+              />
             </IconButton>
           )}
           {isLoggedIn ? (
@@ -149,7 +171,10 @@ const MobileBottomNav = () => {
                 handleNav("/");
               }}
             >
-              <LogoutIcon fontSize="medium" />
+              <LogoutIcon
+                fontSize="medium"
+                sx={{ color: theme.palette.light.main }}
+              />
             </IconButton>
           ) : (
             <IconButton
@@ -158,7 +183,10 @@ const MobileBottomNav = () => {
               sx={{ p: 1 }}
               onClick={() => handleNav("/login")}
             >
-              <LoginIcon fontSize="medium" />
+              <LoginIcon
+                fontSize="medium"
+                sx={{ color: theme.palette.light.main }}
+              />
             </IconButton>
           )}
 
@@ -201,7 +229,10 @@ const MobileBottomNav = () => {
               display: { xs: "flex", sm: "none" },
             }}
           >
-            <MyLocationIcon fontSize="large" />
+            <MyLocationIcon
+              fontSize="large"
+              sx={{ color: theme.palette.light.main }}
+            />
           </Fab>
         ) : (
           <Fab
@@ -220,7 +251,10 @@ const MobileBottomNav = () => {
               display: { xs: "flex", sm: "none" },
             }}
           >
-            <MapIcon fontSize="large" />
+            <MapIcon
+              fontSize="large"
+              sx={{ color: theme.palette.light.main }}
+            />
           </Fab>
         ))}
     </React.Fragment>

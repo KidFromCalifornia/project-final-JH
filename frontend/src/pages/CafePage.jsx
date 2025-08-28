@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { cafeAPI } from "../services/api";
 import { useCafeStore } from "../useCafeStore";
-import { SwalAlertStyles } from "../components/SwalAlertStyles";
+import { showAlert } from "../components/SwalAlertStyles";
 import { Box, Typography, Paper, Alert, CircularProgress } from "@mui/material";
 
 const CafePage = () => {
@@ -22,7 +22,12 @@ const CafePage = () => {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message || "Failed to fetch cafe");
+        setError(null);
+        showAlert({
+          title: "We couldn't load this cafe",
+          text: "We couldn't reach the server. Please try again.",
+          icon: "error",
+        });
         setLoading(false);
       });
   }, [cafeId, setLoading]);

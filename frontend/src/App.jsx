@@ -91,25 +91,34 @@ export const App = () => {
               <a
                 href="https://github.com/KidFromCalifornia"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="Github"
-                alt=" Link to Github"
-              ></a>
+                aria-label="Link to Github"
+              >
+                Github
+              </a>
             </li>
             <li>
               <a
                 href="https://www.linkedin.com/in/jonathanwhicks/"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="linkedin"
-                alt=" Link to linkdin"
-              ></a>
+                aria-label="Link to LinkedIn"
+              >
+                LinkedIn
+              </a>
             </li>
             <li>
               <a
                 href="https://www.instagram.com/thekidfromcalifornia"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="instagram"
-                alt=" Link to instagram"
-              ></a>
+                aria-label="Link to Instagram"
+              >
+                Instagram
+              </a>
             </li>
           </ul>
         </div>

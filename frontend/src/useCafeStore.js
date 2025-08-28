@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { tastingAPI } from "./services/api.js";
 
 export const useCafeStore = create((set) => ({
   // Theme mode state
@@ -28,7 +29,6 @@ export const useCafeStore = create((set) => ({
     set({ loading: true });
     try {
       let allTastings = [];
-      const { tastingAPI } = await import("./services/api.js");
       if (isLoggedIn) {
         const userTastings = await tastingAPI.getUserTastings();
         allTastings = userTastings.data || [];

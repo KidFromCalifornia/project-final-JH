@@ -14,6 +14,7 @@ export default defineConfig({
   ],
 
   build: {
+    chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -22,6 +23,9 @@ export default defineConfig({
           }
           if (id.includes("node_modules/@mui")) {
             return "mui";
+          }
+          if (id.includes("node_modules/@mui/icons-material")) {
+            return "mui-icons";
           }
           if (id.includes("node_modules/maplibre-gl")) {
             return "maplibre";

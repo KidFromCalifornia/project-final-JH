@@ -10,7 +10,11 @@ const getCustomIcon = (category, theme, themeMode) => {
   let color;
   switch (category) {
     case "thirdwave":
-      color = theme.palette.accent?.main || theme.palette.secondary.main;
+      // Use stronger yellow on light backgrounds for contrast
+      color =
+        (themeMode === "light"
+          ? theme.palette.accentStrong?.main
+          : theme.palette.accent?.main) || theme.palette.secondary.main;
       break;
     case "specialty":
       color =
@@ -28,41 +32,27 @@ const getCustomIcon = (category, theme, themeMode) => {
       color = theme.palette.primary.main;
   }
 
-  const iconProps = { sx: { fontSize: 32, color }, inheritViewBox: true };
+  const iconProps = {
+    sx: {
+      fontSize: 32,
+      color,
+      "& path": { fill: color, stroke: "none" },
+      "& g path": { fill: color },
+      "& [fill]": { fill: `${color} !important` },
+      filter: "drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))",
+    },
+    inheritViewBox: true,
+  };
 
   switch (category) {
     case "thirdwave":
-      return (
-        <SvgIcon
-          component={ThirdWavePinIcon}
-          {...iconProps}
-          filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
-        />
-      );
+      return <SvgIcon component={ThirdWavePinIcon} {...iconProps} />;
     case "specialty":
-      return (
-        <SvgIcon
-          component={SpecialtyPinIcon}
-          {...iconProps}
-          filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
-        />
-      );
+      return <SvgIcon component={SpecialtyPinIcon} {...iconProps} />;
     case "roaster":
-      return (
-        <SvgIcon
-          component={RoasterPinIcon}
-          {...iconProps}
-          filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
-        />
-      );
+      return <SvgIcon component={RoasterPinIcon} {...iconProps} />;
     case "geotag":
-      return (
-        <SvgIcon
-          component={GeotagPinIcon}
-          {...iconProps}
-          filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
-        />
-      );
+      return <SvgIcon component={GeotagPinIcon} {...iconProps} />;
     default:
       return <SvgIcon component={PinIcon} {...iconProps} />;
   }

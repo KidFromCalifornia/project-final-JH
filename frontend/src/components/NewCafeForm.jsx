@@ -1,14 +1,25 @@
 import React, { useState } from "react";
 import { cafeAPI } from "../services/api";
-import { SwalAlertStyles } from "./SwalAlertStyles";
+import { SwalAlertStyles, showAlert } from "./SwalAlertStyles";
 import {
+  Box,
+  Stack,
+  Typography,
   TextField,
   Select,
   MenuItem,
   Checkbox,
   FormControlLabel,
   Button,
+  FormControl,
+  InputLabel,
+  FormGroup,
+  Divider,
+  Paper,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const CATEGORY_OPTIONS = ["specialty", "roaster", "thirdwave"];
 const FEATURE_OPTIONS = [
@@ -47,6 +58,7 @@ const NewCafeForm = ({ onClose }) => {
     ],
   });
   const [status, setStatus] = useState("");
+  const [statusType, setStatusType] = useState("success");
 
   // Handle basic field changes
   const handleChange = (e) => {
@@ -155,6 +167,7 @@ const NewCafeForm = ({ onClose }) => {
 
       const result = await cafeAPI.submitCafe(payload);
       if (result.success) {
+        setStatusType("success");
         setStatus("Cafe added!");
         setForm({
           name: "",
@@ -174,50 +187,57 @@ const NewCafeForm = ({ onClose }) => {
           ],
         });
       } else {
-        setStatus(result.error || "Error adding cafe.");
+        setStatusType("error");
+        setStatus(
+          result.error ||
+            "We couldn't add this cafe. Please check and try again."
+        );
       }
     } catch {
-      setStatus("Network error.");
+      setStatus("");
+      setStatusType("error");
+      showAlert({
+        title: "We couldn't submit your suggestion",
+        text: "We couldn't reach the server. Please try again.",
+        icon: "error",
+      });
     }
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          margin: "0.5rem",
-          position: "fixed",
-          backgroundColor: "white",
-          padding: "1rem",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          maxWidth: "300px",
-          top: "0",
-          right: "0",
-          color: "#170351",
-        }}
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={(t) => ({
+        p: 2,
+        maxWidth: 640,
+        color: t.palette.text.primary,
+        backgroundColor: t.palette.background.paper,
+      })}
+    >
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ mb: 1 }}
       >
-        <button
-          type="button"
-          aria-label="Close login form"
+        <Typography variant="h6">Suggest a Cafe</Typography>
+        <IconButton
+          aria-label="Close add cafe form"
           onClick={onClose}
-          style={{
-            float: "right",
-            cursor: "pointer",
-            background: "none",
-            border: "none",
-            fontSize: "1.5rem",
-          }}
+          size="small"
+          color="inherit"
         >
-          ×
-        </button>
-        <h2>Suggest a Cafe</h2>
-        {status && (
-          <SwalAlertStyles
-            message={status}
-            type={status.includes("error") ? "error" : "success"}
-          />
-        )}
+          <CloseIcon />
+        </IconButton>
+      </Stack>
+      {status && (
+        <Box sx={{ mb: 2 }}>
+          <SwalAlertStyles message={status} type={statusType} />
+        </Box>
+      )}
+
+      <Stack spacing={2} sx={{ mb: 2 }}>
         <TextField
           label="Name"
           name="name"
@@ -225,7 +245,6 @@ const NewCafeForm = ({ onClose }) => {
           onChange={handleChange}
           required
           fullWidth
-          margin="normal"
         />
         <TextField
           label="Website"
@@ -233,7 +252,6 @@ const NewCafeForm = ({ onClose }) => {
           value={form.website}
           onChange={handleChange}
           fullWidth
-          margin="normal"
         />
         <TextField
           label="Description"
@@ -242,54 +260,61 @@ const NewCafeForm = ({ onClose }) => {
           onChange={handleChange}
           inputProps={{ maxLength: 1000 }}
           fullWidth
-          margin="normal"
+          multiline
+          minRows={2}
         />
-        <FormControlLabel
-          control={
-            <Select
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              required
-              fullWidth
-              displayEmpty
-            >
-              <MenuItem value="">Select Category</MenuItem>
-              {CATEGORY_OPTIONS.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option.charAt(0).toUpperCase() + option.slice(1)}
-                </MenuItem>
-              ))}
-            </Select>
-          }
-          label="Category"
-        />
+        <FormControl fullWidth required>
+          <InputLabel id="category-label">Category</InputLabel>
+          <Select
+            labelId="category-label"
+            name="category"
+            value={form.category}
+            label="Category"
+            onChange={handleChange}
+            displayEmpty
+          >
+            <MenuItem value="">
+              <em>Select Category</em>
+            </MenuItem>
+            {CATEGORY_OPTIONS.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Stack>
 
-        <fieldset hidden>
-          <legend>Images</legend>
-          {form.images.map((img, idx) => (
-            <div key={idx}>
-              <input
-                type="text"
-                value={img}
-                onChange={(e) => handleImageChange(e, idx)}
-                placeholder="Image URL"
-              />
-            </div>
-          ))}
-        </fieldset>
-        <fieldset>
-          <legend>Location</legend>
-          {form.locations.map((loc, idx) => (
-            <div
-              key={idx}
-              style={{
-                border: "1px solid #eee",
-                marginBottom: "1rem",
-                padding: "1rem",
-                position: "relative",
-              }}
-            >
+      <Divider sx={{ my: 2 }}>
+        <Typography variant="subtitle2" sx={{ color: "inherit" }}>
+          Location
+        </Typography>
+      </Divider>
+      <Stack spacing={2}>
+        {form.locations.map((loc, idx) => (
+          <Paper
+            key={idx}
+            variant="outlined"
+            sx={(t) => ({
+              p: 2,
+              position: "relative",
+              backgroundColor: t.palette.background.paper,
+              borderColor: t.palette.divider,
+              borderRadius: 1,
+            })}
+          >
+            {form.locations.length > 1 && (
+              <IconButton
+                aria-label="Remove this location"
+                onClick={() => removeLocation(idx)}
+                size="small"
+                color="inherit"
+                sx={{ position: "absolute", top: 8, right: 8 }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )}
+            <Stack spacing={2}>
               <TextField
                 label="Address"
                 name="address"
@@ -297,7 +322,6 @@ const NewCafeForm = ({ onClose }) => {
                 onChange={(e) => handleLocationChange(e, idx)}
                 required
                 fullWidth
-                margin="normal"
               />
               <TextField
                 label="Neighborhood"
@@ -305,7 +329,6 @@ const NewCafeForm = ({ onClose }) => {
                 value={loc.neighborhood}
                 onChange={(e) => handleLocationChange(e, idx)}
                 fullWidth
-                margin="normal"
               />
               <TextField
                 label="Location Note"
@@ -313,68 +336,54 @@ const NewCafeForm = ({ onClose }) => {
                 value={loc.locationNote}
                 onChange={(e) => handleLocationChange(e, idx)}
                 fullWidth
-                margin="normal"
               />
-
-              {form.locations.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeLocation(idx)}
-                  style={{
-                    position: "absolute",
-                    top: "0.5rem",
-                    right: "0.5rem",
-                    background: "#eee",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "2rem",
-                    height: "2rem",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                  }}
-                  aria-label="Remove this location"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addLocation}
-            style={{ marginTop: "0.5rem" }}
-          >
-            Add Another Location
-          </button>
-        </fieldset>
-        <fieldset>
-          <legend>Features</legend>
-          {FEATURE_OPTIONS.map((feature) => (
-            <FormControlLabel
-              key={feature}
-              control={
-                <Checkbox
-                  name={feature}
-                  checked={form.features.includes(feature)}
-                  onChange={() => handleFeatureChange(feature)}
-                />
-              }
-              label={feature.replace(/_/g, " ")}
-            />
-          ))}
-        </fieldset>
+            </Stack>
+          </Paper>
+        ))}
         <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 2 }}
+          type="button"
+          onClick={addLocation}
+          startIcon={<AddCircleOutlineIcon />}
+          variant="text"
+          sx={{ alignSelf: "flex-start" }}
         >
-          Add Cafe
+          Add Another Location
         </Button>
-        {status && <p>{status}</p>}
-      </form>
-    </>
+      </Stack>
+
+      <Divider sx={{ my: 2 }}>
+        <Typography variant="subtitle2" sx={{ color: "inherit" }}>
+          Features
+        </Typography>
+      </Divider>
+      <FormGroup row sx={{ rowGap: 1, columnGap: 2 }}>
+        {FEATURE_OPTIONS.map((feature) => (
+          <FormControlLabel
+            key={feature}
+            control={
+              <Checkbox
+                size="small"
+                name={feature}
+                checked={form.features.includes(feature)}
+                onChange={() => handleFeatureChange(feature)}
+              />
+            }
+            label={feature.replace(/_/g, " ")}
+            sx={(t) => ({ color: t.palette.text.primary })}
+          />
+        ))}
+      </FormGroup>
+
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 3 }}
+      >
+        Add Cafe
+      </Button>
+    </Box>
   );
 };
 

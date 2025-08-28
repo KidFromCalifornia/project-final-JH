@@ -19,6 +19,7 @@ import {
 import FilterDropdown from "./FilterDropdown";
 import { useCafeStore } from "../useCafeStore";
 import LoginForm from "./LoginForm";
+import NewCafeForm from "./NewCafeForm";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 
@@ -42,7 +43,7 @@ import {
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import sccLogoMono from "../assets/scc_logo_mono.svg";
+import sccLogoMono from "../assets/whiteCup_logo.svg";
 import Switch from "@mui/material/Switch";
 
 const drawerWidth = 320;
@@ -129,7 +130,9 @@ const NavBar = ({
   const [open, setOpen] = React.useState(false);
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
+  const setSearchResultsStore = useCafeStore((state) => state.setSearchResults);
   const darkMode = themeMode === "dark";
+  const navIconColor = theme.palette.light.main;
   const handleToggleDarkMode = () => {
     setThemeMode(darkMode ? "light" : "dark");
   };
@@ -139,11 +142,7 @@ const NavBar = ({
     new Set(cafes.map((cafe) => cafe.category).filter(Boolean))
   );
   // Debug: log full cafes array for troubleshooting
-  console.log("Full cafes array:", cafes);
-  console.log(
-    "Neighborhoods in cafes:",
-    cafes.map((cafe) => cafe.locations?.[0]?.neighborhood)
-  );
+
   const neighborhoods = Array.from(
     new Set(
       cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean)
@@ -170,7 +169,9 @@ const NavBar = ({
   // Expose filtered cafes to parent
   React.useEffect(() => {
     onFilteredCafes(filteredCafes);
-  }, [filteredCafes, onFilteredCafes]);
+    // Also update global store so MapPage reacts to filters
+    setSearchResultsStore(filteredCafes);
+  }, [filteredCafes, onFilteredCafes, setSearchResultsStore]);
 
   // If you want to pass filteredCafes to children, do so here
 
@@ -184,51 +185,87 @@ const NavBar = ({
   return (
     <Box sx={{ display: { xs: "none", sm: "flex" } }}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        open={open}
-        color={darkMode ? "primary" : "secondary"}
-      >
-        <Toolbar>
-          <IconButton
-            // color prop removed; use sx for color if needed
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ marginRight: 5, ...(open && { display: "none" }) }}
+      <AppBar position="fixed" open={open} color="transparent">
+        <Toolbar
+          elevation={3}
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            backgroundColor: theme.palette.background.paper,
+            borderBottom: darkMode
+              ? `1px solid ${theme.palette.divider}`
+              : `1px solid ${theme.palette.divider}`,
+            color: theme.palette.light.main,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              flexDirection: "row",
+              flexGrow: 1,
+            }}
           >
-            <MenuIcon color="light" />
-          </IconButton>
-
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Link label="map" to="/" aligncontent="center">
-              <img
-                src={sccLogoMono}
-                alt="SCC Logo"
-                style={{ height: 25, marginRight: 12 }}
-              />
-            </Link>
-            <Typography
-              variant="h2"
-              noWrap
-              component="div"
-              fontWeight={700}
+            <IconButton
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
               sx={{
-                color: darkMode
-                  ? theme.palette.primary.main
-                  : theme.palette.light.main,
-                flexGrow: 1,
+                marginRight: 5,
+                ...(open && { display: "none" }),
               }}
-              aria-hidden="true"
             >
-              Stockholms Coffee Club
-            </Typography>
-          </Box>
+              <MenuIcon
+                sx={{
+                  color: theme.palette.accent.main,
+                }}
+              />
+            </IconButton>
 
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Link
+                to="/"
+                aria-label="map"
+                style={{ display: "inline-flex", lineHeight: 0 }}
+              >
+                <img
+                  src={sccLogoMono}
+                  alt="SCC Logo"
+                  style={{ height: "2rem", width: "auto", display: "block" }}
+                />
+              </Link>
+              <Typography
+                component="div"
+                fontWeight={500}
+                noWrap
+                sx={(t) => ({
+                  color: t.palette.light.main,
+                  lineHeight: 1,
+                  fontFamily: t.typography.header,
+                  fontSize: {
+                    xs: t.typography.h5.fontSize,
+                    sm: t.typography.h4.fontSize,
+                    md: t.typography.h2.fontSize,
+                  },
+                  textTransform: "uppercase",
+                })}
+                aria-hidden="true"
+              >
+                Stockholms Coffee Club
+              </Typography>
+            </Box>
+          </Box>
           {/* Dark mode toggle on right side */}
           <Box sx={{ display: "flex", alignItems: "center", float: "right" }}>
             <IconButton sx={{ ml: 2 }}>
-              {darkMode ? <DarkModeIcon /> : <LightModeIcon />}
+              {darkMode ? (
+                <DarkModeIcon sx={{ color: navIconColor }} />
+              ) : (
+                <LightModeIcon sx={{ color: theme.palette.accent.main }} />
+              )}
             </IconButton>
             <Switch
               checked={darkMode}
@@ -242,7 +279,12 @@ const NavBar = ({
                 sx={{ ml: 2 }}
                 aria-label="User Page"
               >
-                <AccountCircleIcon />
+                <AccountCircleIcon
+                  sx={{
+                    filter: "drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.5))",
+                    fill: theme.palette.accent.main,
+                  }}
+                />
               </IconButton>
             )}
           </Box>
@@ -252,9 +294,9 @@ const NavBar = ({
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
-              <ChevronRightIcon color="light" />
+              <ChevronRightIcon sx={{ color: theme.palette.accent.main }} />
             ) : (
-              <ChevronLeftIcon color="light" />
+              <ChevronLeftIcon sx={{ color: theme.palette.accent.main }} />
             )}
           </IconButton>
         </DrawerHeader>
@@ -263,7 +305,7 @@ const NavBar = ({
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton component={Link} to="/">
               <ListItemIcon>
-                <MapIcon color="light" />
+                <MapIcon sx={{ color: navIconColor }} />
               </ListItemIcon>
               <ListItemText primary="Map" />
             </ListItemButton>
@@ -271,7 +313,7 @@ const NavBar = ({
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton component={Link} to="/tastings">
               <ListItemIcon>
-                <RateReviewIcon color="light" />
+                <RateReviewIcon sx={{ color: navIconColor }} />
               </ListItemIcon>
               <ListItemText primary="Tastings" />
             </ListItemButton>
@@ -280,7 +322,7 @@ const NavBar = ({
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton onClick={() => setShowAddCafe(true)}>
                 <ListItemIcon>
-                  <AddLocationIcon color="light" />
+                  <AddLocationIcon sx={{ color: navIconColor }} />
                 </ListItemIcon>
                 <ListItemText primary="Add Cafe" />
               </ListItemButton>
@@ -290,7 +332,7 @@ const NavBar = ({
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton component={Link} to="/admin">
                 <ListItemIcon>
-                  <AdminPanelSettingsIcon color="light" />
+                  <AdminPanelSettingsIcon sx={{ color: navIconColor }} />
                 </ListItemIcon>
                 <ListItemText primary="Admin" />
               </ListItemButton>
@@ -300,7 +342,7 @@ const NavBar = ({
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton component={Link} to="/user">
                 <ListItemIcon>
-                  <DoorFrontIcon color="light" />
+                  <DoorFrontIcon sx={{ color: navIconColor }} />
                 </ListItemIcon>
                 <ListItemText primary="Userpage" />
               </ListItemButton>
@@ -313,7 +355,7 @@ const NavBar = ({
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton onClick={() => setShowLogin(true)}>
                 <ListItemIcon>
-                  <LoginIcon color="light" />
+                  <LoginIcon sx={{ color: navIconColor }} />
                 </ListItemIcon>
                 <ListItemText primary="Login" />
               </ListItemButton>
@@ -331,7 +373,7 @@ const NavBar = ({
                 }}
               >
                 <ListItemIcon>
-                  <LogoutIcon color="light" />
+                  <LogoutIcon sx={{ color: navIconColor }} />
                 </ListItemIcon>
                 <ListItemText primary="Logout" />
               </ListItemButton>
@@ -352,20 +394,43 @@ const NavBar = ({
             />
           </DialogContent>
         </Dialog>
+        <Dialog
+          open={showAddCafe}
+          onClose={() => setShowAddCafe(false)}
+          maxWidth="sm"
+          fullWidth
+          sx={{
+            "& .MuiDialog-container": {
+              alignItems: "flex-start",
+              justifyContent: "flex-start",
+            },
+          }}
+          PaperProps={{
+            sx: {
+              position: "absolute",
+              top: 88,
+              left: open ? drawerWidth + 24 : 88,
+            },
+          }}
+        >
+          <DialogContent sx={{ p: 0 }}>
+            <NewCafeForm onClose={() => setShowAddCafe(false)} />
+          </DialogContent>
+        </Dialog>
         <Divider />
         <FilterDropdown
           label="Filter by Cafe Type"
           options={categories}
           value={cafeTypeQuery}
           onChange={setCafeTypeQuery}
-          iconComponent={<StorefrontIcon color="light" />}
+          iconComponent={<StorefrontIcon sx={{ color: navIconColor }} />}
         />
         <FilterDropdown
           label="Filter by neighborhood"
           options={neighborhoods}
           value={neighborhoodQuery}
           onChange={setNeighborhoodQuery}
-          iconComponent={<TravelExploreIcon color="light" />}
+          iconComponent={<TravelExploreIcon sx={{ color: navIconColor }} />}
         />
         {/* <FilterDropdown
           label="Filter by neighborhood"
