@@ -1,7 +1,4 @@
-// Health check endpoint for Render
-app.get("/healthz", (req, res) => {
-  res.status(200).send("OK");
-});
+// ...existing code...
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -106,5 +103,8 @@ connectDB()
     console.error("MongoDB connection error:", err);
     process.exit(1);
   });
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
+});
 
 export default connectDB;

@@ -37,16 +37,15 @@ import {
   Storefront as StorefrontIcon,
   TravelExplore as TravelExploreIcon,
   AccountCircle as AccountCircleIcon,
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import sccLogoMono from "../assets/scc_logo_mono.svg";
 import Switch from "@mui/material/Switch";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
 
 const drawerWidth = 320;
-const drawerHeight = "100%";
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -117,8 +116,6 @@ const Drawer = styled(MuiDrawer, {
 const NavBar = ({
   searchResults = [],
   setSearchResults = () => {},
-  searchQuery = "",
-  setSearchQuery = () => {},
   showLogin = false,
   setShowLogin = () => {},
   isLoggedIn = false,
@@ -126,6 +123,7 @@ const NavBar = ({
   setCurrentUser = () => {},
   showAddCafe = false,
   setShowAddCafe = () => {},
+  onFilteredCafes = () => {},
 }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -140,10 +138,41 @@ const NavBar = ({
   const categories = Array.from(
     new Set(cafes.map((cafe) => cafe.category).filter(Boolean))
   );
+  // Debug: log full cafes array for troubleshooting
+  console.log("Full cafes array:", cafes);
+  console.log(
+    "Neighborhoods in cafes:",
+    cafes.map((cafe) => cafe.locations?.[0]?.neighborhood)
+  );
+  const neighborhoods = Array.from(
+    new Set(
+      cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean)
+    )
+  );
   let isAdmin = false;
   if (typeof window !== "undefined" && window.localStorage) {
     isAdmin = localStorage.getItem("admin") === "true";
   }
+
+  // Independent filter state
+  const [cafeTypeQuery, setCafeTypeQuery] = React.useState("");
+  const [neighborhoodQuery, setNeighborhoodQuery] = React.useState("");
+
+  // Filter function
+  const filteredCafes = cafes.filter((cafe) => {
+    const typeMatch = cafeTypeQuery === "" || cafe.category === cafeTypeQuery;
+    const neighborhoodMatch =
+      neighborhoodQuery === "" ||
+      cafe.locations?.[0]?.neighborhood === neighborhoodQuery;
+    return typeMatch && neighborhoodMatch;
+  });
+
+  // Expose filtered cafes to parent
+  React.useEffect(() => {
+    onFilteredCafes(filteredCafes);
+  }, [filteredCafes, onFilteredCafes]);
+
+  // If you want to pass filteredCafes to children, do so here
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -327,17 +356,15 @@ const NavBar = ({
         <FilterDropdown
           label="Filter by Cafe Type"
           options={categories}
-          value={searchQuery}
-          onChange={setSearchQuery}
+          value={cafeTypeQuery}
+          onChange={setCafeTypeQuery}
           iconComponent={<StorefrontIcon color="light" />}
         />
         <FilterDropdown
           label="Filter by neighborhood"
-          options={Array.from(
-            new Set(cafes.map((cafe) => cafe.neighborhood).filter(Boolean))
-          )}
-          value={searchQuery}
-          onChange={setSearchQuery}
+          options={neighborhoods}
+          value={neighborhoodQuery}
+          onChange={setNeighborhoodQuery}
           iconComponent={<TravelExploreIcon color="light" />}
         />
         {/* <FilterDropdown

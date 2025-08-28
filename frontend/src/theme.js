@@ -5,8 +5,8 @@ export const theme = {
     accent: "#fde113ff", // School Yellow
     light: "#f0f4ffff", // Very light Alice Blue
     navbarBackground: "#184777ff", // Match secondary for unity
-    mainText: "#0a1f33ff", // Oxford Blue
-    versoText: "#ebf2fa", // Alice Blue
+    mainText: "#ebf2fa", // Oxford Blue
+    versoText: "#0a1f33", // Alice Blue
     error: "#ef6461", // Bittersweet
     success: "#7eb77fff", // Slightly darker Olivine for readability
   },
@@ -15,8 +15,8 @@ export const theme = {
     primary: "#1c4e7d", // Muted Azel (for subtle contrast in dark mode)
     secondary: "rgba(10, 31, 51, 1)", // Oxford Blue (background support)
     accent: "#fde112ff", // School Yellow (kept vibrant for focus)
-    light: "#ebf2fa", // Muted Azel reused for consistency
-    background: "#0a1f33", // Oxford Blue (true dark mode base)
+    light: "#2570bbff", // Muted Azel reused for consistency
+    background: "#184777ff", // Oxford Blue (true dark mode base)
     mainText: "#ebf2fa", // Alice Blue (light readable text)
     versoText: "#0a1f33", // Oxford Blue (reverse text for highlights)
     error: "#ef6461", // Bittersweet

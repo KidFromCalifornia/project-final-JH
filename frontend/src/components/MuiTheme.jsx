@@ -44,8 +44,8 @@ const MuiTheme = ({ children }) => {
         },
         fontSize: 16,
       },
-      icons: {},
-      shape: { borderRadius: 8 },
+      icons: { fontSize: 20 },
+      shape: { borderRadius: 5 },
       shadows: [customTheme.shadow, ...Array(24).fill(customTheme.shadow)],
       spacing: 8,
       breakpoints: {

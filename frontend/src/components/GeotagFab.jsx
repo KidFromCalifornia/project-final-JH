@@ -1,4 +1,3 @@
-import React from "react";
 import Fab from "@mui/material/Fab";
 
 const GeotagFab = ({
@@ -15,13 +14,15 @@ const GeotagFab = ({
     sx={{
       position: "fixed",
       zIndex: 1301,
-      bottom: 80,
-      left: "50%",
-      transform: "translateX(-50%)",
       width: 56,
       height: 56,
       boxShadow: 3,
-      display: { xs: "flex", sm: "none" },
+      bottom: { xs: 80, sm: "auto" },
+      left: { xs: "50%", sm: "auto" },
+      transform: { xs: "translateX(-50%)", sm: "none" },
+      top: { xs: "auto", sm: 75 },
+      right: { xs: "auto", sm: 30 },
+      display: "flex",
       ...sx,
     }}
     {...props}

@@ -1,10 +1,12 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ThemeWrapper from "./components/MuiTheme.jsx";
 import { App } from "./App.jsx";
 import "./index.css";
-import ThemeWrapper from "./components/MuiTheme.jsx";
+import ReactDOM from "react-dom/client";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+const container = document.getElementById("root");
+const root = ReactDOM.createRoot(container);
+root.render(
   <React.StrictMode>
     <ThemeWrapper>
       <App />

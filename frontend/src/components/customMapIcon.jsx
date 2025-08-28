@@ -4,6 +4,7 @@ import PinIcon from "../assets/pinIcon.svg?react";
 import RoasterPinIcon from "../assets/roasterPinIcon.svg?react";
 import SpecialtyPinIcon from "../assets/specialtyPinIcon.svg?react";
 import ThirdWavePinIcon from "../assets/thirdWaveIcon.svg?react";
+import GeotagPinIcon from "../assets/geotagPinIcon.svg?react";
 
 const getCustomIcon = (category, theme, themeMode) => {
   let color;
@@ -19,6 +20,9 @@ const getCustomIcon = (category, theme, themeMode) => {
       break;
     case "roaster":
       color = theme.palette.error.main;
+      break;
+    case "geotag":
+      color = theme.palette.success.main;
       break;
     default:
       color = theme.palette.primary.main;
@@ -47,6 +51,14 @@ const getCustomIcon = (category, theme, themeMode) => {
       return (
         <SvgIcon
           component={RoasterPinIcon}
+          {...iconProps}
+          filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
+        />
+      );
+    case "geotag":
+      return (
+        <SvgIcon
+          component={GeotagPinIcon}
           {...iconProps}
           filter="drop-shadow(4px 8px 4px rgba(10, 31, 51, 1))"
         />

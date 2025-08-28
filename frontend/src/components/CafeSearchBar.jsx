@@ -1,19 +1,6 @@
 import { useCafeStore } from "../useCafeStore";
 import { cafeAPI, tastingAPI } from "../services/api";
-
-const SearchBarContainer = styled.input`
-  padding: 0.5rem 1rem;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  width: 100%;
-  box-shadow: ${({ theme }) => theme.shadow};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.accent};
-    box-shadow: inset ${({ theme }) => theme.shadow};
-  }
-`;
+import { TextField, Box } from "@mui/material";
 
 const SearchBar = ({ type = "cafes" }) => {
   const searchQuery = useCafeStore((state) => state.searchQuery);
@@ -43,17 +30,21 @@ const SearchBar = ({ type = "cafes" }) => {
   };
 
   return (
-    <>
-      <SearchBarContainer
+    <Box sx={{ width: "100%", mb: 2 }}>
+      <TextField
+        fullWidth
+        id="filled-basic"
+        label={`Search ${type === "cafes" ? "cafes" : "tastings"}`}
+        variant="filled"
         type="text"
-        placeholder={`Search ${type === "cafes" ? "cafes" : "tastings"}...`}
         value={searchQuery}
         onChange={handleChange}
         autoComplete="on"
         role="searchbox"
         aria-label={`Search ${type}`}
+        sx={{ bgcolor: "none" }}
       />
-    </>
+    </Box>
   );
 };
 

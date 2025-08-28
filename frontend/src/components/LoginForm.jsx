@@ -18,7 +18,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [identifier, setIdentifier] = useState("");
-  const error = useCafeStore((state) => state.fetchError);
+  const error = useCafeStore((state) => state.fetchError); // Ensure error handling is correct
   const setError = useCafeStore((state) => state.setFetchError);
   const loading = useCafeStore((state) => state.loading);
   const setLoading = useCafeStore((state) => state.setLoading);

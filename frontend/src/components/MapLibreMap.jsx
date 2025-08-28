@@ -1,6 +1,8 @@
+import { Map, Marker, Popup } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibregl from "maplibre-gl";
 import { MAP_STYLE_LIGHT, MAP_STYLE_DARK } from "../mapStyles";
+import { Box, Typography, SvgIcon } from "@mui/material";
 
 export default function MapLibreMap({
   cafesToShow,

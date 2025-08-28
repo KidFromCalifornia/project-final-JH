@@ -24,6 +24,24 @@ export const useCafeStore = create((set) => ({
   setEditingTasting: (tasting) => set({ editingTasting: tasting }),
   deletingTasting: null,
   setDeletingTasting: (tasting) => set({ deletingTasting: tasting }),
+  fetchTastings: async (isLoggedIn) => {
+    set({ loading: true });
+    try {
+      let allTastings = [];
+      const { tastingAPI } = await import("./services/api.js");
+      if (isLoggedIn) {
+        const userTastings = await tastingAPI.getUserTastings();
+        allTastings = userTastings.data || [];
+      } else {
+        const publicTastings = await tastingAPI.getPublic();
+        allTastings = publicTastings.data || [];
+      }
+      set({ tastings: allTastings });
+    } catch {
+      set({ tastings: [] });
+    }
+    set({ loading: false });
+  },
 
   // Form options
   options: {},

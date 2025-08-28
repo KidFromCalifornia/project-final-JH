@@ -1,11 +1,10 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { Box, Typography, SvgIcon } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import GeotagPinIcon from "../assets/geotagPinIcon.svg";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import GeotagFab from "../components/GeotagFab";
-import { getCustomIcon } from "../components/customMapIcon";
 import { useCafeStore } from "../useCafeStore";
+import { getCustomIcon } from "../components/customMapIcon";
 
 const MapLibreMap = React.lazy(() => import("../components/MapLibreMap"));
 
@@ -90,7 +89,7 @@ const MapPage = () => {
           selectedCafe={selectedCafe}
           setSelectedCafe={setSelectedCafe}
           getCustomIcon={getCustomIcon}
-          GeotagPinIcon={GeotagPinIcon}
+          GeotagPinIcon={getCustomIcon}
         />
       </Suspense>
     </Box>

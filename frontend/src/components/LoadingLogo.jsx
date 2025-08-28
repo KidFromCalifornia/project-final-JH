@@ -7,7 +7,9 @@ const spinKeyframes = {
   },
 };
 
-const LoadingLogo = () => (
+const defaultColor = "#222";
+
+const LoadingLogo = (theme, themeMode) => (
   <Box
     display="flex"
     flexDirection="column"
@@ -37,6 +39,9 @@ const LoadingLogo = () => (
           width: 300,
           height: 300,
           animation: "spin 4.5s linear infinite",
+          filter: themeMode === "dark" ? "brightness(0.8)" : undefined,
+          color:
+            themeMode === "dark" ? theme?.palette?.common?.light : defaultColor,
           "&:hover": {
             animationPlayState: "paused",
           },
@@ -53,7 +58,7 @@ const LoadingLogo = () => (
         }}
       />
     </Box>
-    <Typography variant="h6" mt={2}>
+    <Typography color="text.primary" variant="h2" mt={2}>
       Currently Brewing...
     </Typography>
   </Box>
