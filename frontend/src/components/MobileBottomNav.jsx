@@ -388,17 +388,24 @@ const MobileBottomNav = () => {
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton onClick={() => { /* Handle cafe type filter */ }}>
-              <ListItemIcon><StorefrontIcon sx={{ color: navIconColor }} /></ListItemIcon>
-              <ListItemText primary="Filter by Cafe Type" />
-            </ListItemButton>
+              <FilterDropdown
+          label="Filter by Cafe Type"
+          options={categories}
+          value={cafeTypeQuery}
+          onChange={setCafeTypeQuery}
+          iconComponent={<StorefrontIcon sx={{ color: navIconColor }} />}
+        />
+     
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton onClick={() => { /* Handle neighborhood filter */ }}>
-              <ListItemIcon><TravelExploreIcon sx={{ color: navIconColor }} /></ListItemIcon>
-              <ListItemText primary="Filter by neighborhood" />
-            </ListItemButton>
+              <FilterDropdown
+          label="Filter by neighborhood"
+          options={neighborhoods}
+          value={neighborhoodQuery}
+          onChange={setNeighborhoodQuery}
+          iconComponent={<TravelExploreIcon sx={{ color: navIconColor }} />}
+        />
           </ListItem>
         </List>
       </Drawer>
