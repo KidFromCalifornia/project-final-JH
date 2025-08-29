@@ -18,6 +18,7 @@ import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import Switch from "@mui/material/Switch";
 import MenuItem from "@mui/material/MenuItem";
+import Tooltip from "@mui/material/Tooltip";
 import FilterDropdown from "../common/FilterDropdown";
 import LoginForm from "../forms/LoginForm";
 import NewCafeForm from "../forms/NewCafeForm";
@@ -167,68 +168,80 @@ const MobileBottomNav = () => {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton
-              color="inherit"
-              size="large"
-              sx={{ p: 1 }}
-              onClick={() => openDrawer('main')}
-            >
-              <MenuIcon fontSize="medium" sx={{ color: navIconColor }} />
-            </IconButton>
+            <Tooltip title="Main Menu" arrow>
+              <IconButton
+                color="inherit"
+                size="large"
+                sx={{ p: 1 }}
+                onClick={() => openDrawer('main')}
+              >
+                <MenuIcon fontSize="medium" sx={{ color: navIconColor }} />
+              </IconButton>
+            </Tooltip>
 
-            <IconButton
-              color="inherit"
-              size="large"
-              sx={{ p: 1 }}
-              onClick={() => handleNav("/tastings")}
-            >
-              <RateReviewIcon fontSize="medium" sx={{ color: navIconColor }} />
-            </IconButton>
+            <Tooltip title="Coffee Tastings" arrow>
+              <IconButton
+                color="inherit"
+                size="large"
+                sx={{ p: 1 }}
+                onClick={() => handleNav("/tastings")}
+              >
+                <RateReviewIcon fontSize="medium" sx={{ color: navIconColor }} />
+              </IconButton>
+            </Tooltip>
           </Box>
 
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton
-              color="inherit"
-              size="large"
-              sx={{ p: 1 }}
-              onClick={() => setSearchOpen(true)}
-            >
-              <SearchIcon fontSize="medium" sx={{ color: navIconColor }} />
-            </IconButton>
+            <Tooltip title="Search Cafes" arrow>
+              <IconButton
+                color="inherit"
+                size="large"
+                sx={{ p: 1 }}
+                onClick={() => setSearchOpen(true)}
+              >
+                <SearchIcon fontSize="medium" sx={{ color: navIconColor }} />
+              </IconButton>
+            </Tooltip>
 
-            <IconButton
-              color="inherit"
-              size="large"
-              sx={{ p: 1 }}
-              onClick={() => openDrawer('filter')}
-            >
-              <FilterListIcon fontSize="medium" sx={{ color: navIconColor }} />
-            </IconButton>
+            <Tooltip title="Filter Options" arrow>
+              <IconButton
+                color="inherit"
+                size="large"
+                sx={{ p: 1 }}
+                onClick={() => openDrawer('filter')}
+              >
+                <FilterListIcon fontSize="medium" sx={{ color: navIconColor }} />
+              </IconButton>
+            </Tooltip>
 
             {isLoggedIn ? (
-              <IconButton
-                color="inherit"
-                size="large"
-                sx={{ p: 1 }}
-                onClick={() => {
-                  localStorage.removeItem("userToken");
-                  localStorage.removeItem("username");
-                  localStorage.removeItem("admin");
-                  setIsLoggedIn(false);
-                  handleNav("/");
-                }}
-              >
-                <LogoutIcon fontSize="medium" sx={{ color: navIconColor }} />
-              </IconButton>
+              <Tooltip title="Logout" arrow>
+                <IconButton
+                  color="inherit"
+                  size="large"
+                  sx={{ p: 1 }}
+                  onClick={() => {
+                    localStorage.removeItem("userToken");
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("admin");
+                    setIsLoggedIn(false);
+                    handleNav("/");
+                  }}
+                >
+                  <LogoutIcon fontSize="medium" sx={{ color: navIconColor }} />
+                </IconButton>
+              </Tooltip>
             ) : (
-              <IconButton
-                color="inherit"
-                size="large"
-                sx={{ p: 1 }}
-                onClick={() => navigate("/login")}
-              >
-                <LoginIcon fontSize="medium" sx={{ color: navIconColor }} />
-              </IconButton>
+              <Tooltip title="Login" arrow>
+                <IconButton
+                  color="inherit"
+                  size="large"
+                  sx={{ p: 1 }}
+                  onClick={() => navigate("/login")}
+                >
+                  <LoginIcon fontSize="medium" sx={{ color: navIconColor }} />
+                </IconButton>
+              </Tooltip>
             )}
           </Box>
         </Toolbar>

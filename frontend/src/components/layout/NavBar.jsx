@@ -8,11 +8,12 @@ import {
   Toolbar,
   List,
   CssBaseline,
-  Typography,
+  typography,
   Divider,
   ListItem,
   ListItemText,
   ListItemButton,
+  Tooltip,
 } from "@mui/material";
 
 // import components
@@ -211,11 +212,13 @@ const NavBar = ({
                 ...(open && { display: "none" }),
               }}
             >
-              <MenuIcon
-                sx={{
-                  color: theme.palette.accent.main,
-                }}
-              />
+              <Tooltip title="Open Navigation Menu" arrow>
+                <MenuIcon
+                  sx={{
+                    color: theme.palette.accent.main,
+                  }}
+                />
+              </Tooltip>
             </IconButton>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -235,7 +238,7 @@ const NavBar = ({
                 fontWeight={500}
                 noWrap
                 sx={(t) => ({
-                  color: t.palette.light.main,
+                  color: palette.color.background.main,
                   lineHeight: 1,
                   fontFamily: t.typography.header,
                   fontSize: {
@@ -253,92 +256,108 @@ const NavBar = ({
           </Box>
           {/* Dark mode toggle on right side */}
           <Box sx={{ display: "flex", alignItems: "center", float: "right" }}>
-            <IconButton sx={{ ml: 2 }}>
-              {darkMode ? (
-                <DarkModeIcon sx={{ color: navIconColor }} />
-              ) : (
-                <LightModeIcon sx={{ color: theme.palette.accent.main }} />
-              )}
-            </IconButton>
+            <Tooltip title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"} arrow>
+              <IconButton sx={{ ml: 2 }}>
+                {darkMode ? (
+                  <DarkModeIcon sx={{ color: navIconColor }} />
+                ) : (
+                  <LightModeIcon sx={{ color: theme.palette.accent.main }} />
+                )}
+              </IconButton>
+            </Tooltip>
             <Switch
               checked={darkMode}
               onChange={handleToggleDarkMode}
               inputProps={{ "aria-label": "toggle dark mode" }}
             />
             {isLoggedIn && (
-              <IconButton
-                component={Link}
-                to="/user"
-                sx={{ ml: 2 }}
-                aria-label="User Page"
-              >
-                <AccountCircleIcon
-                  sx={{
-                    filter: "drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.5))",
-                    fill: theme.palette.accent.main,
-                  }}
-                />
-              </IconButton>
+              <Tooltip title="Go to User Profile" arrow>
+                <IconButton
+                  component={Link}
+                  to="/user"
+                  sx={{ ml: 2 }}
+                  aria-label="User Page"
+                >
+                  <AccountCircleIcon
+                    sx={{
+                      filter: "drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.5))",
+                      fill: theme.palette.accent.main,
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
             )}
           </Box>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon sx={{ color: theme.palette.accent.main }} />
-            ) : (
-              <ChevronLeftIcon sx={{ color: theme.palette.accent.main }} />
-            )}
-          </IconButton>
+          <Tooltip title="Close Navigation Menu" arrow>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "rtl" ? (
+                <ChevronRightIcon sx={{ color: theme.palette.accent.main }} />
+              ) : (
+                <ChevronLeftIcon sx={{ color: theme.palette.accent.main }} />
+              )}
+            </IconButton>
+          </Tooltip>
         </DrawerHeader>
         <Divider />
         <List>
           <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton component={Link} to="/">
-              <ListItemIcon>
-                <MapIcon sx={{ color: navIconColor }} />
-              </ListItemIcon>
-              <ListItemText primary="Map" />
-            </ListItemButton>
+            <Tooltip title="View Coffee Map" arrow placement="right" disableHoverListener={open}>
+              <ListItemButton component={Link} to="/">
+                <ListItemIcon>
+                  <MapIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
+                <ListItemText primary="Map" />
+              </ListItemButton>
+            </Tooltip>
           </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton component={Link} to="/tastings">
-              <ListItemIcon>
-                <RateReviewIcon sx={{ color: navIconColor }} />
-              </ListItemIcon>
-              <ListItemText primary="Tastings" />
-            </ListItemButton>
+            <Tooltip title="View Coffee Tastings" arrow placement="right" disableHoverListener={open}>
+              <ListItemButton component={Link} to="/tastings">
+                <ListItemIcon>
+                  <RateReviewIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
+                <ListItemText primary="Tastings" />
+              </ListItemButton>
+            </Tooltip>
           </ListItem>
           {isLoggedIn && (
             <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton onClick={() => setShowAddCafe(true)}>
-                <ListItemIcon>
-                  <AddLocationIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Add Cafe" />
-              </ListItemButton>
+              <Tooltip title="Submit New Cafe" arrow placement="right" disableHoverListener={open}>
+                <ListItemButton onClick={() => setShowAddCafe(true)}>
+                  <ListItemIcon>
+                    <AddLocationIcon sx={{ color: navIconColor }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Add Cafe" />
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           )}
           {isLoggedIn && isAdmin && (
             <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton component={Link} to="/admin">
-                <ListItemIcon>
-                  <AdminPanelSettingsIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Admin" />
-              </ListItemButton>
+              <Tooltip title="Admin Dashboard" arrow placement="right" disableHoverListener={open}>
+                <ListItemButton component={Link} to="/admin">
+                  <ListItemIcon>
+                    <AdminPanelSettingsIcon sx={{ color: navIconColor }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Admin" />
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           )}
           {isLoggedIn && !isAdmin && (
             <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton component={Link} to="/user">
-                <ListItemIcon>
-                  <DoorFrontIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Userpage" />
-              </ListItemButton>
+              <Tooltip title="User Profile & Settings" arrow placement="right" disableHoverListener={open}>
+                <ListItemButton component={Link} to="/user">
+                  <ListItemIcon>
+                    <DoorFrontIcon sx={{ color: navIconColor }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Userpage" />
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           )}
         </List>
@@ -346,30 +365,34 @@ const NavBar = ({
         <List>
           {!isLoggedIn && (
             <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton onClick={() => setShowLogin(true)}>
-                <ListItemIcon>
-                  <LoginIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Login" />
-              </ListItemButton>
+              <Tooltip title="Login to Your Account" arrow placement="right" disableHoverListener={open}>
+                <ListItemButton onClick={() => setShowLogin(true)}>
+                  <ListItemIcon>
+                    <LoginIcon sx={{ color: navIconColor }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Login" />
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           )}
           {isLoggedIn && (
             <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                onClick={() => {
-                  localStorage.removeItem("userToken");
-                  localStorage.removeItem("username");
-                  localStorage.removeItem("admin");
-                  setIsLoggedIn(false);
-                  setShowLogin(false);
-                }}
-              >
-                <ListItemIcon>
-                  <LogoutIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Logout" />
-              </ListItemButton>
+              <Tooltip title="Logout from Account" arrow placement="right" disableHoverListener={open}>
+                <ListItemButton
+                  onClick={() => {
+                    localStorage.removeItem("userToken");
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("admin");
+                    setIsLoggedIn(false);
+                    setShowLogin(false);
+                  }}
+                >
+                  <ListItemIcon>
+                    <LogoutIcon sx={{ color: navIconColor }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Logout" />
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           )}
         </List>
@@ -379,6 +402,18 @@ const NavBar = ({
           onClose={() => setShowLogin(false)}
           maxWidth="xs"
           fullWidth
+          sx={{
+            "& .MuiDialog-container": {
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 2,
+            },
+            "& .MuiDialog-paper": {
+              margin: { xs: 1, sm: 2 },
+              width: { xs: "calc(100vw - 32px)", sm: "auto" },
+              maxWidth: { xs: "none", sm: 400 },
+            },
+          }}
         >
           <DialogContent sx={{ p: 0 }}>
             <LoginForm
@@ -425,6 +460,7 @@ const NavBar = ({
           options={neighborhoods}
           value={neighborhoodQuery}
           onChange={setNeighborhoodQuery}
+xs
           iconComponent={<TravelExploreIcon sx={{ color: navIconColor }} />}
         />
         
@@ -433,22 +469,24 @@ const NavBar = ({
           <>
             <Divider sx={{ my: 1 }} />
             <ListItem disablePadding sx={{ display: "block", py: 0 }}>
-              <ListItemButton
-                onClick={clearFilters}
-                sx={{ 
-                  width: "100%", 
-                  justifyContent: "flex-start", 
-                  minHeight: 48,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  }
-                }}
-              >
-                <ListItemIcon>
-                  <ClearIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Clear All Filters" />
-              </ListItemButton>
+              <Tooltip title="Remove All Active Filters" arrow placement="right" disableHoverListener={open}>
+                <ListItemButton
+                  onClick={clearFilters}
+                  sx={{ 
+                    width: "100%", 
+                    justifyContent: "flex-start", 
+                    minHeight: 48,
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    }
+                  }}
+                >
+                  <ListItemIcon>
+                    <ClearIcon sx={{ color: navIconColor }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Clear All Filters" />
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           </>
         )}

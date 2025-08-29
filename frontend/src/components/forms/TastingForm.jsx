@@ -17,12 +17,47 @@ import {
   Typography,
   Paper,
   Divider,
+  Tooltip,
+  useTheme,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 const TastingForm = ({ onSubmit, initialValues = {} }) => {
+  const theme = useTheme();
+  
+  // Reusable TextField styling to match LoginForm
+  const textFieldStyles = {
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: theme.palette.common.white,
+      minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
+      '& fieldset': {
+        borderColor: theme.palette.text.primary,
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '& input': {
+        color: theme.palette.text.primary,
+        fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+      },
+      '& textarea': {
+        color: theme.palette.text.primary,
+        fontSize: { xs: "16px", sm: "14px" },
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: theme.palette.text.primary,
+      '&.Mui-focused': {
+        color: theme.palette.primary.main,
+      },
+    },
+  };
+
   const [form, setForm] = useState({
     cafeId: initialValues.cafeId || "",
     cafeName: initialValues.cafeName || "",
@@ -57,12 +92,17 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         setOptions(data.enums || {});
       } catch (error) {
         console.error("Error fetching metadata:", error);
-        setFetchError("");
-        showAlert({
-          title: "We couldn't load form options",
-          text: "We couldn't reach the server. Please try again.",
-          icon: "error",
-        });
+        // Only show sweet alert if server is completely down (network error)
+        if (error.code === 'NETWORK_ERROR' || error.message?.includes('fetch') || !error.response) {
+          showAlert({
+            title: "Server Unavailable",
+            text: "We couldn't reach the server. Please try again later.",
+            icon: "error",
+          });
+        } else {
+          // For other errors, use inline error display
+          setFetchError("We couldn't load form options. Please try again.");
+        }
       }
     };
     if (!cafes || cafes.length === 0) {
@@ -111,23 +151,32 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
 
   return (
     <Paper elevation={2} sx={{ 
-      p: 3, 
+      width: { xs: "100%", sm: 640 },
+      maxWidth: { xs: "none", sm: 640 },
+      p: { xs: 2, sm: 3 },
       mb: 4,
-      '& .MuiTextField-root': {
-        '& .MuiOutlinedInput-root': {
-          '&.Mui-focused fieldset': {
-           
-          },
-        },
-        '& .MuiInputLabel-root.Mui-focused': {
-         
-        },
-      },
-      '& .MuiCheckbox-root.Mui-checked': {
-     
-      },
+      display: "flex",
+      flexDirection: "column",
+      gap: 2,
+      backgroundColor: theme.palette.light.main,
+      borderRadius: 2,
+      boxShadow: 3,
+      color: theme.palette.text.primary,
+      position: "relative",
+      zIndex: 1,
+      overflow: "hidden",
+      minHeight: "auto",
     }}>
-      <Typography variant="h5" component="h2" gutterBottom>
+      <Typography 
+        variant="h4" 
+        component="h2" 
+        gutterBottom
+        sx={{ 
+          color: theme.palette.text.primary,
+          fontSize: { xs: "1.5rem", sm: "2rem" },
+          mb: 2,
+        }}
+      >
         {initialValues.cafeId ? 'Edit Coffee Tasting' : 'Add New Coffee Tasting'}
       </Typography>
       
@@ -142,7 +191,6 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField
-
                 label="Coffee Name"
                 name="coffeeName"
                 value={form.coffeeName}
@@ -150,6 +198,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 required
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -162,6 +211,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 required
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               >
                 <MenuItem value="">Select a cafe</MenuItem>
                 {cafes.map((cafe) => (
@@ -179,6 +229,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -189,6 +240,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -199,6 +251,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               />
             </Grid>
           </Grid>
@@ -222,6 +275,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 required
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               >
                 <MenuItem value="">Select</MenuItem>
                 {(options.brewMethod || []).map((method) => (
@@ -241,6 +295,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 required
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               >
                 <MenuItem value="">Select</MenuItem>
                 {(options.roastLevel || []).map((level) => (
@@ -260,6 +315,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 required
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               >
                 <MenuItem value="">Select</MenuItem>
                 {(options.acidity || []).map((level) => (
@@ -279,6 +335,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 required
                 fullWidth
                 margin="normal"
+                sx={textFieldStyles}
               >
                 <MenuItem value="">Select</MenuItem>
                 {(options.mouthFeel || []).map((feel) => (
@@ -322,18 +379,20 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
 
           <FormControl  margin="normal" sx={{ mb: 2, '& .MuiFormLabel-root': { color: 'text.primary' }, '& .MuiFormLabel-root.Mui-focused': { color: 'text.primary' } }}>
             <FormLabel component="legend">Overall Rating</FormLabel>
-            <Rating
-              name="rating"
-              value={form.rating}
-              precision={0.5}
-              max={5}
-              icon={<FavoriteIcon fontSize="inherit" />}
-              emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-              onChange={(e, value) =>
-                setForm((prev) => ({ ...prev, rating: value || 1 }))
-              }
-              sx={{ mt: 1 }}
-            />
+            <Tooltip title="Rate your overall coffee experience from 1-5 hearts" arrow placement="top">
+              <Rating
+                name="rating"
+                value={form.rating}
+                precision={0.5}
+                max={5}
+                icon={<FavoriteIcon fontSize="inherit" />}
+                emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                onChange={(e, value) =>
+                  setForm((prev) => ({ ...prev, rating: value || 1 }))
+                }
+                sx={{ mt: 1 }}
+              />
+            </Tooltip>
             <FormHelperText>
               {form.rating ? `${form.rating} out of 5 hearts` : "Select your rating"}
             </FormHelperText>
@@ -351,6 +410,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
             inputProps={{ maxLength: 500 }}
             placeholder="Share your thoughts about this coffee experience..."
             helperText={`${form.notes.length}/500 characters`}
+            sx={textFieldStyles}
           />
         </Box>
 
@@ -379,8 +439,24 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
           <Button
             type="submit"
             variant="contained"
+            color="primary"
             size="large"
-            sx={{ minWidth: 200, py: 1.5 }}
+            sx={{ 
+              minWidth: 200, 
+              py: { xs: 1.5, sm: 1.5 },
+              px: { xs: 2, sm: 3 },
+              minHeight: { xs: 48, sm: 42 }, // Better touch targets
+              fontSize: { xs: "16px", sm: "14px" },
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              '&:hover': {
+                backgroundColor: theme.palette.primary.dark,
+              },
+              '&:disabled': {
+                backgroundColor: theme.palette.action.disabled,
+                color: theme.palette.text.disabled,
+              }
+            }}
             disabled={
               !form.cafeId ||
               !form.coffeeName ||

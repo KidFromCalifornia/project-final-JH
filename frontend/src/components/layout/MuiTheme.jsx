@@ -75,7 +75,7 @@ const MuiTheme = ({ children }) => {
 
     const isDark = themeMode === "dark";
     const colors = isDark ? customTheme.colorsDarkmode : customTheme.colors;
-    const textSecondaryColor = isDark ? colors.light : colors.versoText;
+    const textSecondaryColor = isDark ? colors.main : colors.versoText;
     const backgroundDefault = colors.background;
     const paperBackground = colors.paper || backgroundDefault;
 
@@ -86,7 +86,7 @@ const MuiTheme = ({ children }) => {
 
         primary: { main: colors.primary, contrastText: isDark ? "#ebf2fa" : "#ebf2fa" },       // Alice Blue on dark/primary
         secondary: { main: colors.secondary, contrastText: isDark ? "#ebf2fa" : "#ebf2fa" },   // Alice Blue on dark/secondary
-        light: { main: colors.light },
+        light: { main: colors.background },
         accent: { main: colors.accent, contrastText: "#0a1f33" },                               // Oxford Blue on yellow
         accentStrong: { main: colors.accentStrong, contrastText: "#0a1f33" },
         textMuted: { main: colors.textMuted },
@@ -107,8 +107,8 @@ const MuiTheme = ({ children }) => {
             themeMode === "dark"
               ? "rgba(95, 155, 223, 0.5)"
               : "rgba(3, 33, 62, 0.5)",
-          muted: colors.textMuted,
         },
+        muted: { main: colors.textMuted },
 
         divider:
           themeMode === "dark"
@@ -313,14 +313,22 @@ const MuiTheme = ({ children }) => {
               borderRadius: customTheme.button.borderRadius,
               fontWeight: 600,
               textTransform: "none",
-              boxShadow: customTheme.shadow,
+              boxShadow: "none", // Remove default shadow
+              border: "none", // Remove any borders
+              outline: "none", // Remove focus outline
               transition: "all 0.2s ease-in-out",
               "&:hover": {
                 transform: "translateY(-1px)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                boxShadow: "none", // Remove hover shadow
+                border: "none",
               },
               "&:active": {
                 transform: "translateY(0)",
+                outline: "none",
+              },
+              "&:focus": {
+                outline: "none", // Remove focus outline
+                boxShadow: "none",
               },
               ...(ownerState.variant === "contained" && {
                 "&:hover": {
@@ -336,12 +344,12 @@ const MuiTheme = ({ children }) => {
           styleOverrides: {
             root: ({ theme }) => ({
               borderRadius: customTheme.borderRadius,
-              boxShadow: customTheme.shadow,
+              boxShadow: "none", // Remove default shadow
               transition: "all 0.3s ease-in-out",
-              border: `1px solid ${theme.palette.divider}`,
+              border: "none", // Remove border
               "&:hover": {
                 transform: "translateY(-2px)",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                boxShadow: "none", // Remove hover shadow
               },
             }),
           },
@@ -351,16 +359,17 @@ const MuiTheme = ({ children }) => {
           styleOverrides: {
             root: ({ theme }) => ({
               borderRadius: customTheme.borderRadius,
-              border: `1px solid ${theme.palette.divider}`,
+              border: "none", // Remove border
+              boxShadow: "none", // Remove shadows
             }),
             elevation1: {
-              boxShadow: customTheme.shadow,
+              boxShadow: "none",
             },
             elevation2: {
-              boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+              boxShadow: "none",
             },
             elevation3: {
-              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+              boxShadow: "none",
             },
           },
         },
@@ -376,9 +385,56 @@ const MuiTheme = ({ children }) => {
                 },
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                   borderColor: theme.palette.accent.main,
-                  borderWidth: "2px",
+                  borderWidth: "1px", // Keep border thin
+                },
+                "&.Mui-focused": {
+                  outline: "none", // Remove focus outline
                 },
               },
+            }),
+          },
+        },
+
+        // Remove unwanted styling from common components
+        MuiIconButton: {
+          styleOverrides: {
+            root: ({ theme }) => ({
+              border: "none",
+              outline: "none",
+              transition: "all 0.2s ease-in-out",
+              "&:focus": {
+                outline: "none",
+                boxShadow: "none",
+              },
+              "&:hover": {
+                transform: "scale(1.1)",
+                backgroundColor: theme.palette.action.hover,
+              },
+            }),
+          },
+        },
+
+        MuiDialog: {
+          styleOverrides: {
+            paper: ({ theme }) => ({
+              border: `1px solid ${theme.palette.divider}`,
+              outline: "none",
+              borderRadius: customTheme.borderRadius,
+              backdropFilter: "blur(10px)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+            }),
+          },
+        },
+
+        MuiAppBar: {
+          styleOverrides: {
+            root: ({ theme }) => ({
+              border: "none",
+              outline: "none",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              backdropFilter: "blur(10px)",
+              backgroundColor: `${theme.palette.background.paper}cc`,
+              borderBottom: `1px solid ${theme.palette.divider}`,
             }),
           },
         },
@@ -392,17 +448,6 @@ const MuiTheme = ({ children }) => {
               "&:hover": {
                 transform: "scale(1.05)",
               },
-            }),
-          },
-        },
-
-        MuiAppBar: {
-          styleOverrides: {
-            root: ({ theme }) => ({
-              backdropFilter: "blur(10px)",
-              backgroundColor: `${theme.palette.background.paper}cc`,
-              borderBottom: `1px solid ${theme.palette.divider}`,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
             }),
           },
         },
@@ -430,16 +475,6 @@ const MuiTheme = ({ children }) => {
           },
         },
 
-        MuiDialog: {
-          styleOverrides: {
-            paper: ({ theme }) => ({
-              borderRadius: customTheme.borderRadius,
-              backdropFilter: "blur(10px)",
-              border: `1px solid ${theme.palette.divider}`,
-            }),
-          },
-        },
-
         MuiListItemButton: {
           styleOverrides: {
             root: ({ theme }) => ({
@@ -455,18 +490,6 @@ const MuiTheme = ({ children }) => {
                 "&:hover": {
                   backgroundColor: theme.palette.accent.main + "30",
                 },
-              },
-            }),
-          },
-        },
-
-        MuiIconButton: {
-          styleOverrides: {
-            root: ({ theme }) => ({
-              transition: "all 0.2s ease-in-out",
-              "&:hover": {
-                transform: "scale(1.1)",
-                backgroundColor: theme.palette.action.hover,
               },
             }),
           },

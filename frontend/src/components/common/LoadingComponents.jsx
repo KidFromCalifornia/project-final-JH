@@ -1,21 +1,26 @@
 import React from 'react';
-import { Box, Card, CardContent, Skeleton } from '@mui/material';
-import { useThemeUtils } from '../../hooks/useThemeUtils';
+import { Box, Card, CardContent, Skeleton, useTheme } from '@mui/material';
 
 // Enhanced loading cards with coffee-themed styling
 export const LoadingTastingCard = () => {
-  const { styles, theme } = useThemeUtils();
+  const theme = useTheme();
   
   return (
     <Card sx={{
-      ...styles.glassMorphism,
+      backgroundColor: theme.palette.background.paper,
+      borderRadius: 2,
       height: 340,
       mb: 2,
       overflow: 'hidden',
     }}>
       <CardContent sx={{ p: 3, height: '100%' }}>
         {/* Header with coffee icon placeholder */}
-        <Box sx={{ ...styles.flexBetween, mb: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          mb: 2 
+        }}>
           <Skeleton variant="circular" width={32} height={32} />
           <Skeleton variant="rounded" width={80} height={24} />
         </Box>
@@ -26,7 +31,6 @@ export const LoadingTastingCard = () => {
           sx={{ 
             fontSize: '1.5rem',
             mb: 1,
-            ...styles.skeleton,
           }} 
         />
         
@@ -51,16 +55,22 @@ export const LoadingTastingCard = () => {
 
 // Loading skeleton for cafe cards
 export const LoadingCafeCard = () => {
-  const { styles } = useThemeUtils();
+  const theme = useTheme();
   
   return (
     <Card sx={{
-      ...styles.glassMorphism,
+      backgroundColor: theme.palette.background.paper,
+      borderRadius: 2,
       height: 280,
       mb: 2,
     }}>
       <CardContent sx={{ p: 3 }}>
-        <Box sx={{ ...styles.flexBetween, mb: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          mb: 2 
+        }}>
           <Skeleton variant="text" sx={{ fontSize: '1.25rem', width: '70%' }} />
           <Skeleton variant="rounded" width={60} height={20} />
         </Box>
@@ -68,7 +78,11 @@ export const LoadingCafeCard = () => {
         <Skeleton variant="text" sx={{ mb: 1 }} />
         <Skeleton variant="text" sx={{ mb: 2 }} />
         
-        <Box sx={{ ...styles.flexBetween }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center'
+        }}>
           <Skeleton variant="rounded" width={100} height={32} />
           <Skeleton variant="circular" width={40} height={40} />
         </Box>
@@ -79,26 +93,27 @@ export const LoadingCafeCard = () => {
 
 // Loading skeleton for map markers
 export const LoadingMapMarker = () => {
-  const { styles } = useThemeUtils();
+  const theme = useTheme();
   
   return (
     <Box sx={{
       width: 32,
       height: 32,
       borderRadius: '50%',
-      ...styles.skeleton,
-      animation: `${styles.shimmer} 1.2s ease-in-out infinite`,
+      backgroundColor: theme.palette.action.hover,
     }} />
   );
 };
 
 // Loading page component
 export const LoadingPage = ({ message = "Loading..." }) => {
-  const { styles, theme } = useThemeUtils();
+  const theme = useTheme();
   
   return (
     <Box sx={{
-      ...styles.centerContent,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       minHeight: '60vh',
       flexDirection: 'column',
       gap: 3,

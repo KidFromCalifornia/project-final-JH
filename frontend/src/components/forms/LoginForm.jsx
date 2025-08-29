@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { authAPI } from "../../services/api";
 import { useCafeStore } from "../../stores/useCafeStore";
 import {
@@ -10,11 +10,14 @@ import {
   CircularProgress,
   Button,
   Alert,
+  Tooltip,
+  useTheme,
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { showAlert } from "../../styles/SwalAlertStyles";
 
 const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
+  const theme = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignup, setIsSignup] = useState(false);
@@ -84,12 +87,17 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         );
       }
     } catch (err) {
-      console.error("Network error:", err);
-      showAlert({
-        title: isSignup ? "Unable to sign up" : "Unable to log in",
-        text: "We couldn't reach the server. Please try again.",
-        icon: "error",
-      });
+      // Only show sweet alert if server is completely down (network error)
+      if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
+        showAlert({
+          title: "Server Unavailable",
+          text: "We couldn't reach the server. Please try again later.",
+          icon: "error",
+        });
+      } else {
+        // For other errors, just set the error state for inline display
+        setError(isSignup ? "Signup failed. Please try again." : "Login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -98,26 +106,55 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   return (
     <Box
       sx={{
-        width: { xs: "90vw", sm: 400 },
-        p: 3,
+        width: { xs: "100%", sm: 400 },
+        maxWidth: { xs: "none", sm: 400 },
+        p: { xs: 2, sm: 3 },
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        bgcolor: 'background.paper',
+        backgroundColor: theme.palette.light.main,
         borderRadius: 2,
         boxShadow: 3,
+        color: theme.palette.text.primary,
+        position: "relative",
+        zIndex: 1,
+        overflow: "hidden",
+        minHeight: "auto",
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Typography variant="h4" color="text.primary">
+      <Box sx={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "center",
+        mb: 1,
+      }}>
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            color: theme.palette.text.primary,
+            fontSize: { xs: "1.5rem", sm: "2rem" },
+          }}
+        >
           {isSignup ? "Sign Up" : "Login"}
         </Typography>
-        <IconButton onClick={onClose} aria-label="Close login form">
+        <IconButton 
+          onClick={onClose} 
+          aria-label="Close login form" 
+          color="inherit"
+          sx={{ 
+            p: { xs: 1, sm: 1.5 },
+          }}
+        >
           <CloseIcon />
         </IconButton>
       </Box>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <form onSubmit={handleSubmit} style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        gap: 16,
+        width: "100%",
+      }}>
         {isSignup && (
           <TextField
             label="Email"
@@ -127,6 +164,33 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             required
             fullWidth
             autoComplete="email"
+            color="primary"
+            variant="outlined"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: theme.palette.common.white,
+                minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
+                '& fieldset': {
+                  borderColor: theme.palette.text.primary,
+                },
+                '&:hover fieldset': {
+                  borderColor: theme.palette.primary.main,
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: theme.palette.primary.main,
+                },
+                '& input': {
+                  color: theme.palette.text.primary,
+                  fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: theme.palette.text.primary,
+                '&.Mui-focused': {
+                  color: theme.palette.primary.main,
+                },
+              },
+            }}
           />
         )}
         <TextField
@@ -137,6 +201,33 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           required
           fullWidth
           autoComplete="username"
+          color="primary"
+          variant="outlined"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: theme.palette.common.white,
+              minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
+              '& fieldset': {
+                borderColor: theme.palette.text.primary,
+              },
+              '&:hover fieldset': {
+                borderColor: theme.palette.primary.main,
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: theme.palette.primary.main,
+              },
+              '& input': {
+                color: theme.palette.text.primary,
+                fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: theme.palette.text.primary,
+              '&.Mui-focused': {
+                color: theme.palette.primary.main,
+              },
+            },
+          }}
         />
         <Box sx={{ position: "relative" }}>
           <TextField
@@ -147,35 +238,98 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             required
             fullWidth
             autoComplete="current-password"
+            color="primary"
+            variant="outlined"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: theme.palette.common.white,
+                minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
+                '& fieldset': {
+                  borderColor: theme.palette.text.primary,
+                },
+                '&:hover fieldset': {
+                  borderColor: theme.palette.primary.main,
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: theme.palette.primary.main,
+                },
+                '& input': {
+                  color: theme.palette.text.primary,
+                  fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: theme.palette.text.primary,
+                '&.Mui-focused': {
+                  color: theme.palette.primary.main,
+                },
+              },
+            }}
           />
-          <IconButton
-            aria-label="Toggle password visibility"
-            onClick={() => setShowPassword((prev) => !prev)}
-            sx={{ position: "absolute", right: 8, top: 8 }}
-            size="small"
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </IconButton>
+          <Tooltip title={showPassword ? "Hide password" : "Show password"}>
+            <IconButton
+              aria-label="Toggle password visibility"
+              onClick={() => setShowPassword((prev) => !prev)}
+              sx={{ 
+                position: "absolute", 
+                right: 8, 
+                top: 8,
+                color: theme.palette.text.primary,
+                "&:hover": {
+                  color: theme.palette.primary.main,
+                }
+              }}
+              size="small"
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </Tooltip>
         </Box>
-
         <Button
           type="submit"
           disabled={loading}
           variant="contained"
-          sx={{ py: 1.5, mt: 1 }}
+          color="primary"
+          sx={{ 
+            py: { xs: 1.5, sm: 1.5 },
+            px: { xs: 2, sm: 3 },
+            mt: 1,
+            minHeight: { xs: 48, sm: 42 }, // Better touch targets
+            fontSize: { xs: "16px", sm: "14px" },
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            '&:hover': {
+              backgroundColor: theme.palette.primary.dark,
+            },
+            '&:disabled': {
+              backgroundColor: theme.palette.action.disabled,
+              color: theme.palette.text.disabled,
+            }
+          }}
         >
-          {loading ? <CircularProgress size={24} /> : isSignup ? "Sign Up" : "Login"}
+          {loading ? <CircularProgress size={24} color="inherit" /> : isSignup ? "Sign Up" : "Login"}
         </Button>
-      </form>
+    </form>
 
       {error && <Alert severity="error">{error}</Alert>}
 
-      <Typography align="center" sx={{ mt: 2 }}>
+      <Typography align="center" sx={{ mt: 2, color: theme.palette.text.primary }}>
         {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
         <Button
           onClick={() => setIsSignup(!isSignup)}
           variant="text"
           size="small"
+          color="primary"
+          sx={{
+            textDecoration: 'underline',
+            backgroundColor: 'transparent',
+            fontWeight: 600,
+            boxShadow: 'none',
+            '&:hover': {
+              transform: 'scale(1.05)',
+boxShadow: 'none',
+            }
+          }}
         >
           {isSignup ? "Login" : "Sign Up"}
         </Button>

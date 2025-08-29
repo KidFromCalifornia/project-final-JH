@@ -36,7 +36,7 @@ const getCustomIcon = (category, theme, themeMode) => {
     sx: {
       fontSize: 32,
       color, // This will be inherited by the SVG's currentColor
-      filter: "drop-shadow(4px 0px 4px rgba(10, 31, 51, 1))",
+      
     },
     inheritViewBox: true,
   };

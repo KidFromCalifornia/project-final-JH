@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, useState, useEffect, lazy } from "react";
 import NavBar from "./components/layout/NavBar";
 import LoadingLogo from "./components/common/LoadingLogo.jsx";
@@ -26,14 +26,11 @@ const App = () => {
   useEffect(() => {
     const token = localStorage.getItem("userToken");
     const username = localStorage.getItem("username");
-    console.log("App loading - token:", !!token, "username:", username); // Debug log
     if (token && username) {
       setIsLoggedIn(true);
       setCurrentUser({ username });
     }
   }, []);
-
-  console.log("App render - showLogin:", showLogin, "isLoggedIn:", isLoggedIn); // Debug log
 
   return (
     <Router>
@@ -80,12 +77,11 @@ const App = () => {
                 <AdminPage isLoggedIn={isLoggedIn} currentUser={currentUser} />
               }
             />
+            {/* Catch-all route for unmatched paths */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
-        {/* Debug info */}
-        <div style={{ position: 'fixed', bottom: 10, right: 10, background: 'rgba(0,0,0,0.8)', color: 'white', padding: '5px', fontSize: '12px', zIndex: 9999 }}>
-          Login: {showLogin ? 'true' : 'false'} | LoggedIn: {isLoggedIn ? 'true' : 'false'}
-        </div>
+        
       </main>
 
       <MobileBottomNav />

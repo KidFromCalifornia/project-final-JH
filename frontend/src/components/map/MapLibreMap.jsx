@@ -3,17 +3,19 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import maplibregl from "maplibre-gl";
 import { MAP_STYLE_LIGHT, MAP_STYLE_DARK } from "../../styles/mapStyles";
 import { Box, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+
 
 export default function MapLibreMap({
   cafesToShow,
   showUserPin,
   userLocation,
-  theme,
   themeMode,
   selectedCafe,
   setSelectedCafe,
   getCustomIcon,
 }) {
+  const theme = useTheme();
   return (
     <Map
       mapLib={maplibregl}
@@ -70,6 +72,7 @@ export default function MapLibreMap({
               latitude={coords[1]}
               onClose={() => setSelectedCafe(null)}
               closeOnClick={false}
+
             >
               <Box>
                 <Typography variant="h6" fontWeight="bold">

@@ -22,13 +22,18 @@ const CafePage = () => {
         setLoading(false);
       })
       .catch((err) => {
-        setError(null);
-        showAlert({
-          title: "We couldn't load this cafe",
-          text: "We couldn't reach the server. Please try again.",
-          icon: "error",
-        });
         setLoading(false);
+        // Only show sweet alert if server is completely down (network error)
+        if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
+          showAlert({
+            title: "Server Unavailable",
+            text: "We couldn't reach the server. Please try again later.",
+            icon: "error",
+          });
+        } else {
+          // For other errors, use inline error display
+          setError("We couldn't load this cafe. Please try again.");
+        }
       });
   }, [cafeId, setLoading]);
 

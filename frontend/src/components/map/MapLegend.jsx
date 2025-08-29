@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   IconButton,
@@ -12,6 +12,7 @@ import {
   Typography,
   useTheme,
   Fab,
+  Tooltip,
 } from "@mui/material";
 import {
   Info as InfoIcon,
@@ -40,11 +41,7 @@ const MapLegend = () => {
       label: "Coffee Roaster",
       description: "Coffee roasting facilities and roaster cafes",
     },
-    {
-      category: "default",
-      label: "General Cafe",
-      description: "Standard coffee shops and cafes",
-    },
+
     {
       category: "geotag",
       label: "Your Location",
@@ -59,32 +56,33 @@ const MapLegend = () => {
   return (
     <>
       {/* Legend FAB Button */}
-      <Fab
-        onClick={handleOpen}
-        onClose={handleClose}
-        sx={{
-          position: "fixed",
-          zIndex: 1301,
-          width: 56,
-          height: 56,
-          backgroundColor: theme.palette.secondary.main,
-          color: theme.palette.light.main,
-          boxShadow: 3,
-          border: `1px solid ${theme.palette.divider}`,
-          bottom: { xs: 110, sm: "auto" }, // Above mobile nav
-          left: { xs: "50%", sm: "auto" },
-          transform: { xs: "translateX(-50%)", sm: "none" },
-          top: { xs: "auto", sm: 140 }, // Below geotag button on desktop
-          right: { xs: "auto", sm: 30 },
-          "&:hover": {
+      <Tooltip title="Show Map Legend" arrow placement="left">
+        <Fab
+          onClick={handleOpen}
+          sx={{
+            position: "fixed",
+            zIndex: 1301,
+            width: 56,
+            height: 56,
             backgroundColor: theme.palette.secondary.main,
-            color: theme.palette.accentStrong.main,
-          },
-        }}
-        aria-label="Show map legend"
-      >
-        <InfoIcon fontSize="large" />
-      </Fab>
+            color: theme.palette.light.main,
+            boxShadow: 3,
+            border: `1px solid ${theme.palette.divider}`,
+            bottom: { xs: 110, sm: "auto" }, // Above mobile nav
+            left: { xs: "50%", sm: "auto" },
+            transform: { xs: "translateX(-50%)", sm: "none" },
+            top: { xs: "auto", sm: 140 }, // Below geotag button on desktop
+            right: { xs: "auto", sm: 30 },
+            "&:hover": {
+              backgroundColor: theme.palette.secondary.main,
+              color: theme.palette.accentStrong.main,
+            },
+          }}
+          aria-label="Show map legend"
+        >
+          <InfoIcon fontSize="large" />
+        </Fab>
+      </Tooltip>
 
       {/* Legend Dialog */}
       <Dialog
@@ -96,6 +94,7 @@ const MapLegend = () => {
           sx: {
             borderRadius: 2,
             maxHeight: "80vh",
+            maxWidth: "20rem",
           },
         }}
       >
@@ -108,26 +107,28 @@ const MapLegend = () => {
           }}
         >
           <Typography variant="h6" component="h2">
-            Map Legend
+           What does it mean?
           </Typography>
-          <IconButton
-            onClick={handleClose}
-            size="small"
-            sx={{ color: theme.palette.text.secondary }}
-          >
-            <CloseIcon />
-          </IconButton>
+          <Tooltip title="Close Legend" arrow>
+            <IconButton 
+              onClick={handleClose}
+              size="small"
+              sx={{ color: theme.palette.text.secondary }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
         </DialogTitle>
 
         <DialogContent sx={{ pt: 1 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Different icons represent different types of coffee establishments:
+            Here is information about how each icon is used
           </Typography>
 
           <List disablePadding>
             {legendItems.map((item, index) => (
               <ListItem key={index} sx={{ py: 1, px: 0 }}>
-                <ListItemIcon sx={{ minWidth: "20rem" }}>
+                <ListItemIcon sx={{ minWidth: "48px" }}>
                   {item.isUserLocation ? (
                     <MyLocationIcon
                       sx={{
@@ -141,12 +142,12 @@ const MapLegend = () => {
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography variant="subtitle2" fontWeight="medium">
+                    <Typography caption variant="subtitle2" fontWeight="medium">
                       {item.label}
                     </Typography>
                   }
                   secondary={
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography caption variant="body2" color="text.secondary">
                       {item.description}
                     </Typography>
                   }
@@ -157,7 +158,7 @@ const MapLegend = () => {
 
           <Box sx={{ mt: 2, p: 2, bgcolor: "action.hover", borderRadius: 1 }}>
             <Typography variant="caption" color="text.secondary">
-              <strong>Tip:</strong> Use the filters in the navigation to show only specific types of coffee establishments.
+              <strong>Tip:</strong> Too many options? Use the filters in the menu to specify what you're looking for.
             </Typography>
           </Box>
         </DialogContent>

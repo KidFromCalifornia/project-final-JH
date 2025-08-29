@@ -1,28 +1,31 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { cafeAPI } from "../../services/api";
 import { SwalAlertStyles, showAlert } from "../../styles/SwalAlertStyles";
 import {
   Box,
-  Stack,
-  Typography,
   TextField,
-  Select,
-  MenuItem,
-  Checkbox,
-  FormControlLabel,
   Button,
   FormControl,
   InputLabel,
-  FormGroup,
+  Select,
+  MenuItem,
+  Stack,
+  Typography,
   Divider,
-  Paper,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Tooltip,
   IconButton,
+  Paper,
+  Grid,
+  useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const CATEGORY_OPTIONS = ["specialty", "roaster", "thirdwave"];
-const FEATURE_OPTIONS = [
+    const FEATURE_OPTIONS = [
   "outdoor_seating",
   "wheelchair_accessible",
   "lunch",
@@ -40,6 +43,39 @@ const FEATURE_OPTIONS = [
 ];
 
 const NewCafeForm = ({ onClose }) => {
+  const theme = useTheme();
+  
+  // Reusable TextField styling to match LoginForm
+  const textFieldStyles = {
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: theme.palette.common.white,
+      minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
+      '& fieldset': {
+        borderColor: theme.palette.text.primary,
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '& input': {
+        color: theme.palette.text.primary,
+        fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+      },
+      '& textarea': {
+        color: theme.palette.text.primary,
+        fontSize: { xs: "16px", sm: "14px" },
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: theme.palette.text.primary,
+      '&.Mui-focused': {
+        color: theme.palette.primary.main,
+      },
+    },
+  };
+
   const [form, setForm] = useState({
     name: "",
     website: "",
@@ -58,7 +94,27 @@ const NewCafeForm = ({ onClose }) => {
     ],
   });
   const [status, setStatus] = useState("");
-  const [statusType, setStatusType] = useState("success");
+  const [statusType, setStatusType] = useState("");
+
+  const getFeatureTooltip = (feature) => {
+    const tooltips = {
+      outdoor_seating: "Has outdoor seating available",
+      wheelchair_accessible: "Accessible for wheelchair users",
+      lunch: "Serves lunch options",
+      pour_over: "Offers pour-over brewing methods",
+      takeaway: "Offers takeaway/to-go options",
+      vegan_options: "Has vegan food and drink options",
+      breakfast: "Serves breakfast items",
+      iced_drinks: "Offers cold/iced beverages",
+      pastries: "Serves pastries and other baked goods",
+      multi_roaster: "Features coffee from multiple roasters",
+      decaf: "Offers decaffeinated coffee options",
+      no_coffee_bar: "No on-site coffee bar (retail, office or roastery)",
+      limited_sitting: "Limited seating available",
+      roaster_only: "Roastery without public seating",
+    };
+    return tooltips[feature] || `Feature: ${feature.replace(/_/g, " ")}`;
+  };
 
   // Handle basic field changes
   const handleChange = (e) => {
@@ -193,14 +249,19 @@ const NewCafeForm = ({ onClose }) => {
             "We couldn't add this cafe. Please check and try again."
         );
       }
-    } catch {
-      setStatus("");
-      setStatusType("error");
-      showAlert({
-        title: "We couldn't submit your suggestion",
-        text: "We couldn't reach the server. Please try again.",
-        icon: "error",
-      });
+    } catch (err) {
+      // Only show sweet alert if server is completely down (network error)
+      if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
+        showAlert({
+          title: "Server Unavailable",
+          text: "We couldn't reach the server. Please try again later.",
+          icon: "error",
+        });
+      } else {
+        // For other errors, use inline status display
+        setStatus("We couldn't submit your suggestion. Please try again.");
+        setStatusType("error");
+      }
     }
   };
 
@@ -208,95 +269,140 @@ const NewCafeForm = ({ onClose }) => {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={(t) => ({
-        p: 2,
-        maxWidth: 640,
-        color: t.palette.text.primary,
-        backgroundColor: t.palette.background.paper,
-      })}
+      sx={{
+        width: { xs: "100%", sm: 640 },
+        maxWidth: { xs: "none", sm: 640 },
+        p: { xs: 2, sm: 3 },
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        backgroundColor: theme.palette.light.main,
+        borderRadius: 2,
+        boxShadow: 3,
+        color: theme.palette.text.primary,
+        position: "relative",
+        zIndex: 1,
+        overflow: "hidden",
+        minHeight: "auto",
+      }}
     >
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{ mb: 1 }}
-      >
-        <Typography variant="h6">Suggest a Cafe</Typography>
-        <IconButton
-          aria-label="Close add cafe form"
-          onClick={onClose}
-          size="small"
+      <Box sx={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "center",
+        mb: 1,
+      }}>
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            color: theme.palette.text.primary,
+            fontSize: { xs: "1.5rem", sm: "2rem" },
+          }}
+        >
+          Suggest a Cafe
+        </Typography>
+        <IconButton 
+          onClick={onClose} 
+          aria-label="Close add cafe form" 
           color="inherit"
+          sx={{ 
+            p: { xs: 1, sm: 1.5 },
+          }}
         >
           <CloseIcon />
         </IconButton>
-      </Stack>
+      </Box>
       {status && (
         <Box sx={{ mb: 2 }}>
           <SwalAlertStyles message={status} type={statusType} />
         </Box>
       )}
 
-      <Stack spacing={2} sx={{ mb: 2 }}>
-        <TextField
-          label="Name"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          fullWidth
-        />
-        <TextField
-          label="Website"
-          name="website"
-          value={form.website}
-          onChange={handleChange}
-          fullWidth
-        />
-        <TextField
-          label="Description"
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          inputProps={{ maxLength: 1000 }}
-          fullWidth
-          multiline
-          minRows={2}
-        />
-        <FormControl fullWidth required>
-          <InputLabel id="category-label">Category</InputLabel>
-          <Select
-            labelId="category-label"
-            name="category"
-            value={form.category}
-            label="Category"
+      {/* Basic Information - 2 columns for better space usage */}
+      <Grid container spacing={{ xs: 1.5, sm: 2 }} sx={{ mb: 2 }}>
+        <Grid item xs={12} sm={8}>
+          <TextField
+            label="Cafe Name"
+            name="name"
+            value={form.name}
             onChange={handleChange}
-            displayEmpty
-          >
-            <MenuItem value="">
-              <em>Select Category</em>
-            </MenuItem>
-            {CATEGORY_OPTIONS.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option.charAt(0).toUpperCase() + option.slice(1)}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Stack>
+            required
+            fullWidth
+            size="small"
+            sx={textFieldStyles}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth required size="small">
+            <InputLabel id="category-label">Category</InputLabel>
+            <Select
+              labelId="category-label"
+              name="category"
+              value={form.category}
+              label="Category"
+              onChange={handleChange}
+            >
+              {CATEGORY_OPTIONS.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        
+        <Grid item xs={12}>
+          <TextField
+            label="Primary Address"
+            name="address"
+            value={form.locations[0]?.address || ""}
+            onChange={(e) => handleLocationChange(e, 0)}
+            required
+            fullWidth
+            size="small"
+            placeholder="Street address, city"
+            sx={textFieldStyles}
+          />
+        </Grid>
+        
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Neighborhood"
+            name="neighborhood"
+            value={form.locations[0]?.neighborhood || ""}
+            onChange={(e) => handleLocationChange(e, 0)}
+            fullWidth
+            size="small"
+            sx={textFieldStyles}
+          />
+        </Grid>
+        
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Website (optional)"
+            name="website"
+            value={form.website}
+            onChange={handleChange}
+            fullWidth
+            size="small"
+            placeholder="https://..."
+            sx={textFieldStyles}
+          />
+        </Grid>
+      </Grid>
 
       <Divider sx={{ my: 2 }}>
         <Typography variant="subtitle2" sx={{ color: "inherit" }}>
           Location
         </Typography>
       </Divider>
-      <Stack spacing={2}>
+      <Stack spacing={{ xs: 1.5, sm: 2 }}>
         {form.locations.map((loc, idx) => (
           <Paper
             key={idx}
             variant="outlined"
             sx={(t) => ({
-              p: 2,
+              p: { xs: 1.5, sm: 2 },
               position: "relative",
               backgroundColor: t.palette.background.paper,
               borderColor: t.palette.divider,
@@ -314,7 +420,7 @@ const NewCafeForm = ({ onClose }) => {
                 <CloseIcon fontSize="small" />
               </IconButton>
             )}
-            <Stack spacing={2}>
+            <Stack spacing={{ xs: 1.5, sm: 2 }}>
               <TextField
                 label="Address"
                 name="address"
@@ -322,6 +428,8 @@ const NewCafeForm = ({ onClose }) => {
                 onChange={(e) => handleLocationChange(e, idx)}
                 required
                 fullWidth
+                size="small"
+                sx={textFieldStyles}
               />
               <TextField
                 label="Neighborhood"
@@ -329,6 +437,8 @@ const NewCafeForm = ({ onClose }) => {
                 value={loc.neighborhood}
                 onChange={(e) => handleLocationChange(e, idx)}
                 fullWidth
+                size="small"
+                sx={textFieldStyles}
               />
               <TextField
                 label="Location Note"
@@ -336,19 +446,23 @@ const NewCafeForm = ({ onClose }) => {
                 value={loc.locationNote}
                 onChange={(e) => handleLocationChange(e, idx)}
                 fullWidth
+                size="small"
+                sx={textFieldStyles}
               />
             </Stack>
           </Paper>
         ))}
-        <Button
-          type="button"
-          onClick={addLocation}
-          startIcon={<AddCircleOutlineIcon />}
-          variant="text"
-          sx={{ alignSelf: "flex-start" }}
-        >
-          Add Another Location
-        </Button>
+        <Tooltip title="Add another location for this cafe" arrow>
+          <Button
+            type="button"
+            onClick={addLocation}
+            startIcon={<AddCircleOutlineIcon />}
+            variant="text"
+            sx={{ alignSelf: "flex-start" }}
+          >
+            Add Another Location
+          </Button>
+        </Tooltip>
       </Stack>
 
       <Divider sx={{ my: 2 }}>
@@ -356,30 +470,66 @@ const NewCafeForm = ({ onClose }) => {
           Features
         </Typography>
       </Divider>
-      <FormGroup row sx={{ rowGap: 1, columnGap: 2 }}>
+      <FormGroup 
+        row 
+        sx={{ 
+          rowGap: { xs: 0.5, sm: 1 }, 
+          columnGap: { xs: 1, sm: 2 },
+          '& .MuiFormControlLabel-root': {
+            minWidth: { xs: '45%', sm: 'auto' },
+            mb: { xs: 0.5, sm: 0 },
+          }
+        }}
+      >
         {FEATURE_OPTIONS.map((feature) => (
-          <FormControlLabel
-            key={feature}
-            control={
-              <Checkbox
-                size="small"
-                name={feature}
-                checked={form.features.includes(feature)}
-                onChange={() => handleFeatureChange(feature)}
-              />
-            }
-            label={feature.replace(/_/g, " ")}
-            sx={(t) => ({ color: t.palette.text.primary })}
-          />
+          <Tooltip key={feature} title={getFeatureTooltip(feature)} arrow>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  name={feature}
+                  checked={form.features.includes(feature)}
+                  onChange={() => handleFeatureChange(feature)}
+                />
+              }
+              label={
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                    lineHeight: 1.2
+                  }}
+                >
+                  {feature.replace(/_/g, " ")}
+                </Typography>
+              }
+              sx={(t) => ({ color: t.palette.text.primary })}
+            />
+          </Tooltip>
         ))}
       </FormGroup>
 
       <Button
         type="submit"
         variant="contained"
-    
+        color="primary"
         fullWidth
-        sx={{ mt: 3 }}
+        sx={{ 
+          py: { xs: 1.5, sm: 1.5 },
+          px: { xs: 2, sm: 3 },
+          mt: 3,
+          minHeight: { xs: 48, sm: 42 }, // Better touch targets
+          fontSize: { xs: "16px", sm: "14px" },
+          backgroundColor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
+          '&:hover': {
+            backgroundColor: theme.palette.primary.dark,
+          },
+          '&:disabled': {
+            backgroundColor: theme.palette.action.disabled,
+            color: theme.palette.text.disabled,
+          }
+        }}
       >
         Add Cafe
       </Button>

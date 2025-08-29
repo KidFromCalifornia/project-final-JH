@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
-
 import {
   Box,
   Card,
@@ -9,7 +8,16 @@ import {
   Typography,
   Button,
   Tooltip,
+  Chip,
+  Rating,
+  IconButton,
 } from "@mui/material";
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Coffee as CoffeeIcon,
+  Star as StarIcon,
+} from "@mui/icons-material";
 
 function FlipTastingCard({
   tasting,
@@ -20,241 +28,284 @@ function FlipTastingCard({
 }) {
   const [flipped, setFlipped] = useState(false);
   const theme = useTheme();
-  const gradientFront = `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 50%, ${theme.palette.primary.main} 100%)`;
-  const gradientBack = `linear-gradient(135deg, ${
-    theme.palette.secondary.main
-  } 0%, ${
-    theme.palette.light?.main ||
-    theme.palette.primary.light ||
-    theme.palette.primary.main
-  } 100%)`;
+  
+  // Enhanced gradients using theme colors
+  const gradientFront = `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`;
+  const gradientBack = `linear-gradient(135deg, ${theme.palette.accent.main}, ${theme.palette.accentStrong.main})`;
+
+  const cardStyles = {
+    cursor: 'pointer',
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+      transform: 'translateY(-4px)',
+    },
+    perspective: 1000,
+    width: "100%",
+    height: 340,
+    position: "relative",
+    mb: 2,
+  };
+
+  const flipCardInner = {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    textAlign: "center",
+    transition: "transform 0.6s ease-in-out",
+    transformStyle: "preserve-3d",
+    transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+  };
+
+  const cardSide = {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backfaceVisibility: "hidden",
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: theme.shadows[3],
+    overflow: "hidden",
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(10px)',
+  };
+
+  const frontCard = {
+    ...cardSide,
+    background: gradientFront,
+    color: theme.palette.common.white,
+  };
+
+  const backCard = {
+    ...cardSide,
+    transform: "rotateY(180deg)",
+    backgroundColor: theme.palette.background.paper,
+    border: `1px solid ${theme.palette.divider}`,
+  };
 
   return (
-    <Box
-      sx={{
-        perspective: 1000,
-        cursor: "pointer",
-        mb: 2,
-        width: "100%",
-        height: 320,
-        position: "relative",
-      }}
-      onClick={() => setFlipped((prev) => !prev)}
-    >
+    <Box sx={cardStyles}>
       <Tooltip
-        title={flipped ? "Show tasting details" : "Flip for more info"}
+        title={flipped ? "Click to see front" : "Click for details"}
         arrow
+        placement="top"
       >
         <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            transition: "transform 0.6s",
-            transformStyle: "preserve-3d",
-            transform: flipped ? "rotateY(180deg)" : "none",
+          onClick={() => setFlipped((prev) => !prev)}
+          sx={flipCardInner}
+          role="button"
+          tabIndex={0}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              setFlipped((prev) => !prev);
+            }
           }}
+          aria-label={`Tasting card for ${tasting.cafeId?.name || 'Unknown cafe'}`}
         >
-          {/* Front Side */}
-          <Card
-            sx={{
-              width: "100%",
-              height: "100%",
-              backfaceVisibility: "hidden",
-              background: gradientFront,
-              boxShadow: theme.shadows[4],
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              alignItems: "center",
-              borderRadius: theme.shape.borderRadius,
-              position: "absolute",
-              top: 0,
-              left: 0,
-              zIndex: 2,
-              overflow: "hidden",
-              p: 0,
-            }}
-          >
-            {/* Centered coffee name and notes */}
-            <Box
-              sx={{
-                flex: 1,
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                textAlign: "center",
-                px: 2,
-                py: 4,
-              }}
-            >
-              <Typography
-                variant="h5"
-                fontWeight="bold"
-                sx={{
-                  mb: 2,
-                  color: theme.palette.text.primary,
-                  textShadow: `0 2px 8px ${theme.palette.secondary.main}`,
-                }}
-              >
-                {tasting.coffeeName}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  mb: 2,
-                  color: theme.palette.text.primary,
-                  textAlign: "center",
-                  textShadow: `0 1px 6px ${theme.palette.primary.main}`,
-                }}
-              >
-                {tasting.notes}
-              </Typography>
-            </Box>
-            {/* Bottom info box */}
-            <Box
-              sx={{
-                boxShadow: "inset theme.shadow.main ",
-                width: "100%",
-                bgcolor:
-                  themeMode === "dark"
-                    ? theme.colors?.background || theme.palette.background.paper
-                    : "rgba(255,255,255,0.85)",
-                py: theme.spacing(3),
-                px: theme.spacing(2),
-                display: "flex",
-                alignItems: "center",
-                alignContent: "Center",
-                justifyContent: "space-between",
-                borderTop: `1.5px solid ${
-                  theme.colors?.secondary || theme.palette.secondary.main
-                }`,
-              }}
-            >
-              <Typography
-                variant="caption"
-                sx={{ color: theme.palette.primary.main, fontWeight: 600 }}
-              >
-                {tasting.userId?.username || "Unknown User"}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{ color: theme.palette.secondary.main }}
-              >
-                {new Date(tasting.createdAt).toLocaleDateString()}
-              </Typography>
-            </Box>
+          {/* Front of card */}
+          <Card sx={frontCard} elevation={0}>
+            <CardContent sx={{ 
+              height: '100%', 
+              display: 'flex', 
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              p: 3,
+            }}>
+              <Box>
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  mb: 2 
+                }}>
+                  <CoffeeIcon sx={{ fontSize: 32, opacity: 0.9 }} />
+                  <Chip
+                    label={tasting.brewMethod || 'Coffee'}
+                    size="small"
+                    sx={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      color: 'inherit',
+                      fontWeight: 600,
+                    }}
+                  />
+                </Box>
+                
+                <Typography 
+                  variant="h5" 
+                  component="h3"
+                  gutterBottom
+                  sx={{ 
+                    fontWeight: 700,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    mb: 1,
+                  }}
+                >
+                  {tasting.cafeId?.name || "Unknown Cafe"}
+                </Typography>
+                
+                <Box sx={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 2 
+                }}>
+                  <Rating
+                    value={tasting.rating || 0}
+                    readOnly
+                    size="large"
+                    sx={{
+                      '& .MuiRating-iconFilled': {
+                        color: theme.palette.accent.main,
+                      },
+                      '& .MuiRating-iconEmpty': {
+                        color: 'rgba(255, 255, 255, 0.3)',
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+
+              <Box>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    opacity: 0.9,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {tasting.notes || "No notes available"}
+                </Typography>
+                
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    opacity: 0.7,
+                    mt: 2,
+                    display: 'block',
+                  }}
+                >
+                  by {tasting.userId?.username || "Anonymous"} • {" "}
+                  {tasting.createdAt 
+                    ? new Date(tasting.createdAt).toLocaleDateString()
+                    : "Unknown date"
+                  }
+                </Typography>
+              </Box>
+            </CardContent>
           </Card>
-          {/* Back Side */}
-          <Card
-            sx={{
-              width: "100%",
-              height: "100%",
-              backfaceVisibility: "hidden",
-              background: gradientBack,
-              boxShadow: theme.shadows[3],
-              transform: "rotateY(180deg)",
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              borderRadius: theme.shape.borderRadius,
-              position: "absolute",
-              top: 0,
-              left: 0,
-              zIndex: 1,
-            }}
-          >
-            <CardContent>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                {tasting.coffeeName}
+
+          {/* Back of card */}
+          <Card sx={backCard} elevation={0}>
+            <CardContent sx={{ 
+              height: '100%', 
+              display: 'flex', 
+              flexDirection: 'column',
+              p: 3,
+            }}>
+              <Typography 
+                variant="h6" 
+                component="h3"
+                gutterBottom
+                color="primary"
+                sx={{ fontWeight: 600 }}
+              >
+                Tasting Details
               </Typography>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Cafe:</strong> {tasting.cafeId?.name}
-              </Typography>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Rating:</strong> {tasting.rating}/5
-              </Typography>
-              {Array.isArray(tasting.features) &&
-                tasting.features.length > 0 && (
-                  <Box sx={{ mb: 1 }}>
-                    <Typography variant="body2" fontWeight="bold">
-                      Features:
+              
+              <Box sx={{ flexGrow: 1, mt: 2 }}>
+                {tasting.brewMethod && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      Brew Method
                     </Typography>
-                    <ul style={{ margin: 0, paddingLeft: 16 }}>
-                      {tasting.features.map((feature, idx) => (
-                        <li key={idx} style={{ fontSize: "0.95em" }}>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
+                    <Typography variant="body1" sx={{ textTransform: 'capitalize' }}>
+                      {tasting.brewMethod}
+                    </Typography>
                   </Box>
                 )}
-              {Array.isArray(tasting.images) && tasting.images.length > 0 && (
-                <Box sx={{ mb: 1 }}>
-                  <Typography variant="body2" fontWeight="bold">
-                    Images:
-                  </Typography>
-                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                    {tasting.images.map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt="Tasting"
-                        style={{
-                          width: 48,
-                          height: 48,
-                          objectFit: "cover",
-                          borderRadius: 2,
-                        }}
-                      />
-                    ))}
+                
+                {tasting.rating && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      Rating
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Rating value={tasting.rating} readOnly size="small" />
+                      <Typography variant="body1">
+                        {tasting.rating}/5
+                      </Typography>
+                    </Box>
                   </Box>
+                )}
+
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Notes
+                  </Typography>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      mt: 0.5,
+                      lineHeight: 1.6,
+                      maxHeight: 100,
+                      overflow: 'auto',
+                    }}
+                  >
+                    {tasting.notes || "No detailed notes available"}
+                  </Typography>
                 </Box>
+              </Box>
+
+              {isLoggedIn && (
+                <CardActions sx={{ 
+                  justifyContent: 'center', 
+                  gap: 1,
+                  pt: 2,
+                  borderTop: `1px solid ${theme.palette.divider}`,
+                }}>
+                  <Tooltip title="Edit tasting">
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingTasting(tasting);
+                      }}
+                      size="small"
+                      sx={helpers.hover(
+                        { color: theme.palette.primary.main },
+                        { backgroundColor: colors.primary.light }
+                      )}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                  
+                  <Tooltip title="Delete tasting">
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeletingTasting(tasting);
+                      }}
+                      size="small"
+                      sx={helpers.hover(
+                        { color: theme.palette.error.main },
+                        { backgroundColor: colors.alpha(theme.palette.error.main, 0.1) }
+                      )}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
+                </CardActions>
               )}
-              <Typography variant="caption" color="text.secondary">
-                {tasting.userId?.username} •{" "}
-                {new Date(tasting.createdAt).toLocaleDateString()}
-              </Typography>
             </CardContent>
-            <CardActions sx={{ justifyContent: "flex-end" }}>
-              {isLoggedIn && (
-                <Tooltip title="Edit tasting" arrow>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingTasting(tasting);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                </Tooltip>
-              )}
-              {isLoggedIn && (
-                <Tooltip title="Delete tasting" arrow>
-                  <Button
-                    size="small"
-                    color="error"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setDeletingTasting(tasting);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </Tooltip>
-              )}
-            </CardActions>
           </Card>
         </Box>
       </Tooltip>
     </Box>
   );
 }
+
 export default FlipTastingCard;
