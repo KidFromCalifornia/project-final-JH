@@ -125,7 +125,18 @@ const TastingsPage = () => {
   const totalPages = Math.ceil(filteredTastings.length / tastingsPerPage);
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container 
+      maxWidth="lg" 
+      sx={{ 
+        mt: 4, 
+        mb: 4, 
+        backgroundColor: theme.palette.background.default, 
+        borderRadius: 2, 
+        p: 3, 
+        boxShadow: 3,
+        color: theme.palette.text.primary
+      }}
+    >
       <Typography variant="h1" hidden gutterBottom>
         Coffee Tasting Page
       </Typography>
@@ -139,10 +150,10 @@ const TastingsPage = () => {
           />
         ) : (
           <Box sx={{ textAlign: "center", py: 4, mb: 4 }}>
-            <Typography variant="h4" color="text.secondary" gutterBottom>
+            <Typography variant="h4" color="text.primary" gutterBottom>
               Share Your Coffee Experience
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="text.primary">
               Please log in to add your own tasting notes and experiences
             </Typography>
           </Box>
@@ -176,7 +187,7 @@ const TastingsPage = () => {
               <Grid item xs={12}>
                 <Typography
                   variant="body2"
-                  color="text.secondary"
+                  color="text.primary"
                   sx={{ textAlign: 'center', py: 4 }}
                 >
                   No tasting cards to display.

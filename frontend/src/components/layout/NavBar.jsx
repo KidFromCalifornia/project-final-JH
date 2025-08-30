@@ -1,124 +1,31 @@
-import * as React from "react";
-import { Link } from "react-router-dom";
-import { styled, useTheme } from "@mui/material/styles";
+import React from "react";
+import { useTheme } from "@mui/material/styles";
 import {
   Box,
-  Drawer as MuiDrawer,
-  AppBar as MuiAppBar,
   Toolbar,
-  List,
   CssBaseline,
-  typography,
-  Divider,
-  ListItem,
-  ListItemText,
-  ListItemButton,
   Tooltip,
+  IconButton,
+  Dialog,
+  DialogContent,
 } from "@mui/material";
-
-// import components
-import FilterDropdown from "../common/FilterDropdown";
-import { useCafeStore } from "../../stores/useCafeStore";
-import LoginForm from "../forms/LoginForm";
-import NewCafeForm from "../forms/NewCafeForm";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-
-// Import Icons
 import {
-  Login as LoginIcon,
-  Logout as LogoutIcon,
-  DoorFront as DoorFrontIcon,
-  Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
-  AdminPanelSettings as AdminPanelSettingsIcon,
-  RateReview as RateReviewIcon,
-  Map as MapIcon,
-  AddLocation as AddLocationIcon,
-  Storefront as StorefrontIcon,
-  TravelExplore as TravelExploreIcon,
-  AccountCircle as AccountCircleIcon,
-  Clear as ClearIcon,
-  LightMode as LightModeIcon,
-  DarkMode as DarkModeIcon,
+  Menu as MenuIcon,
 } from "@mui/icons-material";
-import IconButton from "@mui/material/IconButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import sccLogoMono from "../../assets/images/whiteCup_logo.svg";
-import Switch from "@mui/material/Switch";
 
-const drawerWidth = 320;
-
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-  color: theme.palette.text.primary,
-}));
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  background: theme.palette.background.default,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  ...(open && {
-    ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
-  }),
-}));
+// Components
+import NavigationHeader from "./navigation/NavigationHeader";
+import NavigationItems from "./navigation/NavigationItems";
+import NavigationFilters from "./navigation/NavigationFilters";
+import { AppBar, Drawer, DrawerHeader, drawerWidth } from "./navigation/NavigationStyles";
+import LoginForm from "../forms/LoginForm";
+import NewCafeForm from "../forms/NewCafeForm";
+import { useCafeStore } from "../../stores/useCafeStore";
 
 const NavBar = ({
   searchResults = [],
-  setSearchResults = () => {},
   showLogin = false,
   setShowLogin = () => {},
   isLoggedIn = false,
@@ -133,28 +40,10 @@ const NavBar = ({
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
   const darkMode = themeMode === "dark";
-  const navIconColor = theme.palette.light.main;
-  const handleToggleDarkMode = () => {
-    setThemeMode(darkMode ? "light" : "dark");
-  };
-  const allCafes = useCafeStore ? useCafeStore((state) => state.cafes) : [];
-  const cafes = searchResults.length > 0 ? searchResults : allCafes;
-  const categories = Array.from(
-    new Set(cafes.map((cafe) => cafe.category).filter(Boolean))
-  );
-  // Debug: log full cafes array for troubleshooting
+  const navIconColor = theme.palette.light?.main || "#fff";
 
-  const neighborhoods = Array.from(
-    new Set(
-      cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean)
-    )
-  );
-  let isAdmin = false;
-  if (typeof window !== "undefined" && window.localStorage) {
-    isAdmin = localStorage.getItem("admin") === "true";
-  }
-
-  // Use store filters instead of local state
+  // Store state
+  const allCafes = useCafeStore((state) => state.cafes);
   const cafeTypeQuery = useCafeStore((state) => state.cafeTypeFilter);
   const neighborhoodQuery = useCafeStore((state) => state.neighborhoodFilter);
   const setCafeTypeQuery = useCafeStore((state) => state.setCafeTypeFilter);
@@ -162,138 +51,107 @@ const NavBar = ({
   const filteredCafes = useCafeStore((state) => state.filteredCafes);
   const clearFilters = useCafeStore((state) => state.clearFilters);
 
+  // Computed values
+  const cafes = searchResults.length > 0 ? searchResults : allCafes;
+  const categories = Array.from(
+    new Set(cafes.map((cafe) => cafe.category).filter(Boolean))
+  );
+  const neighborhoods = Array.from(
+    new Set(
+      cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean)
+    )
+  );
+
+  let isAdmin = false;
+  if (typeof window !== "undefined" && window.localStorage) {
+    isAdmin = localStorage.getItem("admin") === "true";
+  }
+
+  // Handlers
+  const handleToggleDarkMode = () => {
+    setThemeMode(darkMode ? "light" : "dark");
+  };
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
   // Expose filtered cafes to parent
   React.useEffect(() => {
     onFilteredCafes(filteredCafes);
   }, [filteredCafes, onFilteredCafes]);
 
-  // If you want to pass filteredCafes to children, do so here
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
   return (
     <Box sx={{ display: { xs: "none", sm: "flex" } }}>
       <CssBaseline />
+      
       <AppBar position="fixed" open={open} color="transparent">
         <Toolbar
-          elevation={3}
           sx={{
             display: "flex",
-            flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            backgroundColor: theme.palette.background.paper,
-            borderBottom: darkMode
-              ? `1px solid ${theme.palette.divider}`
-              : `1px solid ${theme.palette.divider}`,
-            color: theme.palette.light.main,
+            backgroundColor: theme.palette.primary.main,
+            boxShadow: `0 0.125rem 0.5rem ${theme.palette.secondary.main}40`,
+            color: theme.palette.light?.main || "#fff",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              flexDirection: "row",
-              flexGrow: 1,
-            }}
-          >
-            <IconButton
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-                ...(open && { display: "none" }),
-              }}
-            >
-              <Tooltip title="Open Navigation Menu" arrow>
-                <MenuIcon
-                  sx={{
-                    color: theme.palette.accent.main,
-                  }}
-                />
-              </Tooltip>
-            </IconButton>
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Link
-                to="/"
-                aria-label="map"
-                style={{ display: "inline-flex", lineHeight: 0 }}
-              >
-                <img
-                  src={sccLogoMono}
-                  alt="SCC Logo"
-                  style={{ height: "2rem", width: "auto", display: "block" }}
-                />
-              </Link>
-              <Typography
-                component="div"
-                fontWeight={500}
-                noWrap
-                sx={(t) => ({
-                  color: palette.color.background.main,
-                  lineHeight: 1,
-                  fontFamily: t.typography.header,
-                  fontSize: {
-                    xs: t.typography.h5.fontSize,
-                    sm: t.typography.h4.fontSize,
-                    md: t.typography.h2.fontSize,
-                  },
-                  textTransform: "uppercase",
-                })}
-                aria-hidden="true"
-              >
-                Stockholms Coffee Club
-              </Typography>
-            </Box>
-          </Box>
-          {/* Dark mode toggle on right side */}
-          <Box sx={{ display: "flex", alignItems: "center", float: "right" }}>
-            <Tooltip title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"} arrow>
-              <IconButton sx={{ ml: 2 }}>
-                {darkMode ? (
-                  <DarkModeIcon sx={{ color: navIconColor }} />
-                ) : (
-                  <LightModeIcon sx={{ color: theme.palette.accent.main }} />
-                )}
-              </IconButton>
-            </Tooltip>
-            <Switch
-              checked={darkMode}
-              onChange={handleToggleDarkMode}
-              inputProps={{ "aria-label": "toggle dark mode" }}
-            />
-            {isLoggedIn && (
-              <Tooltip title="Go to User Profile" arrow>
-                <IconButton
-                  component={Link}
-                  to="/user"
-                  sx={{ ml: 2 }}
-                  aria-label="User Page"
-                >
-                  <AccountCircleIcon
-                    sx={{
-                      filter: "drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.5))",
-                      fill: theme.palette.accent.main,
-                    }}
-                  />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Box>
+          <NavigationHeader
+            theme={theme}
+            open={open}
+            darkMode={darkMode}
+            isLoggedIn={isLoggedIn}
+            navIconColor={navIconColor}
+            handleToggleDarkMode={handleToggleDarkMode}
+          />
         </Toolbar>
       </AppBar>
+
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <Tooltip title="Close Navigation Menu" arrow>
-            <IconButton onClick={handleDrawerClose}>
+        <DrawerHeader
+          >
+          {/* Menu icon - same position as toolbar menu when drawer is open */}
+          <Tooltip title="Menu" arrow>
+            <IconButton
+              onClick={handleDrawerOpen}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleDrawerOpen();
+                }
+              }}
+              sx={{ 
+                alignItems: 'center',
+                justifyContent: 'center',
+                p: 1,
+                visibility: open ? 'hidden' : 'visible'
+              }}
+            >
+              <MenuIcon sx={{ color: theme.palette.accent.main }} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Close Menu" arrow>
+            <IconButton 
+              onClick={handleDrawerClose}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleDrawerClose();
+                }
+              }}
+              sx={{ 
+                alignItems: 'center',
+                justifyContent: 'center',
+                p: 1
+              }}
+            >
               {theme.direction === "rtl" ? (
                 <ChevronRightIcon sx={{ color: theme.palette.accent.main }} />
               ) : (
@@ -302,195 +160,82 @@ const NavBar = ({
             </IconButton>
           </Tooltip>
         </DrawerHeader>
-        <Divider />
-        <List>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <Tooltip title="View Coffee Map" arrow placement="right" disableHoverListener={open}>
-              <ListItemButton component={Link} to="/">
-                <ListItemIcon>
-                  <MapIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Map" />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <Tooltip title="View Coffee Tastings" arrow placement="right" disableHoverListener={open}>
-              <ListItemButton component={Link} to="/tastings">
-                <ListItemIcon>
-                  <RateReviewIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Tastings" />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-          {isLoggedIn && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <Tooltip title="Submit New Cafe" arrow placement="right" disableHoverListener={open}>
-                <ListItemButton onClick={() => setShowAddCafe(true)}>
-                  <ListItemIcon>
-                    <AddLocationIcon sx={{ color: navIconColor }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Add Cafe" />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          )}
-          {isLoggedIn && isAdmin && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <Tooltip title="Admin Dashboard" arrow placement="right" disableHoverListener={open}>
-                <ListItemButton component={Link} to="/admin">
-                  <ListItemIcon>
-                    <AdminPanelSettingsIcon sx={{ color: navIconColor }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Admin" />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          )}
-          {isLoggedIn && !isAdmin && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <Tooltip title="User Profile & Settings" arrow placement="right" disableHoverListener={open}>
-                <ListItemButton component={Link} to="/user">
-                  <ListItemIcon>
-                    <DoorFrontIcon sx={{ color: navIconColor }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Userpage" />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          )}
-        </List>
-        <Divider />
-        <List>
-          {!isLoggedIn && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <Tooltip title="Login to Your Account" arrow placement="right" disableHoverListener={open}>
-                <ListItemButton onClick={() => setShowLogin(true)}>
-                  <ListItemIcon>
-                    <LoginIcon sx={{ color: navIconColor }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Login" />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          )}
-          {isLoggedIn && (
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <Tooltip title="Logout from Account" arrow placement="right" disableHoverListener={open}>
-                <ListItemButton
-                  onClick={() => {
-                    localStorage.removeItem("userToken");
-                    localStorage.removeItem("username");
-                    localStorage.removeItem("admin");
-                    setIsLoggedIn(false);
-                    setShowLogin(false);
-                  }}
-                >
-                  <ListItemIcon>
-                    <LogoutIcon sx={{ color: navIconColor }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Logout" />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          )}
-        </List>
-        {/* log in */}
-        <Dialog
-          open={showLogin}
-          onClose={() => setShowLogin(false)}
-          maxWidth="xs"
-          fullWidth
-          sx={{
-            "& .MuiDialog-container": {
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 2,
-            },
-            "& .MuiDialog-paper": {
-              margin: { xs: 1, sm: 2 },
-              width: { xs: "calc(100vw - 32px)", sm: "auto" },
-              maxWidth: { xs: "none", sm: 400 },
-            },
-          }}
-        >
-          <DialogContent sx={{ p: 0 }}>
-            <LoginForm
-              onClose={() => setShowLogin(false)}
-              setCurrentUser={setCurrentUser}
-              setIsLoggedIn={setIsLoggedIn}
-            />
-          </DialogContent>
-        </Dialog>
-        {/* add new cafe only visible when logged in */}
-        <Dialog
-          open={showAddCafe}
-          onClose={() => setShowAddCafe(false)}
-          maxWidth="sm"
-          fullWidth
-          sx={{
-            "& .MuiDialog-container": {
-              alignItems: "flex-start",
-              justifyContent: "flex-start",
-            },
-          }}
-          PaperProps={{
-            sx: {
-              position: "absolute",
-              top: 88,
-              left: open ? drawerWidth + 24 : 88,
-            },
-          }}
-        >
-          <DialogContent sx={{ p: 0 }}>
-            <NewCafeForm onClose={() => setShowAddCafe(false)} />
-          </DialogContent>
-        </Dialog>
-        <Divider />
-        <FilterDropdown
-          label="Filter by Cafe Type"
-          options={categories}
-          value={cafeTypeQuery}
-          onChange={setCafeTypeQuery}
-          iconComponent={<StorefrontIcon sx={{ color: navIconColor }} />}
+
+        <NavigationItems
+          isLoggedIn={isLoggedIn}
+          isAdmin={isAdmin}
+          navIconColor={navIconColor}
+          open={open}
+          setShowLogin={setShowLogin}
+          setShowAddCafe={setShowAddCafe}
+          setIsLoggedIn={setIsLoggedIn}
         />
-        <FilterDropdown
-          label="Filter by neighborhood"
-          options={neighborhoods}
-          value={neighborhoodQuery}
-          onChange={setNeighborhoodQuery}
-xs
-          iconComponent={<TravelExploreIcon sx={{ color: navIconColor }} />}
+
+        <NavigationFilters
+          categories={categories}
+          neighborhoods={neighborhoods}
+          cafeTypeQuery={cafeTypeQuery}
+          neighborhoodQuery={neighborhoodQuery}
+          setCafeTypeQuery={setCafeTypeQuery}
+          setNeighborhoodQuery={setNeighborhoodQuery}
+          clearFilters={clearFilters}
+          navIconColor={navIconColor}
+          open={open}
         />
-        
-        {/* Clear filters button - only show when filters are active */}
-        {(cafeTypeQuery || neighborhoodQuery) && (
-          <>
-            <Divider sx={{ my: 1 }} />
-            <ListItem disablePadding sx={{ display: "block", py: 0 }}>
-              <Tooltip title="Remove All Active Filters" arrow placement="right" disableHoverListener={open}>
-                <ListItemButton
-                  onClick={clearFilters}
-                  sx={{ 
-                    width: "100%", 
-                    justifyContent: "flex-start", 
-                    minHeight: 48,
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    }
-                  }}
-                >
-                  <ListItemIcon>
-                    <ClearIcon sx={{ color: navIconColor }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Clear All Filters" />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          </>
-        )}
       </Drawer>
+
+      {/* Login Dialog */}
+      <Dialog
+        open={showLogin}
+        onClose={() => setShowLogin(false)}
+        maxWidth="xs"
+        fullWidth
+        sx={{
+          "& .MuiDialog-container": {
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 2,
+          },
+          "& .MuiDialog-paper": {
+            margin: { xs: 1, sm: 2 },
+            width: { xs: "calc(100vw - 2rem)", sm: "auto" },
+            maxWidth: { xs: "none", sm: "25rem" },
+          },
+        }}
+      >
+        <DialogContent sx={{ p: 0 }}>
+          <LoginForm
+            onClose={() => setShowLogin(false)}
+            setCurrentUser={setCurrentUser}
+            setIsLoggedIn={setIsLoggedIn}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Cafe Dialog */}
+      <Dialog
+        open={showAddCafe}
+        onClose={() => setShowAddCafe(false)}
+        maxWidth="sm"
+        fullWidth
+        sx={{
+          "& .MuiDialog-container": {
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+          },
+        }}
+        PaperProps={{
+          sx: {
+            position: "absolute",
+            top: "5.5rem",
+            left: open ? `calc(${drawerWidth} + 1.5rem)` : "5.5rem",
+          },
+        }}
+      >
+        <DialogContent sx={{ p: 0 }}>
+          <NewCafeForm onClose={() => setShowAddCafe(false)} />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

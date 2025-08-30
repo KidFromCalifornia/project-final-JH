@@ -15,7 +15,6 @@ import {
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Coffee as CoffeeIcon,
   Star as StarIcon,
 } from "@mui/icons-material";
 
@@ -31,14 +30,10 @@ function FlipTastingCard({
   
   // Enhanced gradients using theme colors
   const gradientFront = `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`;
-  const gradientBack = `linear-gradient(135deg, ${theme.palette.accent.main}, ${theme.palette.accentStrong.main})`;
 
   const cardStyles = {
     cursor: 'pointer',
     transition: 'transform 0.3s ease',
-    '&:hover': {
-      transform: 'translateY(-4px)',
-    },
     perspective: 1000,
     width: "100%",
     height: 340,
@@ -50,10 +45,9 @@ function FlipTastingCard({
     position: "relative",
     width: "100%",
     height: "100%",
-    textAlign: "center",
     transition: "transform 0.6s ease-in-out",
     transformStyle: "preserve-3d",
-    transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+    transform: "rotateY(0deg)",
   };
 
   const cardSide = {
@@ -84,20 +78,12 @@ function FlipTastingCard({
   return (
     <Box sx={cardStyles}>
       <Tooltip
-        title={flipped ? "Click to see front" : "Click for details"}
+        title="Tasting details"
         arrow
         placement="top"
       >
         <Box
-          onClick={() => setFlipped((prev) => !prev)}
           sx={flipCardInner}
-          role="button"
-          tabIndex={0}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              setFlipped((prev) => !prev);
-            }
-          }}
           aria-label={`Tasting card for ${tasting.cafeId?.name || 'Unknown cafe'}`}
         >
           {/* Front of card */}
@@ -106,17 +92,15 @@ function FlipTastingCard({
               height: '100%', 
               display: 'flex', 
               flexDirection: 'column',
-              justifyContent: 'space-between',
               p: 3,
             }}>
-              <Box>
+              <Box sx={{ mb: 3 }}>
                 <Box sx={{ 
                   display: 'flex', 
-                  justifyContent: 'space-between', 
+                  justifyContent: 'flex-end', 
                   alignItems: 'center',
-                  mb: 2 
+                  mb: 3 
                 }}>
-                  <CoffeeIcon sx={{ fontSize: 32, opacity: 0.9 }} />
                   <Chip
                     label={tasting.brewMethod || 'Coffee'}
                     size="small"
@@ -131,42 +115,31 @@ function FlipTastingCard({
                 <Typography 
                   variant="h5" 
                   component="h3"
-                  gutterBottom
                   sx={{ 
                     fontWeight: 700,
                     display: '-webkit-box',
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
-                    mb: 1,
+                    mb: 0,
                   }}
                 >
                   {tasting.cafeId?.name || "Unknown Cafe"}
                 </Typography>
                 
-                <Box sx={{ 
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mb: 2 
-                }}>
-                  <Rating
-                    value={tasting.rating || 0}
-                    readOnly
-                    size="large"
-                    sx={{
-                      '& .MuiRating-iconFilled': {
-                        color: theme.palette.accent.main,
-                      },
-                      '& .MuiRating-iconEmpty': {
-                        color: 'rgba(255, 255, 255, 0.3)',
-                      },
-                    }}
-                  />
-                </Box>
               </Box>
 
-              <Box>
+              <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Typography 
+                  variant="subtitle2" 
+                  sx={{ 
+                    fontWeight: 600,
+                    mb: 1.5,
+                    opacity: 0.8
+                  }}
+                >
+                  Tasting Notes
+                </Typography>
                 <Typography 
                   variant="body2" 
                   sx={{ 
@@ -175,16 +148,20 @@ function FlipTastingCard({
                     WebkitLineClamp: 3,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
+                    mb: 3,
                   }}
                 >
-                  {tasting.notes || "No notes available"}
+                  {tasting.tastingNotes && tasting.tastingNotes.length > 0 
+                    ? tasting.tastingNotes.join(', ') 
+                    : "No tasting notes available"}
                 </Typography>
-                
+              </Box>
+
+              <Box>
                 <Typography 
                   variant="caption" 
                   sx={{ 
                     opacity: 0.7,
-                    mt: 2,
                     display: 'block',
                   }}
                 >
@@ -274,10 +251,9 @@ function FlipTastingCard({
                         setEditingTasting(tasting);
                       }}
                       size="small"
-                      sx={helpers.hover(
-                        { color: theme.palette.primary.main },
-                        { backgroundColor: colors.primary.light }
-                      )}
+                      sx={{ 
+                        color: theme.palette.primary.main 
+                      }}
                     >
                       <EditIcon />
                     </IconButton>
@@ -290,10 +266,9 @@ function FlipTastingCard({
                         setDeletingTasting(tasting);
                       }}
                       size="small"
-                      sx={helpers.hover(
-                        { color: theme.palette.error.main },
-                        { backgroundColor: colors.alpha(theme.palette.error.main, 0.1) }
-                      )}
+                      sx={{ 
+                        color: theme.palette.error.main 
+                      }}
                     >
                       <DeleteIcon />
                     </IconButton>

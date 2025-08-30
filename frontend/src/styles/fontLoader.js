@@ -1,30 +1,45 @@
-// Optimized font loading for Stockholm Type - reduces head bloat
+// Stockholm Type font loader following official Stockholm guidelines
+// Based on: https://font.stockholm.se/dokumentation/
 const loadStockholmFont = () => {
-  // Skip WebFont library and load directly via CSS for better performance
-  const loadFontDirectly = () => {
-    // Check if font is already loaded
-    if (document.querySelector('link[href*="stockholm-type"]')) {
-      return;
-    }
+  // Check if font is already loaded
+  if (document.querySelector('link[href*="stockholm-type"]') || 
+      document.querySelector('style[data-font="stockholm-type"]')) {
+    return;
+  }
 
+  const loadFontDirectly = () => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://font.stockholm.se/css/stockholm-type.css'; // Use HTTPS
+    // Official Stockholm font service URL (protocol-relative for better compatibility)
+    link.href = '//font.stockholm.se/css/stockholm-type.css';
+    link.setAttribute('data-font', 'stockholm-type');
+    
     link.onload = () => {
+      // Following Stockholm's convention for font loading classes
       document.documentElement.classList.add('wf-stockholmtype-active');
-      document.documentElement.classList.add('wf-stockholmtype-n4-active');
-      document.documentElement.classList.add('wf-stockholmtype-n7-active');
+      document.documentElement.classList.add('wf-stockholmtype-n4-active'); // Regular
+      document.documentElement.classList.add('wf-stockholmtype-n7-active'); // Bold
       document.documentElement.classList.add('wf-active');
+      console.log('Stockholm Type font loaded successfully');
     };
+    
     link.onerror = () => {
+      // Following Stockholm's convention for inactive font state
       document.documentElement.classList.add('wf-stockholmtype-inactive');
-      console.warn('Stockholm Type font failed to load');
+      document.documentElement.classList.add('wf-stockholmtype-n4-inactive');
+      document.documentElement.classList.add('wf-stockholmtype-n7-inactive');
+      console.warn('Stockholm Type font failed to load - using Verdana fallback as per Stockholm guidelines');
     };
+    
     document.head.appendChild(link);
   };
 
-  // Load font immediately
-  loadFontDirectly();
+  // Load font when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadFontDirectly);
+  } else {
+    loadFontDirectly();
+  }
 };
 
 // Load font when module is imported

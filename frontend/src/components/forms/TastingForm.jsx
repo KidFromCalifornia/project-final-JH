@@ -151,8 +151,8 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
 
   return (
     <Paper elevation={2} sx={{ 
-      width: { xs: "100%", sm: 640 },
-      maxWidth: { xs: "none", sm: 640 },
+      width: { xs: "100%", sm: 640, md: 900, lg: 1000 },
+      maxWidth: { xs: "none", sm: 640, md: 900, lg: 1000 },
       p: { xs: 2, sm: 3 },
       mb: 4,
       display: "flex",
@@ -183,13 +183,29 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
       <form onSubmit={handleSubmit}>
         {fetchError && <SwalAlertStyles message={fetchError} type="error" />}
         
-        {/* Coffee Information Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Coffee Information
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+        {/* Main Form Container - Flex Row Layout */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', lg: 'row' },
+          gap: 3,
+          alignItems: 'flex-start'
+        }}>
+          
+          {/* Left Column */}
+          <Box sx={{ 
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3
+          }}>
+            
+            {/* Coffee Information Section */}
+            <Paper elevation={1} sx={{ p: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
+              <Typography variant="h6" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 600, mb: 2 }}>
+                Coffee Information
+              </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6} md={6} lg={4}>
               <TextField
                 label="Coffee Name"
                 name="coffeeName"
@@ -201,7 +217,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 sx={textFieldStyles}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6} lg={4}>
               <TextField
                 select
                 label="Where did you taste this coffee?"
@@ -221,7 +237,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6} lg={4}>
               <TextField
                 label="Coffee Roaster"
                 name="coffeeRoaster"
@@ -232,7 +248,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 sx={textFieldStyles}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6} lg={4}>
               <TextField
                 label="Coffee Origin"
                 name="coffeeOrigin"
@@ -243,7 +259,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 sx={textFieldStyles}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6} lg={4}>
               <TextField
                 label="Coffee Region"
                 name="coffeeOriginRegion"
@@ -254,18 +270,29 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 sx={textFieldStyles}
               />
             </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={4}>
+              <div></div> {/* Empty grid item for spacing */}
+            </Grid>
           </Grid>
-        </Box>
-
-        <Divider sx={{ my: 3 }} />
+        </Paper>
+        
+      </Box>
+          
+      {/* Right Column */}
+      <Box sx={{ 
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3
+      }}>
 
         {/* Brewing Information Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Brewing Information
+        <Paper elevation={1} sx={{ p: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
+          <Typography variant="h6" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 600, mb: 2 }}>
+            Brewing Method & Profile
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6} md={6} lg={3}>
               <TextField
                 select
                 label="Brew Method"
@@ -285,7 +312,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6} lg={3}>
               <TextField
                 select
                 label="Roast Level"
@@ -305,7 +332,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6} lg={3}>
               <TextField
                 select
                 label="Acidity"
@@ -325,7 +352,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6} lg={3}>
               <TextField
                 select
                 label="Mouth Feel"
@@ -345,129 +372,189 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 ))}
               </TextField>
             </Grid>
+            
+            {/* Rating Section */}
+            <Grid item xs={12}>
+              <FormControl margin="normal" sx={{ mt: 2, '& .MuiFormLabel-root': { color: theme.palette.text.primary }, '& .MuiFormLabel-root.Mui-focused': { color: theme.palette.text.primary } }}>
+                <FormLabel component="legend" sx={{ fontWeight: 600, mb: 1 }}>Overall Rating</FormLabel>
+                <Tooltip title="Rate your overall coffee experience from 1-5 hearts" arrow placement="top">
+                  <Rating
+                    name="rating"
+                    value={form.rating}
+                    precision={0.5}
+                    max={5}
+                    icon={<FavoriteIcon fontSize="inherit" />}
+                    emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+                    onChange={(e, value) =>
+                      setForm((prev) => ({ ...prev, rating: value || 1 }))
+                    }
+                    sx={{ 
+                      mt: 1, 
+                      '& .MuiRating-iconFilled': { color: theme.palette.accent.main },
+                      '& .MuiRating-iconEmpty': { color: 'rgba(0, 0, 0, 0.26)' }
+                    }}
+                  />
+                </Tooltip>
+                <FormHelperText>
+                  {form.rating ? `${form.rating} out of 5 hearts` : "Select your rating"}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
           </Grid>
-        </Box>
+        </Paper>
+        
+      </Box>
+      
+    </Box>
 
-        <Divider sx={{ my: 3 }} />
+    {/* Full Width Sections */}
+    <Box sx={{ mt: 3 }}>
 
-        {/* Tasting Notes Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Tasting Experience
+        {/* Tasting Experience Section */}
+        <Paper elevation={1} sx={{ p: 3, mb: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
+          <Typography variant="h6" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 600, mb: 2 }}>
+            Tasting Experience & Notes
           </Typography>
           
-          <FormControl fullWidth margin="normal" required sx={{ mb: 2, '& .MuiFormLabel-root': {  }, '& .MuiFormLabel-root.Mui-focused': {  } }}>
-            <FormLabel component="legend">Tasting Notes (Select at least one)</FormLabel>
-            <FormGroup row>
-              {(options.tastingNotes || []).map((note) => (
-                <FormControlLabel
-                  key={note}
-                  control={
-                    <Checkbox
-                      name="tastingNotes"
-                      value={note}
-                      checked={form.tastingNotes.includes(note)}
-                      onChange={handleTastingNotesChange}
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <FormControl fullWidth margin="normal" required sx={{ mb: 2, '& .MuiFormLabel-root': { color: theme.palette.text.primary }, '& .MuiFormLabel-root.Mui-focused': { color: theme.palette.text.primary } }}>
+                <FormLabel component="legend" sx={{ fontWeight: 600, mb: 1 }}>Tasting Notes (Select at least one)</FormLabel>
+                <FormGroup sx={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  flexWrap: 'wrap', 
+                  gap: 1.5,
+                  justifyContent: 'flex-start',
+                  width: '100%'
+                }}>
+                  {(options.tastingNotes || []).map((note) => (
+                    <FormControlLabel
+                      key={note}
+                      control={
+                        <Checkbox
+                          name="tastingNotes"
+                          value={note}
+                          checked={form.tastingNotes.includes(note)}
+                          onChange={handleTastingNotesChange}
+                          sx={{ color: theme.palette.primary.main }}
+                        />
+                      }
+                      label={note}
+                      sx={{ 
+                        minWidth: '180px', 
+                        maxWidth: 'calc(25% - 12px)',
+                        mb: 1,
+                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                        borderRadius: 1,
+                        px: 1,
+                        mr: 0,
+                        flex: '1 1 auto',
+                        '@media (max-width: 900px)': {
+                          maxWidth: 'calc(33.333% - 12px)'
+                        },
+                        '@media (max-width: 600px)': {
+                          maxWidth: 'calc(50% - 12px)'
+                        }
+                      }}
                     />
-                  }
-                  label={note}
-                  sx={{ minWidth: '200px', mb: 1 }}
-                />
-              ))}
-            </FormGroup>
-          </FormControl>
-
-          <FormControl  margin="normal" sx={{ mb: 2, '& .MuiFormLabel-root': { color: 'text.primary' }, '& .MuiFormLabel-root.Mui-focused': { color: 'text.primary' } }}>
-            <FormLabel component="legend">Overall Rating</FormLabel>
-            <Tooltip title="Rate your overall coffee experience from 1-5 hearts" arrow placement="top">
-              <Rating
-                name="rating"
-                value={form.rating}
-                precision={0.5}
-                max={5}
-                icon={<FavoriteIcon fontSize="inherit" />}
-                emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                onChange={(e, value) =>
-                  setForm((prev) => ({ ...prev, rating: value || 1 }))
-                }
-                sx={{ mt: 1 }}
+                  ))}
+                </FormGroup>
+              </FormControl>
+            </Grid>
+            
+            <Grid item xs={12}>
+              <TextField
+                label="Additional Notes"
+                name="notes"
+                value={form.notes}
+                onChange={handleChange}
+                multiline
+                rows={4}
+                fullWidth
+                margin="normal"
+                inputProps={{ maxLength: 500 }}
+                placeholder="Share your thoughts about this coffee experience..."
+                helperText={`${form.notes.length}/500 characters`}
+                sx={textFieldStyles}
               />
-            </Tooltip>
-            <FormHelperText>
-              {form.rating ? `${form.rating} out of 5 hearts` : "Select your rating"}
-            </FormHelperText>
-          </FormControl>
-
-          <TextField
-            label="Additional Notes"
-            name="notes"
-            value={form.notes}
-            onChange={handleChange}
-            multiline
-            rows={4}
-            fullWidth
-            margin="normal"
-            inputProps={{ maxLength: 500 }}
-            placeholder="Share your thoughts about this coffee experience..."
-            helperText={`${form.notes.length}/500 characters`}
-            sx={textFieldStyles}
-          />
-        </Box>
+            </Grid>
+          </Grid>
+        </Paper>
 
         <Divider sx={{ my: 3 }} />
 
-        {/* Settings Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Privacy Settings
-          </Typography>
-          <FormControlLabel
-            control={
-              <Checkbox
-                id="isPublic"
-                name="isPublic"
-                checked={form.isPublic}
-                onChange={handleChange}
+        {/* Privacy Settings & Submit Section */}
+        <Paper elevation={1} sx={{ p: 3, mb: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
+          <Grid container spacing={3} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 600, mb: 2 }}>
+                Privacy Settings
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    id="isPublic"
+                    name="isPublic"
+                    checked={form.isPublic}
+                    onChange={handleChange}
+                    sx={{ color: theme.palette.primary.main }}
+                  />
+                }
+                label="Make this tasting public (visible to other users)"
+                sx={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  borderRadius: 1,
+                  px: 2,
+                  py: 1,
+                  mr: 1
+                }}
               />
-            }
-            label="Make this tasting public (visible to other users)"
-          />
-        </Box>
-
-        {/* Submit Button */}
-        <Box sx={{ mt: 4, textAlign: 'center' }}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            sx={{ 
-              minWidth: 200, 
-              py: { xs: 1.5, sm: 1.5 },
-              px: { xs: 2, sm: 3 },
-              minHeight: { xs: 48, sm: 42 }, // Better touch targets
-              fontSize: { xs: "16px", sm: "14px" },
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
-              '&:hover': {
-                backgroundColor: theme.palette.primary.dark,
-              },
-              '&:disabled': {
-                backgroundColor: theme.palette.action.disabled,
-                color: theme.palette.text.disabled,
-              }
-            }}
-            disabled={
-              !form.cafeId ||
-              !form.coffeeName ||
-              !form.brewMethod ||
-              !form.roastLevel ||
-              form.tastingNotes.length === 0
-            }
-          >
-            {initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
-          </Button>
-        </Box>
+            </Grid>
+            
+            <Grid item xs={12} md={6}>
+              <Box sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  sx={{ 
+                    minWidth: 200, 
+                    py: { xs: 1.5, sm: 1.5 },
+                    px: { xs: 2, sm: 3 },
+                    minHeight: { xs: 48, sm: 42 },
+                    fontSize: { xs: "16px", sm: "14px" },
+                    backgroundColor: theme.palette.primary.main,
+                    color: theme.palette.primary.contrastText,
+                    boxShadow: 3,
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.dark,
+                      transform: 'translateY(-2px)',
+                      boxShadow: 6,
+                    },
+                    '&:disabled': {
+                      backgroundColor: theme.palette.action.disabled,
+                      color: theme.palette.text.disabled,
+                    }
+                  }}
+                  disabled={
+                    !form.cafeId ||
+                    !form.coffeeName ||
+                    !form.brewMethod ||
+                    !form.roastLevel ||
+                    form.tastingNotes.length === 0
+                  }
+                >
+                  {initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
+        </Paper>
+        
+      </Box>
+      
       </form>
     </Paper>
   );

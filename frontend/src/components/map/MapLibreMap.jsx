@@ -72,23 +72,80 @@ export default function MapLibreMap({
               latitude={coords[1]}
               onClose={() => setSelectedCafe(null)}
               closeOnClick={false}
-
             >
-              <Box>
-                <Typography variant="h6" fontWeight="bold">
+              <Box sx={{ 
+                minWidth: 200, 
+                maxWidth: 300,
+                backgroundColor: theme.palette.light.main,
+                borderRadius: 2,
+                p: 2,
+                boxShadow: 3,
+                border: `1px solid ${theme.palette.divider}`,
+              }}>
+                <Typography variant="h6" fontWeight="bold" sx={{ 
+                  mb: 1,
+                  color: theme.palette.text.primary 
+                }}>
                   {selectedCafe.name}
                 </Typography>
+                
+                {/* Category */}
+                {selectedCafe.category && (
+                  <Typography variant="caption" sx={{ 
+                    backgroundColor: theme.palette.primary.main, 
+                    color: theme.palette.primary.contrastText,
+                    px: 1, 
+                    py: 0.5, 
+                    borderRadius: 1,
+                    textTransform: 'capitalize',
+                    display: 'inline-block',
+                    mb: 1
+                  }}>
+                    {selectedCafe.category}
+                  </Typography>
+                )}
+                
+                {/* Location Note for multiple locations */}
                 {selectedCafe.hasMultipleLocations && selectedLocation.locationNote && (
-                  <Typography variant="body2" color="primary" fontWeight="500">
+                  <Typography variant="body2" color="primary" fontWeight="500" sx={{ mb: 1 }}>
                     {selectedLocation.locationNote}
                   </Typography>
                 )}
-                <Typography variant="body2" color="text.secondary">
+                
+                {/* Address */}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                   {selectedLocation.address}
                 </Typography>
+                
+                {/* Neighborhood */}
                 {selectedLocation.neighborhood && (
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                     {selectedLocation.neighborhood}
+                  </Typography>
+                )}
+                
+                {/* Opening Times */}
+                {selectedLocation.openingTimes && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    {selectedLocation.openingTimes}
+                  </Typography>
+                )}
+                
+                {/* Website Link */}
+                {selectedCafe.website && (
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    <a 
+                      href={selectedCafe.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ 
+                        color: theme.palette.primary.main,
+                        textDecoration: 'none',
+                        fontWeight: 500
+                      }}
+                    >
+                      Visit Website
+                    </a>
                   </Typography>
                 )}
               </Box>
