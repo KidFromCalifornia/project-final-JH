@@ -7,11 +7,11 @@ const applyFilters = (cafes, cafeTypeFilter, neighborhoodFilter) => {
 
   let filtered = cafes;
 
-  if (cafeTypeFilter && cafeTypeFilter !== '') {
+  if (cafeTypeFilter && cafeTypeFilter !== 'all') {
     filtered = filtered.filter((cafe) => cafe.category === cafeTypeFilter);
   }
 
-  if (neighborhoodFilter && neighborhoodFilter !== '') {
+  if (neighborhoodFilter && neighborhoodFilter !== 'all') {
     filtered = filtered.filter((cafe) => cafe.locations?.[0]?.neighborhood === neighborhoodFilter);
   }
 
