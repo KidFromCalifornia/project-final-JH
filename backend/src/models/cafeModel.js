@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const cafeSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      ref: "Cafe",
+      ref: 'Cafe',
       required: true,
       trim: true,
     },
@@ -29,8 +29,8 @@ const cafeSchema = new mongoose.Schema(
         coordinates: {
           type: {
             type: String,
-            enum: ["Point"],
-            default: "Point",
+            enum: ['Point'],
+            default: 'Point',
           },
           coordinates: {
             type: [Number],
@@ -54,27 +54,27 @@ const cafeSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["specialty", "roaster", "thirdwave"],
+      enum: ['specialty', 'roaster', 'thirdwave'],
     },
 
     features: [
       {
         type: String,
         enum: [
-          "outdoor_seating",
-          "wheelchair_accessible",
-          "lunch",
-          "pour_over",
-          "takeaway",
-          "vegan_options",
-          "breakfast",
-          "iced_drinks",
-          "pastries",
-          "multi_roaster",
-          "decaf",
-          "no_coffee_bar",
-          "limited_sitting",
-          "roaster_only",
+          'outdoor_seating',
+          'wheelchair_accessible',
+          'lunch',
+          'pour_over',
+          'takeaway',
+          'vegan_options',
+          'breakfast',
+          'iced_drinks',
+          'pastries',
+          'multi_roaster',
+          'decaf',
+          'no_coffee_bar',
+          'limited_sitting',
+          'roaster_only',
         ],
         required: true,
       },
@@ -91,7 +91,7 @@ const cafeSchema = new mongoose.Schema(
     },
     submittedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: false,
     },
   },
@@ -100,8 +100,8 @@ const cafeSchema = new mongoose.Schema(
   }
 );
 
-cafeSchema.index({ "locations.coordinates": "2dsphere" });
+cafeSchema.index({ 'locations.coordinates': '2dsphere' });
 
 //
-export const Cafe = mongoose.model("Cafe", cafeSchema);
-export const CafeSubmission = mongoose.model("CafeSubmission", cafeSchema);
+export const Cafe = mongoose.model('Cafe', cafeSchema);
+export const CafeSubmission = mongoose.model('CafeSubmission', cafeSchema);

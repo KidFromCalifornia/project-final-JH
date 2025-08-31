@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { cafeAPI } from "../../services/api";
-import { SwalAlertStyles, showAlert } from "../../styles/SwalAlertStyles";
+import { useState } from 'react';
+import { cafeAPI } from '../../services/api';
+import { SwalAlertStyles, showAlert } from '../../styles/SwalAlertStyles';
 import {
   Box,
   TextField,
@@ -20,31 +20,31 @@ import {
   Paper,
   Grid,
   useTheme,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-const CATEGORY_OPTIONS = ["specialty", "roaster", "thirdwave"];
-    const FEATURE_OPTIONS = [
-  "outdoor_seating",
-  "wheelchair_accessible",
-  "lunch",
-  "pour_over",
-  "takeaway",
-  "vegan_options",
-  "breakfast",
-  "iced_drinks",
-  "pastries",
-  "multi_roaster",
-  "decaf",
-  "no_coffee_bar",
-  "limited_sitting",
-  "roaster_only",
+const CATEGORY_OPTIONS = ['specialty', 'roaster', 'thirdwave'];
+const FEATURE_OPTIONS = [
+  'outdoor_seating',
+  'wheelchair_accessible',
+  'lunch',
+  'pour_over',
+  'takeaway',
+  'vegan_options',
+  'breakfast',
+  'iced_drinks',
+  'pastries',
+  'multi_roaster',
+  'decaf',
+  'no_coffee_bar',
+  'limited_sitting',
+  'roaster_only',
 ];
 
 const NewCafeForm = ({ onClose }) => {
   const theme = useTheme();
-  
+
   // Reusable TextField styling to match LoginForm
   const textFieldStyles = {
     '& .MuiOutlinedInput-root': {
@@ -61,11 +61,11 @@ const NewCafeForm = ({ onClose }) => {
       },
       '& input': {
         color: theme.palette.text.primary,
-        fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+        fontSize: { xs: '16px', sm: '14px' }, // Prevents zoom on iOS
       },
       '& textarea': {
         color: theme.palette.text.primary,
-        fontSize: { xs: "16px", sm: "14px" },
+        fontSize: { xs: '16px', sm: '14px' },
       },
     },
     '& .MuiInputLabel-root': {
@@ -77,43 +77,43 @@ const NewCafeForm = ({ onClose }) => {
   };
 
   const [form, setForm] = useState({
-    name: "",
-    website: "",
-    description: "",
-    category: "",
+    name: '',
+    website: '',
+    description: '',
+    category: '',
     hasMultipleLocations: false,
     features: [],
-    images: [""],
+    images: [''],
     locations: [
       {
-        address: "",
-        neighborhood: "",
-        locationNote: "",
+        address: '',
+        neighborhood: '',
+        locationNote: '',
         isMainLocation: true,
       },
     ],
   });
-  const [status, setStatus] = useState("");
-  const [statusType, setStatusType] = useState("");
+  const [status, setStatus] = useState('');
+  const [statusType, setStatusType] = useState('');
 
   const getFeatureTooltip = (feature) => {
     const tooltips = {
-      outdoor_seating: "Has outdoor seating available",
-      wheelchair_accessible: "Accessible for wheelchair users",
-      lunch: "Serves lunch options",
-      pour_over: "Offers pour-over brewing methods",
-      takeaway: "Offers takeaway/to-go options",
-      vegan_options: "Has vegan food and drink options",
-      breakfast: "Serves breakfast items",
-      iced_drinks: "Offers cold/iced beverages",
-      pastries: "Serves pastries and other baked goods",
-      multi_roaster: "Features coffee from multiple roasters",
-      decaf: "Offers decaffeinated coffee options",
-      no_coffee_bar: "No on-site coffee bar (retail, office or roastery)",
-      limited_sitting: "Limited seating available",
-      roaster_only: "Roastery without public seating",
+      outdoor_seating: 'Has outdoor seating available',
+      wheelchair_accessible: 'Accessible for wheelchair users',
+      lunch: 'Serves lunch options',
+      pour_over: 'Offers pour-over brewing methods',
+      takeaway: 'Offers takeaway/to-go options',
+      vegan_options: 'Has vegan food and drink options',
+      breakfast: 'Serves breakfast items',
+      iced_drinks: 'Offers cold/iced beverages',
+      pastries: 'Serves pastries and other baked goods',
+      multi_roaster: 'Features coffee from multiple roasters',
+      decaf: 'Offers decaffeinated coffee options',
+      no_coffee_bar: 'No on-site coffee bar (retail, office or roastery)',
+      limited_sitting: 'Limited seating available',
+      roaster_only: 'Roastery without public seating',
     };
-    return tooltips[feature] || `Feature: ${feature.replace(/_/g, " ")}`;
+    return tooltips[feature] || `Feature: ${feature.replace(/_/g, ' ')}`;
   };
 
   // Handle basic field changes
@@ -121,7 +121,7 @@ const NewCafeForm = ({ onClose }) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -140,7 +140,7 @@ const NewCafeForm = ({ onClose }) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => {
       const locations = [...prev.locations];
-      locations[idx][name] = type === "checkbox" ? checked : value;
+      locations[idx][name] = type === 'checkbox' ? checked : value;
       return { ...prev, locations };
     });
   };
@@ -177,9 +177,9 @@ const NewCafeForm = ({ onClose }) => {
       locations: [
         ...prev.locations,
         {
-          address: "",
-          neighborhood: "",
-          locationNote: "",
+          address: '',
+          neighborhood: '',
+          locationNote: '',
           isMainLocation: false,
         },
       ],
@@ -197,7 +197,7 @@ const NewCafeForm = ({ onClose }) => {
   // Prepare payload for backend and geocode addresses
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus("");
+    setStatus('');
     try {
       // Geocode each location
       const locationsWithCoords = await Promise.all(
@@ -207,7 +207,7 @@ const NewCafeForm = ({ onClose }) => {
             ...loc,
             coordinates: geo
               ? {
-                  type: "Point",
+                  type: 'Point',
                   coordinates: [geo.lon, geo.lat],
                 }
               : undefined,
@@ -223,44 +223,41 @@ const NewCafeForm = ({ onClose }) => {
 
       const result = await cafeAPI.submitCafe(payload);
       if (result.success) {
-        setStatusType("success");
-        setStatus("Cafe added!");
+        setStatusType('success');
+        setStatus('Cafe added!');
         setForm({
-          name: "",
-          website: "",
-          description: "",
-          category: "",
+          name: '',
+          website: '',
+          description: '',
+          category: '',
           hasMultipleLocations: false,
           features: [],
-          images: [""],
+          images: [''],
           locations: [
             {
-              address: "",
-              neighborhood: "",
-              locationNote: "",
+              address: '',
+              neighborhood: '',
+              locationNote: '',
               isMainLocation: true,
             },
           ],
         });
       } else {
-        setStatusType("error");
-        setStatus(
-          result.error ||
-            "We couldn't add this cafe. Please check and try again."
-        );
+        setStatusType('error');
+        setStatus(result.error || "We couldn't add this cafe. Please check and try again.");
       }
     } catch (err) {
       // Only show sweet alert if server is completely down (network error)
       if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
         showAlert({
-          title: "Server Unavailable",
+          title: 'Server Unavailable',
           text: "We couldn't reach the server. Please try again later.",
-          icon: "error",
+          icon: 'error',
         });
       } else {
         // For other errors, use inline status display
         setStatus("We couldn't submit your suggestion. Please try again.");
-        setStatusType("error");
+        setStatusType('error');
       }
     }
   };
@@ -270,42 +267,44 @@ const NewCafeForm = ({ onClose }) => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        width: { xs: "100%", sm: 640 },
-        maxWidth: { xs: "none", sm: 640 },
+        width: { xs: '100%', sm: 640 },
+        maxWidth: { xs: 'none', sm: 640 },
         p: { xs: 2, sm: 3 },
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         gap: 2,
         backgroundColor: theme.palette.light.main,
         borderRadius: 2,
         boxShadow: 3,
         color: theme.palette.text.primary,
-        position: "relative",
+        position: 'relative',
         zIndex: 1,
-        overflow: "hidden",
-        minHeight: "auto",
+        overflow: 'hidden',
+        minHeight: 'auto',
       }}
     >
-      <Box sx={{ 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center",
-        mb: 1,
-      }}>
-        <Typography 
-          variant="h4" 
-          sx={{ 
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 1,
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
             color: theme.palette.text.primary,
-            fontSize: { xs: "1.5rem", sm: "2rem" },
+            fontSize: { xs: '1.5rem', sm: '2rem' },
           }}
         >
           Suggest a Cafe
         </Typography>
-        <IconButton 
-          onClick={onClose} 
-          aria-label="Close add cafe form" 
+        <IconButton
+          onClick={onClose}
+          aria-label="Close add cafe form"
           color="inherit"
-          sx={{ 
+          sx={{
             p: { xs: 1, sm: 1.5 },
           }}
         >
@@ -350,12 +349,12 @@ const NewCafeForm = ({ onClose }) => {
             </Select>
           </FormControl>
         </Grid>
-        
+
         <Grid item xs={12}>
           <TextField
             label="Primary Address"
             name="address"
-            value={form.locations[0]?.address || ""}
+            value={form.locations[0]?.address || ''}
             onChange={(e) => handleLocationChange(e, 0)}
             required
             fullWidth
@@ -364,19 +363,19 @@ const NewCafeForm = ({ onClose }) => {
             sx={textFieldStyles}
           />
         </Grid>
-        
+
         <Grid item xs={12} sm={6}>
           <TextField
             label="Neighborhood"
             name="neighborhood"
-            value={form.locations[0]?.neighborhood || ""}
+            value={form.locations[0]?.neighborhood || ''}
             onChange={(e) => handleLocationChange(e, 0)}
             fullWidth
             size="small"
             sx={textFieldStyles}
           />
         </Grid>
-        
+
         <Grid item xs={12} sm={6}>
           <TextField
             label="Website (optional)"
@@ -392,7 +391,7 @@ const NewCafeForm = ({ onClose }) => {
       </Grid>
 
       <Divider sx={{ my: 2 }}>
-        <Typography variant="subtitle2" sx={{ color: "inherit" }}>
+        <Typography variant="subtitle2" sx={{ color: 'inherit' }}>
           Location
         </Typography>
       </Divider>
@@ -403,7 +402,7 @@ const NewCafeForm = ({ onClose }) => {
             variant="outlined"
             sx={(t) => ({
               p: { xs: 1.5, sm: 2 },
-              position: "relative",
+              position: 'relative',
               backgroundColor: t.palette.background.paper,
               borderColor: t.palette.divider,
               borderRadius: 1,
@@ -415,7 +414,7 @@ const NewCafeForm = ({ onClose }) => {
                 onClick={() => removeLocation(idx)}
                 size="small"
                 color="inherit"
-                sx={{ position: "absolute", top: 8, right: 8 }}
+                sx={{ position: 'absolute', top: 8, right: 8 }}
               >
                 <CloseIcon fontSize="small" />
               </IconButton>
@@ -458,7 +457,7 @@ const NewCafeForm = ({ onClose }) => {
             onClick={addLocation}
             startIcon={<AddCircleOutlineIcon />}
             variant="text"
-            sx={{ alignSelf: "flex-start" }}
+            sx={{ alignSelf: 'flex-start' }}
           >
             Add Another Location
           </Button>
@@ -466,19 +465,19 @@ const NewCafeForm = ({ onClose }) => {
       </Stack>
 
       <Divider sx={{ my: 2 }}>
-        <Typography variant="subtitle2" sx={{ color: "inherit" }}>
+        <Typography variant="subtitle2" sx={{ color: 'inherit' }}>
           Features
         </Typography>
       </Divider>
-      <FormGroup 
-        row 
-        sx={{ 
-          rowGap: { xs: 0.5, sm: 1 }, 
+      <FormGroup
+        row
+        sx={{
+          rowGap: { xs: 0.5, sm: 1 },
           columnGap: { xs: 1, sm: 2 },
           '& .MuiFormControlLabel-root': {
             minWidth: { xs: '45%', sm: 'auto' },
             mb: { xs: 0.5, sm: 0 },
-          }
+          },
         }}
       >
         {FEATURE_OPTIONS.map((feature) => (
@@ -493,14 +492,14 @@ const NewCafeForm = ({ onClose }) => {
                 />
               }
               label={
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
+                <Typography
+                  variant="body2"
+                  sx={{
                     fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                    lineHeight: 1.2
+                    lineHeight: 1.2,
                   }}
                 >
-                  {feature.replace(/_/g, " ")}
+                  {feature.replace(/_/g, ' ')}
                 </Typography>
               }
               sx={(t) => ({ color: t.palette.text.primary })}
@@ -514,12 +513,12 @@ const NewCafeForm = ({ onClose }) => {
         variant="contained"
         color="primary"
         fullWidth
-        sx={{ 
+        sx={{
           py: { xs: 1.5, sm: 1.5 },
           px: { xs: 2, sm: 3 },
           mt: 3,
           minHeight: { xs: 48, sm: 42 }, // Better touch targets
-          fontSize: { xs: "16px", sm: "14px" },
+          fontSize: { xs: '16px', sm: '14px' },
           backgroundColor: theme.palette.primary.main,
           color: theme.palette.primary.contrastText,
           '&:hover': {
@@ -528,7 +527,7 @@ const NewCafeForm = ({ onClose }) => {
           '&:disabled': {
             backgroundColor: theme.palette.action.disabled,
             color: theme.palette.text.disabled,
-          }
+          },
         }}
       >
         Add Cafe

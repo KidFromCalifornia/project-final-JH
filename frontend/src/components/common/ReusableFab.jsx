@@ -3,19 +3,19 @@ import { Fab, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useCafeStore } from '../../stores/useCafeStore';
 
-const ReusableFab = ({ 
-  icon, 
-  tooltipTitle, 
-  onClick, 
+const ReusableFab = ({
+  icon,
+  tooltipTitle,
+  onClick,
   ariaLabel,
-  placement = "left",
-  size = { xs: "3rem", sm: "3.5rem" },
+  placement = 'left',
+  size = { xs: '3rem', sm: '3.5rem' },
   showCondition = true, // Allow conditional rendering
-  ...props 
+  ...props
 }) => {
   const theme = useTheme();
   const themeMode = useCafeStore((state) => state.themeMode);
-  const isDarkMode = themeMode === "dark";
+  const isDarkMode = themeMode === 'dark';
 
   // Don't render if condition is false
   if (!showCondition) return null;
@@ -24,14 +24,14 @@ const ReusableFab = ({
     <Tooltip title={tooltipTitle} arrow placement={placement}>
       <Fab
         onClick={onClick}
-        color={isDarkMode ? "secondary" : "primary"}
+        color={isDarkMode ? 'secondary' : 'primary'}
         aria-label={ariaLabel}
         sx={{
           color: theme.palette.light.main,
           width: size,
           height: size,
           boxShadow: `0.25rem 0.25rem 0.5rem ${theme.palette.secondary.main}40`,
-          "&:hover": {
+          '&:hover': {
             color: theme.palette.accentStrong.main,
           },
         }}

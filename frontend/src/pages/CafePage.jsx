@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { cafeAPI } from "../services/api";
-import { useCafeStore } from "../stores/useCafeStore";
-import { showAlert } from "../styles/SwalAlertStyles";
-import { Box, Typography, Paper, Alert, CircularProgress } from "@mui/material";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { cafeAPI } from '../services/api';
+import { useCafeStore } from '../stores/useCafeStore';
+import { showAlert } from '../styles/SwalAlertStyles';
+import { Box, Typography, Paper, Alert, CircularProgress } from '@mui/material';
 
 const CafePage = () => {
   const { cafeId } = useParams();
@@ -26,9 +26,9 @@ const CafePage = () => {
         // Only show sweet alert if server is completely down (network error)
         if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
           showAlert({
-            title: "Server Unavailable",
+            title: 'Server Unavailable',
             text: "We couldn't reach the server. Please try again later.",
-            icon: "error",
+            icon: 'error',
           });
         } else {
           // For other errors, use inline error display
@@ -65,7 +65,7 @@ const CafePage = () => {
         <Typography variant="h4" gutterBottom>
           {cafe.name}
         </Typography>
-        
+
         {/* Multiple Locations Display */}
         {cafe.hasMultipleLocations && cafe.locations?.length > 1 ? (
           <Box sx={{ mb: 2 }}>
@@ -73,15 +73,16 @@ const CafePage = () => {
               Locations:
             </Typography>
             {cafe.locations.map((location, index) => (
-              <Box key={index} sx={{ mb: 1, pl: 1, borderLeft: '2px solid', borderLeftColor: 'primary.main' }}>
+              <Box
+                key={index}
+                sx={{ mb: 1, pl: 1, borderLeft: '2px solid', borderLeftColor: 'primary.main' }}
+              >
                 {location.locationNote && (
                   <Typography variant="subtitle2" color="primary" fontWeight="500">
                     {location.locationNote}
                   </Typography>
                 )}
-                <Typography variant="body1">
-                  {location.address}
-                </Typography>
+                <Typography variant="body1">{location.address}</Typography>
                 {location.neighborhood && (
                   <Typography variant="body2" color="text.secondary">
                     {location.neighborhood}
@@ -95,13 +96,11 @@ const CafePage = () => {
             {cafe.locations?.[0]?.address}
           </Typography>
         )}
-        
+
         <Typography variant="body2" sx={{ mb: 2 }}>
           {cafe.description}
         </Typography>
-        <Typography variant="body2">
-          {cafe.features?.join(", ")}
-        </Typography>
+        <Typography variant="body2">{cafe.features?.join(', ')}</Typography>
       </Paper>
     </Box>
   );

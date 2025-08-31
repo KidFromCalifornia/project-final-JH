@@ -1,5 +1,5 @@
-import React from "react";
-import { useTheme } from "@mui/material/styles";
+import React from 'react';
+import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Toolbar,
@@ -8,23 +8,23 @@ import {
   IconButton,
   Dialog,
   DialogContent,
-} from "@mui/material";
+} from '@mui/material';
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Menu as MenuIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
 // Components
-import NavigationHeader from "./navigation/NavigationHeader";
-import NavigationItems from "./navigation/NavigationItems";
-import NavigationFilters from "./navigation/NavigationFilters";
-import { AppBar, Drawer, DrawerHeader, drawerWidth } from "./navigation/NavigationStyles";
-import LoginForm from "../forms/LoginForm";
-import NewCafeForm from "../forms/NewCafeForm";
-import { useCafeStore } from "../../stores/useCafeStore";
+import NavigationHeader from './navigation/NavigationHeader';
+import NavigationItems from './navigation/NavigationItems';
+import NavigationFilters from './navigation/NavigationFilters';
+import { AppBar, Drawer, DrawerHeader, drawerWidth } from './navigation/NavigationStyles';
+import LoginForm from '../forms/LoginForm';
+import NewCafeForm from '../forms/NewCafeForm';
+import { useCafeStore } from '../../stores/useCafeStore';
 
-const NavBar = ({
+const DesktopNavBar = ({
   searchResults = [],
   showLogin = false,
   setShowLogin = () => {},
@@ -39,8 +39,8 @@ const NavBar = ({
   const [open, setOpen] = React.useState(false);
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
-  const darkMode = themeMode === "dark";
-  const navIconColor = theme.palette.light?.main || "#fff";
+  const darkMode = themeMode === 'dark';
+  const navIconColor = theme.palette.light?.main || '#fff';
 
   // Store state
   const allCafes = useCafeStore((state) => state.cafes);
@@ -53,23 +53,19 @@ const NavBar = ({
 
   // Computed values
   const cafes = searchResults.length > 0 ? searchResults : allCafes;
-  const categories = Array.from(
-    new Set(cafes.map((cafe) => cafe.category).filter(Boolean))
-  );
+  const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
   const neighborhoods = Array.from(
-    new Set(
-      cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean)
-    )
+    new Set(cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
   );
 
   let isAdmin = false;
-  if (typeof window !== "undefined" && window.localStorage) {
-    isAdmin = localStorage.getItem("admin") === "true";
+  if (typeof window !== 'undefined' && window.localStorage) {
+    isAdmin = localStorage.getItem('admin') === 'true';
   }
 
   // Handlers
   const handleToggleDarkMode = () => {
-    setThemeMode(darkMode ? "light" : "dark");
+    setThemeMode(darkMode ? 'light' : 'dark');
   };
 
   const handleDrawerOpen = () => {
@@ -86,18 +82,18 @@ const NavBar = ({
   }, [filteredCafes, onFilteredCafes]);
 
   return (
-    <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+    <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
       <CssBaseline />
-      
+
       <AppBar position="fixed" open={open} color="transparent">
         <Toolbar
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             backgroundColor: theme.palette.primary.main,
             boxShadow: `0 0.125rem 0.5rem ${theme.palette.secondary.main}40`,
-            color: theme.palette.light?.main || "#fff",
+            color: theme.palette.light?.main || '#fff',
           }}
         >
           <NavigationHeader
@@ -112,8 +108,7 @@ const NavBar = ({
       </AppBar>
 
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader
-          >
+        <DrawerHeader>
           {/* Menu icon - same position as toolbar menu when drawer is open */}
           <Tooltip title="Menu" arrow>
             <IconButton
@@ -125,11 +120,11 @@ const NavBar = ({
                   handleDrawerOpen();
                 }
               }}
-              sx={{ 
+              sx={{
                 alignItems: 'center',
                 justifyContent: 'center',
                 p: 1,
-                visibility: open ? 'hidden' : 'visible'
+                visibility: open ? 'hidden' : 'visible',
               }}
             >
               <MenuIcon sx={{ color: theme.palette.accent.main }} />
@@ -137,7 +132,7 @@ const NavBar = ({
           </Tooltip>
 
           <Tooltip title="Close Menu" arrow>
-            <IconButton 
+            <IconButton
               onClick={handleDrawerClose}
               tabIndex={0}
               onKeyDown={(e) => {
@@ -146,13 +141,13 @@ const NavBar = ({
                   handleDrawerClose();
                 }
               }}
-              sx={{ 
+              sx={{
                 alignItems: 'center',
                 justifyContent: 'center',
-                p: 1
+                p: 1,
               }}
             >
-              {theme.direction === "rtl" ? (
+              {theme.direction === 'rtl' ? (
                 <ChevronRightIcon sx={{ color: theme.palette.accent.main }} />
               ) : (
                 <ChevronLeftIcon sx={{ color: theme.palette.accent.main }} />
@@ -191,15 +186,15 @@ const NavBar = ({
         maxWidth="xs"
         fullWidth
         sx={{
-          "& .MuiDialog-container": {
-            alignItems: "center",
-            justifyContent: "center",
+          '& .MuiDialog-container': {
+            alignItems: 'center',
+            justifyContent: 'center',
             padding: 2,
           },
-          "& .MuiDialog-paper": {
+          '& .MuiDialog-paper': {
             margin: { xs: 1, sm: 2 },
-            width: { xs: "calc(100vw - 2rem)", sm: "auto" },
-            maxWidth: { xs: "none", sm: "25rem" },
+            width: { xs: 'calc(100vw - 2rem)', sm: 'auto' },
+            maxWidth: { xs: 'none', sm: '25rem' },
           },
         }}
       >
@@ -219,16 +214,16 @@ const NavBar = ({
         maxWidth="sm"
         fullWidth
         sx={{
-          "& .MuiDialog-container": {
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
+          '& .MuiDialog-container': {
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
           },
         }}
         PaperProps={{
           sx: {
-            position: "absolute",
-            top: "5.5rem",
-            left: open ? `calc(${drawerWidth} + 1.5rem)` : "5.5rem",
+            position: 'absolute',
+            top: '5.5rem',
+            left: open ? `calc(${drawerWidth} + 1.5rem)` : '5.5rem',
           },
         }}
       >
@@ -240,4 +235,4 @@ const NavBar = ({
   );
 };
 
-export default NavBar;
+export default DesktopNavBar;

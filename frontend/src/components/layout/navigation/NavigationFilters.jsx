@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Divider } from '@mui/material';
 import {
@@ -14,14 +13,13 @@ const NavigationFilters = ({
   neighborhoodQuery,
   setCafeTypeQuery,
   setNeighborhoodQuery,
- 
   navIconColor,
-  open
+  open,
 }) => {
   return (
     <>
       <Divider />
-      
+
       <FilterDropdown
         label="Filter by Cafe Type"
         options={categories}
@@ -29,7 +27,7 @@ const NavigationFilters = ({
         onChange={setCafeTypeQuery}
         iconComponent={<StorefrontIcon sx={{ color: navIconColor }} />}
       />
-      
+
       <FilterDropdown
         label="Filter by neighborhood"
         options={neighborhoods}

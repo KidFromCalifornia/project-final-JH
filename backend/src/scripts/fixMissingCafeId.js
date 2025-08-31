@@ -2,20 +2,20 @@
 // Fixes tastings with missing cafeId by matching cafeNeighborhood to Cafe.
 // Exit code 0 = success, 1 = failure.
 
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 dotenv.config();
 
-const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:3001/api";
+const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:3001/api';
 
-import { Cafe } from "../models/cafeModel.js";
-import CoffeeTasting from "../models/TastingsModel.js";
+import { Cafe } from '../models/cafeModel.js';
+import CoffeeTasting from '../models/TastingsModel.js';
 
 async function fixTastings() {
   let success = true;
   try {
     await mongoose.connect(MONGO_URI);
-    console.log("Connected to MongoDB");
+    console.log('Connected to MongoDB');
 
     const tastings = await CoffeeTasting.find({ cafeId: null });
     console.log(`Found ${tastings.length} tastings with missing cafeId.`);
@@ -39,11 +39,11 @@ async function fixTastings() {
       }
     }
   } catch (error) {
-    console.error("Error fixing tastings:", error);
+    console.error('Error fixing tastings:', error);
     success = false;
   } finally {
     await mongoose.disconnect();
-    console.log("Done.");
+    console.log('Done.');
     process.exit(success ? 0 : 1);
   }
 }

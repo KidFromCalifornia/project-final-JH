@@ -1,27 +1,27 @@
-import React from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useCafeStore } from "../../stores/useCafeStore";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import { useTheme } from "@mui/material/styles";
-import IconButton from "@mui/material/IconButton";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import Divider from "@mui/material/Divider";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import TextField from "@mui/material/TextField";
-import Switch from "@mui/material/Switch";
-import MenuItem from "@mui/material/MenuItem";
-import Tooltip from "@mui/material/Tooltip";
-import FilterDropdown from "../common/FilterDropdown";
-import LoginForm from "../forms/LoginForm";
-import NewCafeForm from "../forms/NewCafeForm";
+import React from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useCafeStore } from '../../stores/useCafeStore';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import { useTheme } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import TextField from '@mui/material/TextField';
+import Switch from '@mui/material/Switch';
+import MenuItem from '@mui/material/MenuItem';
+import Tooltip from '@mui/material/Tooltip';
+import FilterDropdown from '../common/FilterDropdown';
+import LoginForm from '../forms/LoginForm';
+import NewCafeForm from '../forms/NewCafeForm';
 
 import {
   Login as LoginIcon,
@@ -40,8 +40,8 @@ import {
   DarkMode as DarkModeIcon,
   FilterList as FilterListIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
-} from "@mui/icons-material";
-import SearchIcon from "@mui/icons-material/Search";
+} from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
 
 const drawerWidth = 300;
 const appBarHeight = 56; // match this to your AppBar height
@@ -56,8 +56,8 @@ const MobileBottomNav = () => {
   const cafes = useCafeStore((state) => state.cafes);
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
-  const darkMode = themeMode === "dark";
-  const navIconColor = theme.palette.light?.main || "#fff";
+  const darkMode = themeMode === 'dark';
+  const navIconColor = theme.palette.light?.main || '#fff';
 
   // Use store filters instead of local state
   const cafeTypeQuery = useCafeStore((state) => state.cafeTypeFilter);
@@ -66,29 +66,24 @@ const MobileBottomNav = () => {
   const setNeighborhoodQuery = useCafeStore((state) => state.setNeighborhoodFilter);
   const clearFilters = useCafeStore((state) => state.clearFilters);
 
-  const categories = Array.from(
-    new Set(cafes.map((cafe) => cafe.category).filter(Boolean))
-  );
+  const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
 
   const neighborhoods = Array.from(
-    new Set(
-      cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean)
-    )
+    new Set(cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
   );
 
   let isAdmin = false;
-  if (typeof window !== "undefined" && window.localStorage) {
-    isAdmin = localStorage.getItem("admin") === "true";
+  if (typeof window !== 'undefined' && window.localStorage) {
+    isAdmin = localStorage.getItem('admin') === 'true';
   }
 
   // Local UI state (remove filter state as it's now in store)
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState('');
   const [showLogin, setShowLogin] = React.useState(false);
   const [showAddCafe, setShowAddCafe] = React.useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = React.useState(false);
-
 
   // Ensure only one drawer can be open at a time
   const openDrawer = (drawerType) => {
@@ -99,21 +94,25 @@ const MobileBottomNav = () => {
       setDrawerOpen(false);
       setFilterDrawerOpen(true);
     }
-    
+
     // Dispatch event to notify other components about drawer state
-    window.dispatchEvent(new CustomEvent('drawerStateChange', { 
-      detail: { isOpen: true } 
-    }));
+    window.dispatchEvent(
+      new CustomEvent('drawerStateChange', {
+        detail: { isOpen: true },
+      })
+    );
   };
 
   const closeDrawers = () => {
     setDrawerOpen(false);
     setFilterDrawerOpen(false);
-    
+
     // Dispatch event to notify other components about drawer state
-    window.dispatchEvent(new CustomEvent('drawerStateChange', { 
-      detail: { isOpen: false } 
-    }));
+    window.dispatchEvent(
+      new CustomEvent('drawerStateChange', {
+        detail: { isOpen: false },
+      })
+    );
   };
 
   const handleNav = (path) => {
@@ -122,37 +121,36 @@ const MobileBottomNav = () => {
   };
 
   const toggleDarkMode = () => {
-    setThemeMode(darkMode ? "light" : "dark");
+    setThemeMode(darkMode ? 'light' : 'dark');
   };
 
   // Common drawer props to ensure consistent styling
   const drawerPaperProps = {
     sx: {
-      width: "100%",
-      maxHeight: "calc(50vh)",
-      height: "auto",
-      overflowY: "auto", 
+      width: '100%',
+      maxHeight: 'calc(50vh)',
+      height: 'auto',
+      overflowY: 'auto',
       borderTopLeftRadius: 16,
       borderTopRightRadius: 16,
       bottom: appBarHeight,
-      position: "fixed",
+      position: 'fixed',
       backgroundColor: theme.palette.primary.main,
-      color: theme.palette.light?.main || "#fff",
-      boxShadow: '0px -4px 8px rgba(0,0,0,0.1)'
-    }
+      color: theme.palette.light?.main || '#fff',
+      boxShadow: '0px -4px 8px rgba(0,0,0,0.1)',
+    },
   };
 
   return (
     <React.Fragment>
       <AppBar
         position="fixed"
-        
         sx={{
-          top: "auto",
+          top: 'auto',
           bottom: 0,
-          width: "100vw",
+          width: '100vw',
           height: appBarHeight,
-          display: { xs: "flex", sm: "none" },
+          display: { xs: 'flex', sm: 'none' },
           zIndex: 1200,
           borderRadius: 0,
         }}
@@ -161,13 +159,13 @@ const MobileBottomNav = () => {
           sx={{
             minHeight: appBarHeight,
             px: 1,
-            justifyContent: "space-between",
-            alignItems: "center",
-            overflowX: "auto",
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            overflowX: 'auto',
             gap: 0.5,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Tooltip title="Main Menu" arrow>
               <IconButton
                 color="inherit"
@@ -184,14 +182,14 @@ const MobileBottomNav = () => {
                 color="inherit"
                 size="large"
                 sx={{ p: 1 }}
-                onClick={() => handleNav("/tastings")}
+                onClick={() => handleNav('/tastings')}
               >
                 <RateReviewIcon fontSize="medium" sx={{ color: navIconColor }} />
               </IconButton>
             </Tooltip>
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Tooltip title="Search Cafes" arrow>
               <IconButton
                 color="inherit"
@@ -221,11 +219,11 @@ const MobileBottomNav = () => {
                   size="large"
                   sx={{ p: 1 }}
                   onClick={() => {
-                    localStorage.removeItem("userToken");
-                    localStorage.removeItem("username");
-                    localStorage.removeItem("admin");
+                    localStorage.removeItem('userToken');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('admin');
                     setIsLoggedIn(false);
-                    handleNav("/");
+                    handleNav('/');
                   }}
                 >
                   <LogoutIcon fontSize="medium" sx={{ color: navIconColor }} />
@@ -237,7 +235,7 @@ const MobileBottomNav = () => {
                   color="inherit"
                   size="large"
                   sx={{ p: 1 }}
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate('/login')}
                 >
                   <LoginIcon fontSize="medium" sx={{ color: navIconColor }} />
                 </IconButton>
@@ -258,19 +256,19 @@ const MobileBottomNav = () => {
           '& .MuiBackdrop-root': {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
           },
-          zIndex: 1199 // just below AppBar
+          zIndex: 1199, // just below AppBar
         }}
       >
         <List sx={{ pt: 0 }}>
-          <ListItem 
+          <ListItem
             disablePadding
-            sx={{ 
+            sx={{
               backgroundColor: theme.palette.primary.dark,
               display: 'flex',
               justifyContent: 'space-between',
               pl: 2,
               pr: 1,
-              py: 0.5
+              py: 0.5,
             }}
           >
             <Box component="span" sx={{ fontWeight: 500, fontSize: '1.2rem', color: navIconColor }}>
@@ -283,22 +281,33 @@ const MobileBottomNav = () => {
 
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/" onClick={closeDrawers}>
-              <ListItemIcon><MapIcon sx={{ color: navIconColor }} /></ListItemIcon>
+              <ListItemIcon>
+                <MapIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
               <ListItemText primary="Map" />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/tastings" onClick={closeDrawers}>
-              <ListItemIcon><RateReviewIcon sx={{ color: navIconColor }} /></ListItemIcon>
+              <ListItemIcon>
+                <RateReviewIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
               <ListItemText primary="Tastings" />
             </ListItemButton>
           </ListItem>
 
           {isLoggedIn && (
             <ListItem disablePadding>
-              <ListItemButton onClick={() => { setShowAddCafe(true); closeDrawers(); }}>
-                <ListItemIcon><AddLocationIcon sx={{ color: navIconColor }} /></ListItemIcon>
+              <ListItemButton
+                onClick={() => {
+                  setShowAddCafe(true);
+                  closeDrawers();
+                }}
+              >
+                <ListItemIcon>
+                  <AddLocationIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
                 <ListItemText primary="Add Cafe" />
               </ListItemButton>
             </ListItem>
@@ -307,7 +316,9 @@ const MobileBottomNav = () => {
           {isLoggedIn && isAdmin && (
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/admin" onClick={closeDrawers}>
-                <ListItemIcon><AdminPanelSettingsIcon sx={{ color: navIconColor }} /></ListItemIcon>
+                <ListItemIcon>
+                  <AdminPanelSettingsIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
                 <ListItemText primary="Admin" />
               </ListItemButton>
             </ListItem>
@@ -316,7 +327,9 @@ const MobileBottomNav = () => {
           {isLoggedIn && !isAdmin && (
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/user" onClick={closeDrawers}>
-                <ListItemIcon><DoorFrontIcon sx={{ color: navIconColor }} /></ListItemIcon>
+                <ListItemIcon>
+                  <DoorFrontIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
                 <ListItemText primary="Userpage" />
               </ListItemButton>
             </ListItem>
@@ -326,22 +339,33 @@ const MobileBottomNav = () => {
 
           {!isLoggedIn ? (
             <ListItem disablePadding>
-              <ListItemButton onClick={() => { setShowLogin(true); closeDrawers(); }}>
-                <ListItemIcon><LoginIcon sx={{ color: navIconColor }} /></ListItemIcon>
+              <ListItemButton
+                onClick={() => {
+                  setShowLogin(true);
+                  closeDrawers();
+                }}
+              >
+                <ListItemIcon>
+                  <LoginIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
                 <ListItemText primary="Login" />
               </ListItemButton>
             </ListItem>
           ) : (
             <ListItem disablePadding>
-              <ListItemButton onClick={() => {
-                localStorage.removeItem("userToken");
-                localStorage.removeItem("username");
-                localStorage.removeItem("admin");
-                setIsLoggedIn(false);
-                closeDrawers();
-                navigate("/");
-              }}>
-                <ListItemIcon><LogoutIcon sx={{ color: navIconColor }} /></ListItemIcon>
+              <ListItemButton
+                onClick={() => {
+                  localStorage.removeItem('userToken');
+                  localStorage.removeItem('username');
+                  localStorage.removeItem('admin');
+                  setIsLoggedIn(false);
+                  closeDrawers();
+                  navigate('/');
+                }}
+              >
+                <ListItemIcon>
+                  <LogoutIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
                 <ListItemText primary="Logout" />
               </ListItemButton>
             </ListItem>
@@ -350,22 +374,35 @@ const MobileBottomNav = () => {
           <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
 
           <ListItem>
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: '100%' }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                {darkMode ? <DarkModeIcon sx={{ color: navIconColor }} /> : <LightModeIcon sx={{ color: navIconColor }} />}
-                <Box component="span" sx={{ color: navIconColor }}>Theme</Box>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {darkMode ? (
+                  <DarkModeIcon sx={{ color: navIconColor }} />
+                ) : (
+                  <LightModeIcon sx={{ color: navIconColor }} />
+                )}
+                <Box component="span" sx={{ color: navIconColor }}>
+                  Theme
+                </Box>
               </Box>
-              <Switch 
-                checked={darkMode} 
-                onChange={toggleDarkMode} 
-                inputProps={{ "aria-label": "toggle dark mode" }}
+              <Switch
+                checked={darkMode}
+                onChange={toggleDarkMode}
+                inputProps={{ 'aria-label': 'toggle dark mode' }}
                 sx={{
                   '& .MuiSwitch-switchBase.Mui-checked': {
-                    color: theme.palette.light?.main
+                    color: theme.palette.light?.main,
                   },
                   '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                    backgroundColor: theme.palette.accent?.main
-                  }
+                    backgroundColor: theme.palette.accent?.main,
+                  },
                 }}
               />
             </Box>
@@ -373,7 +410,6 @@ const MobileBottomNav = () => {
         </List>
       </Drawer>
 
-      {/* Filter Drawer - matches the screenshot */}
       <Drawer
         anchor="bottom"
         open={filterDrawerOpen}
@@ -381,22 +417,21 @@ const MobileBottomNav = () => {
         hideBackdrop={false}
         PaperProps={drawerPaperProps}
         sx={{
-          '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-          zIndex: 1199 // just below AppBar
+          '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+          zIndex: 1199,
         }}
       >
+        {/* Header */}
         <List sx={{ pt: 0 }}>
-          <ListItem 
+          <ListItem
             disablePadding
-            sx={{ 
+            sx={{
               backgroundColor: theme.palette.primary.dark,
               display: 'flex',
               justifyContent: 'space-between',
               pl: 2,
               pr: 1,
-              py: 0.5
+              py: 0.5,
             }}
           >
             <Box component="span" sx={{ fontWeight: 500, fontSize: '1.2rem', color: navIconColor }}>
@@ -408,98 +443,69 @@ const MobileBottomNav = () => {
           </ListItem>
         </List>
 
-        {/* Filter controls using TextField selects for mobile */}
+        {/* Filter controls */}
         <Box sx={{ px: 2, py: 2 }}>
+          {/* Cafe Type */}
           <TextField
             select
             fullWidth
             label="Filter by Cafe Type"
             value={cafeTypeQuery}
-            onChange={(e) => {
-              setCafeTypeQuery(e.target.value);
-            }}
-            sx={{ 
+            onChange={(e) => setCafeTypeQuery(e.target.value)}
+            sx={{
               mb: 2,
-              '& .MuiOutlinedInput-root': {
-                color: 'inherit',
-              },
-              '& .MuiInputLabel-root': {
-                color: 'inherit',
-              },
-              '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-              },
-              '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-              },
+              '& .MuiOutlinedInput-root': { color: theme.palette.light.main },
+              '& .MuiInputLabel-root': { color: theme.palette.light.main },
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.light.main },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.light.main },
+              '& .MuiSelect-icon': { color: theme.palette.light.main },
             }}
             InputProps={{
               startAdornment: <StorefrontIcon sx={{ color: navIconColor, mr: 1 }} />,
             }}
           >
-            <MenuItem value="">All Types</MenuItem>
+            <MenuItem sx={{ color: theme.palette.light.main, fontWeight: 500 }} value="all">
+              All Types
+            </MenuItem>
             {categories.map((category) => (
-              <MenuItem key={category} value={category}>
+              <MenuItem key={category} sx={{ color: theme.palette.light.main }} value={category}>
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </MenuItem>
             ))}
           </TextField>
-          
+
+          {/* Neighborhood */}
           <TextField
             select
             fullWidth
             label="Filter by Neighborhood"
             value={neighborhoodQuery}
-            onChange={(e) => {
-              setNeighborhoodQuery(e.target.value);
-            }}
-            sx={{ 
+            onChange={(e) => setNeighborhoodQuery(e.target.value)}
+            sx={{
               mb: 2,
-              '& .MuiOutlinedInput-root': {
-                color: 'inherit',
-              },
-              '& .MuiInputLabel-root': {
-                color: 'inherit',
-              },
-              '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-              },
-              '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-              },
+              '& .MuiOutlinedInput-root': { color: theme.palette.light.main },
+              '& .MuiInputLabel-root': { color: theme.palette.light.main },
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.light.main },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.light.main },
+              '& .MuiSelect-icon': { color: theme.palette.light.main },
             }}
             InputProps={{
               startAdornment: <TravelExploreIcon sx={{ color: navIconColor, mr: 1 }} />,
             }}
           >
-            <MenuItem value="">All Neighborhoods</MenuItem>
+            <MenuItem sx={{ color: theme.palette.light.main, fontWeight: 500 }} value="all">
+              All Neighborhoods
+            </MenuItem>
             {neighborhoods.map((neighborhood) => (
-              <MenuItem key={neighborhood} value={neighborhood}>
+              <MenuItem
+                key={neighborhood}
+                sx={{ color: theme.palette.light.main }}
+                value={neighborhood}
+              >
                 {neighborhood.charAt(0).toUpperCase() + neighborhood.slice(1)}
               </MenuItem>
             ))}
           </TextField>
-
-          {/* Clear filters button */}
-          {(cafeTypeQuery || neighborhoodQuery) && (
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <IconButton 
-                onClick={() => {
-                  clearFilters();
-                  closeDrawers();
-                }}
-                sx={{ 
-                  color: navIconColor,
-                  border: `1px solid ${navIconColor}`,
-                  borderRadius: 1,
-                  px: 2,
-                  fontSize: '0.875rem'
-                }}
-              >
-                Clear Filters
-              </IconButton>
-            </Box>
-          )}
         </Box>
       </Drawer>
 
@@ -517,43 +523,22 @@ const MobileBottomNav = () => {
         maxWidth="sm"
         fullWidth
         sx={{
-          "& .MuiDialog-container": {
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
+          '& .MuiDialog-container': {
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
           },
         }}
         PaperProps={{
           sx: {
-            position: "absolute",
+            position: 'absolute',
             top: 88,
             left: 24,
-            width: { xs: "calc(100% - 48px)", sm: 600 },
+            width: { xs: 'calc(100% - 48px)', sm: 600 },
           },
         }}
       >
         <DialogContent sx={{ p: 0 }}>
           <NewCafeForm onClose={() => setShowAddCafe(false)} />
-        </DialogContent>
-      </Dialog>
-
-      {/* Search Dialog */}
-      <Dialog
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Search Cafes"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
         </DialogContent>
       </Dialog>
     </React.Fragment>

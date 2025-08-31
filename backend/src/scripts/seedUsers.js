@@ -2,32 +2,32 @@
 // Seeds sample users into the database. Passwords are hashed for security.
 // Exit code 0 = success, 1 = failure.
 
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import { User } from "../models/User.js";
-import bcrypt from "bcryptjs";
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import { User } from '../models/User.js';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
 const users = [
   {
-    username: "Admin",
-    email: "admin@example.com",
-    password: "Admin123", // Will be hashed below
-    role: "admin", // Admin user
+    username: 'Admin',
+    email: 'admin@example.com',
+    password: 'Admin123', // Will be hashed below
+    role: 'admin', // Admin user
   },
   {
-    username: "TestUser",
-    email: "testuser@example.com",
-    password: "User1234", // Will be hashed below
-    role: "user", // Regular user
+    username: 'TestUser',
+    email: 'testuser@example.com',
+    password: 'User1234', // Will be hashed below
+    role: 'user', // Regular user
   },
 ];
 
 const deepEqual = (a, b) => {
   if (a === b) return true;
   if (typeof a !== typeof b) return false;
-  if (typeof a !== "object" || a === null || b === null) return false;
+  if (typeof a !== 'object' || a === null || b === null) return false;
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) {
@@ -49,7 +49,7 @@ const seedUsers = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URI);
-      console.log("🚀 Connected to MongoDB (seedUsers)");
+      console.log('🚀 Connected to MongoDB (seedUsers)');
     }
     const dbUsers = await User.find({}).lean();
     const dbUserMap = new Map(dbUsers.map((u) => [u.email, u]));
@@ -72,7 +72,7 @@ const seedUsers = async () => {
       }
     }
     if (usersToInsert.length === 0 && usersToUpdate.length === 0) {
-      console.log("No new or changed users to seed. All users are up to date.");
+      console.log('No new or changed users to seed. All users are up to date.');
       return;
     }
     if (usersToInsert.length > 0) {
@@ -88,11 +88,11 @@ const seedUsers = async () => {
       }
     }
   } catch (error) {
-    console.error("Error seeding users:", error);
+    console.error('Error seeding users:', error);
     success = false;
   } finally {
     await mongoose.disconnect();
-    console.log("🔌 Disconnected from MongoDB");
+    console.log('🔌 Disconnected from MongoDB');
     process.exit(success ? 0 : 1);
   }
 };

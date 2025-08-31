@@ -1,4 +1,4 @@
-# Stockholm Coffee Club 
+# Stockholm Coffee Club
 
 A comprehensive fullstack application for discovering and reviewing Stockholm's specialty coffee scene. Built with React, Node.js, and MongoDB, featuring interactive maps, user authentication, and a sophisticated coffee tasting note system.
 
@@ -14,6 +14,7 @@ Stockholm has an incredible coffee culture, but finding the best specialty coffe
 ## Tech Stack
 
 ### Frontend
+
 - **React 18** with lazy loading and Suspense
 - **Material-UI v5** for design system and theming
 - **Zustand** for global state management
@@ -22,6 +23,7 @@ Stockholm has an incredible coffee culture, but finding the best specialty coffe
 - **SweetAlert2** for enhanced notifications
 
 ### Backend
+
 - **Node.js** with Express framework
 - **MongoDB** with Mongoose ODM
 - **JWT authentication** with bcryptjs
@@ -29,6 +31,7 @@ Stockholm has an incredible coffee culture, but finding the best specialty coffe
 - **RESTful API** design with proper error handling
 
 ### Key Features
+
 - 🗺️ Interactive map with custom icons and geolocation
 - ☕ Coffee tasting notes with rating system
 - 👥 User authentication and profiles
@@ -59,20 +62,24 @@ npm run dev
 ## API Documentation
 
 ### Authentication Endpoints
+
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 
 ### Cafe Endpoints
+
 - `GET /api/cafes` - Get all approved cafes
 - `GET /api/cafes/:id` - Get cafe by ID
 - `POST /api/cafes` - Create new cafe (admin only)
 
 ### Tasting Endpoints
+
 - `GET /api/tastings/public` - Get public tasting notes
 - `GET /api/tastings` - Get user's tastings (auth required)
 - `POST /api/tastings` - Create new tasting (auth required)
 
 ### Submission Endpoints
+
 - `POST /api/cafeSubmissions` - Submit new cafe for approval
 - `GET /api/cafeSubmissions` - Get submissions (admin only)
 
@@ -89,6 +96,7 @@ I approached this project with a mobile-first mindset, focusing on the core user
 ## Future Enhancements
 
 Given more time, I would add:
+
 - Real-time notifications for new cafe approvals
 - Social features (following users, sharing tastings)
 - Advanced analytics dashboard for admins

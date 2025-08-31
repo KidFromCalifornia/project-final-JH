@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { useCafeStore } from "../../stores/useCafeStore";
-import { apiCall } from "../../services/api";
-import { SwalAlertStyles, showAlert } from "../../styles/SwalAlertStyles";
+import { useState, useEffect } from 'react';
+import { useCafeStore } from '../../stores/useCafeStore';
+import { apiCall } from '../../services/api';
+import { SwalAlertStyles, showAlert } from '../../styles/SwalAlertStyles';
 import {
   TextField,
   Checkbox,
@@ -19,64 +19,68 @@ import {
   Divider,
   Tooltip,
   useTheme,
-} from "@mui/material";
-import Grid from "@mui/material/Grid";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+} from '@mui/material';
+import Grid from '@mui/material/Grid';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const TastingForm = ({ onSubmit, initialValues = {} }) => {
   const theme = useTheme();
-  
+
   // Reusable TextField styling to match LoginForm
   const textFieldStyles = {
     '& .MuiOutlinedInput-root': {
       backgroundColor: theme.palette.common.white,
-      minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
-      '& fieldset': {
-        borderColor: theme.palette.text.primary,
-      },
-      '&:hover fieldset': {
-        borderColor: theme.palette.primary.main,
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: theme.palette.primary.main,
-      },
-      '& input': {
-        color: theme.palette.text.primary,
-        fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
-      },
-      '& textarea': {
-        color: theme.palette.text.primary,
-        fontSize: { xs: "16px", sm: "14px" },
-      },
+      minHeight: { xs: 56, sm: 48 },
+      '& fieldset': { borderColor: theme.palette.text.primary },
+      '&:hover fieldset': { borderColor: theme.palette.primary.main },
+      '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
+      '& input': { color: theme.palette.text.primary, fontSize: { xs: '18px', sm: '16px' } },
+      '& textarea': { color: theme.palette.text.primary, fontSize: { xs: '18px', sm: '16px' } },
     },
     '& .MuiInputLabel-root': {
       color: theme.palette.text.primary,
-      '&.Mui-focused': {
-        color: theme.palette.primary.main,
-      },
+      '&.Mui-focused': { color: theme.palette.primary.main },
     },
   };
 
+  // Section styling for better visual hierarchy
+  const sectionStyles = {
+    backgroundColor: theme.palette.background.default,
+    borderRadius: 2,
+    p: 3,
+    mb: 2,
+    boxShadow: theme.shadows[2],
+    border: `1px solid ${theme.palette.divider}`,
+    height: 'fit-content',
+  };
+
+  const sectionHeaderStyles = {
+    color: theme.palette.primary.main,
+    fontWeight: 600,
+    mb: 2,
+    pb: 1,
+    borderBottom: `2px solid ${theme.palette.background.default}`,
+  };
+
+  // State initialization
   const [form, setForm] = useState({
-    cafeId: initialValues.cafeId || "",
-    cafeName: initialValues.cafeName || "",
-    cafeNeighborhood: initialValues.cafeNeighborhood || "",
-    coffeeRoaster: initialValues.coffeeRoaster || "",
-    coffeeOrigin: initialValues.coffeeOrigin || "",
-    coffeeOriginRegion: initialValues.coffeeOriginRegion || "",
-    brewMethod: initialValues.brewMethod || "",
+    cafeId: initialValues.cafeId || '',
+    coffeeName: initialValues.coffeeName || '',
+    coffeeRoaster: initialValues.coffeeRoaster || '',
+    coffeeOrigin: initialValues.coffeeOrigin || '',
+    coffeeOriginRegion: initialValues.coffeeOriginRegion || '',
+    brewMethod: initialValues.brewMethod || '',
     tastingNotes: initialValues.tastingNotes || [],
-    acidity: initialValues.acidity || "",
-    mouthFeel: initialValues.mouthFeel || "",
-    roastLevel: initialValues.roastLevel || "",
+    acidity: initialValues.acidity || '',
+    mouthFeel: initialValues.mouthFeel || '',
+    roastLevel: initialValues.roastLevel || '',
     rating: initialValues.rating || 3,
-    notes: initialValues.notes || "",
-    isPublic:
-      initialValues.isPublic !== undefined ? initialValues.isPublic : true,
-    coffeeName: initialValues.coffeeName || "",
+    notes: initialValues.notes || '',
+    isPublic: initialValues.isPublic !== undefined ? initialValues.isPublic : true,
   });
-  
+
+  // Store hooks
   const cafes = useCafeStore((state) => state.cafes);
   const setCafes = useCafeStore((state) => state.setCafes);
   const options = useCafeStore((state) => state.options);
@@ -84,23 +88,21 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
   const fetchError = useCafeStore((state) => state.fetchError);
   const setFetchError = useCafeStore((state) => state.setFetchError);
 
+  // Fetch cafes and options
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await apiCall("/metadata/form-options");
+        const data = await apiCall('/metadata/form-options');
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
-        console.error("Error fetching metadata:", error);
-        // Only show sweet alert if server is completely down (network error)
         if (error.code === 'NETWORK_ERROR' || error.message?.includes('fetch') || !error.response) {
           showAlert({
-            title: "Server Unavailable",
+            title: 'Server Unavailable',
             text: "We couldn't reach the server. Please try again later.",
-            icon: "error",
+            icon: 'error',
           });
         } else {
-          // For other errors, use inline error display
           setFetchError("We couldn't load form options. Please try again.");
         }
       }
@@ -110,13 +112,11 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
     }
   }, [setCafes, setOptions, setFetchError, cafes]);
 
+  // Input handlers
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-    if (fetchError) setFetchError("");
+    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    if (fetchError) setFetchError('');
   };
 
   const handleTastingNotesChange = (e) => {
@@ -127,257 +127,221 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         ? [...prev.tastingNotes, value]
         : prev.tastingNotes.filter((note) => note !== value),
     }));
-    if (fetchError) setFetchError("");
+    if (fetchError) setFetchError('');
   };
 
   const handleCafeChange = (e) => {
-    const selectedCafe = cafes.find((c) => c._id === e.target.value);
-    setForm((prev) => ({
-      ...prev,
-      cafeId: e.target.value,
-      cafeNeighborhood: selectedCafe ? selectedCafe.neighborhood : "",
-    }));
-    if (fetchError) setFetchError("");
+    setForm((prev) => ({ ...prev, cafeId: e.target.value }));
+    if (fetchError) setFetchError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (form.tastingNotes.length === 0) {
-      setFetchError("Please select at least one tasting note.");
+      setFetchError('Please select at least one tasting note.');
       return;
     }
     onSubmit(form);
   };
 
   return (
-    <Paper elevation={2} sx={{ 
-      width: { xs: "100%", sm: 640, md: 900, lg: 1000 },
-      maxWidth: { xs: "none", sm: 640, md: 900, lg: 1000 },
-      p: { xs: 2, sm: 3 },
-      mb: 4,
-      display: "flex",
-      flexDirection: "column",
-      gap: 2,
-      backgroundColor: theme.palette.light.main,
-      borderRadius: 2,
-      boxShadow: 3,
-      color: theme.palette.text.primary,
-      position: "relative",
-      zIndex: 1,
-      overflow: "hidden",
-      minHeight: "auto",
-    }}>
-      <Typography 
-        variant="h4" 
-        component="h2" 
-        gutterBottom
-        sx={{ 
-          color: theme.palette.text.primary,
-          fontSize: { xs: "1.5rem", sm: "2rem" },
-          mb: 2,
-        }}
-      >
+    <Paper
+      elevation={6}
+      sx={{
+        width: '100%',
+        p: { xs: 2, sm: 3 },
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+        borderRadius: 2,
+        boxShadow: 5,
+      }}
+    >
+      <Typography variant="h4" component="h2" align="center" gutterBottom sx={{ mb: 3 }}>
         {initialValues.cafeId ? 'Edit Coffee Tasting' : 'Add New Coffee Tasting'}
       </Typography>
-      
-      <form onSubmit={handleSubmit}>
-        {fetchError && <SwalAlertStyles message={fetchError} type="error" />}
-        
-        {/* Main Form Container - Flex Row Layout */}
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: { xs: 'column', lg: 'row' },
-          gap: 3,
-          alignItems: 'flex-start'
-        }}>
-          
-          {/* Left Column */}
-          <Box sx={{ 
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 3
-          }}>
-            
-            {/* Coffee Information Section */}
-            <Paper elevation={1} sx={{ p: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
-              <Typography variant="h6" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 600, mb: 2 }}>
-                Coffee Information
-              </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={6} lg={4}>
-              <TextField
-                label="Coffee Name"
-                name="coffeeName"
-                value={form.coffeeName}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={4}>
-              <TextField
-                select
-                label="Where did you taste this coffee?"
-                name="cafeId"
-                value={form.cafeId}
-                onChange={handleCafeChange}
-                required
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              >
-                <MenuItem value="">Select a cafe</MenuItem>
-                {cafes.map((cafe) => (
-                  <MenuItem key={cafe._id} value={cafe._id}>
-                    {cafe.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={4}>
-              <TextField
-                label="Coffee Roaster"
-                name="coffeeRoaster"
-                value={form.coffeeRoaster}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={4}>
-              <TextField
-                label="Coffee Origin"
-                name="coffeeOrigin"
-                value={form.coffeeOrigin}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={4}>
-              <TextField
-                label="Coffee Region"
-                name="coffeeOriginRegion"
-                value={form.coffeeOriginRegion}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={4}>
-              <div></div> {/* Empty grid item for spacing */}
-            </Grid>
-          </Grid>
-        </Paper>
-        
-      </Box>
-          
-      {/* Right Column */}
-      <Box sx={{ 
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 3
-      }}>
 
-        {/* Brewing Information Section */}
-        <Paper elevation={1} sx={{ p: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
-          <Typography variant="h6" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 600, mb: 2 }}>
-            Brewing Method & Profile
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={6} lg={3}>
-              <TextField
-                select
-                label="Brew Method"
-                name="brewMethod"
-                value={form.brewMethod}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              >
-                <MenuItem value="">Select</MenuItem>
-                {(options.brewMethod || []).map((method) => (
-                  <MenuItem key={method} value={method}>
-                    {method}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={3}>
-              <TextField
-                select
-                label="Roast Level"
-                name="roastLevel"
-                value={form.roastLevel}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              >
-                <MenuItem value="">Select</MenuItem>
-                {(options.roastLevel || []).map((level) => (
-                  <MenuItem key={level} value={level}>
-                    {level}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={3}>
-              <TextField
-                select
-                label="Acidity"
-                name="acidity"
-                value={form.acidity}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              >
-                <MenuItem value="">Select</MenuItem>
-                {(options.acidity || []).map((level) => (
-                  <MenuItem key={level} value={level}>
-                    {level}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} lg={3}>
-              <TextField
-                select
-                label="Mouth Feel"
-                name="mouthFeel"
-                value={form.mouthFeel}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
-                sx={textFieldStyles}
-              >
-                <MenuItem value="">Select</MenuItem>
-                {(options.mouthFeel || []).map((feel) => (
-                  <MenuItem key={feel} value={feel}>
-                    {feel}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            
-            {/* Rating Section */}
-            <Grid item xs={12}>
-              <FormControl margin="normal" sx={{ mt: 2, '& .MuiFormLabel-root': { color: theme.palette.text.primary }, '& .MuiFormLabel-root.Mui-focused': { color: theme.palette.text.primary } }}>
-                <FormLabel component="legend" sx={{ fontWeight: 600, mb: 1 }}>Overall Rating</FormLabel>
-                <Tooltip title="Rate your overall coffee experience from 1-5 hearts" arrow placement="top">
+      <form onSubmit={handleSubmit} aria-label="Coffee Tasting Form">
+        {fetchError && <SwalAlertStyles message={fetchError} type="error" />}
+
+        <Grid container spacing={{ xs: 2, md: 3 }}>
+          {/* Basic Coffee Info Section */}
+          <Grid item xs={12} lg={6}>
+            <Paper elevation={3} sx={sectionStyles}>
+              <Typography variant="h6" sx={sectionHeaderStyles}>
+                Coffee Details
+              </Typography>
+
+              <Tooltip title="Select the cafe where you tasted this coffee." placement="top" arrow>
+                <TextField
+                  select
+                  label="Where did you taste this coffee?"
+                  name="cafeId"
+                  value={form.cafeId}
+                  onChange={handleCafeChange}
+                  required
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  aria-label="Cafe Location"
+                  sx={textFieldStyles}
+                >
+                  <MenuItem value="">Select a cafe</MenuItem>
+                  {cafes.map((cafe) => (
+                    <MenuItem key={cafe._id} value={cafe._id}>
+                      {cafe.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Tooltip>
+
+              <Tooltip title="Enter the name of the coffee." placement="top" arrow>
+                <TextField
+                  label="Coffee Name"
+                  name="coffeeName"
+                  value={form.coffeeName}
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  aria-label="Coffee Name"
+                  sx={textFieldStyles}
+                />
+              </Tooltip>
+
+              <Tooltip title="Enter the name of the coffee roaster." placement="top" arrow>
+                <TextField
+                  label="Coffee Roaster"
+                  name="coffeeRoaster"
+                  value={form.coffeeRoaster}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  aria-label="Coffee Roaster"
+                  sx={textFieldStyles}
+                />
+              </Tooltip>
+
+              {/* Origin fields side by side */}
+              <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                <Tooltip title="Enter the origin of the coffee." placement="top" arrow>
+                  <TextField
+                    label="Coffee Origin"
+                    name="coffeeOrigin"
+                    value={form.coffeeOrigin}
+                    onChange={handleChange}
+                    sx={{ flex: 1, ...textFieldStyles }}
+                  />
+                </Tooltip>
+                <Tooltip title="Enter the region of the coffee." placement="top" arrow>
+                  <TextField
+                    label="Region"
+                    name="coffeeOriginRegion"
+                    value={form.coffeeOriginRegion}
+                    onChange={handleChange}
+                    sx={{ flex: 1, ...textFieldStyles }}
+                  />
+                </Tooltip>
+              </Box>
+            </Paper>
+          </Grid>
+
+          {/* Taste Profile Section */}
+          <Grid item xs={12} lg={6}>
+            <Paper elevation={3} sx={sectionStyles}>
+              <Typography variant="h6" sx={sectionHeaderStyles}>
+                Taste Profile
+              </Typography>
+
+              {/* Brew method and roast level side by side */}
+              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                <Tooltip title="Select the brew method for the coffee." placement="top" arrow>
+                  <TextField
+                    select
+                    label="Brew Method"
+                    name="brewMethod"
+                    value={form.brewMethod}
+                    onChange={handleChange}
+                    required
+                    sx={{ flex: 1, ...textFieldStyles }}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {(options.brewMethod || []).map((method) => (
+                      <MenuItem key={method} value={method}>
+                        {method}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Tooltip>
+
+                <Tooltip title="Select the roast level of the coffee." placement="top" arrow>
+                  <TextField
+                    select
+                    label="Roast Level"
+                    name="roastLevel"
+                    value={form.roastLevel}
+                    onChange={handleChange}
+                    sx={{ flex: 1, ...textFieldStyles }}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {(options.roastLevel || []).map((level) => (
+                      <MenuItem key={level} value={level}>
+                        {level}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Tooltip>
+              </Box>
+
+              {/* Acidity and Mouth Feel side by side */}
+              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                <Tooltip title="Select the acidity level of the coffee." placement="top" arrow>
+                  <TextField
+                    select
+                    label="Acidity"
+                    name="acidity"
+                    value={form.acidity}
+                    onChange={handleChange}
+                    sx={{ flex: 1, ...textFieldStyles }}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {(options.acidity || []).map((level) => (
+                      <MenuItem key={level} value={level}>
+                        {level}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Tooltip>
+
+                <Tooltip title="How does the coffee feel in your mouth?" placement="top" arrow>
+                  <TextField
+                    select
+                    label="Mouth Feel"
+                    name="mouthFeel"
+                    value={form.mouthFeel}
+                    onChange={handleChange}
+                    sx={{ flex: 1, ...textFieldStyles }}
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {(options.mouthFeel || []).map((feel) => (
+                      <MenuItem key={feel} value={feel}>
+                        {feel}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Tooltip>
+              </Box>
+
+              <FormControl fullWidth margin="normal">
+                <FormLabel sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                  Overall Rating
+                </FormLabel>
+                <Tooltip
+                  title="Rate your overall coffee experience from 1-5 hearts"
+                  arrow
+                  placement="top"
+                >
                   <Rating
                     name="rating"
                     value={form.rating}
@@ -385,49 +349,46 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                     max={5}
                     icon={<FavoriteIcon fontSize="inherit" />}
                     emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                    onChange={(e, value) =>
-                      setForm((prev) => ({ ...prev, rating: value || 1 }))
-                    }
-                    sx={{ 
-                      mt: 1, 
+                    onChange={(e, value) => setForm((prev) => ({ ...prev, rating: value || 1 }))}
+                    sx={{
+                      mt: 1,
                       '& .MuiRating-iconFilled': { color: theme.palette.accent.main },
-                      '& .MuiRating-iconEmpty': { color: 'rgba(0, 0, 0, 0.26)' }
+                      '& .MuiRating-iconEmpty': { color: 'rgba(0, 0, 0, 0.26)' },
                     }}
+                    aria-label="Overall Rating"
                   />
                 </Tooltip>
-                <FormHelperText>
-                  {form.rating ? `${form.rating} out of 5 hearts` : "Select your rating"}
+                <FormHelperText sx={{ color: theme.palette.text.secondary }}>
+                  {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
                 </FormHelperText>
               </FormControl>
-            </Grid>
+            </Paper>
           </Grid>
-        </Paper>
-        
-      </Box>
-      
-    </Box>
 
-    {/* Full Width Sections */}
-    <Box sx={{ mt: 3 }}>
+          {/* Tasting Notes - Full Width */}
+          <Grid item xs={12}>
+            <Paper elevation={3} sx={sectionStyles}>
+              <Typography variant="h6" sx={sectionHeaderStyles}>
+                Tasting Notes
+              </Typography>
 
-        {/* Tasting Experience Section */}
-        <Paper elevation={1} sx={{ p: 3, mb: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
-          <Typography variant="h6" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 600, mb: 2 }}>
-            Tasting Experience & Notes
-          </Typography>
-          
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <FormControl fullWidth margin="normal" required sx={{ mb: 2, '& .MuiFormLabel-root': { color: theme.palette.text.primary }, '& .MuiFormLabel-root.Mui-focused': { color: theme.palette.text.primary } }}>
-                <FormLabel component="legend" sx={{ fontWeight: 600, mb: 1 }}>Tasting Notes (Select at least one)</FormLabel>
-                <FormGroup sx={{ 
-                  display: 'flex', 
-                  flexDirection: 'row', 
-                  flexWrap: 'wrap', 
-                  gap: 1.5,
-                  justifyContent: 'flex-start',
-                  width: '100%'
-                }}>
+              <FormControl fullWidth required>
+                <FormLabel sx={{ fontWeight: 600, color: theme.palette.text.primary, mb: 1 }}>
+                  Select at least one tasting note
+                </FormLabel>
+                <FormGroup
+                  sx={{
+                    display: 'grid', // Changed from 'flex'
+                    gridTemplateColumns: {
+                      xs: 'repeat(2, 1fr)',
+                      sm: 'repeat(3, 1fr)',
+                      md: 'repeat(4, 1fr)',
+                      lg: 'repeat(5, 1fr)',
+                    },
+                    gap: 1,
+                    mt: 1,
+                  }}
+                >
                   {(options.tastingNotes || []).map((note) => (
                     <FormControlLabel
                       key={note}
@@ -437,33 +398,48 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                           value={note}
                           checked={form.tastingNotes.includes(note)}
                           onChange={handleTastingNotesChange}
-                          sx={{ color: theme.palette.primary.main }}
+                          size="small"
+                          sx={{
+                            color: theme.palette.primary.main,
+                            '&.Mui-checked': { color: theme.palette.secondary.main },
+                          }}
                         />
                       }
-                      label={note}
-                      sx={{ 
-                        minWidth: '180px', 
-                        maxWidth: 'calc(25% - 12px)',
-                        mb: 1,
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                      label={
+                        <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                          {note}
+                        </Typography>
+                      }
+                      sx={{
+                        backgroundColor: form.tastingNotes.includes(note)
+                          ? 'rgba(25, 118, 210, 0.1)'
+                          : 'rgba(255, 255, 255, 0.8)',
                         borderRadius: 1,
                         px: 1,
-                        mr: 0,
-                        flex: '1 1 auto',
-                        '@media (max-width: 900px)': {
-                          maxWidth: 'calc(33.333% - 12px)'
+                        py: 0.5,
+                        m: 0,
+                        border: form.tastingNotes.includes(note)
+                          ? `1px solid ${theme.palette.primary.main}`
+                          : '1px solid transparent',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          backgroundColor: 'rgba(25, 118, 210, 0.05)',
                         },
-                        '@media (max-width: 600px)': {
-                          maxWidth: 'calc(50% - 12px)'
-                        }
                       }}
                     />
                   ))}
                 </FormGroup>
               </FormControl>
-            </Grid>
-            
-            <Grid item xs={12}>
+            </Paper>
+          </Grid>
+
+          {/* Notes and Actions */}
+          <Grid item xs={12}>
+            <Paper elevation={3} sx={sectionStyles}>
+              <Typography variant="h6" sx={sectionHeaderStyles}>
+                Additional Details
+              </Typography>
+
               <TextField
                 label="Additional Notes"
                 name="notes"
@@ -473,88 +449,77 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                 rows={4}
                 fullWidth
                 margin="normal"
+                variant="outlined"
+                aria-label="Additional Notes"
                 inputProps={{ maxLength: 500 }}
                 placeholder="Share your thoughts about this coffee experience..."
-                helperText={`${form.notes.length}/500 characters`}
                 sx={textFieldStyles}
               />
-            </Grid>
-          </Grid>
-        </Paper>
 
-        <Divider sx={{ my: 3 }} />
-
-        {/* Privacy Settings & Submit Section */}
-        <Paper elevation={1} sx={{ p: 3, mb: 3, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" gutterBottom sx={{ color: theme.palette.primary.main, fontWeight: 600, mb: 2 }}>
-                Privacy Settings
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id="isPublic"
-                    name="isPublic"
-                    checked={form.isPublic}
-                    onChange={handleChange}
-                    sx={{ color: theme.palette.primary.main }}
-                  />
-                }
-                label="Make this tasting public (visible to other users)"
-                sx={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                  borderRadius: 1,
-                  px: 2,
-                  py: 1,
-                  mr: 1
+              {/* Actions Section */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mt: 3,
+                  pt: 2,
+                  borderTop: `1px solid ${theme.palette.divider}`,
                 }}
-              />
-            </Grid>
-            
-            <Grid item xs={12} md={6}>
-              <Box sx={{ textAlign: { xs: 'center', md: 'right' } }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  sx={{ 
-                    minWidth: 200, 
-                    py: { xs: 1.5, sm: 1.5 },
-                    px: { xs: 2, sm: 3 },
-                    minHeight: { xs: 48, sm: 42 },
-                    fontSize: { xs: "16px", sm: "14px" },
-                    backgroundColor: theme.palette.primary.main,
-                    color: theme.palette.primary.contrastText,
-                    boxShadow: 3,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.dark,
-                      transform: 'translateY(-2px)',
-                      boxShadow: 6,
-                    },
-                    '&:disabled': {
-                      backgroundColor: theme.palette.action.disabled,
-                      color: theme.palette.text.disabled,
-                    }
-                  }}
-                  disabled={
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="isPublic"
+                      checked={form.isPublic}
+                      onChange={handleChange}
+                      sx={{ color: theme.palette.primary.main }}
+                    />
+                  }
+                  label="Make this tasting public"
+                  sx={{ color: theme.palette.text.primary }}
+                />
+                <Tooltip
+                  title={
                     !form.cafeId ||
                     !form.coffeeName ||
                     !form.brewMethod ||
-                    !form.roastLevel ||
                     form.tastingNotes.length === 0
+                      ? 'Please fill in all required fields'
+                      : 'Submit your experience.'
                   }
+                  placement="top"
+                  arrow
                 >
-                  {initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
-                </Button>
+                  <span>
+                    {' '}
+                    {/* Added span wrapper for disabled button */}
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      size="large"
+                      disabled={
+                        !form.cafeId ||
+                        !form.coffeeName ||
+                        !form.brewMethod ||
+                        form.tastingNotes.length === 0
+                      }
+                      sx={{
+                        minWidth: 160,
+                        py: 1.5,
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
+                      }}
+                      aria-label={initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                    >
+                      {initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                    </Button>
+                  </span>
+                </Tooltip>
               </Box>
-            </Grid>
+            </Paper>
           </Grid>
-        </Paper>
-        
-      </Box>
-      
+        </Grid>
       </form>
     </Paper>
   );

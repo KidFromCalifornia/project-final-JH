@@ -5,15 +5,15 @@ export const createComponents = (customTheme) => ({
       body: {
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
-        WebkitFontSmoothing: "antialiased",
-        MozOsxFontSmoothing: "grayscale",
-        scrollBehavior: "smooth",
+        WebkitFontSmoothing: 'antialiased',
+        MozOsxFontSmoothing: 'grayscale',
+        scrollBehavior: 'smooth',
       },
       a: {
         color: theme.palette.accentStrong?.main || theme.palette.accent.main,
         textDecorationColor: theme.palette.accentStrong?.main || theme.palette.accent.main,
-        transition: "color 0.2s ease-in-out",
-        "&:hover": {
+        transition: 'color 0.2s ease-in-out',
+        '&:hover': {
           color: theme.palette.primary.main,
         },
       },
@@ -31,16 +31,16 @@ export const createComponents = (customTheme) => ({
         fontFamily: 'Verdana, Arial, sans-serif !important',
       },
       // Custom scrollbar styling
-      "*::-webkit-scrollbar": {
-        width: "0.5rem",
+      '*::-webkit-scrollbar': {
+        width: '0.5rem',
       },
-      "*::-webkit-scrollbar-track": {
+      '*::-webkit-scrollbar-track': {
         backgroundColor: theme.palette.background.paper,
       },
-      "*::-webkit-scrollbar-thumb": {
+      '*::-webkit-scrollbar-thumb': {
         backgroundColor: theme.palette.primary.main,
         borderRadius: 4, // Convert to pixels
-        "&:hover": {
+        '&:hover': {
           backgroundColor: theme.palette.secondary.main,
         },
       },
@@ -52,28 +52,28 @@ export const createComponents = (customTheme) => ({
       root: ({ theme, ownerState }) => ({
         borderRadius: customTheme.button.borderRadius,
         fontWeight: 600,
-        textTransform: "none",
-        boxShadow: "none",
-        border: "none",
-        outline: "none",
-        transition: "all 0.2s ease-in-out",
-        "&:hover": {
-          transform: "translateY(-0.0625rem)",
-          boxShadow: "none",
-          border: "none",
+        textTransform: 'none',
+        boxShadow: 'none',
+        border: 'none',
+        outline: 'none',
+        transition: 'all 0.2s ease-in-out',
+        '&:hover': {
+          transform: 'translateY(-0.0625rem)',
+          boxShadow: 'none',
+          border: 'none',
         },
-        "&:active": {
-          transform: "translateY(0)",
-          outline: "none",
+        '&:active': {
+          transform: 'translateY(0)',
+          outline: 'none',
         },
-        "&:focus": {
-          outline: "none",
-          boxShadow: "none",
+        '&:focus': {
+          outline: 'none',
+          boxShadow: 'none',
         },
-        ...(ownerState.variant === "contained" && {
-          "&:hover": {
+        ...(ownerState.variant === 'contained' && {
+          '&:hover': {
             backgroundColor: customTheme.button.hover,
-            transform: "translateY(-0.0625rem)",
+            transform: 'translateY(-0.0625rem)',
           },
         }),
       }),
@@ -84,12 +84,12 @@ export const createComponents = (customTheme) => ({
     styleOverrides: {
       root: ({ theme }) => ({
         borderRadius: customTheme.borderRadius,
-        boxShadow: "none",
-        transition: "all 0.3s ease-in-out",
-        border: "none",
-        "&:hover": {
-          transform: "translateY(-0.125rem)",
-          boxShadow: "none",
+        boxShadow: 'none',
+        transition: 'all 0.3s ease-in-out',
+        border: 'none',
+        '&:hover': {
+          transform: 'translateY(-0.125rem)',
+          boxShadow: 'none',
         },
       }),
     },
@@ -99,17 +99,17 @@ export const createComponents = (customTheme) => ({
     styleOverrides: {
       root: ({ theme }) => ({
         borderRadius: customTheme.borderRadius,
-        border: "none",
-        boxShadow: "none",
+        border: 'none',
+        boxShadow: 'none',
       }),
       elevation1: {
-        boxShadow: "none",
+        boxShadow: 'none',
       },
       elevation2: {
-        boxShadow: "none",
+        boxShadow: 'none',
       },
       elevation3: {
-        boxShadow: "none",
+        boxShadow: 'none',
       },
     },
   },
@@ -117,14 +117,14 @@ export const createComponents = (customTheme) => ({
   MuiAppBar: {
     styleOverrides: {
       root: ({ theme }) => ({
-        border: "none",
-        outline: "none",
+        border: 'none',
+        outline: 'none',
         borderRadius: 0,
-        boxShadow: "0 0.125rem 0.5rem rgba(0,0,0,0.08)",
-        backdropFilter: "blur(0.625rem)",
+        boxShadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
+        backdropFilter: 'blur(0.625rem)',
         backgroundColor: `${theme.palette.primary.main}cc`,
         borderBottom: `0.0625rem solid ${theme.palette.divider}`,
-        color: theme.palette.light?.main || "#fff",
+        color: theme.palette.light?.main || '#fff',
       }),
     },
   },
@@ -134,9 +134,9 @@ export const createComponents = (customTheme) => ({
       paper: ({ theme }) => ({
         borderRight: `0.0625rem solid ${theme.palette.divider}`,
         borderRadius: 0,
-        backdropFilter: "blur(0.625rem)",
+        backdropFilter: 'blur(0.625rem)',
         backgroundColor: `${theme.palette.primary.main}f5`,
-        color: theme.palette.light?.main || "#fff",
+        color: theme.palette.light?.main || '#fff',
       }),
     },
   },

@@ -20,18 +20,18 @@ import {
 } from '@mui/icons-material';
 
 const NavigationItems = ({
-  isLoggedIn, 
-  isAdmin, 
-  navIconColor, 
-  open, 
+  isLoggedIn,
+  isAdmin,
+  navIconColor,
+  open,
   setShowLogin,
   setShowAddCafe,
-  setIsLoggedIn
+  setIsLoggedIn,
 }) => {
   const handleLogout = () => {
-    localStorage.removeItem("userToken");
-    localStorage.removeItem("username");
-    localStorage.removeItem("admin");
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('username');
+    localStorage.removeItem('admin');
     setIsLoggedIn(false);
     setShowLogin(false);
   };
@@ -39,7 +39,7 @@ const NavigationItems = ({
   return (
     <>
       <List>
-        <ListItem disablePadding sx={{ display: "block" }}>
+        <ListItem disablePadding sx={{ display: 'block' }}>
           <Tooltip title="Map" arrow placement="right" disableHoverListener={open}>
             <ListItemButton component={Link} to="/">
               <ListItemIcon>
@@ -50,7 +50,7 @@ const NavigationItems = ({
           </Tooltip>
         </ListItem>
 
-        <ListItem disablePadding sx={{ display: "block" }}>
+        <ListItem disablePadding sx={{ display: 'block' }}>
           <Tooltip title="Tastings" arrow placement="right" disableHoverListener={open}>
             <ListItemButton component={Link} to="/tastings">
               <ListItemIcon>
@@ -62,7 +62,7 @@ const NavigationItems = ({
         </ListItem>
 
         {isLoggedIn && (
-          <ListItem disablePadding sx={{ display: "block" }}>
+          <ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title="Add Cafe" arrow placement="right" disableHoverListener={open}>
               <ListItemButton onClick={() => setShowAddCafe(true)}>
                 <ListItemIcon>
@@ -75,7 +75,7 @@ const NavigationItems = ({
         )}
 
         {isLoggedIn && isAdmin && (
-          <ListItem disablePadding sx={{ display: "block" }}>
+          <ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title="Admin" arrow placement="right" disableHoverListener={open}>
               <ListItemButton component={Link} to="/admin">
                 <ListItemIcon>
@@ -88,7 +88,7 @@ const NavigationItems = ({
         )}
 
         {isLoggedIn && !isAdmin && (
-          <ListItem disablePadding sx={{ display: "block" }}>
+          <ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title="Profile" arrow placement="right" disableHoverListener={open}>
               <ListItemButton component={Link} to="/user">
                 <ListItemIcon>
@@ -105,7 +105,7 @@ const NavigationItems = ({
 
       <List>
         {!isLoggedIn && (
-          <ListItem disablePadding sx={{ display: "block" }}>
+          <ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title="Login" arrow placement="right" disableHoverListener={open}>
               <ListItemButton onClick={() => setShowLogin(true)}>
                 <ListItemIcon>
@@ -118,7 +118,7 @@ const NavigationItems = ({
         )}
 
         {isLoggedIn && (
-          <ListItem disablePadding sx={{ display: "block" }}>
+          <ListItem disablePadding sx={{ display: 'block' }}>
             <Tooltip title="Logout" arrow placement="right" disableHoverListener={open}>
               <ListItemButton onClick={handleLogout}>
                 <ListItemIcon>

@@ -1,10 +1,10 @@
-import express from "express";
-import CoffeeTasting from "../models/TastingsModel.js";
-import { Cafe } from "../models/cafeModel.js";
+import express from 'express';
+import CoffeeTasting from '../models/TastingsModel.js';
+import { Cafe } from '../models/cafeModel.js';
 
 const router = express.Router();
 
-router.get("/form-options", async (req, res) => {
+router.get('/form-options', async (req, res) => {
   try {
     const paths = CoffeeTasting.schema.paths;
     const enums = {};
@@ -15,7 +15,7 @@ router.get("/form-options", async (req, res) => {
         enums[key] = paths[key].enumValues;
       }
       if (
-        paths[key].instance === "Array" &&
+        paths[key].instance === 'Array' &&
         paths[key].caster &&
         paths[key].caster.enumValues &&
         paths[key].caster.enumValues.length > 0
@@ -27,7 +27,7 @@ router.get("/form-options", async (req, res) => {
     // Fetch cafes with full location info
     const cafes = await Cafe.find(
       {},
-      "_id name locations.address locations.neighborhood locations.coordinates"
+      '_id name locations.address locations.neighborhood locations.coordinates'
     );
 
     res.json({
@@ -35,7 +35,7 @@ router.get("/form-options", async (req, res) => {
       cafes,
     });
   } catch (error) {
-    console.error("Metadata route error:", error);
+    console.error('Metadata route error:', error);
     res.status(500).json({ error: error.message });
   }
 });

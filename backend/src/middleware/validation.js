@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // User registration validation
 export const registerSchema = z.object({
-  username: z.string().min(5, "Username must be at least 5 characters").max(20),
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  username: z.string().min(5, 'Username must be at least 5 characters').max(20),
+  email: z.string().email('Invalid email format'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 export const cafeSubmissionSchema = z.object({
   name: z.string().min(1),
@@ -18,14 +18,14 @@ export const cafeSubmissionSchema = z.object({
       isMainLocation: z.boolean().optional(),
       coordinates: z
         .object({
-          type: z.literal("Point"),
+          type: z.literal('Point'),
           coordinates: z.array(z.number()).length(2),
         })
         .optional(),
     })
   ),
   description: z.string().max(1000).optional(),
-  category: z.enum(["specialty", "roaster", "thirdwave"]),
+  category: z.enum(['specialty', 'roaster', 'thirdwave']),
   features: z.array(z.string()).min(1),
   images: z.array(z.string()).optional(),
 });
@@ -33,24 +33,24 @@ export const cafeSubmissionSchema = z.object({
 // User login validation
 export const loginSchema = z
   .object({
-    email: z.string().email("Invalid email format").optional(),
-    username: z.string().min(1, "Username is required").optional(),
-    password: z.string().min(1, "Password is required"),
+    email: z.string().email('Invalid email format').optional(),
+    username: z.string().min(1, 'Username is required').optional(),
+    password: z.string().min(1, 'Password is required'),
   })
   .refine((data) => data.email || data.username, {
-    message: "Email or username is required",
+    message: 'Email or username is required',
   });
 
 // Cafe validation: locations should be an array of objects
 export const cafeSchema = z.object({
-  name: z.string().min(1, "Cafe name is required"),
+  name: z.string().min(1, 'Cafe name is required'),
   locations: z.array(
     z.object({
-      address: z.string().min(1, "Address is required"),
+      address: z.string().min(1, 'Address is required'),
       isMainLocation: z.boolean().optional(),
       coordinates: z
         .object({
-          type: z.literal("Point").optional(),
+          type: z.literal('Point').optional(),
           coordinates: z.array(z.number()).length(2).optional(), // [longitude, latitude]
         })
         .optional(),
@@ -58,23 +58,23 @@ export const cafeSchema = z.object({
       locationNote: z.string().optional(),
     })
   ),
-  category: z.enum(["specialty", "roaster", "thirdwave"]),
+  category: z.enum(['specialty', 'roaster', 'thirdwave']),
   features: z.array(
     z.enum([
-      "outdoor_seating",
-      "wheelchair_accessible",
-      "lunch",
-      "pour_over",
-      "takeaway",
-      "vegan_options",
-      "breakfast",
-      "iced_drinks",
-      "pastries",
-      "multi_roaster",
-      "decaf",
-      "no_coffee_bar",
-      "limited_sitting",
-      "roaster_only",
+      'outdoor_seating',
+      'wheelchair_accessible',
+      'lunch',
+      'pour_over',
+      'takeaway',
+      'vegan_options',
+      'breakfast',
+      'iced_drinks',
+      'pastries',
+      'multi_roaster',
+      'decaf',
+      'no_coffee_bar',
+      'limited_sitting',
+      'roaster_only',
     ])
   ),
   images: z.array(z.string()).optional(),

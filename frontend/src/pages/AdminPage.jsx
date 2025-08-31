@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Box, Typography, Button, Paper, Divider } from "@mui/material";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+import { useEffect, useState } from 'react';
+import { Box, Typography, Button, Paper, Divider } from '@mui/material';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 const AdminPage = () => {
   const [cafes, setCafes] = useState([]);
@@ -10,9 +10,9 @@ const AdminPage = () => {
 
   // Check admin status from localStorage
   const isAdmin =
-    typeof window !== "undefined" &&
+    typeof window !== 'undefined' &&
     window.localStorage &&
-    localStorage.getItem("admin") === "true";
+    localStorage.getItem('admin') === 'true';
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -77,20 +77,13 @@ const AdminPage = () => {
         </Typography>
         <Divider sx={{ mb: 2 }} />
         {cafes.map((cafe) => (
-          <Box
-            key={cafe._id}
-            mb={2}
-            p={2}
-            border={1}
-            borderColor="grey.200"
-            borderRadius={2}
-          >
+          <Box key={cafe._id} mb={2} p={2} border={1} borderColor="grey.200" borderRadius={2}>
             <Typography variant="subtitle1" fontWeight="bold">
               {cafe.name}
             </Typography>
             <Typography variant="body2">{cafe.address}</Typography>
             <Typography variant="body2">{cafe.description}</Typography>
-            <Typography variant="body2">{cafe.features?.join(", ")}</Typography>
+            <Typography variant="body2">{cafe.features?.join(', ')}</Typography>
             <Box mt={1}>
               <Button
                 variant="outlined"
@@ -118,14 +111,7 @@ const AdminPage = () => {
         </Typography>
         <Divider sx={{ mb: 2 }} />
         {submissions.map((sub) => (
-          <Box
-            key={sub._id}
-            mb={2}
-            p={2}
-            border={1}
-            borderColor="grey.200"
-            borderRadius={2}
-          >
+          <Box key={sub._id} mb={2} p={2} border={1} borderColor="grey.200" borderRadius={2}>
             <Typography variant="subtitle1" fontWeight="bold">
               {sub.name}
             </Typography>
@@ -165,14 +151,7 @@ const AdminPage = () => {
         </Typography>
         <Divider sx={{ mb: 2 }} />
         {tastings.map((tasting) => (
-          <Box
-            key={tasting._id}
-            mb={2}
-            p={2}
-            border={1}
-            borderColor="grey.200"
-            borderRadius={2}
-          >
+          <Box key={tasting._id} mb={2} p={2} border={1} borderColor="grey.200" borderRadius={2}>
             <Typography variant="subtitle1" fontWeight="bold">
               {tasting.cafeName}
             </Typography>

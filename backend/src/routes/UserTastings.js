@@ -1,14 +1,14 @@
-import express from "express";
-import { authenticateToken } from "../middleware/auth.js";
-import { CoffeeTasting } from "../models/TastingsModel.js";
+import express from 'express';
+import { authenticateToken } from '../middleware/auth.js';
+import { CoffeeTasting } from '../models/TastingsModel.js';
 
 const router = express.Router();
 
-router.get("/public", async (req, res) => {
+router.get('/public', async (req, res) => {
   try {
     const publicTastingNotes = await CoffeeTasting.find({ isPublic: true })
-      .populate("cafeId", "name website hasMultipleLocations locations")
-      .populate("userId", "username")
+      .populate('cafeId', 'name website hasMultipleLocations locations')
+      .populate('userId', 'username')
       .sort({ createdAt: -1 })
       .limit(20);
 
@@ -19,23 +19,20 @@ router.get("/public", async (req, res) => {
       data: publicTastingNotes,
     });
   } catch (error) {
-    console.error("Error in route:", error);
+    console.error('Error in route:', error);
     res.status(500).json({
       success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });
-router.get("/public/search", async (req, res) => {
+router.get('/public/search', async (req, res) => {
   const { query, brewMethod, minRating, maxRating, origin } = req.query;
 
   if (!query && !brewMethod && !minRating && !origin) {
     return res.status(400).json({
       success: false,
-      error: "At least one search parameter is required",
+      error: 'At least one search parameter is required',
     });
   }
 
@@ -46,16 +43,16 @@ router.get("/public/search", async (req, res) => {
     // Text search
     if (query) {
       orConditions.push(
-        { coffeeName: { $regex: query, $options: "i" } },
-        { tastingNotes: { $regex: query, $options: "i" } },
-        { coffeeOrigin: { $regex: query, $options: "i" } },
-        { notes: { $regex: query, $options: "i" } }
+        { coffeeName: { $regex: query, $options: 'i' } },
+        { tastingNotes: { $regex: query, $options: 'i' } },
+        { coffeeOrigin: { $regex: query, $options: 'i' } },
+        { notes: { $regex: query, $options: 'i' } }
       );
     }
 
     // Filters
     if (brewMethod) searchCriteria.brewMethod = brewMethod;
-    if (origin) searchCriteria.coffeeOrigin = { $regex: origin, $options: "i" };
+    if (origin) searchCriteria.coffeeOrigin = { $regex: origin, $options: 'i' };
 
     if (minRating || maxRating) {
       searchCriteria.rating = {};
@@ -68,8 +65,8 @@ router.get("/public/search", async (req, res) => {
     }
 
     const results = await CoffeeTasting.find(searchCriteria)
-      .populate("cafeId", "name website hasMultipleLocations locations")
-      .populate("userId", "username")
+      .populate('cafeId', 'name website hasMultipleLocations locations')
+      .populate('userId', 'username')
       .sort({ createdAt: -1 })
       .limit(50);
 
@@ -81,42 +78,39 @@ router.get("/public/search", async (req, res) => {
       data: results,
     });
   } catch (error) {
-    console.error("Public search error:", error);
+    console.error('Public search error:', error);
     res.status(500).json({
       success: false,
-      error: "Search failed",
+      error: 'Search failed',
     });
   }
 });
 
-router.get("/", authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const userTastingNotes = await CoffeeTasting.find({
       userId: req.user.userId,
     })
-      .populate("cafeId", "name website hasMultipleLocations locations")
-      .populate("userId", "username _id")
+      .populate('cafeId', 'name website hasMultipleLocations locations')
+      .populate('userId', 'username _id')
       .sort({ createdAt: -1 });
     res.json({
       success: true,
       count: userTastingNotes.length,
-      message: "Your tasting notes",
+      message: 'Your tasting notes',
       data: userTastingNotes,
     });
   } catch (error) {
-    console.error("Error in route:", error);
+    console.error('Error in route:', error);
     res.status(500).json({
       success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });
 
 // Create new tasting note
-router.post("/", authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const tastingNoteData = {
       ...req.body,
@@ -127,14 +121,15 @@ router.post("/", authenticateToken, async (req, res) => {
     const savedTastingNote = await newTastingNote.save();
 
     // Populate the response
-    const populatedTastingNote = await CoffeeTasting.findById(
-      savedTastingNote._id
-    ).populate("cafeId", "name website hasMultipleLocations locations");
+    const populatedTastingNote = await CoffeeTasting.findById(savedTastingNote._id).populate(
+      'cafeId',
+      'name website hasMultipleLocations locations'
+    );
 
     res.status(201).json({
       success: true,
       message: `Tasting note created and set to ${
-        savedTastingNote.isPublic ? "public" : "private"
+        savedTastingNote.isPublic ? 'public' : 'private'
       }`,
       data: populatedTastingNote,
     });
@@ -147,17 +142,17 @@ router.post("/", authenticateToken, async (req, res) => {
 });
 
 // Get specific tasting note (user's own only)
-router.get("/:id", authenticateToken, async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const tastingNote = await CoffeeTasting.findById(req.params.id).populate(
-      "cafeId",
-      "name website hasMultipleLocations locations"
+      'cafeId',
+      'name website hasMultipleLocations locations'
     );
 
     if (!tastingNote) {
       return res.status(404).json({
         success: false,
-        error: "Tasting note not found",
+        error: 'Tasting note not found',
       });
     }
 
@@ -165,7 +160,7 @@ router.get("/:id", authenticateToken, async (req, res) => {
     if (tastingNote.userId.toString() !== req.user.userId) {
       return res.status(403).json({
         success: false,
-        error: "You can only view your own tasting notes",
+        error: 'You can only view your own tasting notes',
       });
     }
 
@@ -174,25 +169,22 @@ router.get("/:id", authenticateToken, async (req, res) => {
       data: tastingNote,
     });
   } catch (error) {
-    console.error("Error in route:", error); // Add logging
+    console.error('Error in route:', error); // Add logging
     res.status(500).json({
       success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message, // Hide details in production
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message, // Hide details in production
     });
   }
 });
 
-router.put("/:id", authenticateToken, async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const tastingNote = await CoffeeTasting.findById(req.params.id);
 
     if (!tastingNote) {
       return res.status(404).json({
         success: false,
-        error: "Tasting note not found",
+        error: 'Tasting note not found',
       });
     }
 
@@ -200,44 +192,40 @@ router.put("/:id", authenticateToken, async (req, res) => {
     if (tastingNote.userId.toString() !== req.user.userId) {
       return res.status(403).json({
         success: false,
-        error: "You can only edit your own tasting notes",
+        error: 'You can only edit your own tasting notes',
       });
     }
 
-    const updatedTastingNote = await CoffeeTasting.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    ).populate("cafeId", "name website hasMultipleLocations locations");
+    const updatedTastingNote = await CoffeeTasting.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    }).populate('cafeId', 'name website hasMultipleLocations locations');
 
     res.json({
       success: true,
       message: `Tasting note updated and set to ${
-        updatedTastingNote.isPublic ? "public" : "private"
+        updatedTastingNote.isPublic ? 'public' : 'private'
       }`,
       data: updatedTastingNote,
     });
   } catch (error) {
-    console.error("Error in route:", error); // Add logging
+    console.error('Error in route:', error); // Add logging
     res.status(500).json({
       success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message, // Hide details in production
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message, // Hide details in production
     });
   }
 });
 
 // Delete tasting note (user's own only)
-router.delete("/:id", authenticateToken, async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const tastingNote = await CoffeeTasting.findById(req.params.id);
 
     if (!tastingNote) {
       return res.status(404).json({
         success: false,
-        error: "Tasting note not found",
+        error: 'Tasting note not found',
       });
     }
 
@@ -245,7 +233,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
     if (tastingNote.userId.toString() !== req.user.userId) {
       return res.status(403).json({
         success: false,
-        error: "You can only delete your own tasting notes",
+        error: 'You can only delete your own tasting notes',
       });
     }
 
@@ -253,60 +241,54 @@ router.delete("/:id", authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      message: "Tasting note deleted successfully",
+      message: 'Tasting note deleted successfully',
     });
   } catch (error) {
-    console.error("Error in route:", error); // Add logging
+    console.error('Error in route:', error); // Add logging
     res.status(500).json({
       success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message, // Hide details in production
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message, // Hide details in production
     });
   }
 });
 
 // Admin route - Get all tasting notes (public and private)
-router.get("/admin/all", authenticateToken, async (req, res) => {
+router.get('/admin/all', authenticateToken, async (req, res) => {
   try {
     // Check if user is admin
-    if (req.user.role !== "admin") {
+    if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        error: "Admin access required",
+        error: 'Admin access required',
       });
     }
 
     const allTastingNotes = await CoffeeTasting.find({})
-      .populate("cafeId", "name website hasMultipleLocations locations")
-      .populate("userId", "username email")
+      .populate('cafeId', 'name website hasMultipleLocations locations')
+      .populate('userId', 'username email')
       .sort({ createdAt: -1 });
 
     res.json({
       success: true,
       count: allTastingNotes.length,
-      message: "All tasting notes (admin view)",
+      message: 'All tasting notes (admin view)',
       data: allTastingNotes,
     });
   } catch (error) {
-    console.error("Error in route:", error); // Add logging
+    console.error('Error in route:', error); // Add logging
     res.status(500).json({
       success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message, // Hide details in production
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message, // Hide details in production
     });
   }
 });
 
-router.get("/search", async (req, res) => {
+router.get('/search', async (req, res) => {
   const { query } = req.query;
   if (!query) {
     return res.status(400).json({
       success: false,
-      error: "Search query is required",
+      error: 'Search query is required',
     });
   }
 
@@ -315,9 +297,9 @@ router.get("/search", async (req, res) => {
       $text: { $search: query },
       isPublic: true,
     })
-      .populate("cafeId", "name website hasMultipleLocations locations")
-      .populate("userId", "username")
-      .sort({ score: { $meta: "textScore" } }) // Sort by relevance
+      .populate('cafeId', 'name website hasMultipleLocations locations')
+      .populate('userId', 'username')
+      .sort({ score: { $meta: 'textScore' } }) // Sort by relevance
       .limit(50);
 
     res.json({
@@ -327,43 +309,40 @@ router.get("/search", async (req, res) => {
       data: results,
     });
   } catch (error) {
-    console.error("Search error:", error);
+    console.error('Search error:', error);
     res.status(500).json({
       success: false,
-      error: "Search failed",
+      error: 'Search failed',
     });
   }
 });
 
 // Filter by rating, brew method, etc.
-router.get("/filter", async (req, res) => {
+router.get('/filter', async (req, res) => {
   const { espresso, filteredCoffee, pourOver, other } = req.query;
   try {
     const filterCriteria = {};
-    if (espresso) filterCriteria.brewMethod = "espresso";
-    if (filteredCoffee) filterCriteria.brewMethod = "filtered coffee";
-    if (pourOver) filterCriteria.brewMethod = "pour over";
-    if (other) filterCriteria.brewMethod = "other";
+    if (espresso) filterCriteria.brewMethod = 'espresso';
+    if (filteredCoffee) filterCriteria.brewMethod = 'filtered coffee';
+    if (pourOver) filterCriteria.brewMethod = 'pour over';
+    if (other) filterCriteria.brewMethod = 'other';
 
     const filteredTastings = await CoffeeTasting.find(filterCriteria)
-      .populate("cafeId", "name website hasMultipleLocations locations")
-      .populate("userId", "username")
+      .populate('cafeId', 'name website hasMultipleLocations locations')
+      .populate('userId', 'username')
       .sort({ createdAt: -1 });
 
     res.json({
       success: true,
       count: filteredTastings.length,
-      message: "Filtered tasting notes",
+      message: 'Filtered tasting notes',
       data: filteredTastings,
     });
   } catch (error) {
-    console.error("Error in route:", error);
+    console.error('Error in route:', error);
     res.status(500).json({
       success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });

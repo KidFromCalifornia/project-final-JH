@@ -1,40 +1,42 @@
-import { create } from "zustand";
-import { tastingAPI } from "../services/api.js";
+import { create } from 'zustand';
+import { tastingAPI } from '../services/api.js';
 
 // Helper function to apply filters
 const applyFilters = (cafes, cafeTypeFilter, neighborhoodFilter) => {
   if (!cafes) return [];
-  
+
   let filtered = cafes;
-  
-  if (cafeTypeFilter && cafeTypeFilter !== 'all') {
-    filtered = filtered.filter(cafe => cafe.category === cafeTypeFilter);
+
+  if (cafeTypeFilter && cafeTypeFilter !== '') {
+    filtered = filtered.filter((cafe) => cafe.category === cafeTypeFilter);
   }
-  
-  if (neighborhoodFilter && neighborhoodFilter !== 'all') {
-    filtered = filtered.filter(cafe => cafe.locations?.[0]?.neighborhood === neighborhoodFilter);
+
+  if (neighborhoodFilter && neighborhoodFilter !== '') {
+    filtered = filtered.filter((cafe) => cafe.locations?.[0]?.neighborhood === neighborhoodFilter);
   }
-  
+
   return filtered;
 };
 
 export const useCafeStore = create((set) => ({
   // Theme mode state
-  themeMode: localStorage.getItem("themeMode") || "light",
+  themeMode: localStorage.getItem('themeMode') || 'light',
   setThemeMode: (mode) => {
-    localStorage.setItem("themeMode", mode);
+    localStorage.setItem('themeMode', mode);
     set({ themeMode: mode });
   },
   // Cafe and search state
   cafes: [],
-  setCafes: (cafes) => set((state) => {
-    // When cafes are updated, recalculate filtered cafes if filters are active
-    const filteredCafes = (state.cafeTypeFilter || state.neighborhoodFilter) 
-      ? applyFilters(cafes, state.cafeTypeFilter, state.neighborhoodFilter)
-      : state.filteredCafes;
-    return { cafes, filteredCafes };
-  }),
-  searchQuery: "",
+  setCafes: (cafes) =>
+    set((state) => {
+      // When cafes are updated, recalculate filtered cafes if filters are active
+      const filteredCafes =
+        state.cafeTypeFilter || state.neighborhoodFilter
+          ? applyFilters(cafes, state.cafeTypeFilter, state.neighborhoodFilter)
+          : state.filteredCafes;
+      return { cafes, filteredCafes };
+    }),
+  searchQuery: '',
   setSearchQuery: (query) => set({ searchQuery: query }),
   searchResults: [],
   setSearchResults: (results) => set({ searchResults: results }),
@@ -43,17 +45,19 @@ export const useCafeStore = create((set) => ({
   cafeTypeFilter: '',
   neighborhoodFilter: '',
   filteredCafes: [],
-  
-  setCafeTypeFilter: (filter) => set((state) => {
-    const filteredCafes = applyFilters(state.cafes, filter, state.neighborhoodFilter);
-    return { cafeTypeFilter: filter, filteredCafes };
-  }),
-  
-  setNeighborhoodFilter: (filter) => set((state) => {
-    const filteredCafes = applyFilters(state.cafes, state.cafeTypeFilter, filter);
-    return { neighborhoodFilter: filter, filteredCafes };
-  }),
-  
+
+  setCafeTypeFilter: (filter) =>
+    set((state) => {
+      const filteredCafes = applyFilters(state.cafes, filter, state.neighborhoodFilter);
+      return { cafeTypeFilter: filter, filteredCafes };
+    }),
+
+  setNeighborhoodFilter: (filter) =>
+    set((state) => {
+      const filteredCafes = applyFilters(state.cafes, state.cafeTypeFilter, filter);
+      return { neighborhoodFilter: filter, filteredCafes };
+    }),
+
   clearFilters: () => set({ cafeTypeFilter: '', neighborhoodFilter: '', filteredCafes: [] }),
 
   // Tastings state
@@ -90,11 +94,11 @@ export const useCafeStore = create((set) => ({
   // User state
   user: null,
   setUser: (user) => set({ user }),
-  username: localStorage.getItem("username") || null,
+  username: localStorage.getItem('username') || null,
   setUsername: (username) => set({ username }),
-  userToken: localStorage.getItem("userToken") || null,
+  userToken: localStorage.getItem('userToken') || null,
   setUserToken: (token) => set({ userToken: token }),
-  isLoggedIn: !!localStorage.getItem("userToken"),
+  isLoggedIn: !!localStorage.getItem('userToken'),
   setIsLoggedIn: (val) => set({ isLoggedIn: val }),
 
   //user Submissions
@@ -103,7 +107,7 @@ export const useCafeStore = create((set) => ({
   setUserSubmissions: (subs) => set({ userSubmissions: subs }),
 
   // Error state
-  fetchError: "",
+  fetchError: '',
   setFetchError: (err) => set({ fetchError: err }),
 
   // Pagination

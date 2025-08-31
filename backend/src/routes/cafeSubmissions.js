@@ -1,13 +1,13 @@
-import express from "express";
-import { Cafe, CafeSubmission } from "../models/cafeModel.js";
-import { authenticateToken, requireAdmin } from "../middleware/auth.js";
-import { cafeSubmissionSchema } from "../middleware/validation.js";
+import express from 'express';
+import { Cafe, CafeSubmission } from '../models/cafeModel.js';
+import { authenticateToken, requireAdmin } from '../middleware/auth.js';
+import { cafeSubmissionSchema } from '../middleware/validation.js';
 
 const router = express.Router();
 
 // POST create new cafe submission
 
-router.post("/", authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   // Validate request body
   const result = cafeSubmissionSchema.safeParse(req.body);
   if (!result.success) {
@@ -29,11 +29,11 @@ router.post("/", authenticateToken, async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Cafe submission created successfully",
+      message: 'Cafe submission created successfully',
       data: submission,
     });
   } catch (error) {
-    console.error("Error creating submission:", error);
+    console.error('Error creating submission:', error);
     res.status(400).json({
       success: false,
       error: error.message,
@@ -42,32 +42,32 @@ router.post("/", authenticateToken, async (req, res) => {
 });
 
 // GET all submissions (admin only)
-router.get("/", authenticateToken, requireAdmin, async (req, res) => {
+router.get('/', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const {
       page = 1,
       limit = 10,
-      status = "all",
-      sortBy = "createdAt",
-      order = "desc",
+      status = 'all',
+      sortBy = 'createdAt',
+      order = 'desc',
     } = req.query;
 
     // Build query
     let query = {};
-    if (status === "pending") {
+    if (status === 'pending') {
       query.isApproved = false;
-    } else if (status === "approved") {
+    } else if (status === 'approved') {
       query.isApproved = true;
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const sortOptions = {};
-    sortOptions[sortBy] = order === "desc" ? -1 : 1;
+    sortOptions[sortBy] = order === 'desc' ? -1 : 1;
 
     const [submissions, total] = await Promise.all([
       CafeSubmission.find(query)
-        .populate("submittedBy", "username email")
-        .populate("reviewedBy", "username email")
+        .populate('submittedBy', 'username email')
+        .populate('reviewedBy', 'username email')
         .sort(sortOptions)
         .skip(skip)
         .limit(parseInt(limit)),
@@ -85,7 +85,7 @@ router.get("/", authenticateToken, requireAdmin, async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching submissions:", error);
+    console.error('Error fetching submissions:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -94,103 +94,93 @@ router.get("/", authenticateToken, requireAdmin, async (req, res) => {
 });
 
 // PUT approve submission (admin only)
-router.put(
-  "/:id/approve",
-  authenticateToken,
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const submission = await CafeSubmission.findById(req.params.id);
+router.put('/:id/approve', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const submission = await CafeSubmission.findById(req.params.id);
 
-      if (!submission) {
-        return res.status(404).json({
-          success: false,
-          error: "Submission not found",
-        });
-      }
-
-      // Create new cafe from submission (using new schema)
-      const newCafe = new Cafe({
-        name: submission.name,
-        website: submission.website,
-        hasMultipleLocations: submission.hasMultipleLocations,
-        locations: submission.locations,
-        description: submission.description,
-        category: submission.category,
-        features: submission.features,
-        images: submission.images,
-        isApproved: true,
-        submittedBy: submission.submittedBy,
-      });
-
-      await newCafe.save();
-
-      // Update submission status
-      submission.isApproved = true;
-      submission.reviewedBy = req.user.userId;
-      submission.reviewedAt = new Date();
-      await submission.save();
-
-      res.json({
-        success: true,
-        message: "Submission approved and cafe created",
-        data: {
-          submission,
-          cafe: newCafe,
-        },
-      });
-    } catch (error) {
-      console.error("Error approving submission:", error);
-      res.status(500).json({
+    if (!submission) {
+      return res.status(404).json({
         success: false,
-        error: error.message,
+        error: 'Submission not found',
       });
     }
+
+    // Create new cafe from submission (using new schema)
+    const newCafe = new Cafe({
+      name: submission.name,
+      website: submission.website,
+      hasMultipleLocations: submission.hasMultipleLocations,
+      locations: submission.locations,
+      description: submission.description,
+      category: submission.category,
+      features: submission.features,
+      images: submission.images,
+      isApproved: true,
+      submittedBy: submission.submittedBy,
+    });
+
+    await newCafe.save();
+
+    // Update submission status
+    submission.isApproved = true;
+    submission.reviewedBy = req.user.userId;
+    submission.reviewedAt = new Date();
+    await submission.save();
+
+    res.json({
+      success: true,
+      message: 'Submission approved and cafe created',
+      data: {
+        submission,
+        cafe: newCafe,
+      },
+    });
+  } catch (error) {
+    console.error('Error approving submission:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
-);
+});
 
 // DELETE reject submission (admin only)
-router.delete(
-  "/:id/reject",
-  authenticateToken,
-  requireAdmin,
-  async (req, res) => {
-    try {
-      const { rejectionReason } = req.body;
+router.delete('/:id/reject', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { rejectionReason } = req.body;
 
-      const submission = await CafeSubmission.findById(req.params.id);
+    const submission = await CafeSubmission.findById(req.params.id);
 
-      if (!submission) {
-        return res.status(404).json({
-          success: false,
-          error: "Submission not found",
-        });
-      }
-
-      // Update submission with rejection details
-      submission.isApproved = false;
-      submission.rejectionReason = rejectionReason;
-      submission.reviewedBy = req.user.userId;
-      submission.reviewedAt = new Date();
-      await submission.save();
-
-      res.json({
-        success: true,
-        message: "Submission rejected",
-        data: submission,
-      });
-    } catch (error) {
-      console.error("Error rejecting submission:", error);
-      res.status(500).json({
+    if (!submission) {
+      return res.status(404).json({
         success: false,
-        error: error.message,
+        error: 'Submission not found',
       });
     }
+
+    // Update submission with rejection details
+    submission.isApproved = false;
+    submission.rejectionReason = rejectionReason;
+    submission.reviewedBy = req.user.userId;
+    submission.reviewedAt = new Date();
+    await submission.save();
+
+    res.json({
+      success: true,
+      message: 'Submission rejected',
+      data: submission,
+    });
+  } catch (error) {
+    console.error('Error rejecting submission:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
-);
+});
 
 // GET user's own submissions
-router.get("/my-submissions", authenticateToken, async (req, res) => {
+router.get('/my-submissions', authenticateToken, async (req, res) => {
   try {
     const submissions = await CafeSubmission.find({
       submittedBy: req.user.userId,
@@ -201,7 +191,7 @@ router.get("/my-submissions", authenticateToken, async (req, res) => {
       data: submissions,
     });
   } catch (error) {
-    console.error("Error fetching user submissions:", error);
+    console.error('Error fetching user submissions:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -210,27 +200,24 @@ router.get("/my-submissions", authenticateToken, async (req, res) => {
 });
 
 // GET single submission by ID
-router.get("/:id", authenticateToken, async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const submission = await CafeSubmission.findById(req.params.id)
-      .populate("submittedBy", "username email")
-      .populate("reviewedBy", "username email");
+      .populate('submittedBy', 'username email')
+      .populate('reviewedBy', 'username email');
 
     if (!submission) {
       return res.status(404).json({
         success: false,
-        error: "Submission not found",
+        error: 'Submission not found',
       });
     }
 
     // Check if user can access this submission
-    if (
-      submission.submittedBy._id.toString() !== req.user.userId &&
-      req.user.role !== "admin"
-    ) {
+    if (submission.submittedBy._id.toString() !== req.user.userId && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        error: "Access denied",
+        error: 'Access denied',
       });
     }
 
@@ -239,7 +226,7 @@ router.get("/:id", authenticateToken, async (req, res) => {
       data: submission,
     });
   } catch (error) {
-    console.error("Error fetching submission:", error);
+    console.error('Error fetching submission:', error);
     res.status(500).json({
       success: false,
       error: error.message,

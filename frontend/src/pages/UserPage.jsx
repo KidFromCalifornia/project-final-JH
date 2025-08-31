@@ -1,18 +1,9 @@
-import TastingForm from "../components/forms/TastingForm";
-import { useCafeStore } from "../stores/useCafeStore";
-import { useEffect, useState } from "react";
-import {
-  Container,
-  Box,
-  Typography,
-  List,
-  ListItem,
-  Divider,
-  Button,
-  Alert,
-} from "@mui/material";
+import TastingForm from '../components/forms/TastingForm';
+import { useCafeStore } from '../stores/useCafeStore';
+import { useEffect, useState } from 'react';
+import { Container, Box, Typography, List, ListItem, Divider, Button, Alert } from '@mui/material';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 const UserPage = () => {
   // Get global state from store
@@ -48,7 +39,7 @@ const UserPage = () => {
   }, [isLoggedIn, setUserSubmissions]);
 
   const handleTastingSubmit = (formData) => {
-    const method = editingTasting ? "PUT" : "POST";
+    const method = editingTasting ? 'PUT' : 'POST';
     const url = editingTasting
       ? `${API_URL}/tastings/${editingTasting._id}`
       : `${API_URL}/tastings`;
@@ -56,7 +47,7 @@ const UserPage = () => {
     fetch(url, {
       method,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${useCafeStore.getState().userToken}`,
       },
       body: JSON.stringify(formData),
@@ -65,18 +56,16 @@ const UserPage = () => {
       .then((data) => {
         if (data.success) {
           if (editingTasting) {
-            setTastings((prev) =>
-              prev.map((t) => (t._id === editingTasting._id ? data.data : t))
-            );
+            setTastings((prev) => prev.map((t) => (t._id === editingTasting._id ? data.data : t)));
             setEditingTasting(null);
           } else {
             setTastings((prev) => [data.data, ...prev]);
           }
         } else {
-          console.error("Failed to submit tasting:", data.error);
+          console.error('Failed to submit tasting:', data.error);
         }
       })
-      .catch((error) => console.error("Error submitting tasting:", error));
+      .catch((error) => console.error('Error submitting tasting:', error));
   };
 
   if (loading) {
@@ -90,7 +79,7 @@ const UserPage = () => {
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" gutterBottom>
-        {username ? `${username}'s Page` : "User Page"}
+        {username ? `${username}'s Page` : 'User Page'}
       </Typography>
       <Typography variant="h5" gutterBottom>
         Your Cafe Submissions
@@ -102,14 +91,14 @@ const UserPage = () => {
           {userSubmissions.map((sub) => (
             <ListItem
               key={sub._id}
-              sx={{ flexDirection: "column", alignItems: "flex-start", mb: 2 }}
+              sx={{ flexDirection: 'column', alignItems: 'flex-start', mb: 2 }}
             >
               <Typography variant="subtitle1" fontWeight="bold">
                 {sub.name}
               </Typography>
               <Typography variant="body2">{sub.description}</Typography>
               <Typography variant="caption" color="text.secondary">
-                {sub.category} — {sub.isApproved ? "Approved" : "Pending"}
+                {sub.category} — {sub.isApproved ? 'Approved' : 'Pending'}
               </Typography>
             </ListItem>
           ))}
@@ -120,10 +109,7 @@ const UserPage = () => {
         Whatcha Drinking?
       </Typography>
       {isLoggedIn ? (
-        <TastingForm
-          onSubmit={handleTastingSubmit}
-          initialValues={editingTasting || {}}
-        />
+        <TastingForm onSubmit={handleTastingSubmit} initialValues={editingTasting || {}} />
       ) : (
         <Alert severity="warning" sx={{ my: 2 }}>
           Please log in to add your own experience
@@ -138,10 +124,10 @@ const UserPage = () => {
             <ListItem
               key={tasting._id}
               sx={{
-                flexDirection: "column",
-                alignItems: "flex-start",
+                flexDirection: 'column',
+                alignItems: 'flex-start',
                 mb: 2,
-                borderBottom: "1px solid #eee",
+                borderBottom: '1px solid #eee',
                 pb: 2,
               }}
             >
@@ -151,13 +137,10 @@ const UserPage = () => {
               <Typography variant="body2">
                 at <em>{tasting.cafeId?.name}</em>
               </Typography>
-              <Typography variant="body2">
-                Rating: {tasting.rating}/5
-              </Typography>
+              <Typography variant="body2">Rating: {tasting.rating}/5</Typography>
               <Typography variant="body2">{tasting.notes}</Typography>
               <Typography variant="caption" color="text.secondary">
-                {tasting.userId?.username} •{" "}
-                {new Date(tasting.createdAt).toLocaleDateString()}
+                {tasting.userId?.username} • {new Date(tasting.createdAt).toLocaleDateString()}
               </Typography>
               <Button
                 size="small"

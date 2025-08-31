@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { authAPI } from "../../services/api";
-import { useCafeStore } from "../../stores/useCafeStore";
+import { useState } from 'react';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { authAPI } from '../../services/api';
+import { useCafeStore } from '../../stores/useCafeStore';
 import {
   Box,
   TextField,
@@ -12,17 +12,17 @@ import {
   Alert,
   Tooltip,
   useTheme,
-} from "@mui/material";
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { showAlert } from "../../styles/SwalAlertStyles";
+import { showAlert } from '../../styles/SwalAlertStyles';
 
 const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   const theme = useTheme();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [identifier, setIdentifier] = useState("");
+  const [identifier, setIdentifier] = useState('');
   const error = useCafeStore((state) => state.fetchError);
   const setError = useCafeStore((state) => state.setFetchError);
   const loading = useCafeStore((state) => state.loading);
@@ -31,7 +31,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
       const trimmedIdentifier = identifier.trim();
@@ -54,25 +54,22 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
 
       if (data.token || data.accessToken) {
         const token = data.token || data.accessToken;
-        localStorage.setItem("userToken", token);
-        localStorage.setItem("userId", data.user.id);
-        localStorage.setItem(
-          "username",
-          data.user?.username || trimmedIdentifier
-        );
+        localStorage.setItem('userToken', token);
+        localStorage.setItem('userId', data.user.id);
+        localStorage.setItem('username', data.user?.username || trimmedIdentifier);
 
         // Decode role from token
-        let role = "user";
+        let role = 'user';
         try {
-          const { jwtDecode } = await import("jwt-decode");
+          const { jwtDecode } = await import('jwt-decode');
           const decoded = jwtDecode(token);
-          role = decoded.role || "user";
+          role = decoded.role || 'user';
         } catch {
-          role = "user";
+          role = 'user';
         }
 
-        localStorage.setItem("userRole", role);
-        localStorage.setItem("admin", role === "admin" ? "true" : "false");
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('admin', role === 'admin' ? 'true' : 'false');
 
         setIsLoggedIn(true);
         setCurrentUser({ username: data.user?.username || trimmedIdentifier });
@@ -81,22 +78,20 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         setError(
           data.error ||
             data.message ||
-            (isSignup
-              ? "Signup failed. Please check your input."
-              : "Invalid credentials.")
+            (isSignup ? 'Signup failed. Please check your input.' : 'Invalid credentials.')
         );
       }
     } catch (err) {
       // Only show sweet alert if server is completely down (network error)
       if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
         showAlert({
-          title: "Server Unavailable",
+          title: 'Server Unavailable',
           text: "We couldn't reach the server. Please try again later.",
-          icon: "error",
+          icon: 'error',
         });
       } else {
         // For other errors, just set the error state for inline display
-        setError(isSignup ? "Signup failed. Please try again." : "Login failed. Please try again.");
+        setError(isSignup ? 'Signup failed. Please try again.' : 'Login failed. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -106,42 +101,44 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   return (
     <Box
       sx={{
-        width: { xs: "100%", sm: 400 },
-        maxWidth: { xs: "none", sm: 400 },
+        width: { xs: '100%', sm: 400 },
+        maxWidth: { xs: 'none', sm: 400 },
         p: { xs: 2, sm: 3 },
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         gap: 2,
         backgroundColor: theme.palette.light.main,
         borderRadius: 2,
         boxShadow: 3,
         color: theme.palette.text.primary,
-        position: "relative",
+        position: 'relative',
         zIndex: 1,
-        overflow: "hidden",
-        minHeight: "auto",
+        overflow: 'hidden',
+        minHeight: 'auto',
       }}
     >
-      <Box sx={{ 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center",
-        mb: 1,
-      }}>
-        <Typography 
-          variant="h4" 
-          sx={{ 
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 1,
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
             color: theme.palette.text.primary,
-            fontSize: { xs: "1.5rem", sm: "2rem" },
+            fontSize: { xs: '1.5rem', sm: '2rem' },
           }}
         >
-          {isSignup ? "Sign Up" : "Login"}
+          {isSignup ? 'Sign Up' : 'Login'}
         </Typography>
-        <IconButton 
-          onClick={onClose} 
-          aria-label="Close login form" 
+        <IconButton
+          onClick={onClose}
+          aria-label="Close login form"
           color="inherit"
-          sx={{ 
+          sx={{
             p: { xs: 1, sm: 1.5 },
           }}
         >
@@ -149,12 +146,15 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         </IconButton>
       </Box>
 
-      <form onSubmit={handleSubmit} style={{ 
-        display: "flex", 
-        flexDirection: "column", 
-        gap: 16,
-        width: "100%",
-      }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          width: '100%',
+        }}
+      >
         {isSignup && (
           <TextField
             label="Email"
@@ -181,7 +181,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
                 },
                 '& input': {
                   color: theme.palette.text.primary,
-                  fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+                  fontSize: { xs: '16px', sm: '14px' }, // Prevents zoom on iOS
                 },
               },
               '& .MuiInputLabel-root': {
@@ -194,7 +194,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           />
         )}
         <TextField
-          label={isSignup ? "Username" : "Username or Email"}
+          label={isSignup ? 'Username' : 'Username or Email'}
           type="text"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
@@ -218,7 +218,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
               },
               '& input': {
                 color: theme.palette.text.primary,
-                fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+                fontSize: { xs: '16px', sm: '14px' }, // Prevents zoom on iOS
               },
             },
             '& .MuiInputLabel-root': {
@@ -229,10 +229,10 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             },
           }}
         />
-        <Box sx={{ position: "relative" }}>
+        <Box sx={{ position: 'relative' }}>
           <TextField
             label="Password"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -255,7 +255,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
                 },
                 '& input': {
                   color: theme.palette.text.primary,
-                  fontSize: { xs: "16px", sm: "14px" }, // Prevents zoom on iOS
+                  fontSize: { xs: '16px', sm: '14px' }, // Prevents zoom on iOS
                 },
               },
               '& .MuiInputLabel-root': {
@@ -266,18 +266,18 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
               },
             }}
           />
-          <Tooltip title={showPassword ? "Hide password" : "Show password"}>
+          <Tooltip title={showPassword ? 'Hide password' : 'Show password'}>
             <IconButton
               aria-label="Toggle password visibility"
               onClick={() => setShowPassword((prev) => !prev)}
-              sx={{ 
-                position: "absolute", 
-                right: 8, 
+              sx={{
+                position: 'absolute',
+                right: 8,
                 top: 8,
                 color: theme.palette.text.primary,
-                "&:hover": {
+                '&:hover': {
                   color: theme.palette.primary.main,
-                }
+                },
               }}
               size="small"
             >
@@ -290,12 +290,12 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           disabled={loading}
           variant="contained"
           color="primary"
-          sx={{ 
+          sx={{
             py: { xs: 1.5, sm: 1.5 },
             px: { xs: 2, sm: 3 },
             mt: 1,
             minHeight: { xs: 48, sm: 42 }, // Better touch targets
-            fontSize: { xs: "16px", sm: "14px" },
+            fontSize: { xs: '16px', sm: '14px' },
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
             '&:hover': {
@@ -304,17 +304,23 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             '&:disabled': {
               backgroundColor: theme.palette.action.disabled,
               color: theme.palette.text.disabled,
-            }
+            },
           }}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : isSignup ? "Sign Up" : "Login"}
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : isSignup ? (
+            'Sign Up'
+          ) : (
+            'Login'
+          )}
         </Button>
-    </form>
+      </form>
 
       {error && <Alert severity="error">{error}</Alert>}
 
       <Typography align="center" sx={{ mt: 2, color: theme.palette.text.primary }}>
-        {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
+        {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
         <Button
           onClick={() => setIsSignup(!isSignup)}
           variant="text"
@@ -327,11 +333,11 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             boxShadow: 'none',
             '&:hover': {
               transform: 'scale(1.05)',
-boxShadow: 'none',
-            }
+              boxShadow: 'none',
+            },
           }}
         >
-          {isSignup ? "Login" : "Sign Up"}
+          {isSignup ? 'Login' : 'Sign Up'}
         </Button>
       </Typography>
     </Box>

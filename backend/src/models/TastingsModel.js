@@ -1,15 +1,15 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const coffeeTastingSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     cafeId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Cafe",
+      ref: 'Cafe',
       required: true,
     },
     cafeNeighborhood: {
@@ -35,12 +35,12 @@ const coffeeTastingSchema = new mongoose.Schema(
 
     roastLevel: {
       type: String,
-      enum: ["light", "medium", "dark"],
+      enum: ['light', 'medium', 'dark'],
       required: true,
     },
     brewMethod: {
       type: String,
-      enum: ["espresso", "filtered coffee", "pour over", "other"],
+      enum: ['espresso', 'filtered coffee', 'pour over', 'other'],
       required: true,
     },
     rating: {
@@ -53,39 +53,31 @@ const coffeeTastingSchema = new mongoose.Schema(
       {
         type: String,
         enum: [
-          "fruity",
-          "green",
-          "sour",
-          "roasted",
-          "cereal",
-          "spices",
-          "nutty",
-          "cocoa",
-          "sweet",
-          "alcohol",
-          "stale",
-          "earthy",
-          "chemical",
-          "floral",
-          "other",
+          'fruity',
+          'green',
+          'sour',
+          'roasted',
+          'cereal',
+          'spices',
+          'nutty',
+          'cocoa',
+          'sweet',
+          'alcohol',
+          'stale',
+          'earthy',
+          'chemical',
+          'floral',
+          'other',
         ],
       },
     ],
     acidity: {
       type: String,
-      enum: ["light", "medium", "high"],
+      enum: ['light', 'medium', 'high'],
     },
     mouthFeel: {
       type: String,
-      enum: [
-        "mouth drying",
-        "metallic",
-        "oily",
-        "light",
-        "medium",
-        "full",
-        "other",
-      ],
+      enum: ['mouth drying', 'metallic', 'oily', 'light', 'medium', 'full', 'other'],
     },
     notes: {
       type: String,
@@ -106,16 +98,13 @@ const coffeeTastingSchema = new mongoose.Schema(
 );
 
 coffeeTastingSchema.index({
-  coffeeName: "text",
-  notes: "text",
-  coffeeOrigin: "text",
-  coffeeRoaster: "text",
-  coffeeOriginRegion: "text",
+  coffeeName: 'text',
+  notes: 'text',
+  coffeeOrigin: 'text',
+  coffeeRoaster: 'text',
+  coffeeOriginRegion: 'text',
 });
 
-export const CoffeeTasting = mongoose.model(
-  "CoffeeTasting",
-  coffeeTastingSchema
-);
+export const CoffeeTasting = mongoose.model('CoffeeTasting', coffeeTastingSchema);
 
 export default CoffeeTasting;

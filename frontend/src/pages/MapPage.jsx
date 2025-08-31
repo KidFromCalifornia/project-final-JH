@@ -1,17 +1,17 @@
-import React, { useEffect, useState, Suspense } from "react";
-import { Box, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { 
+import React, { useEffect, useState, Suspense } from 'react';
+import { Box, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import {
   MyLocation as MyLocationIcon,
   Clear as ClearIcon,
-  Map as MapIcon
-} from "@mui/icons-material";
-import MapLegend from "../components/map/MapLegend";
-import ReusableFab from "../components/common/ReusableFab";
-import { useCafeStore } from "../stores/useCafeStore";
-import { getCustomIcon } from "../components/map/MapIcons";
+  Map as MapIcon,
+} from '@mui/icons-material';
+import MapLegend from '../components/map/MapLegend';
+import ReusableFab from '../components/common/ReusableFab';
+import { useCafeStore } from '../stores/useCafeStore';
+import { getCustomIcon } from '../components/map/MapIcons';
 
-const MapLibreMap = React.lazy(() => import("../components/map/MapLibreMap"));
+const MapLibreMap = React.lazy(() => import('../components/map/MapLibreMap'));
 
 const MapPage = () => {
   const theme = useTheme();
@@ -50,18 +50,16 @@ const MapPage = () => {
           setUser({ location: { lat: latitude, lng: longitude } });
           setShowUserPin(true);
         },
-        () => alert("Could not get your location")
+        () => alert('Could not get your location')
       );
     } else {
-      alert("Geolocation not supported");
+      alert('Geolocation not supported');
     }
   };
 
   useEffect(() => {
     if (cafes.length === 0) {
-      fetch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:3001/api"}/cafes`
-      )
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/cafes`)
         .then((res) => res.json())
         .then((data) => setCafes(data.data || []));
     }
@@ -72,9 +70,8 @@ const MapPage = () => {
   const neighborhoodFilter = useCafeStore((state) => state.neighborhoodFilter);
   const hasActiveFilters = cafeTypeFilter || neighborhoodFilter;
 
-  
-  const cafesToShow = searchResults.length > 0 ? searchResults : 
-                     hasActiveFilters ? filteredCafes : cafes;
+  const cafesToShow =
+    searchResults.length > 0 ? searchResults : hasActiveFilters ? filteredCafes : cafes;
 
   // Store filters for clear FAB condition
   const clearFilters = useCafeStore((state) => state.clearFilters);
@@ -82,9 +79,9 @@ const MapPage = () => {
   return (
     <Box
       sx={{
-        width: "100vw",
-        height: "100vh",
-        position: "relative",
+        width: '100vw',
+        height: '100vh',
+        position: 'relative',
       }}
     >
       <Typography hidden variant="h1">
@@ -94,24 +91,24 @@ const MapPage = () => {
       {/* FABs using reusable component */}
       <Box
         sx={{
-          position: "fixed",
+          position: 'fixed',
           zIndex: mobileDrawerOpen ? 1300 : 1301, // Higher z-index when mobile drawer is open
-          bottom: { 
-            xs: mobileDrawerOpen ? "auto" : "2.75rem", 
-            sm: "auto" 
+          bottom: {
+            xs: mobileDrawerOpen ? 'auto' : '2.75rem',
+            sm: 'auto',
           },
-          top: { 
-            xs: mobileDrawerOpen ? "1rem" : "auto", 
-            sm: "4.5rem" 
+          top: {
+            xs: mobileDrawerOpen ? '1rem' : 'auto',
+            sm: '4.5rem',
           },
-          right: { xs: "auto", sm: "1.875rem" },
-          left: { xs: "50%", sm: "auto" },
-          transform: { xs: "translateX(-50%)", sm: "none" },
-          display: "flex",
-          flexDirection: { xs: "row", sm: "column" },
+          right: { xs: 'auto', sm: '1.875rem' },
+          left: { xs: '50%', sm: 'auto' },
+          transform: { xs: 'translateX(-50%)', sm: 'none' },
+          display: 'flex',
+          flexDirection: { xs: 'row', sm: 'column' },
           gap: 2,
-          alignItems: "center",
-          transition: "all 0.3s ease-in-out", // Smooth transition when drawer opens/closes
+          alignItems: 'center',
+          transition: 'all 0.3s ease-in-out', // Smooth transition when drawer opens/closes
         }}
       >
         <ReusableFab
@@ -120,7 +117,7 @@ const MapPage = () => {
           onClick={handleGeotag}
           ariaLabel="geotag"
         />
-        
+
         <ReusableFab
           icon={<ClearIcon fontSize="large" />}
           tooltipTitle="Clear Filters"
@@ -128,7 +125,7 @@ const MapPage = () => {
           ariaLabel="Clear all filters"
           showCondition={hasActiveFilters}
         />
-        
+
         <ReusableFab
           icon={<MapIcon fontSize="large" />}
           tooltipTitle="Display Map Legend"

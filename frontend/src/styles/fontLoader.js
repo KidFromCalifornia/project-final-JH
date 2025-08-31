@@ -2,8 +2,10 @@
 // Based on: https://font.stockholm.se/dokumentation/
 const loadStockholmFont = () => {
   // Check if font is already loaded
-  if (document.querySelector('link[href*="stockholm-type"]') || 
-      document.querySelector('style[data-font="stockholm-type"]')) {
+  if (
+    document.querySelector('link[href*="stockholm-type"]') ||
+    document.querySelector('style[data-font="stockholm-type"]')
+  ) {
     return;
   }
 
@@ -13,7 +15,7 @@ const loadStockholmFont = () => {
     // Official Stockholm font service URL (protocol-relative for better compatibility)
     link.href = '//font.stockholm.se/css/stockholm-type.css';
     link.setAttribute('data-font', 'stockholm-type');
-    
+
     link.onload = () => {
       // Following Stockholm's convention for font loading classes
       document.documentElement.classList.add('wf-stockholmtype-active');
@@ -22,15 +24,17 @@ const loadStockholmFont = () => {
       document.documentElement.classList.add('wf-active');
       console.log('Stockholm Type font loaded successfully');
     };
-    
+
     link.onerror = () => {
       // Following Stockholm's convention for inactive font state
       document.documentElement.classList.add('wf-stockholmtype-inactive');
       document.documentElement.classList.add('wf-stockholmtype-n4-inactive');
       document.documentElement.classList.add('wf-stockholmtype-n7-inactive');
-      console.warn('Stockholm Type font failed to load - using Verdana fallback as per Stockholm guidelines');
+      console.warn(
+        'Stockholm Type font failed to load - using Verdana fallback as per Stockholm guidelines'
+      );
     };
-    
+
     document.head.appendChild(link);
   };
 

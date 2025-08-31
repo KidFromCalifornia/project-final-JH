@@ -1,13 +1,13 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography } from '@mui/material';
 
 const spinKeyframes = {
-  "@keyframes spin": {
-    "0%": { transform: "rotate(0deg)" },
-    "100%": { transform: "rotate(360deg)" },
+  '@keyframes spin': {
+    '0%': { transform: 'rotate(0deg)' },
+    '100%': { transform: 'rotate(360deg)' },
   },
 };
 
-const defaultColor = "#222";
+const defaultColor = '#222';
 
 const LoadingLogo = (theme, themeMode) => (
   <Box
@@ -19,12 +19,12 @@ const LoadingLogo = (theme, themeMode) => (
   >
     <Box
       sx={{
-        position: "relative",
+        position: 'relative',
         width: 300,
         height: 300,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         ...spinKeyframes,
       }}
     >
@@ -33,17 +33,16 @@ const LoadingLogo = (theme, themeMode) => (
         src="/src/assets/images/scc_logo_text.svg"
         alt="Logo Text"
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: -10,
           left: 0,
           width: 300,
           height: 300,
-          animation: "spin 4.5s linear infinite",
-          filter: themeMode === "dark" ? "brightness(0.8)" : undefined,
-          color:
-            themeMode === "dark" ? theme?.palette?.common?.light : defaultColor,
-          "&:hover": {
-            animationPlayState: "paused",
+          animation: 'spin 4.5s linear infinite',
+          filter: themeMode === 'dark' ? 'brightness(0.8)' : undefined,
+          color: themeMode === 'dark' ? theme?.palette?.common?.light : defaultColor,
+          '&:hover': {
+            animationPlayState: 'paused',
           },
         }}
       />
@@ -52,7 +51,7 @@ const LoadingLogo = (theme, themeMode) => (
         src="/src/assets/images/scc_shield.svg"
         alt="Logo Shield"
         sx={{
-          position: "absolute",
+          position: 'absolute',
           width: 150,
           height: 150,
         }}
