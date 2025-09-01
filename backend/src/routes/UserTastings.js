@@ -1,6 +1,8 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import { authenticateToken } from '../middleware/auth.js';
 import { CoffeeTasting } from '../models/TastingsModel.js';
+import { validateObjectId } from '../middleware/validateObjectId.js';
 
 const router = express.Router();
 
@@ -142,7 +144,7 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 // Get specific tasting note (user's own only)
-router.get('/:id', authenticateToken, async (req, res) => {
+router.get('/:id', validateObjectId(), authenticateToken, async (req, res) => {
   try {
     const tastingNote = await CoffeeTasting.findById(req.params.id).populate(
       'cafeId',
@@ -177,7 +179,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-router.put('/:id', authenticateToken, async (req, res) => {
+router.put('/:id', validateObjectId(), authenticateToken, async (req, res) => {
   try {
     const tastingNote = await CoffeeTasting.findById(req.params.id);
 
@@ -218,7 +220,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 });
 
 // Delete tasting note (user's own only)
-router.delete('/:id', authenticateToken, async (req, res) => {
+router.delete('/:id', validateObjectId(), authenticateToken, async (req, res) => {
   try {
     const tastingNote = await CoffeeTasting.findById(req.params.id);
 

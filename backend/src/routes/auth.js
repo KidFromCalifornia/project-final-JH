@@ -2,11 +2,18 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
+import { validateRequest, registerSchema, loginSchema } from '../middleware/validation.js';
 
 const router = express.Router();
 
+// Helper function to escape regex special characters
+const escapeRegex = (string) => {
+  if (!string || typeof string !== 'string') return '';
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
 // Register new user
-router.post('/register', async (req, res) => {
+router.post('/register', validateRequest(registerSchema), async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -51,15 +58,15 @@ router.post('/register', async (req, res) => {
 });
 
 // Login user
-router.post('/login', async (req, res) => {
+router.post('/login', validateRequest(loginSchema), async (req, res) => {
   try {
     const { email, username, password } = req.body;
 
-    // Find user by email OR username
+    // Find user by email OR username with escaped regex
     const user = await User.findOne({
       $or: [
-        { email: new RegExp(`^${email}$`, 'i') },
-        { username: new RegExp(`^${username}$`, 'i') },
+        { email: new RegExp(`^${escapeRegex(email)}$`, 'i') },
+        { username: new RegExp(`^${escapeRegex(username)}$`, 'i') },
       ],
     });
 

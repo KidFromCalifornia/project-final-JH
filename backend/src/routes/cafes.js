@@ -1,5 +1,7 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import { Cafe } from '../models/cafeModel.js';
+import { validateObjectId } from '../middleware/validateObjectId.js';
 
 const router = express.Router();
 
@@ -131,7 +133,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET single cafe by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', validateObjectId(), async (req, res) => {
   try {
     const cafe = await Cafe.findById(req.params.id);
 

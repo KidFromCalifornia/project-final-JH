@@ -4,16 +4,23 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 export const apiCall = async (endpoint, options = {}) => {
   const token = localStorage.getItem('userToken');
 
+  // Create abort controller for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
   const config = {
     headers: {
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
     },
+    signal: controller.signal,
     ...options,
   };
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    clearTimeout(timeoutId);
+    
     const data = await response.json();
 
     if (!response.ok) {
@@ -22,6 +29,12 @@ export const apiCall = async (endpoint, options = {}) => {
 
     return data;
   } catch (error) {
+    clearTimeout(timeoutId);
+    
+    if (error.name === 'AbortError') {
+      throw new Error('Request timeout - please try again');
+    }
+    
     console.error('API Error:', error);
     throw error;
   }

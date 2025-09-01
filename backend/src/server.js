@@ -11,8 +11,19 @@ import authRoutes from './routes/auth.js';
 import submissionRoutes from './routes/cafeSubmissions.js';
 import tastingRoutes from './routes/UserTastings.js';
 import metadataRoutes from './routes/metadata.js';
+import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
+
+// Validate required environment variables
+const requiredEnvVars = ['JWT_SECRET', 'MONGODB_URI'];
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingEnvVars.join(', '));
+  console.error('Please check your .env file');
+  process.exit(1);
+}
 
 const primaryPort = process.env.PORT || 3001;
 const backupPorts = [primaryPort, 3002, 3003, 3004, 3005];
@@ -48,7 +59,12 @@ const startServerWithBackup = (app, ports, index = 0) => {
   return server;
 };
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Basic route
@@ -123,6 +139,10 @@ connectDB()
         });
       }
     });
+
+    // Add global error handling middleware
+    app.use(notFoundHandler);
+    app.use(globalErrorHandler);
 
     // Start server with backup port functionality
     startServerWithBackup(app, backupPorts);
