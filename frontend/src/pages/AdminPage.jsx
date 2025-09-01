@@ -16,7 +16,7 @@ const AdminPage = () => {
 
   useEffect(() => {
     if (!isAdmin) return;
-    
+
     const fetchAdminData = async () => {
       try {
         const [cafesRes, submissionsRes, tastingsRes] = await Promise.all([

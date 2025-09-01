@@ -20,7 +20,7 @@ export const apiCall = async (endpoint, options = {}) => {
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
     clearTimeout(timeoutId);
-    
+
     if (!response.ok) {
       let errorMessage = 'API request failed';
       try {
@@ -31,16 +31,16 @@ export const apiCall = async (endpoint, options = {}) => {
       }
       throw new Error(errorMessage);
     }
-    
+
     const data = await response.json();
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
-    
+
     if (error.name === 'AbortError') {
       throw new Error('Request timeout - please try again');
     }
-    
+
     console.error('API Error:', error);
     throw error;
   }

@@ -28,11 +28,11 @@ const UserPage = () => {
               Authorization: `Bearer ${useCafeStore.getState().userToken}`,
             },
           });
-          
+
           if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
           }
-          
+
           const data = await res.json();
           setUserSubmissions(data.data || []);
         } catch (error) {
@@ -70,7 +70,7 @@ const UserPage = () => {
       }
 
       const data = await res.json();
-      
+
       if (data.success) {
         if (editingTasting) {
           setTastings((prev) => prev.map((t) => (t._id === editingTasting._id ? data.data : t)));

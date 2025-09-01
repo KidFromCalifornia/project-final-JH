@@ -11,7 +11,7 @@ export const globalErrorHandler = (err, req, res, next) => {
 
   // MongoDB validation error
   if (err.name === 'ValidationError') {
-    const messages = Object.values(err.errors).map(error => error.message);
+    const messages = Object.values(err.errors).map((error) => error.message);
     error.message = messages.join(', ');
     error.statusCode = 400;
   }

@@ -4,28 +4,23 @@
   "type": "module",
   "description": "Server part of final project - Stockholm Coffee Club",
   "scripts": {
-    "start": "babel-node src/server.js",
-    "dev": "nodemon src/server.js --exec babel-node",
-    "seed:users": "babel-node src/utils/seedUsers.js",
-    "seed:cafes": "babel-node src/utils/seedCafes.js",
-    "seed:tastings": "babel-node src/utils/seedTasting.js",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed:users": "node src/scripts/seedUsers.js",
+    "seed:cafes": "node src/scripts/seedCafes.js",
+    "seed:tastings": "node src/scripts/seedTasting.js",
     "seed:all": "npm run seed:users && npm run seed:cafes && npm run seed:tastings"
   },
   "author": "Jonny Hicks aka Kidfromcalifornia",
   "license": "ISC",
   "dependencies": {
-    "@babel/core": "^7.17.9",
-    "@babel/node": "^7.16.8",
-    "@babel/preset-env": "^7.16.11",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.19.0",
     "mongoose": "^8.17.0",
-    "node-fetch": "^3.3.2",
-    "zod": "^4.0.14"
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

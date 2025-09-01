@@ -152,11 +152,11 @@ const NewCafeForm = ({ onClose }) => {
         address
       )}`;
       const res = await fetch(url);
-      
+
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      
+
       const data = await res.json();
       if (data && data[0]) {
         return {
