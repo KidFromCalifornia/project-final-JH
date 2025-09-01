@@ -53,13 +53,12 @@ const App = () => {
 
       <main
         style={{
-          marginTop: '64px',
-          width: '100%',
+          height: '100vh',
+          width: '100vw',
           flex: 1,
           flexDirection: 'column',
           display: 'flex',
           alignItems: 'center',
-          marginLeft: '2.75rem',
         }}
       >
         <Suspense fallback={<LoadingLogo />}>

@@ -8,22 +8,8 @@
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev"
   },
-  "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.3.1",
-    "@mui/material": "^7.3.1",
-    "jwt-decode": "^4.0.0",
-    "mongodb": "^6.18.0",
-    "spacebar": "^13.1.1-dev",
-    "styled-components": "^6.1.19",
-    "webfontloader": "^1.6.28",
-    "zustand": "^5.0.7"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@svgr/cli": "^8.1.0",
-    "@svgr/webpack": "^8.1.0",
-    "prettier": "^3.6.2",
-    "vite-plugin-svgr": "^4.5.0"
+    "prettier": "^3.6.2"
   }
 }
