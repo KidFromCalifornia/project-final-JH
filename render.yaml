@@ -17,7 +17,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: OPENCAGE_API_KEY
-        sync: false  # You'll need to set this manually
+        sync: false # You'll need to set this manually
       - key: PORT
         value: 10000
 

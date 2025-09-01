@@ -828,7 +828,7 @@ const seedCafes = async () => {
       process.exit(success ? 0 : 1);
     }
   }
-  
+
   return { success, count: validCafes.length };
 };
 
