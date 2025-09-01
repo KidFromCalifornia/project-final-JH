@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
-import { validateRequest, registerSchema, loginSchema } from '../middleware/validation.js';
+import { validateRegister, validateLogin } from '../middleware/validation.js';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ const escapeRegex = (string) => {
 };
 
 // Register new user
-router.post('/register', validateRequest(registerSchema), async (req, res) => {
+router.post('/register', validateRegister, async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -58,7 +58,7 @@ router.post('/register', validateRequest(registerSchema), async (req, res) => {
 });
 
 // Login user
-router.post('/login', validateRequest(loginSchema), async (req, res) => {
+router.post('/login', validateLogin, async (req, res) => {
   try {
     const { email, username, password } = req.body;
 

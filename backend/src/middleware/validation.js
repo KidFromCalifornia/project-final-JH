@@ -1,34 +1,62 @@
 import { z } from 'zod';
 
 // User registration validation
-export const registerSchema = z.object({
-  username: z.string().min(5, 'Username must be at least 5 characters').max(20),
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-});
-export const cafeSubmissionSchema = z.object({
-  name: z.string().min(1),
-  website: z.string().url().optional(),
-  hasMultipleLocations: z.boolean().optional(),
-  locations: z.array(
-    z.object({
-      address: z.string().min(1),
-      neighborhood: z.string().optional(),
-      locationNote: z.string().optional(),
-      isMainLocation: z.boolean().optional(),
-      coordinates: z
-        .object({
-          type: z.literal('Point'),
-          coordinates: z.array(z.number()).length(2),
-        })
-        .optional(),
-    })
-  ),
-  description: z.string().max(1000).optional(),
-  category: z.enum(['specialty', 'roaster', 'thirdwave']),
-  features: z.array(z.string()).min(1),
-  images: z.array(z.string()).optional(),
-});
+// Simple validation functions (replacing Zod)
+
+// Simple email validation
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Validate registration data
+export const validateRegister = (req, res, next) => {
+  const { username, email, password } = req.body;
+
+  if (!username || username.length < 5 || username.length > 20) {
+    return res.status(400).json({
+      success: false,
+      error: 'Username must be 5-20 characters',
+    });
+  }
+
+  if (!email || !isValidEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid email format',
+    });
+  }
+
+  if (!password || password.length < 8) {
+    return res.status(400).json({
+      success: false,
+      error: 'Password must be at least 8 characters',
+    });
+  }
+
+  next();
+};
+
+// Validate login data
+export const validateLogin = (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !isValidEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid email format',
+    });
+  }
+
+  if (!password) {
+    return res.status(400).json({
+      success: false,
+      error: 'Password is required',
+    });
+  }
+
+  next();
+};
 
 // User login validation
 export const loginSchema = z
