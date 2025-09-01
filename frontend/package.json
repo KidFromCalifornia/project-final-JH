@@ -18,13 +18,10 @@
     "@vis.gl/react-maplibre": "^8.0.4",
     "jwt-decode": "^4.0.0",
     "maplibre-gl": "^5.7.0",
-    "rc-drawer": "^7.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.1",
-    "styled-components": "^6.1.19",
-    "styled-theming": "^2.2.0",
     "sweetalert2": "^11.22.3",
     "webfontloader": "^1.6.28",
     "zustand": "^5.0.7"
