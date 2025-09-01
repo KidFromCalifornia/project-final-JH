@@ -3,7 +3,7 @@
   NPM_FLAGS = "--production=false"
 
 [build]
-  command = "cd frontend && npm ci --include=optional && npm run build"
+  command = "cd frontend && npm install --force && npm run build"
   publish = "frontend/dist"
   node_version = "20.18.0"
 
