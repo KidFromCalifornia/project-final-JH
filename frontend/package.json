@@ -12,6 +12,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.4",
     "@mui/material": "^5.14.4",
+    "@rollup/rollup-linux-x64-gnu": "^4.50.0",
     "@vis.gl/react-maplibre": "^8.0.4",
     "jwt-decode": "^4.0.0",
     "maplibre-gl": "^5.7.0",
