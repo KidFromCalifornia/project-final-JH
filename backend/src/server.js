@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // Basic route
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.json({
     message: 'welcome to the Stockholm Coffee Club API! ☕',
     status: 'success',
@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 });
 
 // API Documentation endpoint
-app.get('/api', (req, res) => {
+app.get('/api', (_, res) => {
   res.json({
     message: 'Stockholm Coffee Club API Documentation',
     version: '1.0.0',
@@ -75,7 +75,7 @@ connectDB()
     app.use('/api/metadata', metadataRoutes);
 
     // Seed endpoint
-    app.get('/api/seed', async (req, res) => {
+    app.get('/api/seed', async (_, res) => {
       try {
         const result = await seedCafes();
         res.json({
@@ -102,7 +102,7 @@ connectDB()
     console.error('MongoDB connection error:', err);
     process.exit(1);
   });
-app.get('/healthz', (req, res) => {
+app.get('/healthz', (_, res) => {
   res.status(200).send('OK');
 });
 
