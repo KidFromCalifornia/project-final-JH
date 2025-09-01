@@ -1,0 +1,36 @@
+services:
+  # Backend API Service
+  - type: web
+    name: stockholm-coffee-club-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: stockholm-coffee-club-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OPENCAGE_API_KEY
+        sync: false  # You'll need to set this manually
+      - key: PORT
+        value: 10000
+
+  # Frontend Static Site
+  - type: static
+    name: stockholm-coffee-club-frontend
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://stockholm-coffee-club-backend.onrender.com/api
+
+databases:
+  - name: stockholm-coffee-club-db
+    databaseName: stockholm-coffee-club
+    user: admin

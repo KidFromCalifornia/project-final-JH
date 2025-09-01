@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/database.js';
+import { seedCafes } from './scripts/seedCafes.js';
 
 // Import routes
 import cafeRoutes from './routes/cafes.js';
@@ -13,8 +14,39 @@ import metadataRoutes from './routes/metadata.js';
 
 dotenv.config();
 
-const port = process.env.PORT || 3001;
+const primaryPort = process.env.PORT || 3001;
+const backupPorts = [primaryPort, 3002, 3003, 3004, 3005];
 const app = express();
+
+// Function to try starting server on different ports
+const startServerWithBackup = (app, ports, index = 0) => {
+  if (index >= ports.length) {
+    console.error('❌ All backup ports are busy. Could not start server.');
+    process.exit(1);
+  }
+
+  const currentPort = ports[index];
+  const server = app.listen(currentPort, () => {
+    console.log(`🚀 Server running on http://localhost:${currentPort}`);
+    if (index > 0) {
+      console.log(`⚠️  Primary port was busy, using backup port ${currentPort}`);
+    }
+    console.log(`📍 Environment: ${process.env.NODE_ENV}`);
+    console.log(`☕ Stockholm Coffee Club API ready!`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`⚠️  Port ${currentPort} is busy, trying next port...`);
+      startServerWithBackup(app, ports, index + 1);
+    } else {
+      console.error('Server error:', err);
+      process.exit(1);
+    }
+  });
+
+  return server;
+};
 
 app.use(cors());
 app.use(express.json());
@@ -92,11 +124,8 @@ connectDB()
       }
     });
 
-    app.listen(port, () => {
-      console.log(`🚀 Server running on http://localhost:${port}`);
-      console.log(`📍 Environment: ${process.env.NODE_ENV}`);
-      console.log(`☕ Stockholm Coffee Club API ready!`);
-    });
+    // Start server with backup port functionality
+    startServerWithBackup(app, backupPorts);
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);

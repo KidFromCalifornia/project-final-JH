@@ -291,11 +291,11 @@
     "success": true,
     "provider": "opencage",
     "address": "Fiskshallsvägen 8, 120 44 Stockholm",
-    "lat": 59.3,
-    "lon": 18.05,
+    "lat": 59.355,
+    "lon": 18.0578,
     "geometry": {
-      "lat": 59.3,
-      "lng": 18.05
+      "lat": 59.355,
+      "lng": 18.0578
     },
     "display_name": "120 44, Sverige"
   }

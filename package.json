@@ -2,7 +2,11 @@
   "name": "project-final-parent",
   "version": "1.0.0",
   "scripts": {
-    "postinstall": "npm install --prefix backend"
+    "postinstall": "npm install --prefix backend",
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && npm start",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

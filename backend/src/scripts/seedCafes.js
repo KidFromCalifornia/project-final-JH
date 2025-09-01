@@ -822,9 +822,14 @@ const seedCafes = async () => {
     console.error('Error seeding cafes:', error);
     success = false;
   } finally {
-    await mongoose.disconnect();
-    process.exit(success ? 0 : 1);
+    // Only disconnect and exit if run directly, not when imported
+    if (import.meta.url === `file://${process.argv[1]}`) {
+      await mongoose.disconnect();
+      process.exit(success ? 0 : 1);
+    }
   }
+  
+  return { success, count: validCafes.length };
 };
 
 console.log('Total cafes in array:', cleanedCafes.length);
@@ -834,5 +839,9 @@ console.log(
   cleanedCafes.filter((cafe) => !validCafes.includes(cafe)).map((cafe) => cafe.name)
 );
 
-seedCafes();
+// Only run if this file is executed directly, not when imported
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seedCafes();
+}
+
 export { seedCafes };
