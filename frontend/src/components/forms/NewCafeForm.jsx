@@ -147,19 +147,30 @@ const NewCafeForm = ({ onClose }) => {
 
   // Geocode address using OpenStreetMap Nominatim
   const geocodeAddress = async (address) => {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-      address
-    )}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data && data[0]) {
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon),
-      };
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        address
+      )}`;
+      const res = await fetch(url);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      const data = await res.json();
+      if (data && data[0]) {
+        return {
+          lat: parseFloat(data[0].lat),
+          lon: parseFloat(data[0].lon),
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error geocoding address:', error);
+      return null;
     }
-    return null;
   };
+
   // Handle image URL changes
   const handleImageChange = (e, idx) => {
     const { value } = e.target;

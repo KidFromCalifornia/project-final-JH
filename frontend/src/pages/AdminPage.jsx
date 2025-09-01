@@ -16,16 +16,37 @@ const AdminPage = () => {
 
   useEffect(() => {
     if (!isAdmin) return;
-    Promise.all([
-      fetch(`${API_URL}/cafes`).then((res) => res.json()),
-      fetch(`${API_URL}/cafeSubmissions`).then((res) => res.json()),
-      fetch(`${API_URL}/tastings/public`).then((res) => res.json()),
-    ]).then(([cafesRes, submissionsRes, tastingsRes]) => {
-      setCafes(cafesRes.data || []);
-      setSubmissions(submissionsRes.data || []);
-      setTastings(tastingsRes.data || []);
-      setLoading(false);
-    });
+    
+    const fetchAdminData = async () => {
+      try {
+        const [cafesRes, submissionsRes, tastingsRes] = await Promise.all([
+          fetch(`${API_URL}/cafes`),
+          fetch(`${API_URL}/cafeSubmissions`),
+          fetch(`${API_URL}/tastings/public`),
+        ]);
+
+        // Check if all responses are ok
+        if (!cafesRes.ok || !submissionsRes.ok || !tastingsRes.ok) {
+          throw new Error('One or more API calls failed');
+        }
+
+        const [cafesData, submissionsData, tastingsData] = await Promise.all([
+          cafesRes.json(),
+          submissionsRes.json(),
+          tastingsRes.json(),
+        ]);
+
+        setCafes(cafesData.data || []);
+        setSubmissions(submissionsData.data || []);
+        setTastings(tastingsData.data || []);
+      } catch (error) {
+        console.error('Error fetching admin data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdminData();
   }, [isAdmin]);
 
   if (!isAdmin) {

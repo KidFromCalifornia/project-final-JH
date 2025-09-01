@@ -22,14 +22,25 @@ const UserPage = () => {
     const fetchUserSubmissions = async () => {
       if (isLoggedIn) {
         setLoading(true);
-        const res = await fetch(`${API_URL}/cafeSubmissions/my-submissions`, {
-          headers: {
-            Authorization: `Bearer ${useCafeStore.getState().userToken}`,
-          },
-        });
-        const data = await res.json();
-        setUserSubmissions(data.data || []);
-        setLoading(false);
+        try {
+          const res = await fetch(`${API_URL}/cafeSubmissions/my-submissions`, {
+            headers: {
+              Authorization: `Bearer ${useCafeStore.getState().userToken}`,
+            },
+          });
+          
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          
+          const data = await res.json();
+          setUserSubmissions(data.data || []);
+        } catch (error) {
+          console.error('Error fetching user submissions:', error);
+          setUserSubmissions([]);
+        } finally {
+          setLoading(false);
+        }
       } else {
         setUserSubmissions([]);
       }
@@ -38,34 +49,41 @@ const UserPage = () => {
     fetchUserSubmissions();
   }, [isLoggedIn, setUserSubmissions]);
 
-  const handleTastingSubmit = (formData) => {
+  const handleTastingSubmit = async (formData) => {
     const method = editingTasting ? 'PUT' : 'POST';
     const url = editingTasting
       ? `${API_URL}/tastings/${editingTasting._id}`
       : `${API_URL}/tastings`;
 
-    fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${useCafeStore.getState().userToken}`,
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          if (editingTasting) {
-            setTastings((prev) => prev.map((t) => (t._id === editingTasting._id ? data.data : t)));
-            setEditingTasting(null);
-          } else {
-            setTastings((prev) => [data.data, ...prev]);
-          }
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${useCafeStore.getState().userToken}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      
+      if (data.success) {
+        if (editingTasting) {
+          setTastings((prev) => prev.map((t) => (t._id === editingTasting._id ? data.data : t)));
+          setEditingTasting(null);
         } else {
-          console.error('Failed to submit tasting:', data.error);
+          setTastings((prev) => [data.data, ...prev]);
         }
-      })
-      .catch((error) => console.error('Error submitting tasting:', error));
+      } else {
+        console.error('Failed to submit tasting:', data.error);
+      }
+    } catch (error) {
+      console.error('Error submitting tasting:', error);
+    }
   };
 
   if (loading) {

@@ -6,7 +6,7 @@ export const apiCall = async (endpoint, options = {}) => {
 
   // Create abort controller for timeout
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+  const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
 
   const config = {
     headers: {
@@ -21,12 +21,18 @@ export const apiCall = async (endpoint, options = {}) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
     clearTimeout(timeoutId);
     
-    const data = await response.json();
-
     if (!response.ok) {
-      throw new Error(data.error || 'API request failed');
+      let errorMessage = 'API request failed';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      }
+      throw new Error(errorMessage);
     }
-
+    
+    const data = await response.json();
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
