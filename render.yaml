@@ -21,14 +21,8 @@ services:
       - key: PORT
         value: 10000
 
-  # Frontend Static Site
-  - type: static
-    name: stockholm-coffee-club-frontend
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://stockholm-coffee-club-backend.onrender.com/api
+# Note: Static sites need to be created manually in Render UI
+# The frontend will be deployed as a separate Static Site service
 
 databases:
   - name: stockholm-coffee-club-db
