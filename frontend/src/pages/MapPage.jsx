@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
@@ -10,7 +10,8 @@ import MapLegend from '../components/map/MapLegend';
 import ReusableFab from '../components/common/ReusableFab';
 import { useCafeStore } from '../stores/useCafeStore';
 import { getCustomIcon } from '../components/map/MapIcons';
-import MapLibreMap from '../components/map/MapLibreMap';
+
+const MapLibreMap = React.lazy(() => import('../components/map/MapLibreMap'));
 
 const MapPage = () => {
   const theme = useTheme();
@@ -134,16 +135,18 @@ const MapPage = () => {
       </Box>
 
       <MapLegend open={legendOpen} onClose={() => setLegendOpen(false)} />
-      <MapLibreMap
-        cafesToShow={cafesToShow}
-        showUserPin={showUserPin}
-        userLocation={userLocation}
-        theme={theme}
-        themeMode={themeMode}
-        selectedCafe={selectedCafe}
-        setSelectedCafe={setSelectedCafe}
-        getCustomIcon={getCustomIcon}
-      />
+      <Suspense fallback={<div>Loading map...</div>}>
+        <MapLibreMap
+          cafesToShow={cafesToShow}
+          showUserPin={showUserPin}
+          userLocation={userLocation}
+          theme={theme}
+          themeMode={themeMode}
+          selectedCafe={selectedCafe}
+          setSelectedCafe={setSelectedCafe}
+          getCustomIcon={getCustomIcon}
+        />
+      </Suspense>
     </Box>
   );
 };
