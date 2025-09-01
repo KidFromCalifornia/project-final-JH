@@ -1,40 +1,29 @@
 {
-  "name": "project-final-frontend",
-  "description": "Frontend part of final project",
+  "name": "frontend",
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "prettier": "prettier --write ."
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.5",
-    "@emotion/styled": "^11.13.5",
-    "@mui/icons-material": "^5.15.21",
-    "@mui/material": "^5.15.21",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.4",
+    "@mui/material": "^5.14.4",
     "@vis.gl/react-maplibre": "^8.0.4",
     "jwt-decode": "^4.0.0",
     "maplibre-gl": "^5.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^5.5.0",
-    "react-router-dom": "^6.30.1",
-    "sweetalert2": "^11.22.3",
-    "webfontloader": "^1.6.28",
-    "zustand": "^5.0.7"
+    "react-router-dom": "^7.8.2",
+    "sweetalert2": "^11.22.5",
+    "zustand": "^4.3.9"
   },
   "devDependencies": {
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
-    "eslint": "^8.45.0",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.3",
-    "vite": "^6.3.5",
-    "vite-plugin-svgr": "^4.5.0"
+    "vite": "^5.3.5",
+    "vite-plugin-svgr": "^4.0.0"
   }
 }

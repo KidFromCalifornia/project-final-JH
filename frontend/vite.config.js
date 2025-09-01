@@ -12,7 +12,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // More specific checks first
           if (id.includes('node_modules/@mui/icons-material')) {
             return 'mui-icons';
           }
@@ -28,7 +27,6 @@ export default defineConfig({
           if (id.includes('node_modules/zustand')) {
             return 'zustand';
           }
-          // General catch-all for other vendors
           if (id.includes('node_modules')) {
             return 'vendor';
           }
@@ -37,6 +35,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['@mui/icons-material', '@emotion/react', '@emotion/styled'],
+    include: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
   },
 });
