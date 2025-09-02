@@ -1,19 +1,26 @@
 import express from 'express';
 import { Cafe, CafeSubmission } from '../models/cafeModel.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
-import { cafeSubmissionSchema } from '../middleware/validation.js';
 
 const router = express.Router();
 
 // POST create new cafe submission
 
 router.post('/', authenticateToken, async (req, res) => {
-  // Validate request body
-  const result = cafeSubmissionSchema.safeParse(req.body);
-  if (!result.success) {
+  // Simple validation - check required fields
+  const { name, locations, category, features } = req.body;
+  
+  if (!name || !locations || !Array.isArray(locations) || locations.length === 0) {
     return res.status(400).json({
       success: false,
-      error: result.error.errors,
+      error: 'Name and at least one location are required',
+    });
+  }
+  
+  if (!category || !features || !Array.isArray(features)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Category and features are required',
     });
   }
 
