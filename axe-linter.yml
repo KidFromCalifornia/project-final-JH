@@ -1,0 +1,20 @@
+rules:
+  heading-order: false # Disable this rule
+  color-contrast: true # Check for sufficient color contrast
+  html-has-lang: true # Ensure HTML has a lang attribute
+  image-alt: true # Check that images have alt text
+  landmark-one-main: true # Ensure there's one main landmark
+  page-has-heading-one: true # Check that pages have an h1
+
+exclude:
+  - 'tests/**/*.html' # Skip test files
+  - 'build/**/*.html' # Skip build output
+  - 'dist/**/*.html' # Skip distribution files
+
+global-components:
+  AxeButton: button # Lint <AxeButton> as though it was a <button>
+  MuiTextField: input # Lint Material-UI text fields as inputs
+
+global-libraries:
+  - 'react-native' # Run React Native rules
+  - '@mui/material' # Enable linting MaterialUI components

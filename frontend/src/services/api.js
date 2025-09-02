@@ -60,6 +60,15 @@ export const tastingAPI = {
       method: 'POST',
       body: JSON.stringify(tastingData),
     }),
+  update: (id, tastingData) =>
+    apiCall(`/tastings/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(tastingData),
+    }),
+  delete: (id) =>
+    apiCall(`/tastings/${id}`, {
+      method: 'DELETE',
+    }),
   search: (query) => apiCall(`/tastings/public/search?query=${encodeURIComponent(query)}`),
 };
 

@@ -10,6 +10,7 @@ import MapLegend from '../components/map/MapLegend';
 import ReusableFab from '../components/common/ReusableFab';
 import { useCafeStore } from '../stores/useCafeStore';
 import { getCustomIcon } from '../components/map/MapIcons';
+import { cafeAPI } from '../services/api';
 
 const MapLibreMap = React.lazy(() => import('../components/map/MapLibreMap'));
 
@@ -61,15 +62,7 @@ const MapPage = () => {
     if (cafes.length === 0) {
       const fetchCafes = async () => {
         try {
-          const res = await fetch(
-            `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/cafes`
-          );
-
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-
-          const data = await res.json();
+          const data = await cafeAPI.getAll();
           setCafes(data.data || []);
         } catch (error) {
           console.error('Error fetching cafes:', error);

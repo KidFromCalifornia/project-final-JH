@@ -4,6 +4,14 @@ import App from './App.jsx';
 import './styles/fontLoader.js'; // Load Stockholm Type font
 import ReactDOM from 'react-dom/client';
 
+// Initialize axe-core for accessibility testing in development mode
+if (process.env.NODE_ENV !== 'production') {
+  import('@axe-core/react').then((axe) => {
+    axe.default(React, ReactDOM, 1000); // Run after 1 second
+    console.log('Accessibility testing enabled with axe-core');
+  });
+}
+
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
 root.render(

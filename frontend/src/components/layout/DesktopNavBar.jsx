@@ -185,6 +185,8 @@ const DesktopNavBar = ({
         onClose={() => setShowLogin(false)}
         maxWidth="xs"
         fullWidth
+        disableRestoreFocus
+        keepMounted={false}
         sx={{
           '& .MuiDialog-container': {
             alignItems: 'center',

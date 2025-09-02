@@ -61,6 +61,9 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
       sx={{
         zIndex: 1400, // Higher than FABs (which are at 1301)
       }}
+      // Add accessibility props to improve focus management
+      disableRestoreFocus
+      keepMounted={false}
       PaperProps={{
         sx: {
           borderRadius: { xs: 0, sm: 2 }, // No border radius on mobile
@@ -100,6 +103,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
             onClick={handleClose}
             size="small"
             sx={{ color: theme.palette.text.secondary }}
+            aria-label="Close dialog"
           >
             <CloseIcon />
           </IconButton>
@@ -116,8 +120,8 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
           '&::-webkit-scrollbar': {
             display: 'none',
           },
-          '-ms-overflow-style': 'none', // IE and Edge
-          'scrollbar-width': 'none', // Firefox
+          msOverflowStyle: 'none', // IE and Edge
+          scrollbarWidth: 'none', // Firefox
         }}
       >
         <List disablePadding>
@@ -133,7 +137,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
                   </Typography>
                 }
                 secondary={
-                  <Typography caption variant="body2" color="text.primary">
+                  <Typography variant="body2" color="text.primary">
                     {item.description}
                   </Typography>
                 }

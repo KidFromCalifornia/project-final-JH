@@ -510,7 +510,14 @@ const MobileBottomNav = () => {
       </Drawer>
 
       {/* Login dialog */}
-      <Dialog open={showLogin} onClose={() => setShowLogin(false)} maxWidth="xs" fullWidth>
+      <Dialog
+        open={showLogin}
+        onClose={() => setShowLogin(false)}
+        maxWidth="xs"
+        fullWidth
+        disableRestoreFocus
+        keepMounted={false}
+      >
         <DialogContent sx={{ p: 0 }}>
           <LoginForm onClose={() => setShowLogin(false)} setIsLoggedIn={setIsLoggedIn} />
         </DialogContent>
@@ -522,6 +529,8 @@ const MobileBottomNav = () => {
         onClose={() => setShowAddCafe(false)}
         maxWidth="sm"
         fullWidth
+        disableRestoreFocus
+        keepMounted={false}
         sx={{
           '& .MuiDialog-container': {
             alignItems: 'flex-start',
