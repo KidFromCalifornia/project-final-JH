@@ -51,7 +51,13 @@ const startServerWithBackup = (app, ports, index = 0) => {
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [
+      'http://localhost:5173', // Vite dev server
+      'http://localhost:3000', // React default dev server
+      'https://stockholmscoffeeclub.netlify.app', // Production frontend
+      'https://stockholmscoffeeclub.netlify.app/', // With trailing slash
+      process.env.FRONTEND_URL,
+    ].filter(Boolean),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
