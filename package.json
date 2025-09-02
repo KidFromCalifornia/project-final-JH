@@ -1,6 +1,9 @@
 {
   "name": "project-final-parent",
   "version": "1.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "postinstall": "npm install --prefix backend",
     "build": "cd frontend && npm install && npm run build",
