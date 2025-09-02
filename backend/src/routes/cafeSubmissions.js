@@ -9,14 +9,14 @@ const router = express.Router();
 router.post('/', authenticateToken, async (req, res) => {
   // Simple validation - check required fields
   const { name, locations, category, features } = req.body;
-  
+
   if (!name || !locations || !Array.isArray(locations) || locations.length === 0) {
     return res.status(400).json({
       success: false,
       error: 'Name and at least one location are required',
     });
   }
-  
+
   if (!category || !features || !Array.isArray(features)) {
     return res.status(400).json({
       success: false,

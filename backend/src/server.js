@@ -128,9 +128,21 @@ connectDB()
       }
     });
 
-    // Add global error handling middleware
-    app.use(notFoundHandler);
-    app.use(globalErrorHandler);
+    // Add simple error handling
+    app.use('*', (req, res) => {
+      res.status(404).json({
+        success: false,
+        error: 'Route not found'
+      });
+    });
+
+    app.use((err, req, res, next) => {
+      console.error('Server error:', err);
+      res.status(500).json({
+        success: false,
+        error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+      });
+    });
 
     // Start server with backup port functionality
     startServerWithBackup(app, backupPorts);
