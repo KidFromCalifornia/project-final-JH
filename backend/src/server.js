@@ -59,6 +59,11 @@ app.use(
 );
 app.use(express.json());
 
+// Health check endpoint (before DB connection for immediate availability)
+app.get('/healthz', (_, res) => {
+  res.status(200).send('OK');
+});
+
 // Basic route
 app.get('/', (_, res) => {
   res.json({
@@ -155,8 +160,5 @@ connectDB()
     console.error('MongoDB connection error:', err);
     process.exit(1);
   });
-app.get('/healthz', (_, res) => {
-  res.status(200).send('OK');
-});
 
 export default connectDB;
