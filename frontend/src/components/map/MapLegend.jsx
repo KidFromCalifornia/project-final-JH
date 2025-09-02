@@ -149,7 +149,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
         <Box sx={{ mt: 2, p: 2, bgcolor: theme.palette.primary.main, borderRadius: 1 }}>
           <Typography variant="caption" color="text.secondary">
             <strong>Tip:</strong> Too many options? Use the filters in the menu to specify what
-            you're looking for.
+            you&apos;re looking for.
           </Typography>
         </Box>
       </DialogContent>

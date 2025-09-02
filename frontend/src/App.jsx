@@ -10,6 +10,7 @@ const TastingsPage = lazy(() => import('./pages/TastingsPage.jsx'));
 const CafePage = lazy(() => import('./pages/CafePage.jsx'));
 const UserPage = lazy(() => import('./pages/UserPage.jsx'));
 const AdminPage = lazy(() => import('./pages/AdminPage.jsx'));
+const AboutMePage = lazy(() => import('./pages/AboutMePage.jsx'));
 
 const App = () => {
   // Global state for authentication
@@ -81,6 +82,7 @@ const App = () => {
               path="/admin"
               element={<AdminPage isLoggedIn={isLoggedIn} currentUser={currentUser} />}
             />
+            <Route path="/about" element={<AboutMePage />} />
             {/* Catch-all route for unmatched paths */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

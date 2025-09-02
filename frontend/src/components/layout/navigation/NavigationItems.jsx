@@ -8,6 +8,7 @@ import {
   ListItemText,
   Tooltip,
   Divider,
+  Box,
 } from '@mui/material';
 import {
   Map as MapIcon,
@@ -17,6 +18,7 @@ import {
   DoorFront as DoorFrontIcon,
   Login as LoginIcon,
   Logout as LogoutIcon,
+  Info as InfoIcon,
 } from '@mui/icons-material';
 
 const NavigationItems = ({
@@ -37,7 +39,7 @@ const NavigationItems = ({
   };
 
   return (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <List>
         <ListItem disablePadding sx={{ display: 'block' }}>
           <Tooltip title="Map" arrow placement="right" disableHoverListener={open}>
@@ -100,9 +102,7 @@ const NavigationItems = ({
           </ListItem>
         )}
       </List>
-
       <Divider />
-
       <List>
         {!isLoggedIn && (
           <ListItem disablePadding sx={{ display: 'block' }}>
@@ -130,7 +130,22 @@ const NavigationItems = ({
           </ListItem>
         )}
       </List>
-    </>
+      {/* Separate divider and list for About Me, positioned at the bottom */}
+      <Box sx={{ flexGrow: 1 }} /> {/* This pushes the About Me link to the bottom */}
+      <Divider />
+      <List>
+        <ListItem disablePadding sx={{ display: 'block' }}>
+          <Tooltip title="About Me" arrow placement="right" disableHoverListener={open}>
+            <ListItemButton component={Link} to="/about">
+              <ListItemIcon>
+                <InfoIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
+              <ListItemText primary="About Me" />
+            </ListItemButton>
+          </Tooltip>
+        </ListItem>
+      </List>
+    </Box>
   );
 };
 

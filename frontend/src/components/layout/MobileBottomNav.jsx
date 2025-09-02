@@ -40,6 +40,7 @@ import {
   DarkMode as DarkModeIcon,
   FilterList as FilterListIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
+  Info as InfoIcon,
 } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -406,6 +407,17 @@ const MobileBottomNav = () => {
                 }}
               />
             </Box>
+          </ListItem>
+
+          <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
+
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/about" onClick={closeDrawers}>
+              <ListItemIcon>
+                <InfoIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
+              <ListItemText primary="About Me" />
+            </ListItemButton>
           </ListItem>
         </List>
       </Drawer>

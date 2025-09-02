@@ -1,6 +1,23 @@
 import React from 'react';
 import { Box, Card, CardContent, Skeleton, useTheme } from '@mui/material';
 
+// Define styles object for consistent styling across components
+const styles = {
+  centerContent: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  animations: {
+    bounce: {
+      '@keyframes bounce': {
+        '0%, 100%': { transform: 'translateY(0)' },
+        '50%': { transform: 'translateY(-10px)' },
+      },
+    },
+  },
+};
+
 // Enhanced loading cards with coffee-themed styling
 export const LoadingTastingCard = () => {
   const theme = useTheme();

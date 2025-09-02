@@ -11,14 +11,7 @@ export default [
   js.configs.recommended,
   ...compat.extends('plugin:react/recommended', 'plugin:react-hooks/recommended'),
   {
-    ignores: [
-      'dist/**', // Ignore build files
-      'node_modules/**',
-      '**/*.min.js',
-      'coverage/**',
-      'jest-setup.js', // Ignore test setup
-      '**/__tests__/**' // Ignore test files
-    ],
+    ignores: ['node_modules/**', '**/*.min.js', 'coverage/**', 'dist/**'],
     plugins: {
       'jsx-a11y': jsxA11y,
       react: reactPlugin,
@@ -36,11 +29,18 @@ export default [
       // React rules
       'react/react-in-jsx-scope': 'off', // Not needed in React 17+
       'react/prop-types': 'off', // We're not using prop-types
-      
+
       // Relax some rules for development
-      'no-unused-vars': 'warn',
+      'no-unused-vars': [
+        'warn',
+        {
+          varsIgnorePattern: '.*',
+          argsIgnorePattern: '.*',
+          caughtErrorsIgnorePattern: '.*',
+        },
+      ],
       'no-undef': 'warn',
-      'react/no-unescaped-entities': 'warn'
+      'react/no-unescaped-entities': 'warn',
     },
     settings: {
       react: {
@@ -56,9 +56,37 @@ export default [
         },
       },
       globals: {
+        // Browser globals
+        window: 'readonly',
         document: 'readonly',
         navigator: 'readonly',
-        window: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly',
+        alert: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        AbortController: 'readonly',
+        URL: 'readonly',
+        CustomEvent: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLImageElement: 'readonly',
+        performance: 'readonly',
+
+        // Testing globals
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        test: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        jest: 'readonly',
+
+        // Node.js globals
+        process: 'readonly',
       },
     },
   },

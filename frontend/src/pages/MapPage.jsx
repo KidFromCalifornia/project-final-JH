@@ -85,77 +85,95 @@ const MapPage = () => {
   const clearFilters = useCafeStore((state) => state.clearFilters);
 
   return (
-    <Box
-      sx={{
-        width: '100vw',
-        height: '100vh',
-        position: 'relative',
-      }}
-    >
-      <Typography hidden variant="h1">
-        Stockholm's Coffee Club Map
-      </Typography>
-
-      {/* FABs using reusable component */}
-      <Box
+    <>
+      {/* Screen reader only heading - for accessibility */}
+      <Typography
+        variant="h1"
+        component="h1"
         sx={{
-          position: 'fixed',
-          zIndex: mobileDrawerOpen ? 1300 : 1301, // Higher z-index when mobile drawer is open
-          bottom: {
-            xs: mobileDrawerOpen ? 'auto' : '2.75rem',
-            sm: 'auto',
-          },
-          top: {
-            xs: mobileDrawerOpen ? '1rem' : 'auto',
-            sm: '4.5rem',
-          },
-          right: { xs: 'auto', sm: '1.875rem' },
-          left: { xs: '50%', sm: 'auto' },
-          transform: { xs: 'translateX(-50%)', sm: 'none' },
-          display: 'flex',
-          flexDirection: { xs: 'row', sm: 'column' },
-          gap: 2,
-          alignItems: 'center',
-          transition: 'all 0.3s ease-in-out', // Smooth transition when drawer opens/closes
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
         }}
       >
-        <ReusableFab
-          icon={<MyLocationIcon fontSize="large" />}
-          tooltipTitle=" Display My Location"
-          onClick={handleGeotag}
-          ariaLabel="geotag"
-        />
+        Stockholm&apos;s Coffee Club Map
+      </Typography>
 
-        <ReusableFab
-          icon={<ClearIcon fontSize="large" />}
-          tooltipTitle="Clear Filters"
-          onClick={clearFilters}
-          ariaLabel="Clear all filters"
-          showCondition={hasActiveFilters}
-        />
+      {/* Map container */}
+      <Box
+        sx={{
+          width: '100vw',
+          height: '100vh',
+          position: 'relative',
+        }}
+      >
+        {/* FABs using reusable component */}
+        <Box
+          sx={{
+            position: 'fixed',
+            zIndex: mobileDrawerOpen ? 1300 : 1301, // Higher z-index when mobile drawer is open
+            bottom: {
+              xs: mobileDrawerOpen ? 'auto' : '2.75rem',
+              sm: 'auto',
+            },
+            top: {
+              xs: mobileDrawerOpen ? '1rem' : 'auto',
+              sm: '4.5rem',
+            },
+            right: { xs: 'auto', sm: '1.875rem' },
+            left: { xs: '50%', sm: 'auto' },
+            transform: { xs: 'translateX(-50%)', sm: 'none' },
+            display: 'flex',
+            flexDirection: { xs: 'row', sm: 'column' },
+            gap: 2,
+            alignItems: 'center',
+            transition: 'all 0.3s ease-in-out', // Smooth transition when drawer opens/closes
+          }}
+        >
+          <ReusableFab
+            icon={<MyLocationIcon fontSize="large" />}
+            tooltipTitle=" Display My Location"
+            onClick={handleGeotag}
+            ariaLabel="geotag"
+          />
 
-        <ReusableFab
-          icon={<MapIcon fontSize="large" />}
-          tooltipTitle="Display Map Legend"
-          onClick={() => setLegendOpen(true)}
-          ariaLabel="map legend"
-        />
+          <ReusableFab
+            icon={<ClearIcon fontSize="large" />}
+            tooltipTitle="Clear Filters"
+            onClick={clearFilters}
+            ariaLabel="Clear all filters"
+            showCondition={hasActiveFilters}
+          />
+
+          <ReusableFab
+            icon={<MapIcon fontSize="large" />}
+            tooltipTitle="Display Map Legend"
+            onClick={() => setLegendOpen(true)}
+            ariaLabel="map legend"
+          />
+        </Box>
+
+        <MapLegend open={legendOpen} onClose={() => setLegendOpen(false)} />
+        <Suspense fallback={<div>Loading map...</div>}>
+          <MapLibreMap
+            cafesToShow={cafesToShow}
+            showUserPin={showUserPin}
+            userLocation={userLocation}
+            theme={theme}
+            themeMode={themeMode}
+            selectedCafe={selectedCafe}
+            setSelectedCafe={setSelectedCafe}
+            getCustomIcon={getCustomIcon}
+          />
+        </Suspense>
       </Box>
-
-      <MapLegend open={legendOpen} onClose={() => setLegendOpen(false)} />
-      <Suspense fallback={<div>Loading map...</div>}>
-        <MapLibreMap
-          cafesToShow={cafesToShow}
-          showUserPin={showUserPin}
-          userLocation={userLocation}
-          theme={theme}
-          themeMode={themeMode}
-          selectedCafe={selectedCafe}
-          setSelectedCafe={setSelectedCafe}
-          getCustomIcon={getCustomIcon}
-        />
-      </Suspense>
-    </Box>
+    </>
   );
 };
 

@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -9,12 +10,13 @@
     "postinstall": "npm run build",
     "lint": "eslint . --ext .js,.jsx",
     "lint:fix": "eslint . --ext .js,.jsx --fix",
-    "a11y": "eslint . --ext .js,.jsx"
+    "a11y": "eslint . --ext .js,.jsx --ignore-pattern 'dist/**'"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.21",
+    "@mui/lab": "^5.0.0-alpha.153",
     "@mui/material": "^5.15.21",
     "@vis.gl/react-maplibre": "^8.0.4",
     "jwt-decode": "^4.0.0",

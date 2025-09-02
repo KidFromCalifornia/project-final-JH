@@ -1,7 +1,7 @@
 import { Map, Marker, Popup } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import maplibregl from 'maplibre-gl';
-import { MAP_STYLE_LIGHT, MAP_STYLE_DARK } from '../../styles/mapStyles';
+import { LIGHT_MAP_STYLE, DARK_MAP_STYLE } from '../../styles/mapStyles';
 import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
@@ -19,8 +19,11 @@ export default function MapLibreMap({
     <Map
       mapLib={maplibregl}
       initialViewState={{ longitude: 18.0686, latitude: 59.3293, zoom: 12 }}
-      style={{ width: '100vw', height: '100vh' }}
-      mapStyle={themeMode === 'dark' ? MAP_STYLE_DARK : MAP_STYLE_LIGHT}
+      style={{
+        width: '100vw',
+        height: '100vh',
+      }}
+      mapStyle={themeMode === 'dark' ? DARK_MAP_STYLE : LIGHT_MAP_STYLE}
     >
       {/* Café markers */}
       {cafesToShow.flatMap((cafe) => {
