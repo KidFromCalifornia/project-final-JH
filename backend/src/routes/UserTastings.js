@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import { authenticateToken } from '../middleware/auth.js';
 import { CoffeeTasting } from '../models/TastingsModel.js';
 import { validateObjectId } from '../middleware/validateObjectId.js';
@@ -12,16 +11,20 @@ router.get('/public', async (req, res) => {
       .populate('cafeId', 'name website hasMultipleLocations locations')
       .populate('userId', 'username')
       .sort({ createdAt: -1 })
-      .limit(20);
+      .limit(20)
+      .lean(); // Use lean for better performance
+
+    // Filter out any tastings with missing refs
+    const validTastings = publicTastingNotes.filter((tasting) => tasting.cafeId && tasting.userId);
 
     res.json({
       success: true,
-      count: publicTastingNotes.length,
-      message: `Latest ${publicTastingNotes.length} public coffee tasting notes from the community`,
-      data: publicTastingNotes,
+      count: validTastings.length,
+      message: `Latest ${validTastings.length} public coffee tasting notes from the community`,
+      data: validTastings,
     });
   } catch (error) {
-    console.error('Error in route:', error);
+    console.error('Error fetching public tastings:', error);
     res.status(500).json({
       success: false,
       error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
