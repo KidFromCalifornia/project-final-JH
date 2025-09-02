@@ -11,7 +11,6 @@ Stockholm has an incredible coffee culture, but finding the best specialty coffe
 - **User authentication** with personal profiles and admin management
 - **Mobile-first responsive design** for on-the-go coffee discovery
 
-## Tech Stack
 
 ### Frontend
 
@@ -40,24 +39,6 @@ Stockholm has an incredible coffee culture, but finding the best specialty coffe
 - 📱 Mobile-responsive design
 - 👑 Admin panel for content management
 
-## Installation & Setup
-
-```bash
-# Clone the repository
-git clone [your-repo-url]
-cd project-final-JH-1
-
-# Backend setup
-cd backend
-npm install
-# Create .env file with your MongoDB connection string and JWT secret
-npm run dev
-
-# Frontend setup
-cd ../frontend
-npm install
-npm run dev
-```
 
 ## API Documentation
 
@@ -98,14 +79,13 @@ I approached this project with a mobile-first mindset, focusing on the core user
 Given more time, I would add:
 
 - Real-time notifications for new cafe approvals
-- Social features (following users, sharing tastings)
-- Advanced analytics dashboard for admins
-- Integration with coffee shop APIs for live hours/menu data
 - Push notifications for nearby coffee recommendations
+- storefront
+- interactive game to learn about brewing coffee 
 
 ## View it live
 
-- **Frontend**: [Your deployed frontend URL]
-- **Backend**: [Your deployed backend URL]
-- **GitHub**: [Your repository URL]
-# Clean deploy Mon Sep  1 16:45:28 CEST 2025
+- **Frontend**: https://stockholmscoffeeclub.netlify.app/
+- **Backend**: https://stockhomscoffeeclub.onrender.com/api
+- **GitHub**: https://github.com/KidFromCalifornia/project-final-JH
+
