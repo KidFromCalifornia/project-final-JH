@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/database.js';
+import { seedCafes } from './scripts/seedCafes.js';
 
 // Import routes
 import cafeRoutes from './routes/cafes.js';
@@ -14,6 +15,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Define backup ports in case primary port is busy
+const backupPorts = [PORT, 3002, 3003, 3004, 3005];
 
 // Function to try starting server on different ports
 const startServerWithBackup = (app, ports, index = 0) => {
