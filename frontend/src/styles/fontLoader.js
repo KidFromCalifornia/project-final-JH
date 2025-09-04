@@ -1,5 +1,16 @@
 // Stockholm Type font loader following official Stockholm guidelines
 // Based on: https://font.stockholm.se/dokumentation/
+
+const optimizeFont = () => {
+  const style = document.createElement('style');
+  style.textContent = `
+    @font-face {
+      font-family: 'Stockholm Type';
+      font-display: swap; /* Improve loading performance */
+    }
+  `;
+  document.head.appendChild(style);
+};
 const loadStockholmFont = () => {
   // Check if font is already loaded
   if (
@@ -48,5 +59,6 @@ const loadStockholmFont = () => {
 
 // Load font when module is imported
 loadStockholmFont();
+optimizeFont();
 
 export default loadStockholmFont;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { cafeAPI } from '../../services/api';
-import { SwalAlertStyles, showAlert } from '../../styles/SwalAlertStyles';
+import { useAlert } from '../../context/AlertContext';
 import {
   Box,
   TextField,
@@ -44,6 +44,7 @@ const FEATURE_OPTIONS = [
 
 const NewCafeForm = ({ onClose }) => {
   const theme = useTheme();
+  const { showSnackbar } = useAlert();
 
   // Reusable TextField styling to match LoginForm
   const textFieldStyles = {
@@ -260,11 +261,7 @@ const NewCafeForm = ({ onClose }) => {
     } catch (err) {
       // Only show sweet alert if server is completely down (network error)
       if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
-        showAlert({
-          title: 'Server Unavailable',
-          text: "We couldn't reach the server. Please try again later.",
-          icon: 'error',
-        });
+        showSnackbar("We couldn't reach the server. Please try again later.", 'error');
       } else {
         // For other errors, use inline status display
         setStatus("We couldn't submit your suggestion. Please try again.");

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCafeStore } from '../../stores/useCafeStore';
 import AppBar from '@mui/material/AppBar';
@@ -20,16 +20,18 @@ import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
-import FilterDropdown from '../common/FilterDropdown';
-import LoginForm from '../forms/LoginForm';
-import NewCafeForm from '../forms/NewCafeForm';
+
+import LoadingLogo from '../common/LoadingLogo';
+
+// Lazy load forms for better performance
+const LoginForm = React.lazy(() => import('../forms/LoginForm'));
+const NewCafeForm = React.lazy(() => import('../forms/NewCafeForm'));
 
 import {
   Login as LoginIcon,
   Logout as LogoutIcon,
   DoorFront as DoorFrontIcon,
   Menu as MenuIcon,
-  ChevronLeft as ChevronLeftIcon,
   AdminPanelSettings as AdminPanelSettingsIcon,
   RateReview as RateReviewIcon,
   Map as MapIcon,
@@ -737,7 +739,9 @@ const MobileBottomNav = () => {
         keepMounted={false}
       >
         <DialogContent sx={{ p: 0 }}>
-          <LoginForm onClose={() => setShowLogin(false)} setIsLoggedIn={setIsLoggedIn} />
+          <Suspense fallback={<LoadingLogo />}>
+            <LoginForm onClose={() => setShowLogin(false)} setIsLoggedIn={setIsLoggedIn} />
+          </Suspense>
         </DialogContent>
       </Dialog>
 
@@ -765,7 +769,9 @@ const MobileBottomNav = () => {
         }}
       >
         <DialogContent sx={{ p: 0 }}>
-          <NewCafeForm onClose={() => setShowAddCafe(false)} />
+          <Suspense fallback={<LoadingLogo />}>
+            <NewCafeForm onClose={() => setShowAddCafe(false)} />
+          </Suspense>
         </DialogContent>
       </Dialog>
 

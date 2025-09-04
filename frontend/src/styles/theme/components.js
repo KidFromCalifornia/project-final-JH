@@ -46,7 +46,32 @@ export const createComponents = (customTheme) => ({
       },
     }),
   },
+  MuiTooltip: {
+    styleOverrides: {
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        fontSize: '0.75rem',
+        borderRadius: customTheme.borderRadius / 2,
+      },
+    },
+  },
 
+  MuiChip: {
+    styleOverrides: {
+      root: {
+        borderRadius: customTheme.borderRadius / 2,
+        fontWeight: 500,
+      },
+    },
+  },
+
+  MuiDialog: {
+    styleOverrides: {
+      paper: {
+        borderRadius: customTheme.borderRadius,
+      },
+    },
+  },
   MuiButton: {
     styleOverrides: {
       root: ({ theme, ownerState }) => ({

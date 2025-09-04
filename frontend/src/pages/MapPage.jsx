@@ -8,6 +8,7 @@ import {
 } from '@mui/icons-material';
 import MapLegend from '../components/map/MapLegend';
 import ReusableFab from '../components/common/ReusableFab';
+import LoadingLogo from '../components/common/LoadingLogo';
 import { useCafeStore } from '../stores/useCafeStore';
 import { getCustomIcon } from '../components/map/MapIcons';
 import { cafeAPI } from '../services/api';
@@ -108,16 +109,15 @@ const MapPage = () => {
       {/* Map container */}
       <Box
         sx={{
-          width: '100vw',
-          height: '100vh',
-          position: 'relative',
+          marginTop: { xs: 0, sm: '-64px' }, // Negative top margin on desktop
+          marginLeft: { xs: 0, sm: '-72px' }, // Negative left margin on desktop
+          marginBottom: { xs: '-56px', sm: 0 },
         }}
       >
-        {/* FABs using reusable component */}
         <Box
           sx={{
             position: 'fixed',
-            zIndex: mobileDrawerOpen ? 1300 : 1301, // Higher z-index when mobile drawer is open
+            zIndex: mobileDrawerOpen ? 1300 : 1301,
             bottom: {
               xs: mobileDrawerOpen ? 'auto' : '2.75rem',
               sm: 'auto',
@@ -160,7 +160,8 @@ const MapPage = () => {
         </Box>
 
         <MapLegend open={legendOpen} onClose={() => setLegendOpen(false)} />
-        <Suspense fallback={<div>Loading map...</div>}>
+
+        <Suspense fallback={<LoadingLogo />}>
           <MapLibreMap
             cafesToShow={cafesToShow}
             showUserPin={showUserPin}

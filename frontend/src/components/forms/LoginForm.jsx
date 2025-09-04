@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Close as CloseIcon } from '@mui/icons-material';
 import { authAPI } from '../../services/api';
 import { useCafeStore } from '../../stores/useCafeStore';
 import {
@@ -13,20 +13,27 @@ import {
   Tooltip,
   useTheme,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { showAlert } from '../../styles/SwalAlertStyles';
+import { useAlert } from '../../context/AlertContext';
 
 const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   const theme = useTheme();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { showSnackbar } = useAlert();
+  const [formData, setFormData] = useState({
+    email: '',
+    identifier: '',
+    password: '',
+  });
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [identifier, setIdentifier] = useState('');
   const error = useCafeStore((state) => state.fetchError);
   const setError = useCafeStore((state) => state.setFetchError);
   const loading = useCafeStore((state) => state.loading);
   const setLoading = useCafeStore((state) => state.setLoading);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,23 +41,15 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
     setError('');
 
     try {
+      const { identifier, email, password } = formData;
       const trimmedIdentifier = identifier.trim();
       const trimmedPassword = password.trim();
-      let data;
 
-      if (isSignup) {
-        data = await authAPI.register({
-          username: trimmedIdentifier,
-          email: email.trim(),
-          password: trimmedPassword,
-        });
-      } else {
-        data = await authAPI.login({
-          username: trimmedIdentifier,
-          email: trimmedIdentifier,
-          password: trimmedPassword,
-        });
-      }
+      const payload = isSignup
+        ? { username: trimmedIdentifier, email: email.trim(), password: trimmedPassword }
+        : { username: trimmedIdentifier, email: trimmedIdentifier, password: trimmedPassword };
+
+      const data = isSignup ? await authAPI.register(payload) : await authAPI.login(payload);
 
       if (data.token || data.accessToken) {
         const token = data.token || data.accessToken;
@@ -58,18 +57,17 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         localStorage.setItem('userId', data.user.id);
         localStorage.setItem('username', data.user?.username || trimmedIdentifier);
 
-        // Decode role from token
-        let role = 'user';
+        // Get user role from token
         try {
           const { jwtDecode } = await import('jwt-decode');
           const decoded = jwtDecode(token);
-          role = decoded.role || 'user';
+          const role = decoded.role || 'user';
+          localStorage.setItem('userRole', role);
+          localStorage.setItem('admin', role === 'admin' ? 'true' : 'false');
         } catch {
-          role = 'user';
+          localStorage.setItem('userRole', 'user');
+          localStorage.setItem('admin', 'false');
         }
-
-        localStorage.setItem('userRole', role);
-        localStorage.setItem('admin', role === 'admin' ? 'true' : 'false');
 
         setIsLoggedIn(true);
         setCurrentUser({ username: data.user?.username || trimmedIdentifier });
@@ -78,24 +76,52 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         setError(
           data.error ||
             data.message ||
-            (isSignup ? 'Signup failed. Please check your input.' : 'Invalid credentials.')
+            (isSignup ? 'Signup failed. Please try again.' : 'Invalid credentials.')
         );
       }
     } catch (err) {
-      // Only show sweet alert if server is completely down (network error)
-      if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
-        showAlert({
-          title: 'Server Unavailable',
-          text: "We couldn't reach the server. Please try again later.",
-          icon: 'error',
-        });
-      } else {
-        // For other errors, just set the error state for inline display
-        setError(isSignup ? 'Signup failed. Please try again.' : 'Login failed. Please try again.');
+      if (
+        err.code === 'NETWORK_ERROR' ||
+        (typeof err.message === 'string' && err.message.includes('fetch')) ||
+        !err.response
+      ) {
+        // Show network error alert using the new AlertContext
+        showSnackbar(
+          "We couldn't reach the server. Please check your internet connection and try again.",
+          'error'
+        );
       }
+      setError(isSignup ? 'Signup failed. Please try again.' : 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Common styles for TextField components
+  const textFieldStyles = {
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: theme.palette.common.white,
+      minHeight: { xs: 56, sm: 48 },
+      '& fieldset': {
+        borderColor: theme.palette.text.primary,
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '& input': {
+        color: theme.palette.text.primary,
+        fontSize: { xs: '16px', sm: '14px' },
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: theme.palette.text.primary,
+      '&.Mui-focused': {
+        color: theme.palette.primary.main,
+      },
+    },
   };
 
   return (
@@ -117,20 +143,10 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         minHeight: 'auto',
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 1,
-        }}
-      >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
         <Typography
           variant="h4"
-          sx={{
-            color: theme.palette.text.primary,
-            fontSize: { xs: '1.5rem', sm: '2rem' },
-          }}
+          sx={{ color: theme.palette.text.primary, fontSize: { xs: '1.5rem', sm: '2rem' } }}
         >
           {isSignup ? 'Sign Up' : 'Login'}
         </Typography>
@@ -138,9 +154,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           onClick={onClose}
           aria-label="Close login form"
           color="inherit"
-          sx={{
-            p: { xs: 1, sm: 1.5 },
-          }}
+          sx={{ p: { xs: 1, sm: 1.5 } }}
         >
           <CloseIcon />
         </IconButton>
@@ -148,123 +162,51 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
 
       <form
         onSubmit={handleSubmit}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 16,
-          width: '100%',
-        }}
+        style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}
       >
         {isSignup && (
           <TextField
             label="Email"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             required
             fullWidth
             autoComplete="email"
             color="primary"
             variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                backgroundColor: theme.palette.common.white,
-                minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
-                '& fieldset': {
-                  borderColor: theme.palette.text.primary,
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '& input': {
-                  color: theme.palette.text.primary,
-                  fontSize: { xs: '16px', sm: '14px' }, // Prevents zoom on iOS
-                },
-              },
-              '& .MuiInputLabel-root': {
-                color: theme.palette.text.primary,
-                '&.Mui-focused': {
-                  color: theme.palette.primary.main,
-                },
-              },
-            }}
+            sx={textFieldStyles}
           />
         )}
+
         <TextField
           label={isSignup ? 'Username' : 'Username or Email'}
           type="text"
-          value={identifier}
-          onChange={(e) => setIdentifier(e.target.value)}
+          name="identifier"
+          value={formData.identifier}
+          onChange={handleChange}
           required
           fullWidth
           autoComplete="username"
           color="primary"
           variant="outlined"
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: theme.palette.common.white,
-              minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
-              '& fieldset': {
-                borderColor: theme.palette.text.primary,
-              },
-              '&:hover fieldset': {
-                borderColor: theme.palette.primary.main,
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: theme.palette.primary.main,
-              },
-              '& input': {
-                color: theme.palette.text.primary,
-                fontSize: { xs: '16px', sm: '14px' }, // Prevents zoom on iOS
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: theme.palette.text.primary,
-              '&.Mui-focused': {
-                color: theme.palette.primary.main,
-              },
-            },
-          }}
+          sx={textFieldStyles}
         />
+
         <Box sx={{ position: 'relative' }}>
           <TextField
             label="Password"
             type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             required
             fullWidth
             autoComplete="current-password"
             color="primary"
             variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                backgroundColor: theme.palette.common.white,
-                minHeight: { xs: 56, sm: 48 }, // Larger touch targets on mobile
-                '& fieldset': {
-                  borderColor: theme.palette.text.primary,
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '& input': {
-                  color: theme.palette.text.primary,
-                  fontSize: { xs: '16px', sm: '14px' }, // Prevents zoom on iOS
-                },
-              },
-              '& .MuiInputLabel-root': {
-                color: theme.palette.text.primary,
-                '&.Mui-focused': {
-                  color: theme.palette.primary.main,
-                },
-              },
-            }}
+            sx={textFieldStyles}
           />
           <Tooltip title={showPassword ? 'Hide password' : 'Show password'}>
             <IconButton
@@ -285,6 +227,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             </IconButton>
           </Tooltip>
         </Box>
+
         <Button
           type="submit"
           disabled={loading}
@@ -294,7 +237,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             py: { xs: 1.5, sm: 1.5 },
             px: { xs: 2, sm: 3 },
             mt: 1,
-            minHeight: { xs: 48, sm: 42 }, // Better touch targets
+            minHeight: { xs: 48, sm: 42 },
             fontSize: { xs: '16px', sm: '14px' },
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,

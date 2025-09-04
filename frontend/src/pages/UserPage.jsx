@@ -1,7 +1,10 @@
-import TastingForm from '../components/forms/TastingForm';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useCafeStore } from '../stores/useCafeStore';
-import { useEffect, useState } from 'react';
 import { Container, Box, Typography, List, ListItem, Divider, Button, Alert } from '@mui/material';
+import LoadingLogo from '../components/common/LoadingLogo';
+
+// Lazy load TastingForm for better performance
+const TastingForm = React.lazy(() => import('../components/forms/TastingForm'));
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -127,7 +130,9 @@ const UserPage = () => {
         Whatcha Drinking?
       </Typography>
       {isLoggedIn ? (
-        <TastingForm onSubmit={handleTastingSubmit} initialValues={editingTasting || {}} />
+        <Suspense fallback={<LoadingLogo />}>
+          <TastingForm onSubmit={handleTastingSubmit} initialValues={editingTasting || {}} />
+        </Suspense>
       ) : (
         <Alert severity="warning" sx={{ my: 2 }}>
           Please log in to add your own experience

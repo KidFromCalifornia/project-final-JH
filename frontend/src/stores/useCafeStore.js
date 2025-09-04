@@ -76,13 +76,16 @@ export const useCafeStore = create((set) => ({
       let allTastings = [];
       if (isLoggedIn) {
         const userTastings = await tastingAPI.getUserTastings();
-        allTastings = userTastings || []; // Remove .data
+        console.log('User tastings fetched:', userTastings);
+        allTastings = userTastings || []; // Ensure we have an array
       } else {
         const publicTastings = await tastingAPI.getPublic();
-        allTastings = publicTastings || []; // Remove .data
+        console.log('Public tastings fetched:', publicTastings);
+        allTastings = publicTastings || []; // Ensure we have an array
       }
-      set({ tastings: allTastings });
-    } catch {
+      set({ tastings: Array.isArray(allTastings) ? allTastings : [] });
+    } catch (error) {
+      console.error('Error fetching tastings:', error);
       set({ tastings: [] });
     }
     set({ loading: false });

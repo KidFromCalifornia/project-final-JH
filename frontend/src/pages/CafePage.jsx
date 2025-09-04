@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { cafeAPI } from '../services/api';
 import { useCafeStore } from '../stores/useCafeStore';
-import { showAlert } from '../styles/SwalAlertStyles';
+import { useAlert } from '../context/AlertContext';
 import { Box, Typography, Paper, Alert, CircularProgress } from '@mui/material';
 
 const CafePage = () => {
@@ -11,6 +11,7 @@ const CafePage = () => {
   const loading = useCafeStore((state) => state.loading);
   const setLoading = useCafeStore((state) => state.setLoading);
   const [error, setError] = useState(null);
+  const { showSnackbar } = useAlert();
 
   useEffect(() => {
     if (!cafeId) return;
@@ -25,11 +26,7 @@ const CafePage = () => {
         setLoading(false);
         // Only show sweet alert if server is completely down (network error)
         if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
-          showAlert({
-            title: 'Server Unavailable',
-            text: "We couldn't reach the server. Please try again later.",
-            icon: 'error',
-          });
+          showSnackbar("We couldn't reach the server. Please try again later.", 'error');
         } else {
           // For other errors, use inline error display
           setError("We couldn't load this cafe. Please try again.");

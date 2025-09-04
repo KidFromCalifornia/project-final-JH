@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCafeStore } from '../../stores/useCafeStore';
 import { apiCall } from '../../services/api';
-import { SwalAlertStyles, showAlert } from '../../styles/SwalAlertStyles';
+import { useAlert } from '../../context/AlertContext';
 import {
   TextField,
   Checkbox,
@@ -26,6 +26,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const TastingForm = ({ onSubmit, initialValues = {} }) => {
   const theme = useTheme();
+  const { showSnackbar } = useAlert();
 
   // Reusable TextField styling to match LoginForm
   const textFieldStyles = {
@@ -97,11 +98,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         setOptions(data.enums || {});
       } catch (error) {
         if (error.code === 'NETWORK_ERROR' || error.message?.includes('fetch') || !error.response) {
-          showAlert({
-            title: 'Server Unavailable',
-            text: "We couldn't reach the server. Please try again later.",
-            icon: 'error',
-          });
+          showSnackbar("We couldn't reach the server. Please try again later.", 'error');
         } else {
           setFetchError("We couldn't load form options. Please try again.");
         }
@@ -349,13 +346,12 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                     max={5}
                     icon={<FavoriteIcon fontSize="inherit" />}
                     emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                    onChange={(e, value) => setForm((prev) => ({ ...prev, rating: value || 1 }))}
+                    onChange={(_, value) => setForm((prev) => ({ ...prev, rating: value || 1 }))}
                     sx={{
                       mt: 1,
                       '& .MuiRating-iconFilled': { color: theme.palette.accent.main },
                       '& .MuiRating-iconEmpty': { color: 'rgba(0, 0, 0, 0.26)' },
                     }}
-                    aria-label="Overall Rating"
                   />
                 </Tooltip>
                 <FormHelperText sx={{ color: theme.palette.text.secondary }}>
@@ -383,7 +379,6 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                       xs: 'repeat(2, 1fr)',
                       sm: 'repeat(3, 1fr)',
                       md: 'repeat(4, 1fr)',
-                      lg: 'repeat(5, 1fr)',
                     },
                     gap: 1,
                     mt: 1,

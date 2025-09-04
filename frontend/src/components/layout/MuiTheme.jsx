@@ -21,7 +21,7 @@ const MuiTheme = ({ children }) => {
     };
 
     const palette = createPalette(themeMode, colors, colorsDarkmode);
-    const typography = createTypography(customTheme, palette.text);
+    const typography = createTypography(customTheme, colors, themeMode);
     const components = createComponents(customTheme);
 
     return createTheme({

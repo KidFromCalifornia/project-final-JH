@@ -73,6 +73,10 @@ export const tastingAPI = {
 };
 
 export const authAPI = {
+  checkAuth: () =>
+    apiCall('/auth/check', {
+      method: 'GET',
+    }),
   login: (credentials) =>
     apiCall('/auth/login', {
       method: 'POST',
@@ -83,4 +87,20 @@ export const authAPI = {
       method: 'POST',
       body: JSON.stringify(userData),
     }),
-};
+  logout: () => {
+    // Local logout - clear tokens
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('admin');
+
+    // If your backend needs to invalidate the token
+    return apiCall('/auth/logout', {
+      method: 'POST',
+    }).catch(() => {
+      // Even if the backend call fails, we've still logged out locally
+      return { success: true };
+    });
+  },
+}; // This closing brace was missing
