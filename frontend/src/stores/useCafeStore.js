@@ -61,6 +61,7 @@ export const useCafeStore = create((set) => ({
   clearFilters: () => set({ cafeTypeFilter: '', neighborhoodFilter: '', filteredCafes: [] }),
 
   // Tastings state
+
   tastings: [],
   setTastings: (tastings) => set({ tastings }),
   loading: false,
@@ -74,18 +75,36 @@ export const useCafeStore = create((set) => ({
     set({ loading: true });
     try {
       let allTastings = [];
-      if (isLoggedIn) {
-        const userTastings = await tastingAPI.getUserTastings();
-        console.log('User tastings fetched:', userTastings);
-        allTastings = userTastings || []; // Ensure we have an array
-      } else {
+
+      // Always fetch public tastings first
+      try {
         const publicTastings = await tastingAPI.getPublic();
         console.log('Public tastings fetched:', publicTastings);
-        allTastings = publicTastings || []; // Ensure we have an array
+        allTastings = publicTastings.data || [];
+      } catch (publicError) {
+        console.error('Error fetching public tastings:', publicError);
+        // Don't return early, continue to try user tastings
       }
+
+      // If logged in, also fetch user's private tastings and merge them
+      if (isLoggedIn) {
+        try {
+          const userTastings = await tastingAPI.getUserTastings();
+          console.log('User tastings fetched:', userTastings);
+          const userTastingsData = userTastings.data || [];
+
+          // Merge user tastings with public tastings (user tastings first)
+          allTastings = [...userTastingsData, ...allTastings];
+        } catch (userError) {
+          console.error('Error fetching user tastings (continuing with public only):', userError);
+          // Continue with just public tastings
+        }
+      }
+
       set({ tastings: Array.isArray(allTastings) ? allTastings : [] });
     } catch (error) {
       console.error('Error fetching tastings:', error);
+      // Only set empty array if we have no tastings at all
       set({ tastings: [] });
     }
     set({ loading: false });

@@ -9,8 +9,10 @@ import {
   DialogActions,
   Button,
   IconButton,
+  Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import spiltCoffeeErrorSvg from '../assets/images/spiltCoffeeError.svg';
 
 const AlertContext = createContext();
 
@@ -94,6 +96,9 @@ export const AlertProvider = ({ children }) => {
           onClose={hideSnackbar}
           severity={snackbar.severity}
           variant="filled"
+          iconMapping={{
+            error: <Box component="img" src={spiltCoffeeErrorSvg} sx={{ width: 24, height: 24 }} />,
+          }}
           sx={{ width: '100%' }}
         >
           {snackbar.message}

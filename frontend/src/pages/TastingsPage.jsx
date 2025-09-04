@@ -23,7 +23,7 @@ const TastingsPage = () => {
   const setCurrentPage = useCafeStore((state) => state.setCurrentPage);
   const tastingsPerPage = useCafeStore((state) => state.tastingsPerPage);
   const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
-  // const loading = useCafeStore((state) => state.loading); // REMOVED
+
   const theme = useTheme();
   const fetchTastings = useCafeStore((state) => state.fetchTastings);
 
@@ -36,28 +36,28 @@ const TastingsPage = () => {
     setCurrentPage(1);
   }, [searchQuery, setCurrentPage]);
 
-  // Delete logic
-  useEffect(() => {
-    const deleteTasting = async () => {
-      if (!deletingTasting) return;
-
-      try {
-        const result = await tastingAPI.delete(deletingTasting._id);
-        if (result.success) {
-          setTastings((prev) => prev.filter((t) => t._id !== deletingTasting._id));
-          console.log('Tasting deleted successfully');
-        } else {
-          console.error('Delete failed:', result.error);
-        }
-      } catch (error) {
-        console.error('Delete error:', error.message);
-      } finally {
-        setDeletingTasting(null);
+  // Delete function - called when delete is triggered
+  const handleDeleteTasting = async (tastingToDelete) => {
+    try {
+      const result = await tastingAPI.delete(tastingToDelete._id);
+      if (result.success) {
+        setTastings((prev) => prev.filter((t) => t._id !== tastingToDelete._id));
+      } else {
+        console.error('Delete failed:', result.error);
       }
-    };
+    } catch (error) {
+      console.error('Delete error:', error.message);
+    } finally {
+      setDeletingTasting(null);
+    }
+  };
 
-    deleteTasting();
-  }, [deletingTasting, setTastings, setDeletingTasting]);
+  // Use effect only to trigger delete when deletingTasting changes
+  useEffect(() => {
+    if (deletingTasting) {
+      handleDeleteTasting(deletingTasting);
+    }
+  }, [deletingTasting]);
 
   // Submit logic for both create and edit
   const handleTastingSubmit = async (formData) => {
@@ -69,7 +69,6 @@ const TastingsPage = () => {
         if (result.success) {
           setTastings((prev) => prev.map((t) => (t._id === editingTasting._id ? result.data : t)));
           setEditingTasting(null);
-          console.log('Tasting updated successfully');
         } else {
           console.error('Update failed:', result.error);
         }
@@ -77,7 +76,6 @@ const TastingsPage = () => {
         result = await tastingAPI.create(formData);
         if (result.success) {
           setTastings((prev) => [result.data, ...prev]);
-          console.log('Tasting created successfully');
         } else {
           console.error('Create failed:', result.error);
         }
@@ -132,12 +130,12 @@ const TastingsPage = () => {
       sx={{
         display: 'flex',
         width: '100%',
-        minHeight: '100vh', // Changed from height: '100%'
+        minHeight: '100vh',
         backgroundColor: theme.palette.textMuted?.default,
         color: theme.palette.text.primary,
         flexDirection: { xs: 'column', sm: 'row' },
         alignSelf: 'center',
-        p: 0, // Remove default padding
+        p: 0,
       }}
     >
       <Typography variant="h1" hidden gutterBottom>
@@ -148,8 +146,8 @@ const TastingsPage = () => {
       <Box
         sx={{
           width: { xs: '100%', sm: '50%' },
-          maxHeight: { xs: 'auto', sm: '100vh' }, // Add max height on desktop
-          overflowY: { xs: 'visible', sm: 'auto' }, // Allow scrolling on desktop
+          maxHeight: { xs: 'auto', sm: '100vh' },
+          overflowY: { xs: 'visible', sm: 'auto' },
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -180,10 +178,10 @@ const TastingsPage = () => {
           flexDirection: 'column',
           flexGrow: 1,
           width: { xs: '100%', sm: '50%' },
-          maxHeight: { xs: 'auto', sm: '100vh' }, // Add max height on desktop
-          overflowY: { xs: 'visible', sm: 'auto' }, // Allow scrolling on desktop
-          mt: { xs: 2, sm: 0 }, // Only margin top on mobile
-          mb: { xs: 8, sm: 0 }, // Bottom margin for mobile nav
+          maxHeight: { xs: 'auto', sm: '100vh' },
+          overflowY: { xs: 'visible', sm: 'auto' },
+          mt: { xs: 2, sm: 0 },
+          mb: { xs: 8, sm: 0 },
           px: 2,
           py: 2,
         }}

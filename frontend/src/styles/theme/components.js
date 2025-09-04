@@ -50,7 +50,7 @@ export const createComponents = (customTheme) => ({
     styleOverrides: {
       tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        fontSize: '0.75rem',
+        fontSize: 'rem',
         borderRadius: customTheme.borderRadius / 2,
       },
     },
