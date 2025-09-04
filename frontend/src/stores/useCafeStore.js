@@ -69,16 +69,17 @@ export const useCafeStore = create((set) => ({
   setEditingTasting: (tasting) => set({ editingTasting: tasting }),
   deletingTasting: null,
   setDeletingTasting: (tasting) => set({ deletingTasting: tasting }),
+
   fetchTastings: async (isLoggedIn) => {
     set({ loading: true });
     try {
       let allTastings = [];
       if (isLoggedIn) {
         const userTastings = await tastingAPI.getUserTastings();
-        allTastings = userTastings.data || [];
+        allTastings = userTastings || []; // Remove .data
       } else {
         const publicTastings = await tastingAPI.getPublic();
-        allTastings = publicTastings.data || [];
+        allTastings = publicTastings || []; // Remove .data
       }
       set({ tastings: allTastings });
     } catch {

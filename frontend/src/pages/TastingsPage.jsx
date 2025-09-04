@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useCafeStore } from '../stores/useCafeStore';
 import Container from '@mui/material/Container';
 import { Box, Typography, Button, Alert, Tooltip, useTheme } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import CafeSearchBar from '../components/common/CafeSearchBar';
 import FlipTastingCard from '../components/common/FlipTastingCard';
 import { tastingAPI } from '../services/api';
