@@ -4,50 +4,53 @@ import {
   Typography,
   Container,
   Paper,
-  Avatar,
   Link,
   Divider,
   IconButton,
   Grid,
   Chip,
+  List,
+  ListItem,
 } from '@mui/material';
-import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineOppositeContent,
-  timelineItemClasses,
-} from '@mui/lab';
+
 import { useTheme } from '@mui/material/styles';
 import {
   GitHub as GitHubIcon,
   LinkedIn as LinkedInIcon,
-  ArrowBack as ArrowBackIcon,
   Email as EmailIcon,
-  Coffee as CoffeeIcon,
-  Timeline as TimelineIcon,
-  Restaurant as RestaurantIcon,
-  Lightbulb as LightbulbIcon,
-  School as SchoolIcon,
-  Code as CodeIcon,
-  AutoGraphTwoTone,
-  AirRounded,
-  Subtitles,
+  Instagram as InstagramIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+
+// Skills array defined outside component to prevent recreation on each render
+const skillItems = [
+  'JavaScript',
+  'React',
+  'Node.js',
+  'Express',
+  'MongoDB',
+  'Material UI',
+  'HTML/CSS',
+  'Git',
+  'RESTful APIs',
+  'Responsive Design',
+  'Accessibility',
+  'UI/UX Design',
+  'Figma',
+  'Jest',
+  'MapLibre GL',
+];
 
 const AboutMePage = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
 
   return (
-    <Container maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}>
+    <Container component="section" maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}>
       <Paper
         elevation={3}
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: { sx: 'center', sm: 'flex-start' },
           p: { xs: 2, sm: 3, md: 4 },
           borderRadius: 2,
           backgroundColor: theme.palette.background.paper,
@@ -56,147 +59,264 @@ const AboutMePage = () => {
           mt: 4,
         }}
       >
-        <Box xs={{ mb: 3, alignContent: 'center' }}>
+        <Box sx={{ mb: 3, alignContent: 'center' }}>
           <Typography
             mt={2}
             variant="h1"
             component="h1"
             gutterBottom
-            textAlign="center"
             color={theme.palette.text.secondary}
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-
-              flexWrap: 'wrap',
-              textAlign: 'center',
               textTransform: 'uppercase',
+              fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem' },
+              textAlign: { xs: 'center', sm: 'left' },
             }}
           >
-            About Stockholm's Coffee Club
+            Stockholm's Coffee Club
           </Typography>
+
           <Typography
             variant="body1"
             color={theme.palette.text.secondary}
             paragraph
-            sx={{ msTextAutospace: 'auto', fontSize: { xs: '0.9rem', sm: '1.2rem' }, mb: 4 }}
+            sx={{
+              fontSize: { xs: '0.9rem', sm: '1.1rem' },
+              mb: 2,
+              textAlign: { xs: 'center', sm: 'left' },
+            }}
           >
-            Stockholm's Coffee Club is my capstone project for the Technigo Boot Camp. As a coffee
-            lover new to Stockholm, I wanted to create an application that helps enthusiasts
-            discover specialty coffee shops, track their tastings, and contribute to a
-            community-driven database of great coffee experiences.
+            Stockholm Coffee Club is a passion project that combines my 15 years in the coffee
+            industry with the coding skills I picked up during my time at Technigo's Javascript
+            BootCamp. It started back in the winter of 2024 while I was recovering from heart
+            surgery.
           </Typography>
+
+          <Typography
+            variant="body1"
+            color={theme.palette.text.secondary}
+            paragraph
+            sx={{
+              fontSize: { xs: '0.9rem', sm: '1.1rem' },
+              mb: 2,
+              textAlign: { xs: 'center', sm: 'left' },
+            }}
+          >
+            What began as a simple idea of displaying Stockholm's specialty coffee spots into an
+            Instagram page has now grown into a fullstack web application where coffee lovers can
+            discover cafés around them using geotagging, share what they are drinking, store their
+            personal coffee diary, and submit new locations for approval.
+          </Typography>
+
+          <Typography
+            variant="body1"
+            color={theme.palette.text.secondary}
+            paragraph
+            sx={{
+              fontSize: { xs: '0.9rem', sm: '1.1rem' },
+              mb: 4,
+              textAlign: { xs: 'center', sm: 'left' },
+            }}
+          >
+            The site is built to be intuitive and engaging, with a map of the city's coffee scene
+            and a personal journal for keeping track of tastings. It's designed to work smoothly on
+            both mobile and desktop, with accessibility in the forefront and features like dark and
+            light mode. Under the hood it runs on React, Node, and MongoDB, but at heart it's really
+            about connecting people through great coffee in Stockholm.
+          </Typography>
+
+          <Box
+            display="flex"
+            alignItems="center"
+            flexDirection={{ xs: 'column', sm: 'row' }}
+            justifyContent="center"
+            backgroundColor="transparent"
+            gap={{ xs: 4, sm: 8 }}
+            mb={4}
+          >
+            <Link
+              href="https://www.instagram.com/stockholmscoffeeclub"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Visit Stockholm's Coffee Club Instagram profile (opens in new tab)"
+              sx={{ textDecoration: 'none' }}
+            >
+              <Typography
+                textTransform="uppercase"
+                fontWeight="bold"
+                color={theme.palette.accentStrong?.main || theme.palette.primary.main}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                }}
+              >
+                <InstagramIcon
+                  sx={{
+                    fontSize: { xs: '4.8rem', sm: '4.8rem' },
+                    mr: 1,
+                  }}
+                />
+                <span>
+                  Visit our
+                  <br />
+                  Instagram
+                </span>
+              </Typography>
+            </Link>
+
+            <Link
+              href="https://www.technigo.io/courses/javascript-development-bootcamp"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Learn about the Technigo JavaScript Bootcamp (opens in new tab)"
+              sx={{ textDecoration: 'none' }}
+            >
+              <Typography
+                textTransform="uppercase"
+                fontWeight="bold"
+                color={theme.palette.accentStrong?.main || theme.palette.primary.main}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                }}
+              >
+                <img
+                  src="/techingo_SCC.svg"
+                  alt="Technigo logo"
+                  style={{
+                    width: 'auto',
+                    height: '4rem',
+                    marginRight: '0.5rem',
+                  }}
+                />
+                <span>
+                  Learn about
+                  <br />
+                  Technigo
+                </span>
+              </Typography>
+            </Link>
+          </Box>
         </Box>
-        <Grid mb={4} container spacing={2} sx={{ mb: 2 }}>
+
+        <Grid container spacing={2} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={6}>
             <Paper
-              elevation={1}
+              elevation={2}
               sx={{
-                p: { xs: 1.5, sm: 2 },
+                p: { xs: 2, sm: 2.5 },
                 height: '100%',
                 backgroundColor:
                   theme.palette.mode === 'dark'
                     ? theme.palette.background.paper
-                    : theme.palette.grey[50],
+                    : theme.palette.background.default,
               }}
             >
               <Typography
                 variant="subtitle1"
                 gutterBottom
                 fontWeight="bold"
-                sx={{ fontSize: { xs: '0.95rem', sm: '1.1rem' } }}
+                sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}
               >
                 Key Features
               </Typography>
-              <Typography
-                component="ul"
+
+              <List
                 sx={{
+                  listStyleType: 'disc',
                   pl: 2,
-                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
-                  '& li': { mb: 0.5 },
+                  '& .MuiListItem-root': {
+                    display: 'list-item',
+                    p: 0,
+                    pb: 0.75,
+                  },
                 }}
               >
-                <li>Interactive map of Stockholm's specialty coffee scene</li>
-                <li>Personal coffee tasting journal</li>
-                <li>Community submissions for new cafes</li>
-                <li>Accessibility-focused design</li>
-                <li>Dark/light mode for all lighting conditions</li>
-              </Typography>
+                <ListItem>Interactive map of Stockholm's specialty coffee scene</ListItem>
+                <ListItem>Personal coffee tasting journal</ListItem>
+                <ListItem>Community submissions for new cafes</ListItem>
+                <ListItem>Accessibility-focused design</ListItem>
+                <ListItem>Dark/light mode for all lighting conditions</ListItem>
+              </List>
             </Paper>
           </Grid>
+
           <Grid item xs={12} sm={6}>
             <Paper
-              elevation={1}
+              elevation={2}
               sx={{
-                p: { xs: 1.5, sm: 2 },
+                p: { xs: 2, sm: 2.5 },
                 height: '100%',
                 backgroundColor:
                   theme.palette.mode === 'dark'
                     ? theme.palette.background.paper
-                    : theme.palette.grey[50],
+                    : theme.palette.background.default,
               }}
             >
               <Typography
                 variant="subtitle1"
                 gutterBottom
                 fontWeight="bold"
-                sx={{ fontSize: { xs: '0.95rem', sm: '1.1rem' } }}
+                sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}
               >
                 Technologies Used
               </Typography>
-              <Typography
-                component="ul"
+
+              <List
                 sx={{
+                  listStyleType: 'disc',
                   pl: 2,
-                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
-                  '& li': { mb: 0.5 },
+                  '& .MuiListItem-root': {
+                    display: 'list-item',
+                    p: 0,
+                    pb: 0.75,
+                  },
                 }}
               >
-                <li>Frontend: React, Material UI, MapLibre GL</li>
-                <li>State Management: Zustand</li>
-                <li>Backend: Node.js, Express, MongoDB</li>
-                <li>Authentication: JWT</li>
-                <li>Deployment: Netlify (frontend), Heroku (backend)</li>
-              </Typography>
+                <ListItem>Frontend: React, Material UI, MapLibre GL</ListItem>
+                <ListItem>State Management: Zustand</ListItem>
+                <ListItem>Backend: Node.js, Express, MongoDB</ListItem>
+                <ListItem>Authentication: JWT</ListItem>
+                <ListItem>Deployment: Netlify (frontend), Heroku (backend)</ListItem>
+              </List>
             </Paper>
           </Grid>
         </Grid>
-        <Divider color={theme.palette.light.main} sx={{ my: 4 }} />
+
+        <Divider sx={{ my: 4, borderColor: theme.palette.light?.main || theme.palette.divider }} />
+
         <Box
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: { xs: 'center', sm: 'center' },
-            justifyContent: 'center',
-            alignContent: 'center',
-            gap: { xs: 2, sm: 4 },
-            padding: { xs: 2, sm: 3 },
+            alignItems: 'center',
+            gap: { xs: 3, sm: 4 },
+            px: { xs: 1, sm: 3 },
           }}
         >
           <img
             src="/Jhicks.svg"
-            alt="Jonny Hicks"
+            alt="Jonny Hicks - Profile Illustration"
             style={{
-              width: '15rem',
-              height: '100%',
+              width: '100%',
+              maxWidth: '15rem',
+              height: 'auto',
             }}
           />
 
           <Box
             sx={{
-              width: '65%',
+              width: { xs: '100%', sm: '65%' },
               textAlign: { xs: 'center', sm: 'left' },
               display: 'flex',
               flexDirection: 'column',
-              alignContent: 'left',
-              float: 'right',
-              justifyContent: 'flex-end',
               alignItems: { xs: 'center', sm: 'flex-start' },
               marginTop: { xs: 1, sm: 0 },
             }}
           >
             <Typography
-              variant="h4"
+              variant="h3"
               component="h2"
               color="text.secondary"
               sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem' } }}
@@ -204,16 +324,30 @@ const AboutMePage = () => {
             >
               Jonny Hicks
             </Typography>
+
             <Typography
               variant="subtitle2"
-              textAlign={{ xs: 'center', sm: 'left' }}
               color="text.secondary"
-              sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}
+              sx={{
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+                textAlign: { xs: 'center', sm: 'left' },
+                width: '100%',
+              }}
               mb={1}
             >
               Full Stack Developer | Veteran Coffee Professional
             </Typography>
-            <Typography color="text.secondary" variant="body1" paragraph>
+
+            <Typography
+              color="text.secondary"
+              variant="body1"
+              paragraph
+              sx={{
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+                textAlign: { xs: 'center', sm: 'left' },
+                mb: 2,
+              }}
+            >
               I'm a passionate UX developer based in Stockholm with a background in design and a
               focus on creative solutions, accessible web applications with real user needs in mind.
             </Typography>
@@ -221,356 +355,154 @@ const AboutMePage = () => {
             <Box
               sx={{
                 display: 'flex',
-                gap: 1,
+                gap: 1.5,
                 justifyContent: { xs: 'center', sm: 'flex-start' },
+                width: '100%',
               }}
             >
               <IconButton
                 component="a"
                 href="https://github.com/KidFromCalifornia"
                 target="_blank"
-                aria-label="GitHub profile"
-                sx={{ color: theme.palette.text.secondary }}
+                rel="noopener noreferrer"
+                aria-label="GitHub profile (opens in new tab)"
+                sx={{
+                  color: theme.palette.text.secondary,
+                  padding: { xs: '8px', sm: '8px' },
+                  '& .MuiSvgIcon-root': {
+                    fontSize: { xs: '1.3rem', sm: '1.5rem' },
+                  },
+                  transition: 'transform 150ms ease-in-out, background-color 120ms ease',
+                  '&:hover': {
+                    bgcolor: theme.palette.light?.main || theme.palette.grey[300],
+                    transform: 'scale(1.05)',
+                  },
+                }}
               >
                 <GitHubIcon />
               </IconButton>
+
               <IconButton
                 component="a"
                 href="https://linkedin.com/in/jonathanhicks"
                 target="_blank"
-                aria-label="LinkedIn profile"
-                sx={{ color: theme.palette.text.secondary }}
+                rel="noopener noreferrer"
+                aria-label="LinkedIn profile (opens in new tab)"
+                sx={{
+                  color: theme.palette.text.secondary,
+                  padding: { xs: '8px', sm: '8px' },
+                  '& .MuiSvgIcon-root': {
+                    fontSize: { xs: '1.3rem', sm: '1.5rem' },
+                  },
+                  transition: 'transform 150ms ease-in-out, background-color 120ms ease',
+                  '&:hover': {
+                    backgroundColor: theme.palette.light?.main || theme.palette.grey[300],
+                    transform: 'scale(1.05)',
+                  },
+                }}
               >
                 <LinkedInIcon />
               </IconButton>
+
               <IconButton
                 component="a"
-                href="mailto:jonathanhicks.tech@gmail.com"
-                aria-label="Email me"
-                sx={{ color: theme.palette.text.secondary }}
+                href="mailto:jonny@stockholmscoffeeclub.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Email Jonny (opens mail client)"
+                sx={{
+                  color: theme.palette.text.secondary,
+                  padding: { xs: '8px', sm: '8px' },
+                  '& .MuiSvgIcon-root': {
+                    fontSize: { xs: '1.3rem', sm: '1.5rem' },
+                  },
+                  transition: 'transform 150ms ease-in-out, background-color 120ms ease',
+                  '&:hover': {
+                    bgcolor: theme.palette.light?.main || theme.palette.grey[300],
+                    transform: 'scale(1.05)',
+                  },
+                }}
               >
                 <EmailIcon />
+              </IconButton>
+
+              <IconButton
+                component="a"
+                href="https://www.instagram.com/thekidfromcalifornia"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram profile (opens in new tab)"
+                sx={{
+                  color: theme.palette.text.secondary,
+                  padding: { xs: '8px', sm: '8px' },
+                  '& .MuiSvgIcon-root': {
+                    fontSize: { xs: '1.3rem', sm: '1.5rem' },
+                  },
+                  transition: 'transform 150ms ease-in-out, background-color 120ms ease',
+                  '&:hover': {
+                    backgroundColor: theme.palette.light?.main || theme.palette.grey[300],
+                    transform: 'scale(1.05)',
+                  },
+                }}
+              >
+                <InstagramIcon />
               </IconButton>
             </Box>
           </Box>
         </Box>
 
-        <Divider color={theme.palette.light.main} sx={{ my: 4 }} />
+        <Divider sx={{ my: 4, borderColor: theme.palette.light?.main || theme.palette.divider }} />
 
         <Typography
-          variant="h5"
-          component="h3"
+          variant="h2"
+          component="h2"
           color={theme.palette.text.secondary}
           gutterBottom
           textTransform="uppercase"
+          mb={3}
+          sx={{
+            fontSize: { xs: '1.25rem', sm: '1.5rem' },
+            textAlign: { xs: 'center', sm: 'left' },
+          }}
         >
           Technical Skills
         </Typography>
+
         <Box
           sx={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: { xs: 0.5, sm: 1 },
+            gap: { xs: 0.75, sm: 1 },
             mb: 3,
-            justifyContent: { xs: 'center', sm: 'flex-start' },
+            justifyContent: 'center',
           }}
         >
-          {[
-            'JavaScript',
-            'React',
-            'Node.js',
-            'Express',
-            'MongoDB',
-            'Material UI',
-            'HTML/CSS',
-            'Git',
-            'RESTful APIs',
-            'Responsive Design',
-            'Accessibility',
-            'UI/UX Design',
-            'Figma',
-            'Jest',
-            'MapLibre GL',
-          ].map((skill) => (
+          {skillItems.map((skill) => (
             <Chip
               key={skill}
               label={skill}
-              size="small"
+              size="medium"
               sx={{
-                bgcolor: theme.palette.primary.main,
-                color: theme.palette.primary.contrastText,
                 fontWeight: 500,
-                m: 0.5,
-                height: { xs: '24px', sm: '32px' },
+                bgcolor:
+                  theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0,0,0,0.06)',
+                color:
+                  theme.palette.mode === 'dark'
+                    ? theme.palette.text.primary
+                    : theme.palette.text.secondary,
+                m: { xs: 0.3, sm: 0.5 },
+                height: { xs: '28px', sm: '32px' },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                '&:hover': {
+                  bgcolor:
+                    theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.12)',
+
+                  fontWeight: 600,
+                },
+                transition: 'all 120ms ease',
               }}
             />
           ))}
-        </Box>
-
-        <Divider sx={{ my: 3 }} />
-
-        <Typography
-          variant="h6"
-          component="h3"
-          gutterBottom
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: { xs: '1.1rem', sm: '1.25rem' },
-          }}
-        >
-          <CoffeeIcon sx={{ mr: 1 }} /> My Coffee Journey
-        </Typography>
-        <Typography variant="body1" paragraph sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-          My passion for coffee began during my time in California, where I first discovered the
-          depth and complexity of specialty coffee. Moving to Stockholm introduced me to the vibrant
-          Nordic coffee culture, known for its light roasts and emphasis on transparency in
-          sourcing.
-        </Typography>
-        <Typography variant="body1" paragraph sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-          This project combines my love for coffee with my skills as a developer. It's been a
-          journey of learning, discovery, and lots of caffeine! I hope Stockholm's Coffee Club helps
-          others explore and appreciate the exceptional coffee scene that Stockholm has to offer.
-        </Typography>
-
-        <Divider sx={{ my: 3 }} />
-
-        <Typography
-          variant="h6"
-          component="h3"
-          gutterBottom
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: { xs: '1.1rem', sm: '1.25rem' },
-          }}
-        >
-          <TimelineIcon sx={{ mr: 1 }} /> My Career Journey
-        </Typography>
-
-        <Timeline
-          position="alternate"
-          sx={{
-            p: { xs: 0, sm: 1 },
-            [`& .${timelineItemClasses.root}:before`]: {
-              flex: { xs: 0, sm: 1 },
-              padding: { xs: '0px 0px', sm: '6px 16px' },
-            },
-            mb: 2,
-          }}
-        >
-          <TimelineItem>
-            <TimelineOppositeContent
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-                flex: { xs: 0, sm: 0.3 },
-              }}
-              color="text.secondary"
-            >
-              2005-2023
-            </TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="primary">
-                <RestaurantIcon fontSize="small" />
-              </TimelineDot>
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent sx={{ py: { xs: '8px', sm: '12px' }, px: { xs: 1, sm: 2 } }}>
-              <Typography
-                variant="subtitle2"
-                component="span"
-                fontWeight="bold"
-                sx={{
-                  display: { xs: 'block', sm: 'inline' },
-                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
-                }}
-              >
-                Hospitality Career
-              </Typography>
-              <Typography
-                display={{ xs: 'block', sm: 'none' }}
-                variant="caption"
-                color="text.secondary"
-                sx={{ mb: 0.5 }}
-              >
-                2005-2023
-              </Typography>
-              <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
-                18 years in restaurant management, specializing in coffee program development.
-              </Typography>
-            </TimelineContent>
-          </TimelineItem>
-
-          <TimelineItem>
-            <TimelineOppositeContent
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-                flex: { xs: 0, sm: 0.3 },
-              }}
-              color="text.secondary"
-            >
-              2022
-            </TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="primary">
-                <LightbulbIcon fontSize="small" />
-              </TimelineDot>
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent sx={{ py: { xs: '8px', sm: '12px' }, px: { xs: 1, sm: 2 } }}>
-              <Typography
-                variant="subtitle2"
-                component="span"
-                fontWeight="bold"
-                sx={{
-                  display: { xs: 'block', sm: 'inline' },
-                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
-                }}
-              >
-                Career Transition
-              </Typography>
-              <Typography
-                display={{ xs: 'block', sm: 'none' }}
-                variant="caption"
-                color="text.secondary"
-                sx={{ mb: 0.5 }}
-              >
-                2022
-              </Typography>
-              <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
-                Decided to pursue my passion for technology and enrolled in coding courses.
-              </Typography>
-            </TimelineContent>
-          </TimelineItem>
-
-          <TimelineItem>
-            <TimelineOppositeContent
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-                flex: { xs: 0, sm: 0.3 },
-              }}
-              color="text.secondary"
-            >
-              2023
-            </TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="primary">
-                <SchoolIcon fontSize="small" />
-              </TimelineDot>
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent sx={{ py: { xs: '8px', sm: '12px' }, px: { xs: 1, sm: 2 } }}>
-              <Typography
-                variant="subtitle2"
-                component="span"
-                fontWeight="bold"
-                sx={{
-                  display: { xs: 'block', sm: 'inline' },
-                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
-                }}
-              >
-                Technigo Boot Camp
-              </Typography>
-              <Typography
-                display={{ xs: 'block', sm: 'none' }}
-                variant="caption"
-                color="text.secondary"
-                sx={{ mb: 0.5 }}
-              >
-                2023
-              </Typography>
-              <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
-                Enrolled in an intensive full-stack JavaScript development program.
-              </Typography>
-            </TimelineContent>
-          </TimelineItem>
-
-          <TimelineItem>
-            <TimelineOppositeContent
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-                flex: { xs: 0, sm: 0.3 },
-              }}
-              color="text.secondary"
-            >
-              2024
-            </TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="primary">
-                <CodeIcon fontSize="small" />
-              </TimelineDot>
-            </TimelineSeparator>
-            <TimelineContent sx={{ py: { xs: '8px', sm: '12px' }, px: { xs: 1, sm: 2 } }}>
-              <Typography
-                variant="subtitle2"
-                component="span"
-                fontWeight="bold"
-                sx={{
-                  display: { xs: 'block', sm: 'inline' },
-                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
-                }}
-              >
-                Developer Career
-              </Typography>
-              <Typography
-                display={{ xs: 'block', sm: 'none' }}
-                variant="caption"
-                color="text.secondary"
-                sx={{ mb: 0.5 }}
-              >
-                2024
-              </Typography>
-              <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
-                Launching my career as a full-stack developer, combining my hospitality experience
-                with technical skills.
-              </Typography>
-            </TimelineContent>
-          </TimelineItem>
-        </Timeline>
-
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            mt: 4,
-            flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: 'center',
-            gap: 2,
-          }}
-        >
-          <Link
-            href="https://github.com/KidFromCalifornia/project-final-JH"
-            target="_blank"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none',
-              color: theme.palette.primary.main,
-              fontWeight: 'bold',
-              '&:hover': { textDecoration: 'underline' },
-              fontSize: { xs: '0.9rem', sm: '1rem' },
-            }}
-          >
-            <GitHubIcon sx={{ mr: 1, fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
-            View Project on GitHub
-          </Link>
-
-          <Link
-            href="https://stockholms-coffee-club.netlify.app/"
-            target="_blank"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none',
-              color: theme.palette.secondary.main,
-              fontWeight: 'bold',
-              '&:hover': { textDecoration: 'underline' },
-              fontSize: { xs: '0.9rem', sm: '1rem' },
-            }}
-          >
-            <CoffeeIcon sx={{ mr: 1, fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
-            Visit Live Demo
-          </Link>
         </Box>
 
         <Typography

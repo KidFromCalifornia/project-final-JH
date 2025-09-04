@@ -8,11 +8,19 @@ import {
   IconButton,
   Dialog,
   DialogContent,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Link,
 } from '@mui/material';
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Menu as MenuIcon,
+  Info as InfoIcon,
 } from '@mui/icons-material';
 
 // Components
@@ -109,7 +117,6 @@ const DesktopNavBar = ({
 
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          {/* Menu icon - same position as toolbar menu when drawer is open */}
           <Tooltip title="Menu" arrow>
             <IconButton
               onClick={handleDrawerOpen}
@@ -177,6 +184,20 @@ const DesktopNavBar = ({
           navIconColor={navIconColor}
           open={open}
         />
+
+        <Divider />
+        <List>
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <Tooltip title="About Me" disableHoverListener={open}>
+              <ListItemButton component={Link} to="/about">
+                <ListItemIcon>
+                  <InfoIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
+                <ListItemText primary="About Page" />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+        </List>
       </Drawer>
 
       {/* Login Dialog */}

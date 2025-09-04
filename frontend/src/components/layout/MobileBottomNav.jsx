@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCafeStore } from '../../stores/useCafeStore';
 import AppBar from '@mui/material/AppBar';
@@ -15,6 +15,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
@@ -41,8 +42,8 @@ import {
   FilterList as FilterListIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
   Info as InfoIcon,
+  Search as SearchIcon,
 } from '@mui/icons-material';
-import SearchIcon from '@mui/icons-material/Search';
 
 const drawerWidth = 300;
 const appBarHeight = 56; // match this to your AppBar height
@@ -65,7 +66,6 @@ const MobileBottomNav = () => {
   const neighborhoodQuery = useCafeStore((state) => state.neighborhoodFilter);
   const setCafeTypeQuery = useCafeStore((state) => state.setCafeTypeFilter);
   const setNeighborhoodQuery = useCafeStore((state) => state.setNeighborhoodFilter);
-  const clearFilters = useCafeStore((state) => state.clearFilters);
 
   const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
 
@@ -79,12 +79,15 @@ const MobileBottomNav = () => {
   }
 
   // Local UI state (remove filter state as it's now in store)
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [searchOpen, setSearchOpen] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [showLogin, setShowLogin] = React.useState(false);
-  const [showAddCafe, setShowAddCafe] = React.useState(false);
-  const [filterDrawerOpen, setFilterDrawerOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showLogin, setShowLogin] = useState(false);
+  const [showAddCafe, setShowAddCafe] = useState(false);
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+  console.log('Cafes count:', cafes.length);
+  console.log('Categories:', categories);
+  console.log('Neighborhoods:', neighborhoods);
 
   // Ensure only one drawer can be open at a time
   const openDrawer = (drawerType) => {
@@ -171,10 +174,23 @@ const MobileBottomNav = () => {
               <IconButton
                 color="inherit"
                 size="large"
-                sx={{ p: 1 }}
-                onClick={() => openDrawer('main')}
+                sx={{
+                  p: 1,
+                  bgcolor: drawerOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
+                  transition: 'background-color 200ms ease',
+                  '&:hover': {
+                    bgcolor: drawerOpen ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
+                  },
+                }}
+                onClick={() => (drawerOpen ? closeDrawers() : openDrawer('main'))}
               >
-                <MenuIcon fontSize="medium" sx={{ color: navIconColor }} />
+                <MenuIcon
+                  fontSize="medium"
+                  sx={{
+                    color: drawerOpen ? theme.palette.accent?.main || navIconColor : navIconColor,
+                    transition: 'color 200ms ease',
+                  }}
+                />
               </IconButton>
             </Tooltip>
 
@@ -182,10 +198,30 @@ const MobileBottomNav = () => {
               <IconButton
                 color="inherit"
                 size="large"
-                sx={{ p: 1 }}
+                sx={{
+                  p: 1,
+                  bgcolor:
+                    location.pathname === '/tastings' ? 'rgba(255,255,255,0.15)' : 'transparent',
+                  transition: 'background-color 200ms ease',
+                  '&:hover': {
+                    bgcolor:
+                      location.pathname === '/tastings'
+                        ? 'rgba(255,255,255,0.2)'
+                        : 'rgba(255,255,255,0.1)',
+                  },
+                }}
                 onClick={() => handleNav('/tastings')}
               >
-                <RateReviewIcon fontSize="medium" sx={{ color: navIconColor }} />
+                <RateReviewIcon
+                  fontSize="medium"
+                  sx={{
+                    color:
+                      location.pathname === '/tastings'
+                        ? theme.palette.accent?.main || navIconColor
+                        : navIconColor,
+                    transition: 'color 200ms ease',
+                  }}
+                />
               </IconButton>
             </Tooltip>
           </Box>
@@ -195,10 +231,23 @@ const MobileBottomNav = () => {
               <IconButton
                 color="inherit"
                 size="large"
-                sx={{ p: 1 }}
-                onClick={() => setSearchOpen(true)}
+                sx={{
+                  p: 1,
+                  bgcolor: searchOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
+                  transition: 'background-color 200ms ease',
+                  '&:hover': {
+                    bgcolor: searchOpen ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
+                  },
+                }}
+                onClick={() => setSearchOpen(!searchOpen)}
               >
-                <SearchIcon fontSize="medium" sx={{ color: navIconColor }} />
+                <SearchIcon
+                  fontSize="medium"
+                  sx={{
+                    color: searchOpen ? theme.palette.accent?.main || navIconColor : navIconColor,
+                    transition: 'color 200ms ease',
+                  }}
+                />
               </IconButton>
             </Tooltip>
 
@@ -206,19 +255,38 @@ const MobileBottomNav = () => {
               <IconButton
                 color="inherit"
                 size="large"
-                sx={{ p: 1 }}
-                onClick={() => openDrawer('filter')}
+                sx={{
+                  p: 1,
+                  bgcolor: filterDrawerOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
+                  transition: 'background-color 200ms ease',
+                  '&:hover': {
+                    bgcolor: filterDrawerOpen ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
+                  },
+                }}
+                onClick={() => (filterDrawerOpen ? closeDrawers() : openDrawer('filter'))}
               >
-                <FilterListIcon fontSize="medium" sx={{ color: navIconColor }} />
+                <FilterListIcon
+                  fontSize="medium"
+                  sx={{
+                    color: filterDrawerOpen
+                      ? theme.palette.accent?.main || navIconColor
+                      : navIconColor,
+                    transition: 'color 200ms ease',
+                  }}
+                />
               </IconButton>
             </Tooltip>
-
             {isLoggedIn ? (
               <Tooltip title="Logout" arrow>
                 <IconButton
                   color="inherit"
                   size="large"
-                  sx={{ p: 1 }}
+                  sx={{
+                    p: 1,
+                    '&:hover': {
+                      bgcolor: 'rgba(255,255,255,0.1)',
+                    },
+                  }}
                   onClick={() => {
                     localStorage.removeItem('userToken');
                     localStorage.removeItem('username');
@@ -235,10 +303,23 @@ const MobileBottomNav = () => {
                 <IconButton
                   color="inherit"
                   size="large"
-                  sx={{ p: 1 }}
-                  onClick={() => navigate('/login')}
+                  sx={{
+                    p: 1,
+                    bgcolor: showLogin ? 'rgba(255,255,255,0.15)' : 'transparent',
+                    transition: 'background-color 200ms ease',
+                    '&:hover': {
+                      bgcolor: showLogin ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
+                    },
+                  }}
+                  onClick={() => setShowLogin(!showLogin)}
                 >
-                  <LoginIcon fontSize="medium" sx={{ color: navIconColor }} />
+                  <LoginIcon
+                    fontSize="medium"
+                    sx={{
+                      color: showLogin ? theme.palette.accent?.main || navIconColor : navIconColor,
+                      transition: 'color 200ms ease',
+                    }}
+                  />
                 </IconButton>
               </Tooltip>
             )}
@@ -246,7 +327,6 @@ const MobileBottomNav = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile Drawer - mirrors NavBar */}
       <Drawer
         anchor="bottom"
         open={drawerOpen}
@@ -281,18 +361,57 @@ const MobileBottomNav = () => {
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton component={Link} to="/" onClick={closeDrawers}>
+            <ListItemButton
+              component={Link}
+              to="/"
+              onClick={closeDrawers}
+              sx={{
+                bgcolor: location.pathname === '/' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                '&:hover': {
+                  bgcolor:
+                    location.pathname === '/' ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
+                },
+              }}
+            >
               <ListItemIcon>
-                <MapIcon sx={{ color: navIconColor }} />
+                <MapIcon
+                  sx={{
+                    color:
+                      location.pathname === '/'
+                        ? theme.palette.accent?.main || navIconColor
+                        : navIconColor,
+                  }}
+                />
               </ListItemIcon>
               <ListItemText primary="Map" />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton component={Link} to="/tastings" onClick={closeDrawers}>
+            <ListItemButton
+              component={Link}
+              to="/tastings"
+              onClick={closeDrawers}
+              sx={{
+                bgcolor:
+                  location.pathname === '/tastings' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                '&:hover': {
+                  bgcolor:
+                    location.pathname === '/tastings'
+                      ? 'rgba(255,255,255,0.15)'
+                      : 'rgba(255,255,255,0.05)',
+                },
+              }}
+            >
               <ListItemIcon>
-                <RateReviewIcon sx={{ color: navIconColor }} />
+                <RateReviewIcon
+                  sx={{
+                    color:
+                      location.pathname === '/tastings'
+                        ? theme.palette.accent?.main || navIconColor
+                        : navIconColor,
+                  }}
+                />
               </ListItemIcon>
               <ListItemText primary="Tastings" />
             </ListItemButton>
@@ -302,12 +421,24 @@ const MobileBottomNav = () => {
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
-                  setShowAddCafe(true);
+                  setShowAddCafe(!showAddCafe);
                   closeDrawers();
+                }}
+                sx={{
+                  bgcolor: showAddCafe ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  '&:hover': {
+                    bgcolor: showAddCafe ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
+                  },
                 }}
               >
                 <ListItemIcon>
-                  <AddLocationIcon sx={{ color: navIconColor }} />
+                  <AddLocationIcon
+                    sx={{
+                      color: showAddCafe
+                        ? theme.palette.accent?.main || navIconColor
+                        : navIconColor,
+                    }}
+                  />
                 </ListItemIcon>
                 <ListItemText primary="Add Cafe" />
               </ListItemButton>
@@ -316,9 +447,29 @@ const MobileBottomNav = () => {
 
           {isLoggedIn && isAdmin && (
             <ListItem disablePadding>
-              <ListItemButton component={Link} to="/admin" onClick={closeDrawers}>
+              <ListItemButton
+                component={Link}
+                to="/admin"
+                onClick={closeDrawers}
+                sx={{
+                  bgcolor: location.pathname === '/admin' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  '&:hover': {
+                    bgcolor:
+                      location.pathname === '/admin'
+                        ? 'rgba(255,255,255,0.15)'
+                        : 'rgba(255,255,255,0.05)',
+                  },
+                }}
+              >
                 <ListItemIcon>
-                  <AdminPanelSettingsIcon sx={{ color: navIconColor }} />
+                  <AdminPanelSettingsIcon
+                    sx={{
+                      color:
+                        location.pathname === '/admin'
+                          ? theme.palette.accent?.main || navIconColor
+                          : navIconColor,
+                    }}
+                  />
                 </ListItemIcon>
                 <ListItemText primary="Admin" />
               </ListItemButton>
@@ -327,9 +478,29 @@ const MobileBottomNav = () => {
 
           {isLoggedIn && !isAdmin && (
             <ListItem disablePadding>
-              <ListItemButton component={Link} to="/user" onClick={closeDrawers}>
+              <ListItemButton
+                component={Link}
+                to="/user"
+                onClick={closeDrawers}
+                sx={{
+                  bgcolor: location.pathname === '/user' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  '&:hover': {
+                    bgcolor:
+                      location.pathname === '/user'
+                        ? 'rgba(255,255,255,0.15)'
+                        : 'rgba(255,255,255,0.05)',
+                  },
+                }}
+              >
                 <ListItemIcon>
-                  <DoorFrontIcon sx={{ color: navIconColor }} />
+                  <DoorFrontIcon
+                    sx={{
+                      color:
+                        location.pathname === '/user'
+                          ? theme.palette.accent?.main || navIconColor
+                          : navIconColor,
+                    }}
+                  />
                 </ListItemIcon>
                 <ListItemText primary="Userpage" />
               </ListItemButton>
@@ -342,12 +513,22 @@ const MobileBottomNav = () => {
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
-                  setShowLogin(true);
+                  setShowLogin(!showLogin);
                   closeDrawers();
+                }}
+                sx={{
+                  bgcolor: showLogin ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  '&:hover': {
+                    bgcolor: showLogin ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
+                  },
                 }}
               >
                 <ListItemIcon>
-                  <LoginIcon sx={{ color: navIconColor }} />
+                  <LoginIcon
+                    sx={{
+                      color: showLogin ? theme.palette.accent?.main || navIconColor : navIconColor,
+                    }}
+                  />
                 </ListItemIcon>
                 <ListItemText primary="Login" />
               </ListItemButton>
@@ -362,6 +543,11 @@ const MobileBottomNav = () => {
                   setIsLoggedIn(false);
                   closeDrawers();
                   navigate('/');
+                }}
+                sx={{
+                  '&:hover': {
+                    bgcolor: 'rgba(255,255,255,0.05)',
+                  },
                 }}
               >
                 <ListItemIcon>
@@ -412,11 +598,31 @@ const MobileBottomNav = () => {
           <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
 
           <ListItem disablePadding>
-            <ListItemButton component={Link} to="/about" onClick={closeDrawers}>
+            <ListItemButton
+              component={Link}
+              to="/about"
+              onClick={closeDrawers}
+              sx={{
+                bgcolor: location.pathname === '/about' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                '&:hover': {
+                  bgcolor:
+                    location.pathname === '/about'
+                      ? 'rgba(255,255,255,0.15)'
+                      : 'rgba(255,255,255,0.05)',
+                },
+              }}
+            >
               <ListItemIcon>
-                <InfoIcon sx={{ color: navIconColor }} />
+                <InfoIcon
+                  sx={{
+                    color:
+                      location.pathname === '/about'
+                        ? theme.palette.accent?.main || navIconColor
+                        : navIconColor,
+                  }}
+                />
               </ListItemIcon>
-              <ListItemText primary="About Me" />
+              <ListItemText primary="About Page" />
             </ListItemButton>
           </ListItem>
         </List>
@@ -434,6 +640,7 @@ const MobileBottomNav = () => {
         }}
       >
         {/* Header */}
+
         <List sx={{ pt: 0 }}>
           <ListItem
             disablePadding
@@ -454,7 +661,6 @@ const MobileBottomNav = () => {
             </IconButton>
           </ListItem>
         </List>
-
         {/* Filter controls */}
         <Box sx={{ px: 2, py: 2 }}>
           {/* Cafe Type */}
@@ -560,6 +766,87 @@ const MobileBottomNav = () => {
       >
         <DialogContent sx={{ p: 0 }}>
           <NewCafeForm onClose={() => setShowAddCafe(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Search dialog */}
+      <Dialog
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            pt: 1,
+            width: { xs: 'calc(100% - 32px)', sm: '400px' },
+          },
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>Search Cafes</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            placeholder="Search by name, neighborhood or coffee roaster..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{
+              startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+            }}
+            variant="outlined"
+            size="medium"
+          />
+          {searchQuery && (
+            <Box sx={{ mt: 2 }}>
+              {cafes
+                .filter(
+                  (cafe) =>
+                    cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (cafe.locations?.[0]?.neighborhood || '')
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    (cafe.roaster || '').toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .slice(0, 5) // Limit results
+                .map((cafe) => (
+                  <ListItem
+                    key={cafe._id}
+                    button
+                    onClick={() => {
+                      navigate(`/cafe/${cafe._id}`);
+                      setSearchOpen(false);
+                      setSearchQuery('');
+                    }}
+                    sx={{
+                      borderRadius: 1,
+                      mb: 1,
+                      '&:hover': {
+                        bgcolor: theme.palette.action.hover,
+                      },
+                    }}
+                  >
+                    <StorefrontIcon sx={{ mr: 2, color: 'text.secondary' }} />
+                    <ListItemText
+                      primary={cafe.name}
+                      secondary={cafe.locations?.[0]?.neighborhood || 'Unknown location'}
+                    />
+                  </ListItem>
+                ))}
+              {cafes.filter(
+                (cafe) =>
+                  cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (cafe.locations?.[0]?.neighborhood || '')
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                  (cafe.roaster || '').toLowerCase().includes(searchQuery.toLowerCase())
+              ).length === 0 && (
+                <Box sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>
+                  No cafes found matching your search
+                </Box>
+              )}
+            </Box>
+          )}
         </DialogContent>
       </Dialog>
     </React.Fragment>

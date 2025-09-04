@@ -1,12 +1,12 @@
 // Stockholm-compliant color palette
 export const colors = {
   // Light Mode Colors
-  primary: '#2570bb', // Azel Blue
+  primary: '#194f84',
   secondary: '#0a1f33', // Oxford Blue
   accent: '#fde113', // Schoolbus Yellow
   accentStrong: '#e0b404', // Strong Yellow
   background: '#ebf2fa', // Alice Blue
-  paper: '#2570bb', // Azel Blue for cards/panels
+  paper: '#1d5995', // Azel Blue for cards/panels
   light: '#ebf2fa', // Alice Blue (for light text)
   mainText: '#0a1f33', // Oxford Blue (text)
   versoText: '#ebf2fa', // Alice Blue (on dark)

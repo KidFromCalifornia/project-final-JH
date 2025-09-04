@@ -130,21 +130,6 @@ const NavigationItems = ({
           </ListItem>
         )}
       </List>
-      {/* Separate divider and list for About Me, positioned at the bottom */}
-      <Box sx={{ flexGrow: 1 }} /> {/* This pushes the About Me link to the bottom */}
-      <Divider />
-      <List>
-        <ListItem disablePadding sx={{ display: 'block' }}>
-          <Tooltip title="About Me" arrow placement="right" disableHoverListener={open}>
-            <ListItemButton component={Link} to="/about">
-              <ListItemIcon>
-                <InfoIcon sx={{ color: navIconColor }} />
-              </ListItemIcon>
-              <ListItemText primary="About Me" />
-            </ListItemButton>
-          </Tooltip>
-        </ListItem>
-      </List>
     </Box>
   );
 };

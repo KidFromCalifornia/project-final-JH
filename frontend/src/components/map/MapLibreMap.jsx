@@ -86,12 +86,12 @@ export default function MapLibreMap({
                     borderRadius: 2,
                     p: 2,
                     boxShadow: 3,
-                    border: `1px solid ${theme.palette.divider}`,
+                    border: `1px solid ${theme.palette.primary.main}`,
                   }}
                 >
                   <Typography
-                    variant="h6"
-                    fontWeight="bold"
+                    variant="h2"
+                    component="h2"
                     sx={{
                       mb: 1,
                       color: theme.palette.text.primary,
@@ -121,26 +121,26 @@ export default function MapLibreMap({
 
                   {/* Location Note for multiple locations */}
                   {selectedCafe.hasMultipleLocations && selectedLocation.locationNote && (
-                    <Typography variant="body2" color="primary" fontWeight="500" sx={{ mb: 1 }}>
+                    <Typography variant="h2" color="primary" sx={{ mb: 1 }}>
                       {selectedLocation.locationNote}
                     </Typography>
                   )}
 
                   {/* Address */}
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                  <Typography variant="body2" color="text.primary" sx={{ mb: 0.5 }}>
                     {selectedLocation.address}
                   </Typography>
 
                   {/* Neighborhood */}
                   {selectedLocation.neighborhood && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
                       {selectedLocation.neighborhood}
                     </Typography>
                   )}
 
                   {/* Opening Times */}
                   {selectedLocation.openingTimes && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
                       {selectedLocation.openingTimes}
                     </Typography>
                   )}
