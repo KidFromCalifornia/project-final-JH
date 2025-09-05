@@ -38,12 +38,23 @@ export default function MapLibreMap({
                     key={`${cafe._id}-${locationIndex}`}
                     longitude={coords[0]}
                     latitude={coords[1]}
-                    onClick={() =>
-                      setSelectedCafe({ ...cafe, selectedLocationIndex: locationIndex })
-                    }
-                    sx={{ boxShadow: 3 }}
                   >
-                    {getCustomIcon(cafe.category, theme, themeMode)}
+                    <button
+                      className="marker_icon"
+                      aria-label={`${cafe.name} – Coffee shop at ${location.address || 'this location'}`}
+                      onClick={() =>
+                        setSelectedCafe({ ...cafe, selectedLocationIndex: locationIndex })
+                      }
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: 0,
+                        outline: 'none',
+                      }}
+                    >
+                      {getCustomIcon(cafe.category, theme, themeMode)}
+                    </button>
                   </Marker>
                 );
               }
@@ -59,10 +70,11 @@ export default function MapLibreMap({
         Number.isFinite(userLocation.lng) &&
         Number.isFinite(userLocation.lat) && (
           <Marker longitude={userLocation.lng} latitude={userLocation.lat}>
-            {getCustomIcon('geotag', theme, themeMode)}
+            <div role="img" aria-label="Your current location" style={{ pointerEvents: 'none' }}>
+              {getCustomIcon('geotag', theme, themeMode)}
+            </div>
           </Marker>
         )}
-
       {/* Popup for selected cafe */}
       {selectedCafe &&
         (() => {
