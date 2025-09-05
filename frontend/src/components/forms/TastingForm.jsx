@@ -66,7 +66,9 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
 
   // State initialization
   const [form, setForm] = useState({
-    cafeId: initialValues.cafeId || '',
+    cafeId: (typeof initialValues.cafeId === 'object' && initialValues.cafeId?._id) 
+      ? initialValues.cafeId._id 
+      : initialValues.cafeId || '',
     coffeeName: initialValues.coffeeName || '',
     coffeeRoaster: initialValues.coffeeRoaster || '',
     coffeeOrigin: initialValues.coffeeOrigin || '',
