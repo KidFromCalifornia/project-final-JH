@@ -1,10 +1,11 @@
 import React from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ListItem from '@mui/material/ListItem';
+
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
+import Box from '@mui/material/Box';
 
 import { ListItemButton } from '@mui/material';
 
@@ -22,7 +23,7 @@ const FilterDropdown = ({ label, options, value, onChange, iconComponent }) => {
 
   return (
     <>
-      <ListItem disablePadding sx={{ display: 'block', py: 0 }}>
+      <Box sx={{ display: 'block', p: 0 }}>
         <Tooltip title={getTooltipText()} arrow placement="right">
           <ListItemButton
             onClick={(e) => setAnchorEl(e.currentTarget)}
@@ -32,7 +33,7 @@ const FilterDropdown = ({ label, options, value, onChange, iconComponent }) => {
             <ListItemText secondary={label} />
           </ListItemButton>
         </Tooltip>
-      </ListItem>
+      </Box>
       <Menu
         anchorEl={anchorEl}
         open={openMenu}

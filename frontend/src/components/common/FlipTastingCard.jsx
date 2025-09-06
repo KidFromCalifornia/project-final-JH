@@ -10,6 +10,8 @@ import {
   useMediaQuery,
   useTheme,
   Stack,
+  Tooltip,
+  Rating,
 } from '@mui/material';
 import { useCafeStore } from '../../stores/useCafeStore';
 import {
@@ -22,6 +24,15 @@ import {
   Shadow,
   TastingNotesContainer,
 } from '../../styles/FlipTastingCard.styles';
+// ✅ REMOVED unused Block import
+
+const toTitleCase = (str) => {
+  if (!str) return '';
+  return str
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
 
 const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLoggedIn }) => {
   // Safety check - make sure we have valid tasting data
@@ -37,13 +48,11 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
   const [touchStart, setTouchStart] = useState(null);
   const cafes = useCafeStore((state) => state.cafes);
 
-  // Use the populated cafeId data directly since it's populated from the API
   const cafe = useMemo(() => {
-    // If cafeId is already populated (object), use it directly
     if (tasting.cafeId && typeof tasting.cafeId === 'object' && tasting.cafeId.name) {
       return tasting.cafeId;
     }
-    // Fallback: if cafeId is just an ID string, look it up in the cafes store
+
     return cafes.find((c) => c._id === tasting.cafeId) || {};
   }, [cafes, tasting.cafeId]);
 
@@ -96,26 +105,37 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
       <StyledCard>
         <BoxMain minHeight={280} position="relative">
           <StyledDivContent>
-            <TypographyTitle variant="h2">{tasting.coffeeName}</TypographyTitle>
+            <TypographyTitle variant="h2">{toTitleCase(tasting.coffeeName)}</TypographyTitle>
             {/* Tasting Notes in the gradient overlay */}
             {Array.isArray(tasting.tastingNotes) && tasting.tastingNotes.length > 0 && (
               <TastingNotesContainer>
                 {tasting.tastingNotes.slice(0, 4).map((note, index) => (
                   <Chip
                     key={index}
-                    label={note}
+                    label={toTitleCase(note)}
                     size="small"
                     sx={{
-                      height: '20px',
-                      fontSize: theme.typography.caption.fontSize,
                       fontWeight: theme.typography.fontWeightMedium,
-                      bgcolor: 'rgba(255,255,255,0.2)',
+                      fontSize: theme.typography.caption.fontSize,
+                      bgcolor: 'transparent',
                       color: theme.palette.text.secondary,
-                      borderRadius: theme.shape.borderRadius * 2.5,
+                      border: 'none',
+                      borderRadius: 0,
                       backdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(255,255,255,0.3)',
+                      padding: '0 !important',
+                      margin: '0 !important',
+                      minHeight: 'unset',
+                      height: 'unset',
+
                       '& .MuiChip-label': {
-                        px: theme.spacing(0.75),
+                        padding: '0 !important',
+                        margin: '0 !important',
+                        lineHeight: 1,
+                      },
+
+                      '&.MuiChip-root': {
+                        padding: '0 !important',
+                        margin: '0 !important',
                       },
                     }}
                   />
@@ -126,25 +146,35 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
         </BoxMain>
 
         <RowAuthor>
-          <Box sx={{ alignSelf: 'center', flex: 1, minWidth: 0 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignSelf: 'center',
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
             <Typography
-              variant="body1"
+              fontFamily="font.main"
+              textTransform={'uppercase'}
+              fontSize={16}
               sx={{
-                fontWeight: theme.typography.fontWeightMedium,
-                color: theme.palette.text.primary,
                 mb: 0,
+                color: theme.palette.text.primary,
+                fontWeight: 500,
               }}
             >
               {tasting.userId?.username || 'Anonymous'}
             </Typography>
             <Typography
-              variant="body2"
               sx={{
                 color: theme.palette.text.secondary,
+                fontSize: '1rem',
               }}
             >
-              {new Date(tasting.createdAt || tasting.date).toLocaleDateString()} |{' '}
-              {cafe.name || 'Unknown Cafe'}
+              {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
             </Typography>
           </Box>
         </RowAuthor>
@@ -152,7 +182,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
         <Shadow className="Shadow2" />
       </StyledCard>
     ),
-    [tasting, cafe.name, theme]
+    [tasting, theme] // ✅ FIXED: removed cafe.name since it's not used in frontContent
   );
 
   const backContent = useMemo(() => {
@@ -160,115 +190,186 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
 
     return (
       <>
-        <CardContent sx={{ flexGrow: 1, p: 2 }}>
-          <Typography variant="h6" component="div" gutterBottom color="text.primary">
-            Tasting Details
-          </Typography>
-
-          <Stack direction="row" flexWrap="wrap" gap={1} mb={2}>
-            {Array.isArray(tasting.tastingNotes) &&
-              tasting.tastingNotes.map((note, index) => (
-                <Chip
-                  key={index}
-                  label={note}
-                  size="small"
-                  sx={{
-                    bgcolor: theme.palette.primary.main,
-                    color: theme.palette.primary.contrastText,
-                  }}
-                />
-              ))}
-            {(!Array.isArray(tasting.tastingNotes) || tasting.tastingNotes.length === 0) && (
-              <Typography variant="body2" color="text.secondary">
-                No tasting notes recorded
-              </Typography>
-            )}
-          </Stack>
-
-          <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-            <Typography variant="body2" color="text.secondary">
-              {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
-            </Typography>
-          </Stack>
-
-          {tasting.notes && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 2, fontStyle: 'italic' }}>
-              "{tasting.notes}"
-            </Typography>
-          )}
-        </CardContent>
-
-        <CardActions sx={{ p: 2, pt: 0 }}>
-          {isLoggedIn && tasting.userId && (
-            <>
-              <Button
-                size="small"
-                variant="text"
-                color="primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setEditingTasting(tasting);
-                }}
-              >
-                Edit
-              </Button>
-              <Button
-                size="small"
-                variant="text"
-                color="error"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setDeletingTasting(tasting);
-                }}
-              >
-                Delete
-              </Button>
-            </>
-          )}
-          <Box sx={{ flexGrow: 1 }} />
-          <Typography variant="caption" color="text.secondary">
-            Tap to flip back
-          </Typography>
-        </CardActions>
-      </>
-    );
-  }, [
-    tasting,
-    isFlipped,
-    hasBeenFlipped,
-    isLoggedIn,
-    setEditingTasting,
-    setDeletingTasting,
-    theme,
-  ]);
-
-  return (
-    <Box
-      id={`tasting-card-${tasting._id}`}
-      sx={{
-        width: '100%',
-        height: '100%',
-        cursor: 'pointer',
-      }}
-      onClick={handleClick}
-    >
-      {isFlipped ? (
-        <StyledCard
+        <CardContent
           sx={{
-            width: '100%',
-            height: '100%',
+            flexGrow: 1,
+            p: 3, // ✅ INCREASED padding for better spacing
             display: 'flex',
             flexDirection: 'column',
-            bgcolor: theme.palette.background.paper,
-            overflow: 'hidden',
+            gap: 2, // ✅ ADDED consistent gap between sections
           }}
         >
-          {backContent}
-        </StyledCard>
-      ) : (
-        frontContent
-      )}
-    </Box>
+          {/* Header - Coffee Origin */}
+          <Typography
+            variant="h4"
+            component="h2"
+            sx={{
+              color: theme.palette.text.secondary,
+              fontWeight: theme.typography.fontWeightBold,
+              textAlign: 'center',
+            }}
+          >
+            {toTitleCase(tasting.coffeeOrigin)}
+          </Typography>
+          {/* Coffee Details Grid */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr', // ✅ SINGLE column for better readability
+              gap: 1.5,
+            }}
+          >
+            {tasting.coffeeRoaster && (
+              <Box>
+                <Typography
+                  textTransform={'uppercase'}
+                  variant="body"
+                  sx={{ fontWeight: 'bold', color: theme.palette.text.secondary }}
+                >
+                  Roaster:
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+                  {toTitleCase(tasting.coffeeRoaster)}
+                </Typography>
+              </Box>
+            )}
+
+            {tasting.brewMethod && (
+              <Box>
+                <Typography
+                  textTransform={'uppercase'}
+                  variant="body2"
+                  sx={{ fontWeight: 'bold', color: theme.palette.text.secondary }}
+                >
+                  Brew Method:
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+                  {toTitleCase(tasting.brewMethod)}
+                </Typography>
+              </Box>
+            )}
+
+            {/* Three column grid for short fields */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)', // ✅ THREE columns for compact info
+                gap: 1,
+              }}
+            >
+              {tasting.roastLevel && (
+                <Box>
+                  <Typography
+                    textTransform={'uppercase'}
+                    variant="caption"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: theme.palette.text.secondary,
+                      display: 'block',
+                    }}
+                  >
+                    Roast:
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {toTitleCase(tasting.roastLevel)}
+                  </Typography>
+                </Box>
+              )}
+
+              {tasting.acidity && (
+                <Box>
+                  <Typography
+                    textTransform={'uppercase'}
+                    variant="caption"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: theme.palette.text.secondary,
+                      display: 'block',
+                    }}
+                  >
+                    Acidity:
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {toTitleCase(tasting.acidity)}
+                  </Typography>
+                </Box>
+              )}
+
+              {tasting.mouthFeel && (
+                <Box>
+                  <Typography
+                    textTransform={'uppercase'}
+                    variant="caption"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: theme.palette.text.secondary,
+                      display: 'block',
+                    }}
+                  >
+                    Body:
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {toTitleCase(tasting.mouthFeel)}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </Box>
+
+          {/* Location & Date - Footer */}
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="flex-end"
+            sx={{
+              mt: 'auto',
+              pt: 2,
+              borderTop: `1px solid ${theme.palette.light.main}`,
+              textAlign: 'center', // ✅ CENTERED footer
+            }}
+          >
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+              <strong>{toTitleCase(cafe.name) || 'Unknown Cafe'}</strong>
+              {cafe.locations?.[0]?.neighborhood &&
+                ` • ${toTitleCase(cafe.locations[0].neighborhood)}`}
+            </Typography>
+          </Box>
+        </CardContent>
+      </>
+    );
+  }, [tasting, cafe.name, cafe.locations, isFlipped, hasBeenFlipped, theme]);
+
+  return (
+    <Tooltip title="Click to flip" arrow>
+      <Box
+        id={`tasting-card-${tasting._id}`}
+        sx={{
+          width: '100%',
+          height: 345,
+          cursor: 'pointer',
+        }}
+        onClick={handleClick}
+      >
+        {isFlipped ? (
+          <StyledCard
+            sx={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              background:
+                theme.palette.mode === 'dark'
+                  ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
+                  : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
+            }}
+          >
+            {backContent}
+          </StyledCard>
+        ) : (
+          <Box sx={{ height: '100%' }}>{frontContent}</Box>
+        )}
+      </Box>
+    </Tooltip>
   );
 };
 

@@ -19,6 +19,7 @@ import {
   Divider,
   Tooltip,
   useTheme,
+  Alert,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -28,26 +29,93 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
   const theme = useTheme();
   const { showSnackbar } = useAlert();
 
-  // Reusable TextField styling to match LoginForm
   const textFieldStyles = {
     '& .MuiOutlinedInput-root': {
-      backgroundColor: theme.palette.common.white,
+      backgroundColor:
+        theme.palette.mode === 'dark'
+          ? theme.palette.background.paper // ✅ CHANGE: Use theme background instead of white
+          : theme.palette.common.white,
       minHeight: { xs: 56, sm: 48 },
       '& fieldset': { borderColor: theme.palette.text.primary },
       '&:hover fieldset': { borderColor: theme.palette.primary.main },
       '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
-      '& input': { color: theme.palette.text.primary, fontSize: { xs: '18px', sm: '16px' } },
-      '& textarea': { color: theme.palette.text.primary, fontSize: { xs: '18px', sm: '16px' } },
+      '& input': {
+        color: theme.palette.text.primary,
+        fontSize: { xs: '18px', sm: '16px' },
+        wordWrap: 'break-word', // ✅ Allow text wrapping
+        overflowWrap: 'break-word', // ✅ Modern CSS for text wrapping
+        whiteSpace: 'normal', // ✅ Allow normal white space handling
+        // ✅ ADD placeholder styling for dark mode
+        '&::placeholder': {
+          color: theme.palette.text.secondary,
+          opacity: 0.7,
+        },
+      },
+      '& textarea': {
+        color: theme.palette.text.primary,
+        fontSize: { xs: '18px', sm: '16px' },
+        wordWrap: 'break-word', // ✅ Allow text wrapping in textareas
+        overflowWrap: 'break-word', // ✅ Modern CSS for text wrapping
+        whiteSpace: 'pre-wrap', // ✅ Preserve formatting but allow wrapping
+        // ✅ ADD placeholder styling for textareas
+        '&::placeholder': {
+          color: theme.palette.text.secondary,
+          opacity: 0.7,
+        },
+      },
     },
     '& .MuiInputLabel-root': {
       color: theme.palette.text.primary,
       '&.Mui-focused': { color: theme.palette.primary.main },
+      wordWrap: 'break-word', // ✅ Allow label text wrapping
+      overflowWrap: 'break-word',
+    },
+    // ✅ ADD specific placeholder styling for MUI inputs
+    '& .MuiInputBase-input::placeholder': {
+      color: theme.palette.text.secondary,
+      opacity: 0.7,
+    },
+    '& .MuiSelect-select': {
+      color: theme.palette.text.primary,
+      fontSize: { xs: '18px', sm: '16px' },
     },
   };
 
+  // Select menu styling for better contrast
+  const selectMenuProps = {
+    SelectProps: {
+      MenuProps: {
+        PaperProps: {
+          sx: {
+            backgroundColor: theme.palette.background.paper,
+            border: `1px solid ${theme.palette.divider}`,
+            boxShadow: theme.shadows[8],
+            '& .MuiMenuItem-root': {
+              color: theme.palette.text.primary,
+              fontSize: { xs: '18px', sm: '16px' },
+              backgroundColor: theme.palette.background.paper,
+              '&:hover': {
+                backgroundColor: theme.palette.action.hover,
+              },
+              '&.Mui-selected': {
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
+                '&:hover': {
+                  backgroundColor: theme.palette.primary.dark,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
   // Section styling for better visual hierarchy
   const sectionStyles = {
-    backgroundColor: theme.palette.background.default,
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? theme.palette.background.paper // ✅ CHANGE: Use paper background for dark mode
+        : theme.palette.background.default,
     borderRadius: 2,
     p: 3,
     mb: 2,
@@ -66,9 +134,10 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
 
   // State initialization
   const [form, setForm] = useState({
-    cafeId: (typeof initialValues.cafeId === 'object' && initialValues.cafeId?._id) 
-      ? initialValues.cafeId._id 
-      : initialValues.cafeId || '',
+    cafeId:
+      typeof initialValues.cafeId === 'object' && initialValues.cafeId?._id
+        ? initialValues.cafeId._id
+        : initialValues.cafeId || '',
     coffeeName: initialValues.coffeeName || '',
     coffeeRoaster: initialValues.coffeeRoaster || '',
     coffeeOrigin: initialValues.coffeeOrigin || '',
@@ -148,6 +217,8 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
       elevation={6}
       sx={{
         width: '100%',
+        maxWidth: { xs: '100%', md: '1200px' }, // ✅ Add max width for larger screens
+        mx: 'auto', // ✅ Center the form
         p: { xs: 2, sm: 3 },
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
@@ -155,12 +226,21 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         boxShadow: 5,
       }}
     >
-      <Typography variant="h4" component="h2" align="center" gutterBottom sx={{ mb: 3 }}>
+      <Typography
+        variant="h4"
+        component="h2"
+        align="center"
+        gutterBottom
+        sx={{
+          mb: 3,
+          fontSize: { xs: '1.5rem', sm: '2.125rem' }, // ✅ Responsive font size
+        }}
+      >
         {initialValues.cafeId ? 'Edit Coffee Tasting' : 'Add New Coffee Tasting'}
       </Typography>
 
       <form onSubmit={handleSubmit} aria-label="Coffee Tasting Form">
-        {fetchError && <SwalAlertStyles message={fetchError} type="error" />}
+        {fetchError && <Alert severity="error" sx={{ mb: 2 }}>{fetchError}</Alert>}
 
         <Grid container spacing={{ xs: 2, md: 3 }}>
           {/* Basic Coffee Info Section */}
@@ -183,6 +263,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                   variant="outlined"
                   aria-label="Cafe Location"
                   sx={textFieldStyles}
+                  {...selectMenuProps}
                 >
                   <MenuItem value="">Select a cafe</MenuItem>
                   {cafes.map((cafe) => (
@@ -223,14 +304,25 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
               </Tooltip>
 
               {/* Origin fields side by side */}
-              <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' }, // ✅ Stack on mobile
+                  gap: 1,
+                  mt: 2,
+                }}
+              >
                 <Tooltip title="Enter the origin of the coffee." placement="top" arrow>
                   <TextField
                     label="Coffee Origin"
                     name="coffeeOrigin"
                     value={form.coffeeOrigin}
                     onChange={handleChange}
-                    sx={{ flex: 1, ...textFieldStyles }}
+                    sx={{
+                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
+                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
+                      ...textFieldStyles,
+                    }}
                   />
                 </Tooltip>
                 <Tooltip title="Enter the region of the coffee." placement="top" arrow>
@@ -239,7 +331,11 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                     name="coffeeOriginRegion"
                     value={form.coffeeOriginRegion}
                     onChange={handleChange}
-                    sx={{ flex: 1, ...textFieldStyles }}
+                    sx={{
+                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
+                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
+                      ...textFieldStyles,
+                    }}
                   />
                 </Tooltip>
               </Box>
@@ -254,7 +350,14 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
               </Typography>
 
               {/* Brew method and roast level side by side */}
-              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' }, // ✅ Stack on mobile
+                  gap: 1,
+                  mb: 2,
+                }}
+              >
                 <Tooltip title="Select the brew method for the coffee." placement="top" arrow>
                   <TextField
                     select
@@ -263,11 +366,31 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                     value={form.brewMethod}
                     onChange={handleChange}
                     required
-                    sx={{ flex: 1, ...textFieldStyles }}
+                    sx={{
+                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
+                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
+                      ...textFieldStyles,
+                    }}
+                    SelectProps={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: selectMenuStyles['& .MuiPaper-root']
+                        }
+                      }
+                    }}
                   >
-                    <MenuItem value="">Select</MenuItem>
+                    <MenuItem 
+                      value=""
+                      sx={selectMenuStyles['& .MuiMenuItem-root']}
+                    >
+                      Select
+                    </MenuItem>
                     {(options.brewMethod || []).map((method) => (
-                      <MenuItem key={method} value={method}>
+                      <MenuItem 
+                        key={method} 
+                        value={method}
+                        sx={selectMenuStyles['& .MuiMenuItem-root']}
+                      >
                         {method}
                       </MenuItem>
                     ))}
@@ -281,11 +404,31 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                     name="roastLevel"
                     value={form.roastLevel}
                     onChange={handleChange}
-                    sx={{ flex: 1, ...textFieldStyles }}
+                    sx={{
+                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
+                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
+                      ...textFieldStyles,
+                    }}
+                    SelectProps={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: selectMenuStyles['& .MuiPaper-root']
+                        }
+                      }
+                    }}
                   >
-                    <MenuItem value="">Select</MenuItem>
+                    <MenuItem 
+                      value=""
+                      sx={selectMenuStyles['& .MuiMenuItem-root']}
+                    >
+                      Select
+                    </MenuItem>
                     {(options.roastLevel || []).map((level) => (
-                      <MenuItem key={level} value={level}>
+                      <MenuItem 
+                        key={level} 
+                        value={level}
+                        sx={selectMenuStyles['& .MuiMenuItem-root']}
+                      >
                         {level}
                       </MenuItem>
                     ))}
@@ -294,7 +437,14 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
               </Box>
 
               {/* Acidity and Mouth Feel side by side */}
-              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' }, // ✅ Stack on mobile
+                  gap: 1,
+                  mb: 2,
+                }}
+              >
                 <Tooltip title="Select the acidity level of the coffee." placement="top" arrow>
                   <TextField
                     select
@@ -302,11 +452,31 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                     name="acidity"
                     value={form.acidity}
                     onChange={handleChange}
-                    sx={{ flex: 1, ...textFieldStyles }}
+                    sx={{
+                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
+                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
+                      ...textFieldStyles,
+                    }}
+                    SelectProps={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: selectMenuStyles['& .MuiPaper-root']
+                        }
+                      }
+                    }}
                   >
-                    <MenuItem value="">Select</MenuItem>
+                    <MenuItem 
+                      value=""
+                      sx={selectMenuStyles['& .MuiMenuItem-root']}
+                    >
+                      Select
+                    </MenuItem>
                     {(options.acidity || []).map((level) => (
-                      <MenuItem key={level} value={level}>
+                      <MenuItem 
+                        key={level} 
+                        value={level}
+                        sx={selectMenuStyles['& .MuiMenuItem-root']}
+                      >
                         {level}
                       </MenuItem>
                     ))}
@@ -320,11 +490,31 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                     name="mouthFeel"
                     value={form.mouthFeel}
                     onChange={handleChange}
-                    sx={{ flex: 1, ...textFieldStyles }}
+                    sx={{
+                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
+                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
+                      ...textFieldStyles,
+                    }}
+                    SelectProps={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: selectMenuStyles['& .MuiPaper-root']
+                        }
+                      }
+                    }}
                   >
-                    <MenuItem value="">Select</MenuItem>
+                    <MenuItem 
+                      value=""
+                      sx={selectMenuStyles['& .MuiMenuItem-root']}
+                    >
+                      Select
+                    </MenuItem>
                     {(options.mouthFeel || []).map((feel) => (
-                      <MenuItem key={feel} value={feel}>
+                      <MenuItem 
+                        key={feel} 
+                        value={feel}
+                        sx={selectMenuStyles['& .MuiMenuItem-root']}
+                      >
                         {feel}
                       </MenuItem>
                     ))}
@@ -409,18 +599,25 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                       }
                       sx={{
                         backgroundColor: form.tastingNotes.includes(note)
-                          ? 'rgba(25, 118, 210, 0.1)'
-                          : 'rgba(255, 255, 255, 0.8)',
+                          ? theme.palette.mode === 'dark'
+                            ? 'rgba(25, 118, 210, 0.2)' // ✅ Simplified - no need for complex replace
+                            : 'rgba(25, 118, 210, 0.1)'
+                          : theme.palette.mode === 'dark'
+                            ? theme.palette.background.paper
+                            : 'rgba(255, 255, 255, 0.8)',
                         borderRadius: 1,
                         px: 1,
                         py: 0.5,
                         m: 0,
                         border: form.tastingNotes.includes(note)
                           ? `1px solid ${theme.palette.primary.main}`
-                          : '1px solid transparent',
+                          : `1px solid ${theme.palette.divider}`,
                         transition: 'all 0.2s ease',
                         '&:hover': {
-                          backgroundColor: 'rgba(25, 118, 210, 0.05)',
+                          backgroundColor:
+                            theme.palette.mode === 'dark'
+                              ? theme.palette.action.hover
+                              : 'rgba(25, 118, 210, 0.05)',
                         },
                       }}
                     />

@@ -21,12 +21,13 @@ import {
   ChevronRight as ChevronRightIcon,
   Menu as MenuIcon,
   Info as InfoIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  DoorFront as DoorFrontIcon,
 } from '@mui/icons-material';
 
 // Components
 import NavigationHeader from './navigation/NavigationHeader';
 import NavigationItems from './navigation/NavigationItems';
-import NavigationFilters from './navigation/NavigationFilters';
 import { AppBar, Drawer, DrawerHeader, drawerWidth } from './navigation/NavigationStyles';
 import LoadingLogo from '../common/LoadingLogo';
 import { useCafeStore } from '../../stores/useCafeStore';
@@ -174,9 +175,6 @@ const DesktopNavBar = ({
           setShowLogin={setShowLogin}
           setShowAddCafe={setShowAddCafe}
           setIsLoggedIn={setIsLoggedIn}
-        />
-
-        <NavigationFilters
           categories={categories}
           neighborhoods={neighborhoods}
           cafeTypeQuery={cafeTypeQuery}
@@ -184,13 +182,38 @@ const DesktopNavBar = ({
           setCafeTypeQuery={setCafeTypeQuery}
           setNeighborhoodQuery={setNeighborhoodQuery}
           clearFilters={clearFilters}
-          navIconColor={navIconColor}
-          open={open}
         />
 
+        <Box sx={{ flexGrow: 1 }} />
+
         <Divider />
+        {isLoggedIn && isAdmin && (
+          <ListItem sx={{ display: 'block', padding: 0 }}>
+            <Tooltip title="Admin" arrow placement="right" disableHoverListener={open}>
+              <ListItemButton component={Link} to="/admin">
+                <ListItemIcon>
+                  <AdminPanelSettingsIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
+                <ListItemText primary="Admin" />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+        )}
+
+        {isLoggedIn && !isAdmin && (
+          <ListItem sx={{ display: 'block', padding: 0 }}>
+            <Tooltip title="UserPage" arrow placement="right" disableHoverListener={open}>
+              <ListItemButton component={Link} to="/user">
+                <ListItemIcon>
+                  <DoorFrontIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
+                <ListItemText primary="Profile" />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+        )}
         <List>
-          <ListItem disablePadding sx={{ display: 'block' }}>
+          <ListItem sx={{ display: 'block', padding: 0 }}>
             <Tooltip title="About Me" disableHoverListener={open}>
               <ListItemButton component={Link} to="/about">
                 <ListItemIcon>

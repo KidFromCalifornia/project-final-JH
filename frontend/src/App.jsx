@@ -42,7 +42,7 @@ const App = () => {
     <AlertProvider>
       <Router>
         {isDesktop && (
-          <header>
+          <Box component="header">
             <DesktopNavBar
               component="nav"
               searchResults={searchResults}
@@ -58,7 +58,7 @@ const App = () => {
               setShowAddCafe={setShowAddCafe}
               style={{ flex: 1 }}
             />
-          </header>
+          </Box>
         )}
 
         <Box

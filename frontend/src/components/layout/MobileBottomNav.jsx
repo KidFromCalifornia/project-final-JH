@@ -805,40 +805,42 @@ const MobileBottomNav = () => {
           />
           {searchQuery && (
             <Box sx={{ mt: 2 }}>
-              {cafes
-                .filter(
-                  (cafe) =>
-                    cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    (cafe.locations?.[0]?.neighborhood || '')
-                      .toLowerCase()
-                      .includes(searchQuery.toLowerCase()) ||
-                    (cafe.roaster || '').toLowerCase().includes(searchQuery.toLowerCase())
-                )
-                .slice(0, 5) // Limit results
-                .map((cafe) => (
-                  <ListItem
-                    key={cafe._id}
-                    button
-                    onClick={() => {
-                      navigate(`/cafe/${cafe._id}`);
-                      setSearchOpen(false);
-                      setSearchQuery('');
-                    }}
-                    sx={{
-                      borderRadius: 1,
-                      mb: 1,
-                      '&:hover': {
-                        bgcolor: theme.palette.action.hover,
-                      },
-                    }}
-                  >
-                    <StorefrontIcon sx={{ mr: 2, color: 'text.secondary' }} />
-                    <ListItemText
-                      primary={cafe.name}
-                      secondary={cafe.locations?.[0]?.neighborhood || 'Unknown location'}
-                    />
-                  </ListItem>
-                ))}
+              <List>
+                {cafes
+                  .filter(
+                    (cafe) =>
+                      cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      (cafe.locations?.[0]?.neighborhood || '')
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                      (cafe.roaster || '').toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .slice(0, 5) // Limit results
+                  .map((cafe) => (
+                    <ListItem
+                      key={cafe._id}
+                      button
+                      onClick={() => {
+                        navigate(`/cafe/${cafe._id}`);
+                        setSearchOpen(false);
+                        setSearchQuery('');
+                      }}
+                      sx={{
+                        borderRadius: 1,
+                        mb: 1,
+                        '&:hover': {
+                          bgcolor: theme.palette.action.hover,
+                        },
+                      }}
+                    >
+                      <StorefrontIcon sx={{ mr: 2, color: 'text.secondary' }} />
+                      <ListItemText
+                        primary={cafe.name}
+                        secondary={cafe.locations?.[0]?.neighborhood || 'Unknown location'}
+                      />
+                    </ListItem>
+                  ))}
+              </List>
               {cafes.filter(
                 (cafe) =>
                   cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -2,12 +2,12 @@ import React, { useEffect, Suspense } from 'react';
 import { useCafeStore } from '../stores/useCafeStore';
 import Container from '@mui/material/Container';
 import { Box, Typography, Button, Alert, Tooltip, useTheme } from '@mui/material';
+import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material'; // ✅ ADDED CloseIcon
 import CafeSearchBar from '../components/common/CafeSearchBar';
 import FlipTastingCard from '../components/common/FlipTastingCard';
-import LoadingLogo from '../components/common/LoadingLogo';
 import { tastingAPI } from '../services/api';
+import LoadingLogo from '../components/common/LoadingLogo';
 
-// Lazy load TastingForm for better performance
 const TastingForm = React.lazy(() => import('../components/forms/TastingForm'));
 
 const TastingsPage = () => {
@@ -24,8 +24,30 @@ const TastingsPage = () => {
   const tastingsPerPage = useCafeStore((state) => state.tastingsPerPage);
   const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
 
+  const [showTastingForm, setShowTastingForm] = React.useState(false);
+
   const theme = useTheme();
   const fetchTastings = useCafeStore((state) => state.fetchTastings);
+
+  const handleTastingSubmit = async (formData) => {
+    try {
+      const result = await tastingAPI.create(formData);
+      if (result.success) {
+        setTastings((prev) => [result.data, ...prev]);
+        setShowTastingForm(false);
+      }
+    } catch (error) {
+      console.error('Error creating tasting:', error);
+    }
+  };
+
+  // ✅ ADDED toggle function
+  const handleToggleTastingForm = () => {
+    setShowTastingForm((prev) => !prev);
+    if (showTastingForm) {
+      setEditingTasting(null);
+    }
+  };
 
   useEffect(() => {
     fetchTastings(isLoggedIn);
@@ -59,32 +81,6 @@ const TastingsPage = () => {
     }
   }, [deletingTasting]);
 
-  // Submit logic for both create and edit
-  const handleTastingSubmit = async (formData) => {
-    try {
-      let result;
-
-      if (editingTasting) {
-        result = await tastingAPI.update(editingTasting._id, formData);
-        if (result.success) {
-          setTastings((prev) => prev.map((t) => (t._id === editingTasting._id ? result.data : t)));
-          setEditingTasting(null);
-        } else {
-          console.error('Update failed:', result.error);
-        }
-      } else {
-        result = await tastingAPI.create(formData);
-        if (result.success) {
-          setTastings((prev) => [result.data, ...prev]);
-        } else {
-          console.error('Create failed:', result.error);
-        }
-      }
-    } catch (error) {
-      console.error('Submit error:', error.message);
-    }
-  };
-
   // Normalize function
   const normalize = (str) =>
     String(str || '')
@@ -92,7 +88,7 @@ const TastingsPage = () => {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-  // Filtering logic - SINGLE VERSION ONLY
+  // Filtering logic
   const filteredTastings = (Array.isArray(tastings) ? tastings : []).filter((tasting) => {
     if (!tasting || !tasting._id || tasting._id === 'error') return false;
 
@@ -111,7 +107,7 @@ const TastingsPage = () => {
       tasting.mouthFeel,
       tasting.notes,
       ...(Array.isArray(tasting.tastingNotes) ? tasting.tastingNotes : []),
-      tasting.cafeId?.name, // Changed from cafe?.name to cafeId?.name to match FlipTastingCard
+      tasting.cafeId?.name,
     ].filter(Boolean);
 
     const allFields = searchableFields.map(normalize).join(' ');
@@ -131,162 +127,238 @@ const TastingsPage = () => {
         display: 'flex',
         width: '100%',
         minHeight: '100vh',
-        backgroundColor: theme.palette.textMuted?.default,
+        backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
-        flexDirection: { xs: 'column', sm: 'row' },
+        flexDirection: 'column',
         alignSelf: 'center',
-        p: 0,
+        p: { xs: 1, sm: 2 }, // ✅ Responsive padding
+        overflow: 'visible',
       }}
     >
       <Typography variant="h1" hidden gutterBottom>
-        Coffee Tasting Page
+        Current User Coffee Tasting
       </Typography>
 
-      {/* Form Section */}
+      <Typography
+        variant="h4"
+        color="text.primary"
+        gutterBottom
+        sx={{
+          textAlign: 'center',
+          mb: 3,
+          fontSize: { xs: '1.75rem', sm: '2.125rem' }, // ✅ Responsive font size
+        }}
+      >
+        Coffee Tastings
+      </Typography>
+
+      {/* ✅ Updated search box with toggle button */}
       <Box
         sx={{
-          width: { xs: '100%', sm: '50%' },
-          maxHeight: { xs: 'auto', sm: '100vh' },
-          overflowY: { xs: 'visible', sm: 'auto' },
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '16px',
+          flexDirection: { xs: 'column', sm: 'row' }, // ✅ Stack on mobile
+          justifyContent: 'space-between',
+          alignItems: { xs: 'stretch', sm: 'center' }, // ✅ Full width on mobile
+          gap: 2,
+          mb: 3,
+          px: { xs: 1, sm: 3 }, // ✅ Less padding on mobile
         }}
       >
         {isLoggedIn ? (
-          <Suspense fallback={<LoadingLogo />}>
-            <TastingForm onSubmit={handleTastingSubmit} initialValues={editingTasting || {}} />
-          </Suspense>
+          <Button
+            variant={showTastingForm ? 'outlined' : 'contained'} // ✅ Dynamic variant
+            startIcon={showTastingForm ? <CloseIcon /> : <AddIcon />} // ✅ Dynamic icon
+            onClick={handleToggleTastingForm} // ✅ Toggle function
+            sx={{
+              backgroundColor: showTastingForm ? 'transparent' : theme.palette.primary.main,
+              color: showTastingForm
+                ? theme.palette.primary.main
+                : theme.palette.primary.contrastText,
+              border: '2px solid' + theme.palette.primary.main,
+              minWidth: { xs: '120px', sm: '140px' }, // ✅ Smaller min width on mobile
+              height: 'fit-content', // ✅ Better height management
+              fontSize: { xs: '0.875rem', sm: '1rem' }, // ✅ Responsive font size
+              whiteSpace: 'nowrap', // ✅ Prevent text wrapping within button
+              overflow: 'visible', // ✅ Allow button to expand
+              textWrap: 'nowrap', // ✅ Modern CSS for no wrapping
+              '&:hover': {
+                backgroundColor: showTastingForm
+                  ? theme.palette.primary.light
+                  : theme.palette.primary.dark,
+                color: showTastingForm
+                  ? theme.palette.primary.contrastText
+                  : theme.palette.primary.contrastText,
+              },
+            }}
+          >
+            {showTastingForm ? 'Close' : 'Add Tasting'} {/* ✅ Dynamic text */}
+          </Button>
         ) : (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h4" color="text.primary" gutterBottom>
-              Share Your Coffee Experience
-            </Typography>
-            <Typography variant="body1" color="text.primary">
-              Please log in to add your own tasting notes and experiences
-            </Typography>
-          </Box>
-        )}
-      </Box>
-
-      {/* Right Section - Results */}
-      <Box
-        className="pageRight"
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1,
-          width: { xs: '100%', sm: '50%' },
-          maxHeight: { xs: 'auto', sm: '100vh' },
-          overflowY: { xs: 'visible', sm: 'auto' },
-          mt: { xs: 2, sm: 0 },
-          mb: { xs: 8, sm: 0 },
-          px: 2,
-          py: 2,
-        }}
-      >
-        <CafeSearchBar
-          fullWidth
-          setSearchQuery={setSearchQuery}
-          type="tastings"
-          sx={{ width: '100%', minHeight: '56px', mb: 2 }}
-        />
-
-        {filteredTastings.length === 0 ? (
-          <Alert severity="info" sx={{ mt: 2 }}>
-            No tastings found. {searchQuery && 'Try adjusting your search terms.'}
-          </Alert>
-        ) : (
-          <Box sx={{ flex: 1, overflowY: 'auto' }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              {filteredTastings.length} tasting{filteredTastings.length !== 1 ? 's' : ''} found
-            </Typography>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: '1fr',
-                  sm: 'repeat(auto-fill, minmax(280px, 1fr))',
-                },
-                gap: 2,
-                mt: 2,
-              }}
-            >
-              {currentTastings.length === 0 ? (
-                <Typography
-                  variant="body2"
-                  color="text.primary"
-                  sx={{ textAlign: 'center', py: 4, gridColumn: '1 / -1' }}
-                >
-                  No tasting cards to display.
-                </Typography>
-              ) : (
-                currentTastings.map((tasting) => (
-                  <FlipTastingCard
-                    key={tasting._id}
-                    tasting={tasting}
-                    isLoggedIn={isLoggedIn}
-                    setEditingTasting={setEditingTasting}
-                    setDeletingTasting={setDeletingTasting}
-                    sx={{ width: '100%' }}
-                  />
-                ))
-              )}
-            </Box>
-
-            {totalPages > 1 && (
-              <Box
+          <Tooltip title="Please log in to add tastings" placement="bottom" arrow>
+            <span>
+              <Button
+                variant="outlined"
+                startIcon={<AddIcon />}
+                disabled
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  mt: 4,
-                  mb: 2,
-                  position: 'sticky',
-                  bottom: 0,
-                  backgroundColor: theme.palette.background.default,
-                  py: 2,
+                  minWidth: { xs: '120px', sm: '140px' }, // ✅ Responsive min width
+                  opacity: 0.6,
+                  fontSize: { xs: '0.875rem', sm: '1rem' }, // ✅ Responsive font size
+                  whiteSpace: 'nowrap', // ✅ Prevent text wrapping
+                  overflow: 'visible', // ✅ Allow button to expand
+                  textWrap: 'nowrap', // ✅ Modern CSS for no wrapping
                 }}
               >
-                <Tooltip title="Go to previous page" arrow>
-                  <span>
-                    <Button
-                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                      variant="outlined"
-                      size="small"
-                      sx={{ mx: 1, minWidth: '80px' }}
-                    >
-                      Previous
-                    </Button>
-                  </span>
-                </Tooltip>
+                Add Tasting
+              </Button>
+            </span>
+          </Tooltip>
+        )}
 
-                <Typography variant="body2" sx={{ mx: 2 }}>
-                  Page {currentPage} of {totalPages}
-                </Typography>
+        <CafeSearchBar
+          setSearchQuery={setSearchQuery}
+          type="tastings"
+          sx={{
+            width: { xs: '100%', sm: '50%' }, // ✅ Full width on mobile, 50% on larger screens
+            minWidth: { xs: 'unset', sm: '200px' }, // ✅ Minimum width for larger screens
+          }}
+        />
+      </Box>
 
-                <Tooltip title="Go to next page" arrow>
-                  <span>
-                    <Button
-                      onClick={() =>
-                        setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
-                      }
-                      disabled={currentPage === totalPages || filteredTastings.length === 0}
-                      variant="outlined"
-                      size="small"
-                      sx={{ mx: 1, minWidth: '80px' }}
-                    >
-                      Next
-                    </Button>
-                  </span>
-                </Tooltip>
-              </Box>
+      {/* ✅ Alert for non-logged-in users */}
+      {!isLoggedIn && (
+        <Alert severity="warning" sx={{ mb: 3 }}>
+          You must be logged in to add coffee tastings. Please log in to share your coffee
+          experiences!
+        </Alert>
+      )}
+
+      {/* ✅ TastingForm modal */}
+      {showTastingForm && (
+        <Suspense fallback={<LoadingLogo />}>
+          <TastingForm
+            open={showTastingForm}
+            onClose={() => {
+              setShowTastingForm(false);
+              setEditingTasting(null);
+            }}
+            onSubmit={handleTastingSubmit}
+            editingTasting={editingTasting}
+          />
+        </Suspense>
+      )}
+
+      {filteredTastings.length === 0 ? (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          No tastings found. {searchQuery && 'Try adjusting your search terms.'}
+          {!isLoggedIn && ' Please log in to add tastings.'}
+        </Alert>
+      ) : (
+        <Box sx={{ flex: 1, overflow: 'visible' }}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(auto-fill, minmax(280px, 1fr))',
+                md: 'repeat(auto-fill, minmax(320px, 1fr))', // ✅ Larger cards on desktop
+              },
+              gap: { xs: 1, sm: 2 }, // ✅ Smaller gap on mobile
+              mt: 2,
+              padding: { xs: '0 4px 8px 4px', sm: '0 8px 8px 8px' }, // ✅ Less padding on mobile
+              overflow: 'visible',
+            }}
+          >
+            {currentTastings.length === 0 ? (
+              <Typography
+                variant="body2"
+                color="text.primary"
+                sx={{ textAlign: 'center', py: 4, gridColumn: '1 / -1' }}
+              >
+                No tasting cards to display.
+              </Typography>
+            ) : (
+              currentTastings.map((tasting) => (
+                <FlipTastingCard
+                  key={tasting._id}
+                  tasting={tasting}
+                  isLoggedIn={isLoggedIn}
+                  setEditingTasting={setEditingTasting}
+                  setDeletingTasting={setDeletingTasting}
+                  sx={{ width: '100%' }}
+                />
+              ))
             )}
           </Box>
-        )}
-      </Box>
+
+          {totalPages > 1 && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' }, // ✅ Stack pagination on mobile
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: { xs: 1, sm: 0 }, // ✅ Gap on mobile
+                mt: 4,
+                mb: 2,
+                position: 'sticky',
+                bottom: 0,
+                backgroundColor: theme.palette.background.default,
+                py: 2,
+                px: { xs: 1, sm: 0 }, // ✅ Horizontal padding on mobile
+              }}
+            >
+              <Tooltip title="Go to previous page" arrow>
+                <span>
+                  <Button
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      mx: { xs: 0, sm: 1 },
+                      minWidth: { xs: '70px', sm: '80px' }, // ✅ Smaller buttons on mobile
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' }, // ✅ Smaller text on mobile
+                    }}
+                  >
+                    Previous
+                  </Button>
+                </span>
+              </Tooltip>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  mx: { xs: 0, sm: 2 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' }, // ✅ Responsive font size
+                  textAlign: 'center',
+                  minWidth: 'fit-content',
+                }}
+              >
+                Page {currentPage} of {totalPages}
+              </Typography>
+
+              <Tooltip title="Go to next page" arrow>
+                <span>
+                  <Button
+                    onClick={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
+                    disabled={currentPage === totalPages || filteredTastings.length === 0}
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      mx: { xs: 0, sm: 1 },
+                      minWidth: { xs: '70px', sm: '80px' }, // ✅ Smaller buttons on mobile
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' }, // ✅ Smaller text on mobile
+                    }}
+                  >
+                    Next
+                  </Button>
+                </span>
+              </Tooltip>
+            </Box>
+          )}
+        </Box>
+      )}
     </Container>
   );
 };

@@ -1,8 +1,9 @@
 import { useCafeStore } from '../../stores/useCafeStore';
 import { cafeAPI, tastingAPI } from '../../services/api';
-import { TextField, Box } from '@mui/material';
+import { TextField, Box, useTheme } from '@mui/material'; // ✅ ADD useTheme import
 
 const SearchBar = ({ type = 'cafes' }) => {
+  const theme = useTheme(); // ✅ ADD this line
   const searchQuery = useCafeStore((state) => state.searchQuery);
   const setSearchQuery = useCafeStore((state) => state.setSearchQuery);
   const setSearchResults = useCafeStore((state) => state.setSearchResults);
@@ -32,16 +33,47 @@ const SearchBar = ({ type = 'cafes' }) => {
   return (
     <>
       <TextField
-        sx={{ width: '100%' }}
-        id="filled-basic"
-        label={`Search ${type === 'cafes' ? 'cafes' : 'tastings'}`}
-        variant="filled"
+        id="outlined-basic"
+        label={`Search ${type}...`}
+        variant="outlined"
         type="text"
+        placeholder={`Search ${type}...`}
         value={searchQuery}
         onChange={handleChange}
         autoComplete="on"
         role="searchbox"
         aria-label={`Search ${type}`}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            backgroundColor:
+              theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)', // ✅ ADD subtle background
+            '& fieldset': {
+              borderColor: theme.palette.primary.main,
+            },
+            '&:hover fieldset': {
+              borderColor: theme.palette.primary.dark,
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: theme.palette.primary.main,
+            },
+          },
+          '& .MuiOutlinedInput-input': {
+            // ✅ ADD input styling
+            color: theme.palette.text.primary,
+            '&::placeholder': {
+              // ✅ ADD placeholder styling
+              color: theme.palette.text.primary,
+              opacity: 0.7,
+            },
+          },
+          '& .MuiInputLabel-root': {
+            // ✅ ADD label styling
+            color: theme.palette.text.primary,
+            '&.Mui-focused': {
+              color: theme.palette.primary.main,
+            },
+          },
+        }}
       />
     </>
   );

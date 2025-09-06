@@ -2,27 +2,14 @@ import { styled } from '@mui/material/styles';
 import { Card, Box, Typography } from '@mui/material';
 
 const family = "'Sen', sans-serif";
-
 export const StyledCard = styled(Card)(({ theme }) => ({
   minWidth: 280,
+  maxWidth: 320,
+  maxHeight: 370,
   position: 'relative',
   boxShadow: theme.shadows[8],
   overflow: 'visible',
   borderRadius: theme.shape.borderRadius * 3,
-  transition: theme.transitions.create(['transform', 'box-shadow'], {
-    duration: theme.transitions.duration.standard,
-  }),
-
-  '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: theme.shadows[16],
-    '& .Shadow1': {
-      bottom: '-1.5rem',
-    },
-    '& .Shadow2': {
-      bottom: '-2.5rem',
-    },
-  },
 
   '&:before': {
     content: '""',
@@ -33,8 +20,6 @@ export const StyledCard = styled(Card)(({ theme }) => ({
     bottom: -1,
     height: '100%',
     borderRadius: theme.shape.borderRadius * 3,
-    backgroundColor:
-      theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200],
     opacity: 0.3,
   },
 }));
@@ -46,8 +31,8 @@ export const BoxMain = styled(Box)(({ theme }) => ({
   zIndex: 1,
   background:
     theme.palette.mode === 'dark'
-      ? `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`
-      : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+      ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
+      : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
   position: 'relative',
 
   '&:after': {
@@ -74,7 +59,7 @@ export const StyledDivContent = styled('div')(({ theme }) => ({
 
 export const StyledDivTag = styled('div')(({ theme }) => ({
   display: 'inline-block',
-  fontFamily: theme.typography.fontFamily,
+  fontFamily: family,
   backgroundColor: theme.palette.secondary.main,
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(0.25, 1),
@@ -87,10 +72,10 @@ export const StyledDivTag = styled('div')(({ theme }) => ({
 }));
 
 export const TypographyTitle = styled(Typography)(({ theme }) => ({
-  fontFamily: theme.typography.h4.fontFamily || family,
+  fontFamily: family,
   fontSize: theme.typography.h5.fontSize,
   fontWeight: theme.typography.h4.fontWeight,
-  color: theme.palette.common.white,
+  color: theme.palette.light.main,
   lineHeight: 1.2,
   display: '-webkit-box',
   WebkitLineClamp: 2,
@@ -104,12 +89,22 @@ export const RowAuthor = styled('div')(({ theme }) => ({
   minWidth: 0,
   padding: theme.spacing(2, 3, 3),
   margin: 0,
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor:
+    theme.palette.mode === 'dark' ? theme.palette.textMuted.main : theme.palette.light.main,
   zIndex: 1,
   position: 'relative',
   borderBottomLeftRadius: theme.shape.borderRadius * 3,
   borderBottomRightRadius: theme.shape.borderRadius * 3,
   alignItems: 'center',
+  color:
+    theme.palette.mode === 'dark'
+      ? theme.palette.getContrastText(theme.palette.textMuted.main)
+      : theme.palette.text.primary,
+
+  '& .MuiTypography-root': {
+    // ✅ Ensure all text inherits proper color
+    color: 'inherit',
+  },
 }));
 
 export const Shadow = styled('div')(({ theme }) => ({
@@ -123,7 +118,9 @@ export const Shadow = styled('div')(({ theme }) => ({
   bottom: 0,
   borderRadius: theme.shape.borderRadius * 3,
   backgroundColor:
-    theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200],
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.default
+      : theme.palette.background.paper,
   opacity: 0.4,
   left: '50%',
   transform: 'translateX(-50%)',
@@ -136,7 +133,8 @@ export const Shadow = styled('div')(({ theme }) => ({
 
 export const TastingNotesContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
+  justifyContent: 'flex-start',
   flexWrap: 'wrap',
-  gap: theme.spacing(0.5),
+  gap: theme.spacing(1.5),
   marginTop: theme.spacing(1),
 }));

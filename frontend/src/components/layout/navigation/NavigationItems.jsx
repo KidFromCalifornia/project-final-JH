@@ -14,21 +14,26 @@ import {
   Map as MapIcon,
   RateReview as RateReviewIcon,
   AddLocation as AddLocationIcon,
-  AdminPanelSettings as AdminPanelSettingsIcon,
-  DoorFront as DoorFrontIcon,
   Login as LoginIcon,
   Logout as LogoutIcon,
   Info as InfoIcon,
 } from '@mui/icons-material';
+import NavigationFilters from './NavigationFilters.jsx';
 
 const NavigationItems = ({
   isLoggedIn,
-  isAdmin,
   navIconColor,
   open,
   setShowLogin,
   setShowAddCafe,
   setIsLoggedIn,
+  categories,
+  neighborhoods,
+  cafeTypeQuery,
+  neighborhoodQuery,
+  setCafeTypeQuery,
+  setNeighborhoodQuery,
+  clearFilters,
 }) => {
   const handleLogout = () => {
     localStorage.removeItem('userToken');
@@ -41,71 +46,8 @@ const NavigationItems = ({
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <List>
-        <ListItem disablePadding sx={{ display: 'block' }}>
-          <Tooltip title="Map" arrow placement="right" disableHoverListener={open}>
-            <ListItemButton component={Link} to="/">
-              <ListItemIcon>
-                <MapIcon sx={{ color: navIconColor }} />
-              </ListItemIcon>
-              <ListItemText primary="Map" />
-            </ListItemButton>
-          </Tooltip>
-        </ListItem>
-
-        <ListItem disablePadding sx={{ display: 'block' }}>
-          <Tooltip title="Tastings" arrow placement="right" disableHoverListener={open}>
-            <ListItemButton component={Link} to="/tastings">
-              <ListItemIcon>
-                <RateReviewIcon sx={{ color: navIconColor }} />
-              </ListItemIcon>
-              <ListItemText primary="Tastings" />
-            </ListItemButton>
-          </Tooltip>
-        </ListItem>
-
-        {isLoggedIn && (
-          <ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title="Add Cafe" arrow placement="right" disableHoverListener={open}>
-              <ListItemButton onClick={() => setShowAddCafe(true)}>
-                <ListItemIcon>
-                  <AddLocationIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Add Cafe" />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-        )}
-
-        {isLoggedIn && isAdmin && (
-          <ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title="Admin" arrow placement="right" disableHoverListener={open}>
-              <ListItemButton component={Link} to="/admin">
-                <ListItemIcon>
-                  <AdminPanelSettingsIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Admin" />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-        )}
-
-        {isLoggedIn && !isAdmin && (
-          <ListItem disablePadding sx={{ display: 'block' }}>
-            <Tooltip title="Profile" arrow placement="right" disableHoverListener={open}>
-              <ListItemButton component={Link} to="/user">
-                <ListItemIcon>
-                  <DoorFrontIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Profile" />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-        )}
-      </List>
-      <Divider />
-      <List>
         {!isLoggedIn && (
-          <ListItem disablePadding sx={{ display: 'block' }}>
+          <ListItem sx={{ display: 'block', padding: 0 }}>
             <Tooltip title="Login" arrow placement="right" disableHoverListener={open}>
               <ListItemButton onClick={() => setShowLogin(true)}>
                 <ListItemIcon>
@@ -118,7 +60,7 @@ const NavigationItems = ({
         )}
 
         {isLoggedIn && (
-          <ListItem disablePadding sx={{ display: 'block' }}>
+          <ListItem sx={{ display: 'block', padding: 0 }}>
             <Tooltip title="Logout" arrow placement="right" disableHoverListener={open}>
               <ListItemButton onClick={handleLogout}>
                 <ListItemIcon>
@@ -130,6 +72,67 @@ const NavigationItems = ({
           </ListItem>
         )}
       </List>
+      <List>
+        <ListItem sx={{ display: 'block', padding: 0 }}>
+          <Tooltip title="Map" arrow placement="right" disableHoverListener={open}>
+            <ListItemButton component={Link} to="/">
+              <ListItemIcon>
+                <MapIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
+              <ListItemText primary="Map" />
+            </ListItemButton>
+          </Tooltip>
+        </ListItem>
+
+        {isLoggedIn && (
+          <ListItem sx={{ display: 'block', padding: 0 }}>
+            <Tooltip title="Add Cafe" arrow placement="right" disableHoverListener={open}>
+              <ListItemButton onClick={() => setShowAddCafe(true)}>
+                <ListItemIcon>
+                  <AddLocationIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
+                <ListItemText primary="Add Cafe" />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+        )}
+        <ListItem sx={{ display: 'block', padding: 0 }}>
+          <Tooltip title="Tastings" arrow placement="right" disableHoverListener={open}>
+            <ListItemButton component={Link} to="/tastings">
+              <ListItemIcon>
+                <RateReviewIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
+              <ListItemText primary="Tastings" />
+            </ListItemButton>
+          </Tooltip>
+        </ListItem>
+
+        {isLoggedIn && (
+          <ListItem sx={{ display: 'block', padding: 0 }}>
+            <Tooltip title="Add Cafe" arrow placement="right" disableHoverListener={open}>
+              <ListItemButton onClick={() => setShowAddCafe(true)}>
+                <ListItemIcon>
+                  <AddLocationIcon sx={{ color: navIconColor }} />
+                </ListItemIcon>
+                <ListItemText primary="Add Cafe" />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+        )}
+
+        <NavigationFilters
+          categories={categories}
+          neighborhoods={neighborhoods}
+          cafeTypeQuery={cafeTypeQuery}
+          neighborhoodQuery={neighborhoodQuery}
+          setCafeTypeQuery={setCafeTypeQuery}
+          setNeighborhoodQuery={setNeighborhoodQuery}
+          clearFilters={clearFilters}
+          navIconColor={navIconColor}
+          open={open}
+        />
+      </List>
+      <Divider />
     </Box>
   );
 };
