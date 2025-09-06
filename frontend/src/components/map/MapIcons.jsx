@@ -10,10 +10,10 @@ import GeotagPinIcon from '../../assets/icons/geotagPinIcon.svg?react';
 const getCustomIcon = (category, theme, themeMode, options = {}) => {
   // Simple color map
   const colors = {
-    thirdwave: '#e0b404', // Yellow/gold
-    specialty: '#2570bb', // Blue
-    roaster: '#ef6461', // Red
-    geotag: '#4caf50', // Green
+    thirdwave: theme.palette.accentStrong.main,
+    specialty: '#194f84', // Always use light theme primary color
+    roaster: theme.palette.error.main,
+    geotag: theme.palette.success.main,
     default: theme.palette.primary.main,
   };
 
@@ -22,7 +22,7 @@ const getCustomIcon = (category, theme, themeMode, options = {}) => {
   // Add outline effect for light mode to increase visibility
   const iconProps = {
     sx: {
-      fontSize: 32,
+      fontSize: options.fontSize || '2rem',
       color,
     },
   };

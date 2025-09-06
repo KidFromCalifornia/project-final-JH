@@ -95,26 +95,23 @@ const NewCafeForm = ({ onClose }) => {
   };
 
   // Select menu styling for better contrast
-  const selectMenuProps = {
-    MenuProps: {
-      PaperProps: {
-        sx: {
-          backgroundColor: theme.palette.background.paper,
-          border: `1px solid ${theme.palette.divider}`,
-          boxShadow: theme.shadows[8],
-          '& .MuiMenuItem-root': {
-            color: theme.palette.text.primary,
-            fontSize: { xs: '18px', sm: '16px' },
-            backgroundColor: theme.palette.background.paper,
+  const selectMenuStyles = {
+    PaperProps: {
+      sx: {
+        backgroundColor: theme.palette.background.default,
+        border: `1px solid ${theme.palette.divider}`,
+        boxShadow: theme.shadows[8],
+        '& .MuiMenuItem-root': {
+          color: theme.palette.text.primary,
+          fontSize: { xs: '18px', sm: '16px' },
+          backgroundColor: 'transparent',
+          '&:hover': {
+            backgroundColor: theme.palette.action.hover,
+          },
+          '&.Mui-selected': {
+            color: theme.palette.primary.contrastText,
             '&:hover': {
-              backgroundColor: theme.palette.action.hover,
-            },
-            '&.Mui-selected': {
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
-              '&:hover': {
-                backgroundColor: theme.palette.primary.dark,
-              },
+              backgroundColor: theme.palette.primary.dark,
             },
           },
         },
@@ -423,10 +420,18 @@ const NewCafeForm = ({ onClose }) => {
                 onChange={handleChange}
                 required
                 sx={textFieldStyles}
-                {...selectMenuProps}
+                MenuProps={{
+                  PaperProps: {
+                    sx: selectMenuStyles['& .MuiPaper-root'],
+                  },
+                }}
               >
                 {CATEGORY_OPTIONS.map((option) => (
-                  <MenuItem key={option} value={option}>
+                  <MenuItem
+                    key={option}
+                    value={option}
+                    sx={selectMenuStyles['& .MuiMenuItem-root']}
+                  >
                     {option.charAt(0).toUpperCase() + option.slice(1)}
                   </MenuItem>
                 ))}

@@ -68,7 +68,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
         sx: {
           borderRadius: { xs: 0, sm: 2 }, // No border radius on mobile
           maxHeight: { xs: '100vh', sm: '80vh' },
-          maxWidth: { xs: '100vw', sm: '24rem' },
+          maxWidth: { xs: '100vw', sm: '28rem' },
           width: '100%',
           margin: { xs: 0, sm: 'auto' }, // No margin on mobile
           padding: { xs: '0', sm: '1em' }, // No padding on mobile
@@ -86,9 +86,9 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
           justifyContent: 'space-between',
           alignItems: 'center',
           backgroundColor: 'background.paper',
-          px: { xs: 2, sm: 3 }, // More padding on mobile
-          pt: { xs: 2, sm: 1.5 }, // More top padding on mobile
-          pb: { xs: 1, sm: 1 },
+          px: { xs: 2, sm: 2 }, // Reduced padding
+          pt: { xs: 1.5, sm: 1 }, // Reduced top padding
+          pb: { xs: 0.5, sm: 0.5 }, // Reduced bottom padding
         }}
       >
         <Typography
@@ -113,7 +113,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
       <DialogContent
         sx={{
           width: '100%',
-          padding: { xs: '1rem', sm: '.25rem' }, // More padding on mobile
+          padding: { xs: '0.5rem', sm: '0.25rem' }, // Reduced padding
           flex: 1, // Take up remaining space on mobile
           overflowY: 'auto', // Allow scrolling if needed
           // Hide scrollbar
@@ -126,10 +126,8 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
       >
         <List disablePadding>
           {legendItems.map((item, index) => (
-            <ListItem key={index} sx={{ py: 1, px: 0 }}>
-              <ListItemIcon sx={{ minWidth: '48px' }}>
-                {getCustomIcon(item.category, theme, theme.palette.mode)}
-              </ListItemIcon>
+            <ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+              <ListItemIcon>{getCustomIcon(item.category, theme, theme.palette.mode)}</ListItemIcon>
               <ListItemText
                 primary={
                   <Typography variant="subtitle2" fontWeight="medium" color="color.primary">
@@ -146,7 +144,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
           ))}
         </List>
 
-        <Box sx={{ mt: 2, p: 2, bgcolor: theme.palette.primary.main, borderRadius: 1 }}>
+        <Box sx={{ mt: 1, p: 1, bgcolor: theme.palette.primary.main, borderRadius: 1 }}>
           <Typography variant="caption" color="text.secondary">
             <strong>Tip:</strong> Too many options? Use the filters in the menu to specify what
             you&apos;re looking for.

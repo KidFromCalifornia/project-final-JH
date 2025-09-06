@@ -368,7 +368,7 @@ const AboutMePage = () => {
                 aria-label="GitHub profile (opens in new tab)"
                 sx={{
                   color: theme.palette.text.secondary,
-                  padding: { xs: '8px', sm: '8px' },
+                  padding: { xs: '0.5rem', sm: '0.5rem' },
                   '& .MuiSvgIcon-root': {
                     fontSize: { xs: '1.3rem', sm: '1.5rem' },
                   },
@@ -390,7 +390,7 @@ const AboutMePage = () => {
                 aria-label="LinkedIn profile (opens in new tab)"
                 sx={{
                   color: theme.palette.text.secondary,
-                  padding: { xs: '8px', sm: '8px' },
+                  padding: { xs: '0.5rem', sm: '0.5rem' },
                   '& .MuiSvgIcon-root': {
                     fontSize: { xs: '1.3rem', sm: '1.5rem' },
                   },
@@ -412,7 +412,7 @@ const AboutMePage = () => {
                 aria-label="Email Jonny (opens mail client)"
                 sx={{
                   color: theme.palette.text.secondary,
-                  padding: { xs: '8px', sm: '8px' },
+                  padding: { xs: '0.5rem', sm: '0.5rem' },
                   '& .MuiSvgIcon-root': {
                     fontSize: { xs: '1.3rem', sm: '1.5rem' },
                   },
@@ -434,7 +434,7 @@ const AboutMePage = () => {
                 aria-label="Instagram profile (opens in new tab)"
                 sx={{
                   color: theme.palette.text.secondary,
-                  padding: { xs: '8px', sm: '8px' },
+                  padding: { xs: '0.5rem', sm: '0.5rem' },
                   '& .MuiSvgIcon-root': {
                     fontSize: { xs: '1.3rem', sm: '1.5rem' },
                   },

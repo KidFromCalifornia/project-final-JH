@@ -2,7 +2,7 @@
 export const themeConfig = {
   button: {
     background: '#2570bb',
-    borderRadius: 8, // Convert to pixels
+    borderRadius: 8, // 0.5rem converted to pixels
     shadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
     spacing: '0.5rem',
     hover: '#1c5ea8',
@@ -10,7 +10,7 @@ export const themeConfig = {
     containerWidths: { sm: '10rem', md: '20rem', lg: '25rem', xl: '50rem' },
   },
 
-  borderRadius: 8, // Convert to pixels (0.5rem = 8px)
+  borderRadius: 8, // 0.5rem converted to pixels
   shadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
 
   spacing: {
@@ -35,11 +35,11 @@ export const createPalette = (themeMode, colors, colorsDarkmode) => {
     mode: themeMode,
     common: { black: '#000000', white: '#ffffff' },
 
-    primary: { main: colorPalette.primary, contrastText: isDark ? '#ebf2fa' : '#ebf2fa' },
-    secondary: { main: colorPalette.secondary, contrastText: isDark ? '#ebf2fa' : '#ebf2fa' },
+    primary: { main: colorPalette.primary, contrastText: isDark ? '#ebf2fa' : '#ffffff' },
+    secondary: { main: colorPalette.secondary, contrastText: isDark ? '#ebf2fa' : '#ffffff' },
     light: { main: colorPalette.light },
-    accent: { main: colorPalette.accent, contrastText: '#0a1f33' },
-    accentStrong: { main: colorPalette.accentStrong, contrastText: '#0a1f33' },
+    accent: { main: colorPalette.accent, contrastText: isDark ? '#0a1f33' : '#0a1f33' },
+    accentStrong: { main: colorPalette.accentStrong, contrastText: isDark ? '#0a1f33' : '#0a1f33' },
     textMuted: { main: colorPalette.textMuted },
     success: { main: colorPalette.success, contrastText: '#0a1f33' },
     error: { main: colorPalette.error, contrastText: '#ffffff' },

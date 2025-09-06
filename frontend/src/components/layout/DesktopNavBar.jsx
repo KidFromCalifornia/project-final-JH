@@ -156,6 +156,7 @@ const DesktopNavBar = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 p: 1,
+                visibility: open ? 'visible' : 'hidden',
               }}
             >
               {theme.direction === 'rtl' ? (

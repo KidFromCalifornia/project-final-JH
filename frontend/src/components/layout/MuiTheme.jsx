@@ -30,9 +30,9 @@ const MuiTheme = ({ children }) => {
       components,
 
       // Additional theme properties
-      icons: { fontSize: '1.25rem' },
+      icons: { fontSize: 20 }, // 1.25rem converted to pixels for appropriate icon size
       shape: {
-        borderRadius: 8, // 8px (equivalent to 0.5rem)
+        borderRadius: 8, // 0.5rem converted to pixels
       },
       shadows: [
         'none',
@@ -55,7 +55,7 @@ const MuiTheme = ({ children }) => {
   }, [themeMode]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} key={themeMode}>
       <CssBaseline />
       {children}
     </ThemeProvider>

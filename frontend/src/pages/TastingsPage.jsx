@@ -2,7 +2,7 @@ import React, { useEffect, Suspense } from 'react';
 import { useCafeStore } from '../stores/useCafeStore';
 import Container from '@mui/material/Container';
 import { Box, Typography, Button, Alert, Tooltip, useTheme } from '@mui/material';
-import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material'; // ✅ ADDED CloseIcon
+import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
 import CafeSearchBar from '../components/common/CafeSearchBar';
 import FlipTastingCard from '../components/common/FlipTastingCard';
 import { tastingAPI } from '../services/api';
@@ -41,7 +41,6 @@ const TastingsPage = () => {
     }
   };
 
-  // ✅ ADDED toggle function
   const handleToggleTastingForm = () => {
     setShowTastingForm((prev) => !prev);
     if (showTastingForm) {
@@ -131,7 +130,7 @@ const TastingsPage = () => {
         color: theme.palette.text.primary,
         flexDirection: 'column',
         alignSelf: 'center',
-        p: { xs: 1, sm: 2 }, // ✅ Responsive padding
+        p: { xs: 2, sm: 3 },
         overflow: 'visible',
       }}
     >
@@ -146,41 +145,41 @@ const TastingsPage = () => {
         sx={{
           textAlign: 'center',
           mb: 3,
-          fontSize: { xs: '1.75rem', sm: '2.125rem' }, // ✅ Responsive font size
+          fontSize: { xs: '1.75rem', sm: '2.125rem' },
         }}
       >
         Coffee Tastings
       </Typography>
 
-      {/* ✅ Updated search box with toggle button */}
       <Box
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' }, // ✅ Stack on mobile
+          flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'space-between',
-          alignItems: { xs: 'stretch', sm: 'center' }, // ✅ Full width on mobile
+          alignItems: { xs: 'stretch', sm: 'center' },
           gap: 2,
           mb: 3,
-          px: { xs: 1, sm: 3 }, // ✅ Less padding on mobile
+          px: { xs: 1, sm: 3 },
         }}
       >
         {isLoggedIn ? (
           <Button
-            variant={showTastingForm ? 'outlined' : 'contained'} // ✅ Dynamic variant
-            startIcon={showTastingForm ? <CloseIcon /> : <AddIcon />} // ✅ Dynamic icon
-            onClick={handleToggleTastingForm} // ✅ Toggle function
+            variant={showTastingForm ? 'outlined' : 'contained'}
+            startIcon={showTastingForm ? <CloseIcon /> : <AddIcon />}
+            onClick={handleToggleTastingForm}
             sx={{
               backgroundColor: showTastingForm ? 'transparent' : theme.palette.primary.main,
               color: showTastingForm
                 ? theme.palette.primary.main
                 : theme.palette.primary.contrastText,
-              border: '2px solid' + theme.palette.primary.main,
-              minWidth: { xs: '120px', sm: '140px' }, // ✅ Smaller min width on mobile
-              height: 'fit-content', // ✅ Better height management
-              fontSize: { xs: '0.875rem', sm: '1rem' }, // ✅ Responsive font size
-              whiteSpace: 'nowrap', // ✅ Prevent text wrapping within button
-              overflow: 'visible', // ✅ Allow button to expand
-              textWrap: 'nowrap', // ✅ Modern CSS for no wrapping
+              border: `2px solid ${theme.palette.primary.main}`,
+              minWidth: { xs: '7.5rem', sm: '8.75rem' },
+              py: 1.5,
+              height: 'fit-content',
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              whiteSpace: 'nowrap',
+              overflow: 'visible',
+              textWrap: 'nowrap',
               '&:hover': {
                 backgroundColor: showTastingForm
                   ? theme.palette.primary.light
@@ -201,12 +200,12 @@ const TastingsPage = () => {
                 startIcon={<AddIcon />}
                 disabled
                 sx={{
-                  minWidth: { xs: '120px', sm: '140px' }, // ✅ Responsive min width
+                  minWidth: { xs: '7.5rem', sm: '8.75rem' },
                   opacity: 0.6,
-                  fontSize: { xs: '0.875rem', sm: '1rem' }, // ✅ Responsive font size
-                  whiteSpace: 'nowrap', // ✅ Prevent text wrapping
-                  overflow: 'visible', // ✅ Allow button to expand
-                  textWrap: 'nowrap', // ✅ Modern CSS for no wrapping
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  whiteSpace: 'nowrap',
+                  overflow: 'visible',
+                  textWrap: 'nowrap',
                 }}
               >
                 Add Tasting
@@ -219,8 +218,8 @@ const TastingsPage = () => {
           setSearchQuery={setSearchQuery}
           type="tastings"
           sx={{
-            width: { xs: '100%', sm: '50%' }, // ✅ Full width on mobile, 50% on larger screens
-            minWidth: { xs: 'unset', sm: '200px' }, // ✅ Minimum width for larger screens
+            width: { xs: '100%', sm: '50%' },
+            minWidth: { xs: 'unset', sm: '200px' },
           }}
         />
       </Box>
@@ -261,11 +260,11 @@ const TastingsPage = () => {
               gridTemplateColumns: {
                 xs: '1fr',
                 sm: 'repeat(auto-fill, minmax(280px, 1fr))',
-                md: 'repeat(auto-fill, minmax(320px, 1fr))', // ✅ Larger cards on desktop
+                md: 'repeat(auto-fill, minmax(320px, 1fr))',
               },
-              gap: { xs: 1, sm: 2 }, // ✅ Smaller gap on mobile
+              gap: 2,
               mt: 2,
-              padding: { xs: '0 4px 8px 4px', sm: '0 8px 8px 8px' }, // ✅ Less padding on mobile
+              padding: { xs: '0 0.25rem 0.5rem 0.25rem', sm: '0 0.5rem 0.5rem 0.5rem' },
               overflow: 'visible',
             }}
           >
@@ -295,17 +294,17 @@ const TastingsPage = () => {
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' }, // ✅ Stack pagination on mobile
+                flexDirection: { xs: 'column', sm: 'row' },
                 justifyContent: 'center',
                 alignItems: 'center',
-                gap: { xs: 1, sm: 0 }, // ✅ Gap on mobile
+                gap: { xs: 1, sm: 0 },
                 mt: 4,
                 mb: 2,
                 position: 'sticky',
                 bottom: 0,
                 backgroundColor: theme.palette.background.default,
                 py: 2,
-                px: { xs: 1, sm: 0 }, // ✅ Horizontal padding on mobile
+                px: { xs: 1, sm: 0 },
               }}
             >
               <Tooltip title="Go to previous page" arrow>
@@ -317,8 +316,8 @@ const TastingsPage = () => {
                     size="small"
                     sx={{
                       mx: { xs: 0, sm: 1 },
-                      minWidth: { xs: '70px', sm: '80px' }, // ✅ Smaller buttons on mobile
-                      fontSize: { xs: '0.75rem', sm: '0.875rem' }, // ✅ Smaller text on mobile
+                      minWidth: { xs: '70px', sm: '80px' },
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
                     }}
                   >
                     Previous
@@ -330,7 +329,7 @@ const TastingsPage = () => {
                 variant="body2"
                 sx={{
                   mx: { xs: 0, sm: 2 },
-                  fontSize: { xs: '0.875rem', sm: '1rem' }, // ✅ Responsive font size
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
                   textAlign: 'center',
                   minWidth: 'fit-content',
                 }}
@@ -347,8 +346,8 @@ const TastingsPage = () => {
                     size="small"
                     sx={{
                       mx: { xs: 0, sm: 1 },
-                      minWidth: { xs: '70px', sm: '80px' }, // ✅ Smaller buttons on mobile
-                      fontSize: { xs: '0.75rem', sm: '0.875rem' }, // ✅ Smaller text on mobile
+                      minWidth: { xs: '70px', sm: '80px' },
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
                     }}
                   >
                     Next

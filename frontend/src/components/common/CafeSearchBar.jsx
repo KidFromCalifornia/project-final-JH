@@ -1,9 +1,9 @@
 import { useCafeStore } from '../../stores/useCafeStore';
 import { cafeAPI, tastingAPI } from '../../services/api';
-import { TextField, Box, useTheme } from '@mui/material'; // ✅ ADD useTheme import
+import { TextField, Box, useTheme } from '@mui/material';
 
 const SearchBar = ({ type = 'cafes' }) => {
-  const theme = useTheme(); // ✅ ADD this line
+  const theme = useTheme();
   const searchQuery = useCafeStore((state) => state.searchQuery);
   const setSearchQuery = useCafeStore((state) => state.setSearchQuery);
   const setSearchResults = useCafeStore((state) => state.setSearchResults);
@@ -46,7 +46,7 @@ const SearchBar = ({ type = 'cafes' }) => {
         sx={{
           '& .MuiOutlinedInput-root': {
             backgroundColor:
-              theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)', // ✅ ADD subtle background
+              theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
             '& fieldset': {
               borderColor: theme.palette.primary.main,
             },
@@ -58,16 +58,13 @@ const SearchBar = ({ type = 'cafes' }) => {
             },
           },
           '& .MuiOutlinedInput-input': {
-            // ✅ ADD input styling
             color: theme.palette.text.primary,
             '&::placeholder': {
-              // ✅ ADD placeholder styling
               color: theme.palette.text.primary,
               opacity: 0.7,
             },
           },
           '& .MuiInputLabel-root': {
-            // ✅ ADD label styling
             color: theme.palette.text.primary,
             '&.Mui-focused': {
               color: theme.palette.primary.main,

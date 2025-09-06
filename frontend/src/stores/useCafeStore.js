@@ -19,17 +19,15 @@ const applyFilters = (cafes, cafeTypeFilter, neighborhoodFilter) => {
 };
 
 export const useCafeStore = create((set) => ({
-  // Theme mode state
   themeMode: localStorage.getItem('themeMode') || 'light',
   setThemeMode: (mode) => {
     localStorage.setItem('themeMode', mode);
     set({ themeMode: mode });
   },
-  // Cafe and search state
+
   cafes: [],
   setCafes: (cafes) =>
     set((state) => {
-      // When cafes are updated, recalculate filtered cafes if filters are active
       const filteredCafes =
         state.cafeTypeFilter || state.neighborhoodFilter
           ? applyFilters(cafes, state.cafeTypeFilter, state.neighborhoodFilter)
@@ -41,7 +39,6 @@ export const useCafeStore = create((set) => ({
   searchResults: [],
   setSearchResults: (results) => set({ searchResults: results }),
 
-  // Filter state
   cafeTypeFilter: '',
   neighborhoodFilter: '',
   filteredCafes: [],

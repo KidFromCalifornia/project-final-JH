@@ -35,12 +35,6 @@ const toTitleCase = (str) => {
 };
 
 const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLoggedIn }) => {
-  // Safety check - make sure we have valid tasting data
-  if (!tasting || !tasting._id) {
-    console.error('🚨 FlipTastingCard received invalid tasting data:', tasting);
-    return null;
-  }
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isFlipped, setIsFlipped] = useState(false);
@@ -49,23 +43,16 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
   const cafes = useCafeStore((state) => state.cafes);
 
   const cafe = useMemo(() => {
-    if (tasting.cafeId && typeof tasting.cafeId === 'object' && tasting.cafeId.name) {
+    if (tasting && tasting.cafeId && typeof tasting.cafeId === 'object' && tasting.cafeId.name) {
       return tasting.cafeId;
     }
 
-    return cafes.find((c) => c._id === tasting.cafeId) || {};
-  }, [cafes, tasting.cafeId]);
-
-  const handleClick = () => {
-    setIsFlipped(!isFlipped);
-    if (!hasBeenFlipped) {
-      setHasBeenFlipped(true);
-    }
-  };
+    return cafes.find((c) => c._id === tasting?.cafeId) || {};
+  }, [cafes, tasting?.cafeId]);
 
   // Mobile touch handling for better user experience
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile || !tasting?._id) return;
 
     const cardElement = document.getElementById(`tasting-card-${tasting._id}`);
     if (!cardElement) return;
@@ -97,96 +84,99 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
       cardElement.removeEventListener('touchstart', handleTouchStart);
       cardElement.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isMobile, tasting._id, touchStart, hasBeenFlipped]);
+  }, [isMobile, tasting?._id, touchStart, hasBeenFlipped]);
 
   // Memoize card content to avoid unnecessary re-renders
   const frontContent = useMemo(
-    () => (
-      <StyledCard>
-        <BoxMain minHeight={280} position="relative">
-          <StyledDivContent>
-            <TypographyTitle variant="h2">{toTitleCase(tasting.coffeeName)}</TypographyTitle>
-            {/* Tasting Notes in the gradient overlay */}
-            {Array.isArray(tasting.tastingNotes) && tasting.tastingNotes.length > 0 && (
-              <TastingNotesContainer>
-                {tasting.tastingNotes.slice(0, 4).map((note, index) => (
-                  <Chip
-                    key={index}
-                    label={toTitleCase(note)}
-                    size="small"
-                    sx={{
-                      fontWeight: theme.typography.fontWeightMedium,
-                      fontSize: theme.typography.caption.fontSize,
-                      bgcolor: 'transparent',
-                      color: theme.palette.text.secondary,
-                      border: 'none',
-                      borderRadius: 0,
-                      backdropFilter: 'blur(8px)',
-                      padding: '0 !important',
-                      margin: '0 !important',
-                      minHeight: 'unset',
-                      height: 'unset',
-
-                      '& .MuiChip-label': {
+    () => {
+      if (!tasting) return null;
+      return (
+        <StyledCard>
+          <BoxMain minHeight={280} position="relative">
+            <StyledDivContent>
+              <TypographyTitle variant="h2">{toTitleCase(tasting.coffeeName)}</TypographyTitle>
+              {/* Tasting Notes in the gradient overlay */}
+              {Array.isArray(tasting.tastingNotes) && tasting.tastingNotes.length > 0 && (
+                <TastingNotesContainer>
+                  {tasting.tastingNotes.slice(0, 4).map((note, index) => (
+                    <Chip
+                      key={index}
+                      label={toTitleCase(note)}
+                      size="small"
+                      sx={{
+                        fontWeight: theme.typography.fontWeightMedium,
+                        fontSize: theme.typography.caption.fontSize,
+                        bgcolor: 'transparent',
+                        color: theme.palette.text.secondary,
+                        border: 'none',
+                        borderRadius: 0,
+                        backdropFilter: 'blur(8px)',
                         padding: '0 !important',
                         margin: '0 !important',
-                        lineHeight: 1,
-                      },
+                        minHeight: 'unset',
+                        height: 'unset',
 
-                      '&.MuiChip-root': {
-                        padding: '0 !important',
-                        margin: '0 !important',
-                      },
-                    }}
-                  />
-                ))}
-              </TastingNotesContainer>
-            )}
-          </StyledDivContent>
-        </BoxMain>
+                        '& .MuiChip-label': {
+                          padding: '0 !important',
+                          margin: '0 !important',
+                          lineHeight: 1,
+                        },
 
-        <RowAuthor>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignSelf: 'center',
-              flex: 1,
-              minWidth: 0,
-            }}
-          >
-            <Typography
-              fontFamily="font.main"
-              textTransform={'uppercase'}
-              fontSize={16}
+                        '&.MuiChip-root': {
+                          padding: '0 !important',
+                          margin: '0 !important',
+                        },
+                      }}
+                    />
+                  ))}
+                </TastingNotesContainer>
+              )}
+            </StyledDivContent>
+          </BoxMain>
+
+          <RowAuthor>
+            <Box
               sx={{
-                mb: 0,
-                color: theme.palette.text.primary,
-                fontWeight: 500,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignSelf: 'center',
+                flex: 1,
+                minWidth: 0,
               }}
             >
-              {tasting.userId?.username || 'Anonymous'}
-            </Typography>
-            <Typography
-              sx={{
-                color: theme.palette.text.secondary,
-                fontSize: '1rem',
-              }}
-            >
-              {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
-            </Typography>
-          </Box>
-        </RowAuthor>
-        <Shadow className="Shadow1" />
-        <Shadow className="Shadow2" />
-      </StyledCard>
-    ),
-    [tasting, theme] // ✅ FIXED: removed cafe.name since it's not used in frontContent
+              <Typography
+                fontFamily="font.main"
+                textTransform={'uppercase'}
+                fontSize={16}
+                sx={{
+                  mb: 0,
+                  color: theme.palette.text.primary,
+                  fontWeight: 500,
+                }}
+              >
+                {tasting.userId?.username || 'Anonymous'}
+              </Typography>
+              <Typography
+                sx={{
+                  color: theme.palette.text.secondary,
+                  fontSize: '1rem',
+                }}
+              >
+                {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
+              </Typography>
+            </Box>
+          </RowAuthor>
+          <Shadow className="Shadow1" />
+          <Shadow className="Shadow2" />
+        </StyledCard>
+      );
+    },
+    [tasting, theme]
   );
 
   const backContent = useMemo(() => {
-    if (!isFlipped && !hasBeenFlipped) return null;
+    if (!tasting || (!isFlipped && !hasBeenFlipped)) return null;
 
     return (
       <>
@@ -338,6 +328,19 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
       </>
     );
   }, [tasting, cafe.name, cafe.locations, isFlipped, hasBeenFlipped, theme]);
+
+  const handleClick = () => {
+    setIsFlipped(!isFlipped);
+    if (!hasBeenFlipped) {
+      setHasBeenFlipped(true);
+    }
+  };
+
+  // Safety check - make sure we have valid tasting data
+  if (!tasting || !tasting._id) {
+    console.error('🚨 FlipTastingCard received invalid tasting data:', tasting);
+    return null;
+  }
 
   return (
     <Tooltip title="Click to flip" arrow>

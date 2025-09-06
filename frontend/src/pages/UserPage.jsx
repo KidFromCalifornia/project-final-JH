@@ -22,7 +22,7 @@ import LoadingLogo from '../components/common/LoadingLogo';
 
 // Lazy load forms
 const TastingForm = React.lazy(() => import('../components/forms/TastingForm'));
-const MiniCafeForm = React.lazy(() => import('../components/forms/NewCafeForm')); // ✅ Fixed import
+const MiniCafeForm = React.lazy(() => import('../components/forms/NewCafeForm'));
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -47,13 +47,11 @@ const UserPage = () => {
   const username = useCafeStore((state) => state.username);
   const fetchTastings = useCafeStore((state) => state.fetchTastings);
 
-  // Local state - ✅ Fixed: Added missing showCafeForm
   const [loading, setLoading] = useState(false);
   const [showTastingForm, setShowTastingForm] = useState(false);
-  const [showCafeForm, setShowCafeForm] = useState(false); // ✅ Added this
+  const [showCafeForm, setShowCafeForm] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
-  // ✅ Added missing handlers
   const handleToggleCafeForm = () => {
     setShowCafeForm((prev) => !prev);
   };
@@ -374,17 +372,17 @@ const UserPage = () => {
                     startIcon={showCafeForm ? <CloseIcon /> : <StoreIcon />}
                     onClick={handleToggleCafeForm}
                     sx={{
-                      backgroundColor: showTastingForm ? 'transparent' : theme.palette.primary.main,
-                      color: showTastingForm
+                      backgroundColor: showCafeForm ? 'transparent' : theme.palette.primary.main,
+                      color: showCafeForm
                         ? theme.palette.primary.main
                         : theme.palette.primary.contrastText,
                       border: `2px solid ${theme.palette.primary.main}`,
-                      minWidth: { xs: '120px', sm: '140px' }, // ✅ Responsive min width
-                      whiteSpace: 'nowrap', // ✅ Prevent text wrapping within button
-                      overflow: 'visible', // ✅ Allow button to expand
-                      fontSize: { xs: '0.875rem', sm: '1rem' }, // ✅ Responsive font size
+                      minWidth: { xs: '7.5rem', sm: '8.75rem' },
+                      whiteSpace: 'nowrap',
+                      overflow: 'visible',
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
                       '&:hover': {
-                        backgroundColor: showTastingForm
+                        backgroundColor: showCafeForm
                           ? theme.palette.primary.light
                           : theme.palette.primary.dark,
                         color: theme.palette.primary.contrastText,
@@ -487,10 +485,10 @@ const UserPage = () => {
                         ? theme.palette.primary.main
                         : theme.palette.primary.contrastText,
                       border: `2px solid ${theme.palette.primary.main}`,
-                      minWidth: { xs: '120px', sm: '140px' }, // ✅ Responsive min width
-                      whiteSpace: 'nowrap', // ✅ Prevent text wrapping within button
-                      overflow: 'visible', // ✅ Allow button to expand
-                      fontSize: { xs: '0.875rem', sm: '1rem' }, // ✅ Responsive font size
+                      minWidth: { xs: '7.5rem', sm: '8.75rem' },
+                      whiteSpace: 'nowrap',
+                      overflow: 'visible',
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
                       '&:hover': {
                         backgroundColor: showTastingForm
                           ? theme.palette.primary.light
@@ -559,7 +557,7 @@ const UserPage = () => {
                       },
                       gap: 2,
                       mt: 2,
-                      padding: '0 8px 8px 8px',
+                      padding: '0 0.5rem 0.5rem 0.5rem',
                       overflow: 'visible',
                     }}
                   >

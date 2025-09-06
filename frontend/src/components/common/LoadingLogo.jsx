@@ -7,8 +7,6 @@ const spinKeyframes = {
   },
 };
 
-const defaultColor = '#222';
-
 const LoadingLogo = (theme, themeMode) => (
   <Box
     display="flex"
@@ -40,7 +38,8 @@ const LoadingLogo = (theme, themeMode) => (
           height: 300,
           animation: 'spin 4.5s linear infinite',
           filter: themeMode === 'dark' ? 'brightness(0.8)' : undefined,
-          color: themeMode === 'dark' ? theme?.palette?.common?.light : defaultColor,
+          color:
+            themeMode === 'dark' ? theme?.palette?.common?.white : theme?.palette?.text?.primary,
           '&:hover': {
             animationPlayState: 'paused',
           },

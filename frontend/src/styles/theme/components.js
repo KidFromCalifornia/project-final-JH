@@ -39,7 +39,7 @@ export const createComponents = (customTheme) => ({
       },
       '*::-webkit-scrollbar-thumb': {
         backgroundColor: theme.palette.primary.main,
-        borderRadius: 4, // Convert to pixels
+        borderRadius: 4, // 0.25rem converted to pixels
         '&:hover': {
           backgroundColor: theme.palette.secondary.main,
         },
@@ -50,7 +50,7 @@ export const createComponents = (customTheme) => ({
     styleOverrides: {
       tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        fontSize: 'rem',
+        fontSize: '0.875rem',
         borderRadius: customTheme.borderRadius / 2,
       },
     },

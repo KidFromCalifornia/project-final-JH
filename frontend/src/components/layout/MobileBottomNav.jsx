@@ -47,8 +47,8 @@ import {
   Search as SearchIcon,
 } from '@mui/icons-material';
 
-const drawerWidth = 300;
-const appBarHeight = 56; // match this to your AppBar height
+const drawerWidth = '18.75rem'; // 300px converted to rem
+const appBarHeight = '3.5rem'; // 56px converted to rem
 
 const MobileBottomNav = () => {
   const theme = useTheme();
@@ -137,8 +137,8 @@ const MobileBottomNav = () => {
       maxHeight: 'calc(50vh)',
       height: 'auto',
       overflowY: 'auto',
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
+      borderTopLeftRadius: '1rem',
+      borderTopRightRadius: '1rem',
       bottom: appBarHeight,
       position: 'fixed',
       backgroundColor: theme.palette.primary.main,
@@ -334,7 +334,32 @@ const MobileBottomNav = () => {
         open={drawerOpen}
         onClose={closeDrawers}
         hideBackdrop={false}
-        PaperProps={drawerPaperProps}
+        PaperProps={{
+          ...drawerPaperProps,
+          tabIndex: -1,
+          onKeyDown: (e) => {
+            const container = e.currentTarget;
+            if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              container.scrollTop -= 50;
+            } else if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              container.scrollTop += 50;
+            } else if (e.key === 'PageUp') {
+              e.preventDefault();
+              container.scrollTop -= container.clientHeight;
+            } else if (e.key === 'PageDown') {
+              e.preventDefault();
+              container.scrollTop += container.clientHeight;
+            } else if (e.key === 'Home') {
+              e.preventDefault();
+              container.scrollTop = 0;
+            } else if (e.key === 'End') {
+              e.preventDefault();
+              container.scrollTop = container.scrollHeight;
+            }
+          },
+        }}
         sx={{
           '& .MuiBackdrop-root': {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -635,7 +660,32 @@ const MobileBottomNav = () => {
         open={filterDrawerOpen}
         onClose={closeDrawers}
         hideBackdrop={false}
-        PaperProps={drawerPaperProps}
+        PaperProps={{
+          ...drawerPaperProps,
+          tabIndex: -1,
+          onKeyDown: (e) => {
+            const container = e.currentTarget;
+            if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              container.scrollTop -= 50;
+            } else if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              container.scrollTop += 50;
+            } else if (e.key === 'PageUp') {
+              e.preventDefault();
+              container.scrollTop -= container.clientHeight;
+            } else if (e.key === 'PageDown') {
+              e.preventDefault();
+              container.scrollTop += container.clientHeight;
+            } else if (e.key === 'Home') {
+              e.preventDefault();
+              container.scrollTop = 0;
+            } else if (e.key === 'End') {
+              e.preventDefault();
+              container.scrollTop = container.scrollHeight;
+            }
+          },
+        }}
         sx={{
           '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
           zIndex: 1199,

@@ -6,7 +6,6 @@ import MobileBottomNav from './components/layout/MobileBottomNav.jsx';
 import { AlertProvider } from './context/AlertContext.jsx';
 import { Box, useTheme, useMediaQuery } from '@mui/material';
 
-// Lazy load pages for performance
 const MapPage = lazy(() => import('./pages/MapPage.jsx'));
 const TastingsPage = lazy(() => import('./pages/TastingsPage.jsx'));
 const CafePage = lazy(() => import('./pages/CafePage.jsx'));
@@ -18,17 +17,15 @@ const App = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
-  // Global state for authentication
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [showAddCafe, setShowAddCafe] = useState(false);
 
-  // State for search (only used on TastingsPage)
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Check for existing login on app start
   useEffect(() => {
     const token = localStorage.getItem('userToken');
     const username = localStorage.getItem('username');
@@ -64,25 +61,39 @@ const App = () => {
         <Box
           component="main"
           sx={{
-            // Use padding instead of margin to keep content within viewport
-            paddingTop: { xs: 0, sm: '64px' }, // Desktop AppBar height
-            paddingLeft: { xs: 0, sm: '72px' }, // Desktop drawer width
-            paddingBottom: { xs: '56px', sm: 0 }, // Mobile bottom nav height
-
-            // Adjust dimensions to account for padding
+            paddingTop: { xs: 0, sm: '64px' },
+            paddingLeft: { xs: 0, sm: '72px' },
+            paddingBottom: { xs: '56px', sm: 0 },
             height: '100vh',
             width: '100vw',
-
-            // Use box-sizing to include padding in dimensions
             boxSizing: 'border-box',
-
-            // Keep your layout styles
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-
-            // Prevent overflow
             overflow: 'auto',
+          }}
+          tabIndex={-1}
+          onKeyDown={(e) => {
+            const container = e.currentTarget;
+            if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              container.scrollTop -= 50;
+            } else if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              container.scrollTop += 50;
+            } else if (e.key === 'PageUp') {
+              e.preventDefault();
+              container.scrollTop -= container.clientHeight;
+            } else if (e.key === 'PageDown') {
+              e.preventDefault();
+              container.scrollTop += container.clientHeight;
+            } else if (e.key === 'Home') {
+              e.preventDefault();
+              container.scrollTop = 0;
+            } else if (e.key === 'End') {
+              e.preventDefault();
+              container.scrollTop = container.scrollHeight;
+            }
           }}
         >
           <Suspense fallback={<LoadingLogo />}>

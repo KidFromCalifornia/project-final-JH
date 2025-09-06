@@ -97,7 +97,14 @@ export const AlertProvider = ({ children }) => {
           severity={snackbar.severity}
           variant="filled"
           iconMapping={{
-            error: <Box component="img" src={spiltCoffeeErrorSvg} sx={{ width: 24, height: 24 }} />,
+            error: (
+              <Box
+                component="img"
+                src={spiltCoffeeErrorSvg}
+                sx={{ width: 24, height: 'auto' }}
+                alt="Error icon"
+              />
+            ),
           }}
           sx={{ width: '100%' }}
         >
