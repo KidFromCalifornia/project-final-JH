@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme } from '@mui/material';
-import logoText from '../assets/images/scc_logo_text.svg';
-import logoShield from '../assets/images/scc_shield.svg';
+import logoText from '../../assets/images/scc_logo_text.svg';
+import logoShield from '../../assets/images/scc_shield.svg';
 
 const spinKeyframes = {
   '@keyframes spin': {
