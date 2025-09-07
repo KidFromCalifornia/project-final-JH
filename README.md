@@ -1,91 +1,110 @@
 # Stockholm Coffee Club
 
-A comprehensive fullstack application for discovering and reviewing Stockholm's specialty coffee scene. Built with React, Node.js, and MongoDB, featuring interactive maps, user authentication, and a sophisticated coffee tasting note system.
+Welcome to Stockholm Coffee Club — a fullstack app that helps you discover the city’s best specialty coffee spots. Whether you’re a local on the hunt for your next flat white or a visitor exploring Stockholm’s café culture, this app’s got you covered.
 
-## The Problem
+Built with **React, Node.js, and MongoDB**, it features interactive maps, user accounts, and a way to log your own coffee tasting notes.
 
-Stockholm has an incredible coffee culture, but finding the best specialty coffee shops can be challenging for both locals and visitors. This application solves that by providing:
+---
 
-- **Interactive map** of Stockholm's coffee shops with category filtering
-- **Community-driven reviews** through coffee tasting notes
-- **User authentication** with personal profiles and admin management
-- **Mobile-first responsive design** for on-the-go coffee discovery
+## Why this app?
 
+Stockholm has an established coffee culture, but finding the really good spots isn’t always easy. This app brings them all together in one place with:
+
+- An interactive map of coffee shops (with filters so you can find what matters to you)
+- A tasting notes system so you (and others) can review your coffee adventures
+- User accounts, profiles, and admin features for managing content
+- A mobile-first design so you can use it on the go
+
+---
+
+## Tech stack
 
 ### Frontend
 
-- **React 18** with lazy loading and Suspense
-- **Material-UI v5** for design system and theming
-- **Zustand** for global state management
-- **MapLibre GL JS** for interactive maps
+- **React 18** with lazy loading + Suspense
+- **Material-UI v5** for styling and theming
+- **Zustand** for state management
+- **MapLibre GL JS** for the interactive map
 - **React Router** for navigation
-- **SweetAlert2** for enhanced notifications
+- **SweetAlert2** for nicer alerts
 
 ### Backend
 
-- **Node.js** with Express framework
-- **MongoDB** with Mongoose ODM
-- **JWT authentication** with bcryptjs
-- **Role-based access control** (admin/user)
-- **RESTful API** design with proper error handling
+- **Node.js + Express**
+- **MongoDB + Mongoose**
+- **JWT authentication** (with bcryptjs)
+- **Role-based access control** (admin & user)
+- **REST API** with solid error handling
 
-### Key Features
+---
 
-- 🗺️ Interactive map with custom icons and geolocation
-- ☕ Coffee tasting notes with rating system
-- 👥 User authentication and profiles
-- 🔍 Advanced filtering and search functionality
-- 🌓 Light/dark theme support
-- 📱 Mobile-responsive design
-- 👑 Admin panel for content management
+## Main features
 
+- Interactive map with geolocation
+- Coffee tasting notes & ratings
+- User authentication + profiles
+- Filters & search to find the right café
+- Light/dark theme toggle
+- Mobile-friendly design
+- Admin panel for managing cafés and submissions
 
-## API Documentation
+---
 
-### Authentication Endpoints
+## API Endpoints (quick peek)
 
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
+**Auth**
 
-### Cafe Endpoints
+- `POST /api/auth/register` → Create a new account
+- `POST /api/auth/login` → Log in
 
-- `GET /api/cafes` - Get all approved cafes
-- `GET /api/cafes/:id` - Get cafe by ID
-- `POST /api/cafes` - Create new cafe (admin only)
+**Cafés**
 
-### Tasting Endpoints
+- `GET /api/cafes` → Get all approved cafés
+- `GET /api/cafes/:id` → Get one café
+- `POST /api/cafes` → Add new café (admin only)
 
-- `GET /api/tastings/public` - Get public tasting notes
-- `GET /api/tastings` - Get user's tastings (auth required)
-- `POST /api/tastings` - Create new tasting (auth required)
+**Tastings**
 
-### Submission Endpoints
+- `GET /api/tastings/public` → Browse public notes
+- `GET /api/tastings` → Your tasting notes (login required)
+- `POST /api/tastings` → Add a tasting note (login required)
 
-- `POST /api/cafeSubmissions` - Submit new cafe for approval
-- `GET /api/cafeSubmissions` - Get submissions (admin only)
+**Submissions**
 
-## Approach & Planning
+- `POST /api/cafeSubmissions` → Suggest a café
+- `GET /api/cafeSubmissions` → View submissions (admin only)
 
-I approached this project with a mobile-first mindset, focusing on the core user journey of discovering coffee shops in Stockholm. The architecture separates concerns cleanly:
+---
 
-1. **State Management**: Zustand provides a clean alternative to Context API
-2. **UI/UX**: Material-UI ensures consistency and accessibility
-3. **Maps**: MapLibre offers professional mapping without vendor lock-in
-4. **Authentication**: JWT tokens with role-based permissions
-5. **Database**: MongoDB's flexibility handles varied cafe data structures
+## How I built it
 
-## Future Enhancements
+I started with the core journey: discovering cafés on a map. From there, I layered on features like tastings, profiles, and admin tools. A few key decisions:
 
-Given more time, I would add:
+1. **State management**: Used Zustand (lighter than Context, simpler than Redux)
+2. **UI/UX**: Material-UI made styling fast and consistent
+3. **Maps**: Went with MapLibre (open-source, no vendor lock-in)
+4. **Auth**: JWT-based with role handling
+5. **Database**: MongoDB for flexible café + review data
 
-- Real-time notifications for new cafe approvals
-- Push notifications for nearby coffee recommendations
-- storefront
-- interactive game to learn about brewing coffee 
+---
 
-## View it live
+## What’s next?
 
-- **Frontend**: https://stockholmscoffeeclub.netlify.app/
-- **Backend**: https://stockhomscoffeeclub.onrender.com/api
-- **GitHub**: https://github.com/KidFromCalifornia/project-final-JH
+Some things I’d love to add down the line:
 
+- Real-time notifications when new cafés get approved
+- Push notifications for nearby recommendations
+- A storefront for beans & gear
+- A fun coffee-brewing mini-game
+-
+
+---
+
+## Live links
+
+- **Frontend**: [stockholmscoffeeclub.netlify.app]
+  (https://stockholmscoffeeclub.netlify.app/)
+- **Backend**: [stockholmscoffeeclub.onrender.com/api]
+  (https://stockholmscoffeeclub.onrender.com/api)
+- **GitHub**: [project-final-JH]
+  (https://github.com/KidFromCalifornia/project-final-JH)

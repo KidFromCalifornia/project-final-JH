@@ -60,6 +60,8 @@ const App = () => {
 
         <Box
           component="main"
+          role="main"
+          aria-label="Main content"
           sx={{
             paddingTop: { xs: 0, sm: '64px' },
             paddingLeft: { xs: 0, sm: '72px' },

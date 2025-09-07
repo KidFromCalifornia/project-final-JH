@@ -345,6 +345,8 @@ const MobileBottomNav = () => {
         open={drawerOpen}
         onClose={closeDrawers}
         hideBackdrop={false}
+        role="navigation"
+        aria-label="Mobile navigation menu"
         PaperProps={{
           ...drawerPaperProps,
           tabIndex: -1,
@@ -380,7 +382,6 @@ const MobileBottomNav = () => {
       >
         <List aria-label="Main navigation" sx={{ pt: 0 }}>
           <ListItem
-            role="listitem"
             disablePadding
             sx={{
               backgroundColor: theme.palette.primary.dark,
@@ -672,6 +673,8 @@ const MobileBottomNav = () => {
         open={filterDrawerOpen}
         onClose={closeDrawers}
         hideBackdrop={false}
+        role="navigation"
+        aria-label="Filter navigation menu"
         PaperProps={{
           ...drawerPaperProps,
           tabIndex: -1,

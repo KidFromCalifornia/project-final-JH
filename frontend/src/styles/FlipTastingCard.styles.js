@@ -102,7 +102,7 @@ export const RowAuthor = styled('div')(({ theme }) => ({
       : theme.palette.text.primary,
 
   '& .MuiTypography-root': {
-    // ✅ Ensure all text inherits proper color
+    // Ensure all text inherits proper color
     color: 'inherit',
   },
 }));

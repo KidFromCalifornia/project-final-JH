@@ -24,7 +24,6 @@ import {
   Shadow,
   TastingNotesContainer,
 } from '../../styles/FlipTastingCard.styles';
-// ✅ REMOVED unused Block import
 
 const toTitleCase = (str) => {
   if (!str) return '';
@@ -180,10 +179,10 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
         <CardContent
           sx={{
             flexGrow: 1,
-            p: 3, // ✅ INCREASED padding for better spacing
+            p: 3, // INCREASED padding for better spacing
             display: 'flex',
             flexDirection: 'column',
-            gap: 2, // ✅ ADDED consistent gap between sections
+            gap: 2, // ADDED consistent gap between sections
           }}
         >
           {/* Header - Coffee Origin */}
@@ -202,7 +201,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: '1fr', // ✅ SINGLE column for better readability
+              gridTemplateColumns: '1fr', // SINGLE column for better readability
               gap: 1.5,
             }}
           >
@@ -240,7 +239,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)', // ✅ THREE columns for compact info
+                gridTemplateColumns: 'repeat(3, 1fr)', // THREE columns for compact info
                 gap: 1,
               }}
             >
@@ -312,7 +311,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
               mt: 'auto',
               pt: 2,
               borderTop: `1px solid ${theme.palette.light.main}`,
-              textAlign: 'center', // ✅ CENTERED footer
+              textAlign: 'center', // CENTERED footer
             }}
           >
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
@@ -349,6 +348,15 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
           cursor: 'pointer',
         }}
         onClick={handleClick}
+        role="button"
+        tabIndex={0}
+        aria-label={`Coffee tasting: ${toTitleCase(tasting?.coffeeName || 'Unknown')}. Click to flip card and see details.`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
       >
         {isFlipped ? (
           <StyledCard

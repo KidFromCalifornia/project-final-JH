@@ -65,7 +65,6 @@ const TastingsPage = () => {
     fetchTastings(isLoggedIn);
   }, [isLoggedIn, fetchTastings]);
 
-  // Delete function - called when delete is triggered
   const handleDeleteTasting = async (tastingToDelete) => {
     try {
       const result = await tastingAPI.delete(tastingToDelete._id);
@@ -88,7 +87,6 @@ const TastingsPage = () => {
     }
   }, [deletingTasting]);
 
-  // Normalize function
   const normalize = (str) =>
     String(str || '')
       .toLowerCase()
@@ -154,7 +152,7 @@ const TastingsPage = () => {
       </Typography>
 
       <Typography
-        variant="h4"
+        variant="h2"
         color="text.primary"
         gutterBottom
         sx={{
@@ -162,6 +160,7 @@ const TastingsPage = () => {
           mb: 3,
           fontSize: { xs: '1.75rem', sm: '2.125rem' },
         }}
+        id="tastings-heading"
       >
         Coffee Tastings
       </Typography>
@@ -180,7 +179,9 @@ const TastingsPage = () => {
         {isLoggedIn ? (
           <Button
             variant={showTastingForm ? 'outlined' : 'contained'}
-            startIcon={showTastingForm ? <CloseIcon /> : <AddIcon />}
+            startIcon={
+              showTastingForm ? <CloseIcon aria-hidden="true" /> : <AddIcon aria-hidden="true" />
+            }
             onClick={handleToggleTastingForm}
             aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
             sx={{
@@ -213,8 +214,9 @@ const TastingsPage = () => {
             <span>
               <Button
                 variant="outlined"
-                startIcon={<AddIcon />}
+                startIcon={<AddIcon aria-hidden="true" />}
                 disabled
+                aria-label="Add tasting (login required)"
                 sx={{
                   minWidth: { xs: '7.5rem', sm: '8.75rem' },
                   opacity: 0.6,
@@ -268,7 +270,11 @@ const TastingsPage = () => {
           {!isLoggedIn && ' Please log in to add tastings.'}
         </Alert>
       ) : (
-        <Box sx={{ width: '100%', maxWidth: '1200px', overflow: 'visible' }}>
+        <Box
+          sx={{ width: '100%', maxWidth: '1200px', overflow: 'visible' }}
+          role="region"
+          aria-labelledby="tastings-heading"
+        >
           <Box
             sx={{
               display: 'grid',
@@ -283,6 +289,9 @@ const TastingsPage = () => {
               overflow: 'visible',
               width: '100%',
             }}
+            role="grid"
+            aria-labelledby="tastings-heading"
+            aria-label="Coffee tasting cards grid"
           >
             {currentTastings.length === 0 ? (
               <Typography

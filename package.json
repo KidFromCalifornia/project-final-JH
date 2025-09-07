@@ -9,7 +9,8 @@
     "build": "cd frontend && npm install && npm run build",
     "start": "cd backend && npm start",
     "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "cd frontend && npm run dev"
+    "dev:frontend": "cd frontend && npm run dev",
+    "clean:empty": "node -e \"const {execSync}=require('child_process');try{execSync('find . -type f -empty -not -path \\\"*/node_modules/*\\\" -not -path \\\"./.git/*\\\" -delete');execSync('find . -type d -empty -not -path \\\"*/node_modules/*\\\" -not -path \\\"./.git/*\\\" -delete')}catch(e){console.error(e.message)} console.log('Empty files and directories removed');\""
   },
   "dependencies": {},
   "devDependencies": {

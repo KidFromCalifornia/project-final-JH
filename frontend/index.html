@@ -4,22 +4,98 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="scc_cup.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jonny Hicks' Stockholm Coffee Club</title>
+    <title>Jonny Hicks' Stockholm Coffee Club - Discover Premium Coffee Experiences</title>
 
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#194f84" />
+    <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="Discover the best coffee shops in Stockholm with Jonny Hicks' Stockholm Coffee Club"
+      content="Discover the best specialty coffee shops, roasteries, and tasting experiences in Stockholm. Find third-wave coffee, local roasters, and premium brewing methods in Sweden's coffee capital."
     />
+    <meta
+      name="keywords"
+      content="Stockholm coffee, specialty coffee, coffee shops, coffee tasting, third wave coffee, Swedish coffee, coffee roasters, premium coffee, coffee culture"
+    />
+    <meta name="author" content="Jonny Hicks" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://stockholm-coffee-club.netlify.app/" />
+    <meta property="og:title" content="Jonny Hicks' Stockholm Coffee Club" />
+    <meta
+      property="og:description"
+      content="Discover the best specialty coffee shops, roasteries, and tasting experiences in Stockholm. Find third-wave coffee, local roasters, and premium brewing methods."
+    />
+    <meta property="og:image" content="https://stockholm-coffee-club.netlify.app/scc_color.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Stockholm Coffee Club Logo" />
+    <meta property="og:site_name" content="Stockholm Coffee Club" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://stockholm-coffee-club.netlify.app/" />
+    <meta name="twitter:title" content="Jonny Hicks' Stockholm Coffee Club" />
+    <meta
+      name="twitter:description"
+      content="Discover the best specialty coffee shops, roasteries, and tasting experiences in Stockholm."
+    />
+    <meta name="twitter:image" content="https://stockholm-coffee-club.netlify.app/scc_color.svg" />
+    <meta name="twitter:image:alt" content="Stockholm Coffee Club Logo" />
+    <meta name="twitter:creator" content="@jonnyhicks" />
+
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#194f84" />
+    <meta name="msapplication-TileColor" content="#194f84" />
+    <meta name="application-name" content="Stockholm Coffee Club" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://stockholm-coffee-club.netlify.app/" />
+
+    <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="SCC" />
     <link rel="apple-touch-icon" href="scc_cup.svg" />
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Performance optimizations -->
     <link rel="dns-prefetch" href="//api.maptiler.com" />
     <link rel="dns-prefetch" href="//font.stockholm.se" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Stockholm Coffee Club",
+        "description": "Discover the best specialty coffee shops, roasteries, and tasting experiences in Stockholm",
+        "url": "https://stockholm-coffee-club.netlify.app/",
+        "author": {
+          "@type": "Person",
+          "name": "Jonny Hicks"
+        },
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Coffee shop discovery",
+          "Specialty coffee tasting",
+          "Local roastery finder",
+          "Third-wave coffee guide",
+          "Stockholm coffee culture"
+        ]
+      }
+    </script>
 
     <!-- Optimize CSS delivery -->
     <style>
@@ -28,11 +104,20 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         margin: 0;
         background-color: #fafafa;
+        color: #333;
       }
       #root {
         min-height: 100vh;
       }
       /* Stockholm Type font faces will be loaded by fontLoader.js */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-size: 1.2rem;
+        color: #666;
+      }
     </style>
   </head>
   <body>

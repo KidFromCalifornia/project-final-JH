@@ -24,7 +24,7 @@ const CafePage = () => {
       })
       .catch((err) => {
         setLoading(false);
-        console.log('Cafe fetch error:', err); // Debug log
+        console.log('Cafe fetch error:', err);
 
         // Check for actual network connectivity issues
         if (

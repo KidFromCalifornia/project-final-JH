@@ -158,7 +158,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
-        console.log('Form options fetch error:', error); // Debug log
+        console.log('Form options fetch error:', error);
 
         // Check for actual network connectivity issues
         if (
@@ -456,7 +456,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' }, // ✅ Stack on mobile
+                  flexDirection: { xs: 'column', sm: 'row' }, // Stack on mobile
                   gap: 1,
                   mb: 2,
                 }}
@@ -469,8 +469,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     value={form.acidity}
                     onChange={handleChange}
                     sx={{
-                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
-                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
+                      flex: { xs: 'none', sm: 1 }, // No flex on mobile, flex on larger screens
+                      minWidth: { xs: '100%', sm: '0' }, // Full width on mobile
                       ...textFieldStyles,
                     }}
                     SelectProps={{
@@ -504,8 +504,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     value={form.mouthFeel}
                     onChange={handleChange}
                     sx={{
-                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
-                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
+                      flex: { xs: 'none', sm: 1 }, // No flex on mobile, flex on larger screens
+                      minWidth: { xs: '100%', sm: '0' }, // Full width on mobile
                       ...textFieldStyles,
                     }}
                     SelectProps={{
@@ -610,7 +610,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                       sx={{
                         backgroundColor: form.tastingNotes.includes(note)
                           ? theme.palette.mode === 'dark'
-                            ? 'rgba(25, 118, 210, 0.2)' // ✅ Simplified - no need for complex replace
+                            ? 'rgba(25, 118, 210, 0.2)' // Simplified - no need for complex replace
                             : 'rgba(25, 118, 210, 0.1)'
                           : theme.palette.mode === 'dark'
                             ? theme.palette.background.paper

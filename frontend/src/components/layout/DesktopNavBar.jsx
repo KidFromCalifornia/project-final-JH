@@ -25,7 +25,6 @@ import {
   DoorFront as DoorFrontIcon,
 } from '@mui/icons-material';
 
-// Components
 import NavigationHeader from './navigation/NavigationHeader';
 import NavigationItems from './navigation/NavigationItems';
 import { AppBar, Drawer, DrawerHeader, drawerWidth } from './navigation/NavigationStyles';
@@ -97,7 +96,14 @@ const DesktopNavBar = ({
     <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
       <CssBaseline />
 
-      <AppBar position="fixed" open={open} color="transparent">
+      <AppBar
+        position="fixed"
+        open={open}
+        color="transparent"
+        component="header"
+        role="banner"
+        aria-label="Main site navigation"
+      >
         <Toolbar
           sx={{
             display: 'flex',
@@ -119,7 +125,7 @@ const DesktopNavBar = ({
         </Toolbar>
       </AppBar>
 
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open} role="navigation" aria-label="Site navigation menu">
         <DrawerHeader>
           <Tooltip title="Menu" arrow>
             <IconButton

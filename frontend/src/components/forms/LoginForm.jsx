@@ -78,7 +78,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         showSnackbar(errorMessage, 'error');
       }
     } catch (err) {
-      console.log('Login error:', err); // Debug log to see the actual error
+      console.log('Login error:', err);
 
       // Check for actual network connectivity issues
       if (
@@ -109,7 +109,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
     }
   };
 
-  // Common styles for TextField components
   const textFieldStyles = {
     '& .MuiOutlinedInput-root': {
       backgroundColor: theme.palette.common.white,

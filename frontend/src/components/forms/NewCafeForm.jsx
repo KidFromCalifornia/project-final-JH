@@ -323,7 +323,7 @@ const NewCafeForm = ({ onClose }) => {
         setStatus(result.error || "We couldn't add this cafe. Please check and try again.");
       }
     } catch (err) {
-      console.log('New cafe submission error:', err); // Debug log
+      console.log('New cafe submission error:', err);
 
       // Check for actual network connectivity issues
       if (

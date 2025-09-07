@@ -164,7 +164,6 @@ const UserPage = () => {
     }
   };
 
-  // Delete function
   const handleDeleteTasting = async (tastingToDelete) => {
     try {
       const result = await tastingAPI.delete(tastingToDelete._id);
@@ -193,7 +192,6 @@ const UserPage = () => {
     setActiveTab(1);
   };
 
-  // Normalize function
   const normalize = (str) =>
     String(str || '')
       .toLowerCase()
