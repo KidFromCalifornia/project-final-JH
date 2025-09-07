@@ -182,6 +182,7 @@ const TastingsPage = () => {
             variant={showTastingForm ? 'outlined' : 'contained'}
             startIcon={showTastingForm ? <CloseIcon /> : <AddIcon />}
             onClick={handleToggleTastingForm}
+            aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
             sx={{
               backgroundColor: showTastingForm ? 'transparent' : theme.palette.primary.main,
               color: showTastingForm
