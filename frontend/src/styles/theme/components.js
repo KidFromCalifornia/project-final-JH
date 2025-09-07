@@ -1,20 +1,44 @@
-// Material-UI component overrides
-export const createComponents = (customTheme) => ({
+import { Typography } from '@mui/material';
+import { colors, colorsDarkmode } from './colors';
+import { light } from '@mui/material/styles/createPalette';
+import { fontGrid } from '@mui/material/styles/cssUtils';
+
+const createComponents = (customTheme) => ({
   MuiCssBaseline: {
-    styleOverrides: (theme) => ({
+    styleOverrides: () => ({
+      // Apply border-box to all elements for consistent sizing
+      '*': {
+        boxSizing: 'border-box',
+      },
       body: {
-        backgroundColor: theme.palette.background.default,
-        color: theme.palette.text.primary,
+        color: customTheme.colors.mainText,
         WebkitFontSmoothing: 'antialiased',
         MozOsxFontSmoothing: 'grayscale',
         scrollBehavior: 'smooth',
+        // Prevent duplicate scrollbars
+        overflow: 'hidden',
+        height: '100vh',
+        margin: 0,
+        padding: 0,
+      },
+      html: {
+        // Prevent duplicate scrollbars
+        overflow: 'hidden',
+        height: '100vh',
+        margin: 0,
+        padding: 0,
+      },
+      // Main content wrapper should handle scrolling
+      '#root': {
+        height: '100vh',
+        overflow: 'auto',
       },
       a: {
-        color: theme.palette.accentStrong?.main || theme.palette.accent.main,
-        textDecorationColor: theme.palette.accentStrong?.main || theme.palette.accent.main,
+        color: customTheme.colors.accentStrong || customTheme.colors.light,
+        textDecorationColor: customTheme.colors.accentStrong || customTheme.colors.accent,
         transition: 'color 0.2s ease-in-out',
         '&:hover': {
-          color: theme.palette.primary.main,
+          color: customTheme.colors.primary,
         },
       },
       // Stockholm Type font fallbacks
@@ -30,26 +54,41 @@ export const createComponents = (customTheme) => ({
       '.wf-stockholmtype-loading h1, .wf-stockholmtype-loading h2, .wf-stockholmtype-loading h3': {
         fontFamily: 'Verdana, Arial, sans-serif !important',
       },
-      // Custom scrollbar styling
-      '*::-webkit-scrollbar': {
-        width: '0.5rem',
+      // Custom scrollbar styling - only for main content
+      '#root::-webkit-scrollbar': {
+        width: '0.75rem',
       },
-      '*::-webkit-scrollbar-track': {
-        backgroundColor: theme.palette.background.paper,
+      '#root::-webkit-scrollbar-track': {
+        backgroundColor: customTheme.colors.textMuted,
+        borderRadius: '0.375rem',
       },
-      '*::-webkit-scrollbar-thumb': {
-        backgroundColor: theme.palette.primary.main,
-        borderRadius: 4, // 0.25rem converted to pixels
+      '#root::-webkit-scrollbar-thumb': {
+        backgroundColor: customTheme.colors.secondary,
+        borderRadius: '0.375rem',
         '&:hover': {
-          backgroundColor: theme.palette.secondary.main,
+          backgroundColor: customTheme.colors.primary,
         },
+      },
+      // Hide scrollbars on fixed/absolute elements
+      '[style*="position: fixed"]::-webkit-scrollbar, [style*="position: absolute"]::-webkit-scrollbar':
+        {
+          display: 'none',
+        },
+      // Hide scrollbars on dialogs and modals
+      '.MuiDialog-root::-webkit-scrollbar, .MuiDrawer-root::-webkit-scrollbar, .MuiPopover-root::-webkit-scrollbar, .MuiMenu-root::-webkit-scrollbar':
+        {
+          display: 'none',
+        },
+      // Prevent body scrolling when modals are open
+      '.MuiDialog-root body, .MuiDrawer-root body': {
+        overflow: 'hidden !important',
       },
     }),
   },
   MuiTooltip: {
     styleOverrides: {
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        backgroundColor: 'hsla(222, 95%, 8%, 0.90)',
         fontSize: '0.875rem',
         borderRadius: customTheme.borderRadius / 2,
       },
@@ -59,6 +98,7 @@ export const createComponents = (customTheme) => ({
   MuiChip: {
     styleOverrides: {
       root: {
+        backgroundColor: 'transparent',
         borderRadius: customTheme.borderRadius / 2,
         fontWeight: 500,
       },
@@ -69,6 +109,10 @@ export const createComponents = (customTheme) => ({
     styleOverrides: {
       paper: {
         borderRadius: customTheme.borderRadius,
+        color: customTheme.colors.versoText,
+        // Prevent dialog scrollbars
+        maxHeight: '90vh',
+        overflow: 'auto',
       },
     },
   },
@@ -76,7 +120,9 @@ export const createComponents = (customTheme) => ({
     styleOverrides: {
       root: ({ theme, ownerState }) => ({
         borderRadius: customTheme.button.borderRadius,
-        fontWeight: 600,
+        backgroundColor: `${customTheme.colors.secondary}cc`,
+        color: customTheme.colors.light,
+        fontWeight: 500,
         textTransform: 'none',
         boxShadow: 'none',
         border: 'none',
@@ -89,16 +135,18 @@ export const createComponents = (customTheme) => ({
         },
         '&:active': {
           transform: 'translateY(0)',
-          outline: 'none',
+          backgroundColor: `${customTheme.colors.primary}cc`,
+          fontWeight: 600,
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: 'none',
+          boxShadow: `0 0 0 0.2rem ${customTheme.colors.primary}33`,
         },
         ...(ownerState.variant === 'contained' && {
           '&:hover': {
-            backgroundColor: customTheme.button.hover,
+            backgroundColor: `${customTheme.colors.secondary}33`,
             transform: 'translateY(-0.0625rem)',
+            outline: customTheme.colors.secondary,
           },
         }),
       }),
@@ -109,7 +157,7 @@ export const createComponents = (customTheme) => ({
     styleOverrides: {
       root: ({ theme }) => ({
         borderRadius: customTheme.borderRadius,
-        boxShadow: 'none',
+        boxShadow: customTheme.shadow,
         transition: 'all 0.3s ease-in-out',
         border: 'none',
         '&:hover': {
@@ -117,25 +165,6 @@ export const createComponents = (customTheme) => ({
           boxShadow: 'none',
         },
       }),
-    },
-  },
-
-  MuiPaper: {
-    styleOverrides: {
-      root: ({ theme }) => ({
-        borderRadius: customTheme.borderRadius,
-        border: 'none',
-        boxShadow: 'none',
-      }),
-      elevation1: {
-        boxShadow: 'none',
-      },
-      elevation2: {
-        boxShadow: 'none',
-      },
-      elevation3: {
-        boxShadow: 'none',
-      },
     },
   },
 
@@ -147,9 +176,9 @@ export const createComponents = (customTheme) => ({
         borderRadius: 0,
         boxShadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
         backdropFilter: 'blur(0.625rem)',
-        backgroundColor: `${theme.palette.primary.main}cc`,
-        borderBottom: `0.0625rem solid ${theme.palette.divider}`,
-        color: theme.palette.light?.main || '#fff',
+        backgroundColor: `${customTheme.colors.primary}cc`,
+        borderBottom: `0.0625rem solid ${customTheme.colors.secondary}`,
+        color: customTheme.colors.light || '#fff',
       }),
     },
   },
@@ -157,12 +186,179 @@ export const createComponents = (customTheme) => ({
   MuiDrawer: {
     styleOverrides: {
       paper: ({ theme }) => ({
-        borderRight: `0.0625rem solid ${theme.palette.divider}`,
+        borderRight: `0.0625rem solid ${customTheme.colors.secondary}`,
         borderRadius: 0,
         backdropFilter: 'blur(0.625rem)',
-        backgroundColor: `${theme.palette.primary.main}f5`,
-        color: theme.palette.light?.main || '#fff',
+        backgroundColor: `${customTheme.colors.primary}f5`,
+        color: customTheme.colors.light || '#fff',
+        // Prevent drawer scrollbars
+        overflow: 'hidden',
       }),
     },
   },
+
+  MuiTextField: {
+    styleOverrides: {
+      root: {
+        '& .MuiOutlinedInput-root': {
+          borderRadius: customTheme.borderRadius,
+          backgroundColor: customTheme.colors.background,
+          transition: 'all 0.4s ease-in-out',
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: customTheme.colors.primary,
+            borderWidth: 2,
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: customTheme.colors.secondary,
+            fontWeight: 600,
+            borderWidth: 2,
+          },
+        },
+        '& .MuiInputLabel-root': {
+          color: customTheme.colors.primary,
+          fontWeight: 600,
+          '&.Mui-focused': {
+            color: customTheme.colors.versoText || customTheme.colors.secondary,
+            fontWeight: 600,
+            backgroundColor: customTheme.colors.primary,
+            borderRadius: customTheme.borderRadius / 2,
+            padding: '1px 12px',
+          },
+        },
+        '& .MuiOutlinedInput-input': {
+          color: customTheme.colors.mainText,
+          padding: '16px 14px',
+        },
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderColor: customTheme.colors.secondary,
+        },
+      },
+    },
+  },
+
+  MuiPaper: {
+    styleOverrides: {
+      root: {
+        borderRadius: 12,
+        backgroundColor: customTheme.colors.primary,
+        color: customTheme.colors.versoText,
+        boxShadow: customTheme.shadow,
+        transition: 'box-shadow 0.2s ease-in-out',
+        '&:hover': {
+          boxShadow: `0 4px 16px rgba(0,0,0,0.15)`,
+        },
+      },
+      elevation1: {
+        boxShadow: `0 2px 8px rgba(0,0,0,0.08)`,
+      },
+      elevation2: {
+        boxShadow: `0 4px 12px rgba(0,0,0,0.12)`,
+      },
+      elevation3: {
+        boxShadow: `0 6px 16px rgba(0,0,0,0.15)`,
+      },
+    },
+  },
+
+  MuiSelect: {
+    styleOverrides: {
+      root: {
+        borderRadius: customTheme.borderRadius,
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderColor: customTheme.colors.textMuted,
+        },
+        '&:hover .MuiOutlinedInput-notchedOutline': {
+          borderColor: customTheme.colors.primary,
+        },
+        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+          borderColor: customTheme.colors.primary,
+        },
+      },
+    },
+  },
+
+  MuiFormControl: {
+    styleOverrides: {
+      root: {
+        '& .MuiFormLabel-root': {
+          color: customTheme.colors.primary,
+          fontWeight: 500,
+          '&.Mui-focused': {
+            color: customTheme.colors.primary,
+          },
+        },
+      },
+    },
+  },
+
+  MuiFormHelperText: {
+    styleOverrides: {
+      root: {
+        color: customTheme.colors.secondary,
+        marginLeft: 0,
+        marginTop: 4,
+      },
+    },
+  },
+
+  MuiInputAdornment: {
+    styleOverrides: {
+      root: {
+        color: customTheme.colors.secondary,
+      },
+    },
+  },
+
+  MuiCheckbox: {
+    styleOverrides: {
+      root: {
+        color: customTheme.colors.secondary,
+        borderRadius: 4,
+        '&.Mui-checked': {
+          color: customTheme.colors.primary,
+        },
+        '&:hover': {
+          backgroundColor: `${customTheme.colors.primary}0a`,
+        },
+        '&.Mui-focusVisible': {
+          outline: `2px solid ${customTheme.colors.primary}`,
+          outlineOffset: 2,
+        },
+        '& .MuiSvgIcon-root': {
+          fontSize: '1.25rem',
+        },
+      },
+    },
+  },
+
+  MuiRating: {
+    styleOverrides: {
+      root: {
+        color: customTheme.colors.secondary || customTheme.colors.primary,
+        '&.MuiRating-readOnly': {
+          opacity: 0.7,
+        },
+      },
+    },
+  },
+
+  MuiFormControlLabel: {
+    styleOverrides: {
+      root: {
+        color: customTheme.colors.primary,
+        '& .MuiFormControlLabel-label': {
+          color: customTheme.colors.primary,
+          fontSize: '0.875rem',
+        },
+        '&:hover': {
+          backgroundColor: `${customTheme.colors.primary}0a`,
+        },
+      },
+      label: {
+        color: customTheme.colors.primary,
+      },
+    },
+  },
 });
+
+export { createComponents };

@@ -1,7 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { useCafeStore } from '../stores/useCafeStore';
 import Container from '@mui/material/Container';
-import { Box, Typography, Button, Alert, useTheme } from '@mui/material';
+import { Box, Typography, Button, Alert, useTheme, Tooltip } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
 import CafeSearchBar from '../components/common/CafeSearchBar';
 import FlipTastingCard from '../components/common/FlipTastingCard';

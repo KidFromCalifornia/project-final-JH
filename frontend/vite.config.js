@@ -19,7 +19,7 @@ export default defineConfig({
         'SCC-preview.png',
         'assets/icons/*.svg',
         'assets/images/*.svg',
-        'offline.html'
+        'offline.html',
       ],
       manifest: {
         name: 'Stockholm Coffee Club',

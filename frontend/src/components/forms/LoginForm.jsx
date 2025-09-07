@@ -11,6 +11,7 @@ import {
   Button,
   Tooltip,
   useTheme,
+  Paper,
 } from '@mui/material';
 import { useAlert } from '../../context/AlertContext';
 
@@ -109,32 +110,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
     }
   };
 
-  const textFieldStyles = {
-    '& .MuiOutlinedInput-root': {
-      backgroundColor: theme.palette.common.white,
-      minHeight: { xs: 56, sm: 48 },
-      '& fieldset': {
-        borderColor: theme.palette.text.primary,
-      },
-      '&:hover fieldset': {
-        borderColor: theme.palette.primary.main,
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: theme.palette.primary.main,
-      },
-      '& input': {
-        color: theme.palette.text.primary,
-        fontSize: { xs: '16px', sm: '14px' },
-      },
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.text.primary,
-      '&.Mui-focused': {
-        color: theme.palette.primary.main,
-      },
-    },
-  };
-
   return (
     <Box
       sx={{
@@ -144,34 +119,19 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        backgroundColor: theme.palette.light.main,
-        borderRadius: 2,
-        boxShadow: 3,
-        color: theme.palette.text.primary,
-        position: 'relative',
-        zIndex: 1,
-        overflow: 'hidden',
-        minHeight: 'auto',
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Typography
-          variant="h4"
-          sx={{ color: theme.palette.text.primary, fontSize: { xs: '1.5rem', sm: '2rem' } }}
-        >
+        <Typography color="text.secondary" variant="h4">
           {isSignup ? 'Sign Up' : 'Login'}
         </Typography>
-        <IconButton
-          onClick={onClose}
-          aria-label="Close login form"
-          color="inherit"
-          sx={{ p: { xs: 1, sm: 1.5 } }}
-        >
+        <IconButton onClick={onClose} aria-label="Close login form">
           <CloseIcon />
         </IconButton>
       </Box>
 
-      <form
+      <Paper
+        component="form"
         onSubmit={handleSubmit}
         style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%' }}
       >
@@ -185,14 +145,12 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             required
             fullWidth
             autoComplete="email"
-            color="primary"
             variant="outlined"
-            sx={textFieldStyles}
           />
         )}
 
         <TextField
-          label={isSignup ? 'Username' : 'Username or Email'}
+          label={isSignup ? 'Username' : 'Email'}
           type="text"
           name="identifier"
           value={formData.identifier}
@@ -200,9 +158,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           required
           fullWidth
           autoComplete="username"
-          color="primary"
           variant="outlined"
-          sx={textFieldStyles}
         />
 
         <Box sx={{ position: 'relative' }}>
@@ -215,9 +171,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             required
             fullWidth
             autoComplete="current-password"
-            color="primary"
             variant="outlined"
-            sx={textFieldStyles}
           />
           <Tooltip title={showPassword ? 'Hide password' : 'Show password'}>
             <IconButton
@@ -227,10 +181,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
                 position: 'absolute',
                 right: 8,
                 top: 8,
-                color: theme.palette.text.primary,
-                '&:hover': {
-                  color: theme.palette.primary.main,
-                },
               }}
               size="small"
             >
@@ -243,52 +193,20 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           type="submit"
           disabled={loading}
           variant="contained"
-          color="primary"
           sx={{
             py: { xs: 1.5, sm: 1.5 },
             px: { xs: 2, sm: 3 },
             mt: 1,
             minHeight: { xs: 48, sm: 42 },
-            fontSize: { xs: '16px', sm: '14px' },
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            '&:hover': {
-              backgroundColor: theme.palette.primary.dark,
-            },
-            '&:disabled': {
-              backgroundColor: theme.palette.action.disabled,
-              color: theme.palette.text.disabled,
-            },
           }}
         >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : isSignup ? (
-            'Sign Up'
-          ) : (
-            'Login'
-          )}
+          {loading ? <CircularProgress size={24} /> : isSignup ? 'Sign Up' : 'Login'}
         </Button>
-      </form>
+      </Paper>
 
-      <Typography align="center" sx={{ mt: 2, color: theme.palette.text.primary }}>
+      <Typography color="text.secondary" align="center" sx={{ mt: 2 }}>
         {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
-        <Button
-          onClick={() => setIsSignup(!isSignup)}
-          variant="text"
-          size="small"
-          color="primary"
-          sx={{
-            textDecoration: 'underline',
-            backgroundColor: 'transparent',
-            fontWeight: 600,
-            boxShadow: 'none',
-            '&:hover': {
-              transform: 'scale(1.05)',
-              boxShadow: 'none',
-            },
-          }}
-        >
+        <Button onClick={() => setIsSignup(!isSignup)} variant="text" size="small">
           {isSignup ? 'Login' : 'Sign Up'}
         </Button>
       </Typography>

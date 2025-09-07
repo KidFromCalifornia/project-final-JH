@@ -107,19 +107,6 @@ const NavigationItems = ({
           </Tooltip>
         </ListItem>
 
-        {isLoggedIn && (
-          <ListItem sx={{ display: 'block', padding: 0 }}>
-            <Tooltip title="Add Cafe" arrow placement="right" disableHoverListener={open}>
-              <ListItemButton onClick={() => setShowAddCafe(true)}>
-                <ListItemIcon>
-                  <AddLocationIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Add Cafe" />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-        )}
-
         <NavigationFilters
           categories={categories}
           neighborhoods={neighborhoods}

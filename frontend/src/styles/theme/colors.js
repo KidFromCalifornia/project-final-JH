@@ -27,7 +27,7 @@ export const colorsDarkmode = {
   light: '#ebf2fa', // Alice Blue (for light text)
   mainText: '#ebf2fa', // Alice Blue (text)
   versoText: '#b0d7ff', // Light Sky Blue (accent text)
-  textMuted: '#a0b0c0', // Muted Blue Gray
+  textMuted: '#9ec4ebff', // Muted Blue Gray
   error: '#ff7b76', // Bright Bittersweet
   success: '#90c68f', // Soft Olivine
   info: '#48a4c0ff', // Soft Cyan

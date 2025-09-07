@@ -51,11 +51,6 @@ export const createPalette = (themeMode, colors, colorsDarkmode) => {
       paper: paperBackground,
     },
 
-    text: {
-      primary: colorPalette.mainText,
-      secondary: textSecondaryColor,
-      disabled: themeMode === 'dark' ? 'rgba(105, 175, 255, 0.5)' : 'rgba(3, 33, 62, 0.5)',
-    },
     muted: { main: colorPalette.textMuted },
 
     divider: themeMode === 'dark' ? 'rgba(0, 119, 255, 0.06)' : 'rgba(10,31,51,0.08)',

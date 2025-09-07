@@ -29,99 +29,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const theme = useTheme();
   const { showSnackbar } = useAlert();
 
-  const textFieldStyles = {
-    '& .MuiOutlinedInput-root': {
-      backgroundColor:
-        theme.palette.mode === 'dark' ? theme.palette.background.paper : theme.palette.light.main,
-      minHeight: { xs: '3.5rem', sm: '3rem' },
-      '& fieldset': { borderColor: theme.palette.text.primary },
-      '&:hover fieldset': { borderColor: theme.palette.primary.main },
-      '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
-      '& input': {
-        color: theme.palette.text.secondary,
-        fontSize: { xs: '1.125rem', sm: '1rem' },
-        wordWrap: 'break-word',
-        overflowWrap: 'break-word',
-        whiteSpace: 'normal',
-        '&::placeholder': {
-          color: theme.palette.text.secondary,
-          opacity: 0.7,
-        },
-      },
-      '& textarea': {
-        color: theme.palette.text.secondary,
-        fontSize: { xs: '1.125rem', sm: '1rem' },
-        wordWrap: 'break-word',
-        overflowWrap: 'break-word',
-        whiteSpace: 'pre-wrap',
-        '&::placeholder': {
-          color: theme.palette.text.secondary,
-          opacity: 0.7,
-        },
-      },
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.text.secondary,
-      '&.Mui-focused': { color: theme.palette.primary.main },
-      wordWrap: 'break-word',
-      overflowWrap: 'break-word',
-    },
-    '& .MuiInputBase-input::placeholder': {
-      color: theme.palette.text.secondary,
-      opacity: 0.7,
-    },
-    '& .MuiSelect-select': {
-      color: theme.palette.text.secondary,
-      fontSize: { xs: '1.125rem', sm: '1rem' },
-    },
-  };
-
-  // Select menu styling for better contrast
-  const selectMenuStyles = {
-    PaperProps: {
-      sx: {
-        backgroundColor: theme.palette.background.default,
-        border: `1px solid ${theme.palette.divider}`,
-        boxShadow: theme.shadows[8],
-        '& .MuiMenuItem-root': {
-          color: theme.palette.text.secondary,
-          fontSize: { xs: '1.125rem', sm: '1rem' },
-          backgroundColor: 'transparent',
-          '&:hover': {
-            backgroundColor: theme.palette.action.hover,
-          },
-          '&.Mui-selected': {
-            color: theme.palette.primary.contrastText,
-            '&:hover': {
-              backgroundColor: theme.palette.primary.dark,
-            },
-          },
-        },
-      },
-    },
-  };
-  // Section styling for better visual hierarchy
-  const sectionStyles = {
-    backgroundColor:
-      theme.palette.mode === 'dark'
-        ? theme.palette.background.paper
-        : theme.palette.background.default,
-    borderRadius: 2,
-    p: 3,
-    mb: 2,
-    boxShadow: theme.shadows[2],
-    border: `1px solid ${theme.palette.divider}`,
-    height: 'fit-content',
-  };
-
-  const sectionHeaderStyles = {
-    color: theme.palette.primary.main,
-    fontWeight: 600,
-    mb: 2,
-    pb: 1,
-    borderBottom: `2px solid ${theme.palette.background.default}`,
-  };
-
   // State initialization
   const [form, setForm] = useState({
     cafeId:
@@ -226,10 +133,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         maxWidth: { xs: '100%', md: '1200px' },
         mx: 'auto',
         p: { xs: 2, sm: 3 },
-        backgroundColor: theme.palette.primary.main,
-        color: theme.palette.primary.contrastText,
         borderRadius: 2,
-        boxShadow: 5,
       }}
     >
       <Typography
@@ -237,6 +141,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         component="h2"
         align="center"
         gutterBottom
+        color="primary"
         sx={{
           mb: 3,
           fontSize: { xs: '1.5rem', sm: '2.125rem' },
@@ -255,8 +160,13 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         <Grid container spacing={{ xs: 2, md: 3 }}>
           {/* Basic Coffee Info Section */}
           <Grid item xs={12} lg={6}>
-            <Paper elevation={3} sx={sectionStyles}>
-              <Typography variant="h6" sx={sectionHeaderStyles}>
+            <Paper
+              sx={{
+                backgroundColor: 'background.default',
+                p: 2,
+              }}
+            >
+              <Typography color="text.secondary" variant="h6">
                 Coffee Details
               </Typography>
 
@@ -272,24 +182,10 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   margin="normal"
                   variant="outlined"
                   aria-label="Cafe Location"
-                  sx={textFieldStyles}
-                  SelectProps={{
-                    MenuProps: {
-                      PaperProps: {
-                        sx: selectMenuStyles['& .MuiPaper-root'],
-                      },
-                    },
-                  }}
                 >
-                  <MenuItem value="" sx={selectMenuStyles['& .MuiMenuItem-root']}>
-                    Select a cafe
-                  </MenuItem>
+                  <MenuItem value="">Select a cafe</MenuItem>
                   {cafes.map((cafe, index) => (
-                    <MenuItem
-                      key={cafe._id || `cafe-${index}`}
-                      value={cafe._id}
-                      sx={selectMenuStyles['& .MuiMenuItem-root']}
-                    >
+                    <MenuItem key={cafe._id || `cafe-${index}`} value={cafe._id}>
                       {cafe.name}
                     </MenuItem>
                   ))}
@@ -307,7 +203,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   margin="normal"
                   variant="outlined"
                   aria-label="Coffee Name"
-                  sx={textFieldStyles}
                 />
               </Tooltip>
 
@@ -321,13 +216,14 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   margin="normal"
                   variant="outlined"
                   aria-label="Coffee Roaster"
-                  sx={textFieldStyles}
                 />
               </Tooltip>
 
               {/* Origin fields side by side */}
               <Box
+                background="background.default"
                 sx={{
+                  backgroundColor: theme.palette.background.paper,
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
                   gap: 1,
@@ -343,7 +239,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     sx={{
                       flex: { xs: 'none', sm: 1 },
                       minWidth: { xs: '100%', sm: '0' },
-                      ...textFieldStyles,
                     }}
                   />
                 </Tooltip>
@@ -356,7 +251,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     sx={{
                       flex: { xs: 'none', sm: 1 },
                       minWidth: { xs: '100%', sm: '0' },
-                      ...textFieldStyles,
                     }}
                   />
                 </Tooltip>
@@ -366,13 +260,17 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
           {/* Taste Profile Section */}
           <Grid item xs={12} lg={6}>
-            <Paper elevation={3} sx={sectionStyles}>
-              <Typography variant="h6" sx={sectionHeaderStyles}>
-                Taste Profile
-              </Typography>
+            <Paper
+              sx={{
+                backgroundColor: 'background.default',
+                p: 2,
+              }}
+            >
+              <Typography variant="h6">Taste Profile</Typography>
 
               {/* Brew method and roast level side by side */}
               <Box
+                background="background.default"
                 sx={{
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
@@ -391,25 +289,11 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     sx={{
                       flex: { xs: 'none', sm: 1 },
                       minWidth: { xs: '100%', sm: '0' },
-                      ...textFieldStyles,
-                    }}
-                    SelectProps={{
-                      MenuProps: {
-                        PaperProps: {
-                          sx: selectMenuStyles['& .MuiPaper-root'],
-                        },
-                      },
                     }}
                   >
-                    <MenuItem value="" sx={selectMenuStyles['& .MuiMenuItem-root']}>
-                      Select
-                    </MenuItem>
+                    <MenuItem value="">Select</MenuItem>
                     {(options.brewMethod || []).map((method) => (
-                      <MenuItem
-                        key={method}
-                        value={method}
-                        sx={selectMenuStyles['& .MuiMenuItem-root']}
-                      >
+                      <MenuItem key={method} value={method}>
                         {method}
                       </MenuItem>
                     ))}
@@ -424,27 +308,13 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     value={form.roastLevel}
                     onChange={handleChange}
                     sx={{
-                      flex: { xs: 'none', sm: 1 }, // ✅ No flex on mobile, flex on larger screens
-                      minWidth: { xs: '100%', sm: '0' }, // ✅ Full width on mobile
-                      ...textFieldStyles,
-                    }}
-                    SelectProps={{
-                      MenuProps: {
-                        PaperProps: {
-                          sx: selectMenuStyles['& .MuiPaper-root'],
-                        },
-                      },
+                      flex: { xs: 'none', sm: 1 },
+                      minWidth: { xs: '100%', sm: '0' },
                     }}
                   >
-                    <MenuItem value="" sx={selectMenuStyles['& .MuiMenuItem-root']}>
-                      Select
-                    </MenuItem>
+                    <MenuItem value="">Select</MenuItem>
                     {(options.roastLevel || []).map((level) => (
-                      <MenuItem
-                        key={level}
-                        value={level}
-                        sx={selectMenuStyles['& .MuiMenuItem-root']}
-                      >
+                      <MenuItem key={level} value={level}>
                         {level}
                       </MenuItem>
                     ))}
@@ -454,9 +324,10 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
               {/* Acidity and Mouth Feel side by side */}
               <Box
+                background="background.default"
                 sx={{
                   display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' }, // Stack on mobile
+                  flexDirection: { xs: 'column', sm: 'row' },
                   gap: 1,
                   mb: 2,
                 }}
@@ -469,27 +340,13 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     value={form.acidity}
                     onChange={handleChange}
                     sx={{
-                      flex: { xs: 'none', sm: 1 }, // No flex on mobile, flex on larger screens
-                      minWidth: { xs: '100%', sm: '0' }, // Full width on mobile
-                      ...textFieldStyles,
-                    }}
-                    SelectProps={{
-                      MenuProps: {
-                        PaperProps: {
-                          sx: selectMenuStyles['& .MuiPaper-root'],
-                        },
-                      },
+                      flex: { xs: 'none', sm: 1 },
+                      minWidth: { xs: '100%', sm: '0' },
                     }}
                   >
-                    <MenuItem value="" sx={selectMenuStyles['& .MuiMenuItem-root']}>
-                      Select
-                    </MenuItem>
+                    <MenuItem value="">Select</MenuItem>
                     {(options.acidity || []).map((level) => (
-                      <MenuItem
-                        key={level}
-                        value={level}
-                        sx={selectMenuStyles['& .MuiMenuItem-root']}
-                      >
+                      <MenuItem key={level} value={level}>
                         {level}
                       </MenuItem>
                     ))}
@@ -504,27 +361,13 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     value={form.mouthFeel}
                     onChange={handleChange}
                     sx={{
-                      flex: { xs: 'none', sm: 1 }, // No flex on mobile, flex on larger screens
-                      minWidth: { xs: '100%', sm: '0' }, // Full width on mobile
-                      ...textFieldStyles,
-                    }}
-                    SelectProps={{
-                      MenuProps: {
-                        PaperProps: {
-                          sx: selectMenuStyles['& .MuiPaper-root'],
-                        },
-                      },
+                      flex: { xs: 'none', sm: 1 },
+                      minWidth: { xs: '100%', sm: '0' },
                     }}
                   >
-                    <MenuItem value="" sx={selectMenuStyles['& .MuiMenuItem-root']}>
-                      Select
-                    </MenuItem>
+                    <MenuItem value="">Select</MenuItem>
                     {(options.mouthFeel || []).map((feel) => (
-                      <MenuItem
-                        key={feel}
-                        value={feel}
-                        sx={selectMenuStyles['& .MuiMenuItem-root']}
-                      >
+                      <MenuItem key={feel} value={feel}>
                         {feel}
                       </MenuItem>
                     ))}
@@ -533,9 +376,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
               </Box>
 
               <FormControl fullWidth margin="normal">
-                <FormLabel sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                  Overall Rating
-                </FormLabel>
+                <FormLabel>Overall Rating</FormLabel>
                 <Tooltip
                   title="Rate your overall coffee experience from 1-5 hearts"
                   arrow
@@ -549,14 +390,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     icon={<FavoriteIcon fontSize="inherit" />}
                     emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
                     onChange={(_, value) => setForm((prev) => ({ ...prev, rating: value || 1 }))}
-                    sx={{
-                      mt: 1,
-                      '& .MuiRating-iconFilled': { color: theme.palette.accent.main },
-                      '& .MuiRating-iconEmpty': { color: 'rgba(0, 0, 0, 0.26)' },
-                    }}
                   />
                 </Tooltip>
-                <FormHelperText sx={{ color: theme.palette.text.secondary }}>
+                <FormHelperText>
                   {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
                 </FormHelperText>
               </FormControl>
@@ -565,18 +401,19 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
           {/* Tasting Notes - Full Width */}
           <Grid item xs={12}>
-            <Paper elevation={3} sx={sectionStyles}>
-              <Typography variant="h6" sx={sectionHeaderStyles}>
-                Tasting Notes
-              </Typography>
+            <Paper
+              sx={{
+                backgroundColor: 'background.default',
+                p: 2,
+              }}
+            >
+              <Typography variant="h6">Tasting Notes</Typography>
 
               <FormControl fullWidth required>
-                <FormLabel sx={{ fontWeight: 600, color: theme.palette.text.primary, mb: 1 }}>
-                  Select at least one tasting note
-                </FormLabel>
+                <FormLabel sx={{ mb: 1 }}>Select at least one tasting note</FormLabel>
                 <FormGroup
                   sx={{
-                    display: 'grid', // Changed from 'flex'
+                    display: 'grid',
                     gridTemplateColumns: {
                       xs: 'repeat(2, 1fr)',
                       sm: 'repeat(3, 1fr)',
@@ -596,10 +433,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                           checked={form.tastingNotes.includes(note)}
                           onChange={handleTastingNotesChange}
                           size="small"
-                          sx={{
-                            color: theme.palette.primary.main,
-                            '&.Mui-checked': { color: theme.palette.secondary.main },
-                          }}
                         />
                       }
                       label={
@@ -608,27 +441,10 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         </Typography>
                       }
                       sx={{
-                        backgroundColor: form.tastingNotes.includes(note)
-                          ? theme.palette.mode === 'dark'
-                            ? 'rgba(25, 118, 210, 0.2)' // Simplified - no need for complex replace
-                            : 'rgba(25, 118, 210, 0.1)'
-                          : theme.palette.mode === 'dark'
-                            ? theme.palette.background.paper
-                            : 'rgba(255, 255, 255, 0.8)',
                         borderRadius: 1,
                         px: 1,
                         py: 0.5,
                         m: 0,
-                        border: form.tastingNotes.includes(note)
-                          ? `1px solid ${theme.palette.primary.main}`
-                          : `1px solid ${theme.palette.divider}`,
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                          backgroundColor:
-                            theme.palette.mode === 'dark'
-                              ? theme.palette.action.hover
-                              : 'rgba(25, 118, 210, 0.05)',
-                        },
                       }}
                     />
                   ))}
@@ -639,10 +455,13 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
           {/* Notes and Actions */}
           <Grid item xs={12}>
-            <Paper elevation={3} sx={sectionStyles}>
-              <Typography variant="h6" sx={sectionHeaderStyles}>
-                Additional Details
-              </Typography>
+            <Paper
+              sx={{
+                backgroundColor: 'background.default',
+                p: 2,
+              }}
+            >
+              <Typography variant="h6">Additional Details</Typography>
 
               <TextField
                 label="Additional Notes"
@@ -657,31 +476,24 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 aria-label="Additional Notes"
                 inputProps={{ maxLength: 500 }}
                 placeholder="Share your thoughts about this coffee experience..."
-                sx={textFieldStyles}
               />
 
               {/* Actions Section */}
               <Box
+                background="background.default"
                 sx={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   mt: 3,
                   pt: 2,
-                  borderTop: `1px solid ${theme.palette.divider}`,
                 }}
               >
                 <FormControlLabel
                   control={
-                    <Checkbox
-                      name="isPublic"
-                      checked={form.isPublic}
-                      onChange={handleChange}
-                      sx={{ color: theme.palette.primary.main }}
-                    />
+                    <Checkbox name="isPublic" checked={form.isPublic} onChange={handleChange} />
                   }
                   label="Make this tasting public"
-                  sx={{ color: theme.palette.text.primary }}
                 />
                 <Box sx={{ display: 'flex', gap: 2 }}>
                   {onClose && (
@@ -713,8 +525,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     arrow
                   >
                     <span>
-                      {' '}
-                      {/* Added span wrapper for disabled button */}
                       <Button
                         type="submit"
                         variant="contained"
