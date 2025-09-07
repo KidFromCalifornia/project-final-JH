@@ -223,6 +223,8 @@ const AboutMePage = () => {
               </Typography>
 
               <List
+                role="list"
+                aria-label="Key features"
                 sx={{
                   listStyleType: 'disc',
                   pl: 2,
@@ -233,11 +235,13 @@ const AboutMePage = () => {
                   },
                 }}
               >
-                <ListItem>Interactive map of Stockholm's specialty coffee scene</ListItem>
-                <ListItem>Personal coffee tasting journal</ListItem>
-                <ListItem>Community submissions for new cafes</ListItem>
-                <ListItem>Accessibility-focused design</ListItem>
-                <ListItem>Dark/light mode for all lighting conditions</ListItem>
+                <ListItem role="listitem">
+                  Interactive map of Stockholm's specialty coffee scene
+                </ListItem>
+                <ListItem role="listitem">Personal coffee tasting journal</ListItem>
+                <ListItem role="listitem">Community submissions for new cafes</ListItem>
+                <ListItem role="listitem">Accessibility-focused design</ListItem>
+                <ListItem role="listitem">Dark/light mode for all lighting conditions</ListItem>
               </List>
             </Paper>
           </Grid>
@@ -264,6 +268,8 @@ const AboutMePage = () => {
               </Typography>
 
               <List
+                role="list"
+                aria-label="Technologies used"
                 sx={{
                   listStyleType: 'disc',
                   pl: 2,
@@ -274,11 +280,13 @@ const AboutMePage = () => {
                   },
                 }}
               >
-                <ListItem>Frontend: React, Material UI, MapLibre GL</ListItem>
-                <ListItem>State Management: Zustand</ListItem>
-                <ListItem>Backend: Node.js, Express, MongoDB</ListItem>
-                <ListItem>Authentication: JWT</ListItem>
-                <ListItem>Deployment: Netlify (frontend), Heroku (backend)</ListItem>
+                <ListItem role="listitem">Frontend: React, Material UI, MapLibre GL</ListItem>
+                <ListItem role="listitem">State Management: Zustand</ListItem>
+                <ListItem role="listitem">Backend: Node.js, Express, MongoDB</ListItem>
+                <ListItem role="listitem">Authentication: JWT</ListItem>
+                <ListItem role="listitem">
+                  Deployment: Netlify (frontend), Heroku (backend)
+                </ListItem>
               </List>
             </Paper>
           </Grid>
@@ -316,7 +324,7 @@ const AboutMePage = () => {
             }}
           >
             <Typography
-              variant="h3"
+              variant="h2"
               component="h2"
               color="text.secondary"
               sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem' } }}

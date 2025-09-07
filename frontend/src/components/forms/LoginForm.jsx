@@ -9,7 +9,6 @@ import {
   IconButton,
   CircularProgress,
   Button,
-  Alert,
   Tooltip,
   useTheme,
 } from '@mui/material';
@@ -25,8 +24,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   });
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const error = useCafeStore((state) => state.fetchError);
-  const setError = useCafeStore((state) => state.setFetchError);
   const loading = useCafeStore((state) => state.loading);
   const setLoading = useCafeStore((state) => state.setLoading);
 
@@ -38,7 +35,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
       const { identifier, email, password } = formData;
@@ -52,6 +48,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
       const data = isSignup ? await authAPI.register(payload) : await authAPI.login(payload);
 
       if (data.token || data.accessToken) {
+        // Success case - user exists and credentials are correct
         const token = data.token || data.accessToken;
         localStorage.setItem('userToken', token);
         localStorage.setItem('userId', data.user.id);
@@ -73,25 +70,40 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         setCurrentUser({ username: data.user?.username || trimmedIdentifier });
         onClose();
       } else {
-        setError(
+        // Server returned success but no token - likely authentication error
+        const errorMessage =
           data.error ||
-            data.message ||
-            (isSignup ? 'Signup failed. Please try again.' : 'Invalid credentials.')
-        );
+          data.message ||
+          'Invalid credentials. Please check your username/email and password.';
+        showSnackbar(errorMessage, 'error');
       }
     } catch (err) {
+      console.log('Login error:', err); // Debug log to see the actual error
+
+      // Check for actual network connectivity issues
       if (
-        err.code === 'NETWORK_ERROR' ||
-        (typeof err.message === 'string' && err.message.includes('fetch')) ||
-        !err.response
+        (err.name === 'TypeError' && err.message.includes('fetch')) ||
+        err.message.includes('NetworkError') ||
+        err.message.includes('Failed to fetch') ||
+        !navigator.onLine
       ) {
-        // Show network error alert using the new AlertContext
+        // True network error - no internet or server unreachable
         showSnackbar(
           "We couldn't reach the server. Please check your internet connection and try again.",
           'error'
         );
+      } else if (err.message.includes('timeout') || err.message.includes('Request timeout')) {
+        // Request timeout
+        showSnackbar('Request timed out. Please try again.', 'error');
+      } else {
+        // Authentication or other server errors (invalid credentials, user doesn't exist, etc.)
+        const errorMessage =
+          err.message ||
+          (isSignup
+            ? 'Signup failed. Please try again.'
+            : 'Invalid credentials. Please check your username/email and password.');
+        showSnackbar(errorMessage, 'error');
       }
-      setError(isSignup ? 'Signup failed. Please try again.' : 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -259,8 +271,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           )}
         </Button>
       </form>
-
-      {error && <Alert severity="error">{error}</Alert>}
 
       <Typography align="center" sx={{ mt: 2, color: theme.palette.text.primary }}>
         {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}

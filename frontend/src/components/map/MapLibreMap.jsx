@@ -90,91 +90,90 @@ export default function MapLibreMap({
                 onClose={() => setSelectedCafe(null)}
                 closeOnClick={false}
               >
-                <Box
+                <Typography
+                  variant="h6"
+                  component="h3"
                   sx={{
-                    minWidth: 200,
-                    maxWidth: 300,
-                    backgroundColor: theme.palette.light.main,
-                    borderRadius: 2,
-                    p: 2,
-                    boxShadow: 3,
-                    border: `1px solid ${theme.palette.primary.main}`,
+                    mb: 1.5,
+                    color: theme.palette.text.secondary,
+                    fontWeight: 600,
+                    fontSize: { xs: '1.1rem', sm: '1.25rem' },
                   }}
                 >
+                  {selectedCafe.name}
+                </Typography>
+
+                {/* Category */}
+                {selectedCafe.category && (
                   <Typography
-                    variant="h2"
-                    component="h2"
+                    variant="caption"
                     sx={{
-                      mb: 1,
-                      color: theme.palette.text.primary,
+                      backgroundColor: theme.palette.primary.main,
+                      color: theme.palette.primary.contrastText,
+                      px: 1.5,
+                      py: 0.5,
+                      borderRadius: 1,
+                      textTransform: 'capitalize',
+                      display: 'inline-block',
+                      mb: 1.5,
+                      fontWeight: 500,
+                      fontSize: '0.75rem',
                     }}
                   >
-                    {selectedCafe.name}
+                    {selectedCafe.category}
                   </Typography>
+                )}
 
-                  {/* Category */}
-                  {selectedCafe.category && (
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        backgroundColor: theme.palette.primary.main,
-                        color: theme.palette.primary.contrastText,
-                        px: 1,
-                        py: 0.5,
-                        borderRadius: 1,
-                        textTransform: 'capitalize',
-                        display: 'inline-block',
-                        mb: 1,
+                {/* Address */}
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    mb: 0.5,
+                    fontSize: '0.875rem',
+                    lineHeight: 1.4,
+                    fontWeight: 500,
+                  }}
+                >
+                  {selectedLocation.address}
+                </Typography>
+
+                {/* Neighborhood */}
+                {selectedLocation.neighborhood && (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      mb: 1.5,
+                      fontSize: '0.8rem',
+                      lineHeight: 1.4,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {selectedLocation.neighborhood}
+                  </Typography>
+                )}
+
+                {/* Website Link */}
+                {selectedCafe.website && (
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    <a
+                      href={selectedCafe.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: theme.palette.primary.main,
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        fontSize: '0.875rem',
+                        borderBottom: `1px solid ${theme.palette.primary.main}`,
+                        paddingBottom: '2px',
                       }}
                     >
-                      {selectedCafe.category}
-                    </Typography>
-                  )}
-
-                  {/* Location Note for multiple locations */}
-                  {selectedCafe.hasMultipleLocations && selectedLocation.locationNote && (
-                    <Typography variant="h2" color="primary" sx={{ mb: 1 }}>
-                      {selectedLocation.locationNote}
-                    </Typography>
-                  )}
-
-                  {/* Address */}
-                  <Typography variant="body2" color="text.primary" sx={{ mb: 0.5 }}>
-                    {selectedLocation.address}
+                      Visit Website
+                    </a>
                   </Typography>
-
-                  {/* Neighborhood */}
-                  {selectedLocation.neighborhood && (
-                    <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
-                      {selectedLocation.neighborhood}
-                    </Typography>
-                  )}
-
-                  {/* Opening Times */}
-                  {selectedLocation.openingTimes && (
-                    <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
-                      {selectedLocation.openingTimes}
-                    </Typography>
-                  )}
-
-                  {/* Website Link */}
-                  {selectedCafe.website && (
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                      <a
-                        href={selectedCafe.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          color: theme.palette.primary.main,
-                          textDecoration: 'none',
-                          fontWeight: 500,
-                        }}
-                      >
-                        Visit Website
-                      </a>
-                    </Typography>
-                  )}
-                </Box>
+                )}
               </Popup>
             );
           }

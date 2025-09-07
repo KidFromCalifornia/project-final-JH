@@ -124,6 +124,7 @@ const DesktopNavBar = ({
           <Tooltip title="Menu" arrow>
             <IconButton
               onClick={handleDrawerOpen}
+              aria-label="Open menu"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -145,6 +146,7 @@ const DesktopNavBar = ({
           <Tooltip title="Close Menu" arrow>
             <IconButton
               onClick={handleDrawerClose}
+              aria-label="Close menu"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -228,63 +230,66 @@ const DesktopNavBar = ({
       </Drawer>
 
       {/* Login Dialog */}
-      <Dialog
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-        maxWidth="xs"
-        fullWidth
-        disableRestoreFocus
-        keepMounted={false}
-        sx={{
-          '& .MuiDialog-container': {
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 2,
-          },
-          '& .MuiDialog-paper': {
-            margin: { xs: 1, sm: 2 },
-            width: { xs: 'calc(100vw - 2rem)', sm: 'auto' },
-            maxWidth: { xs: 'none', sm: '25rem' },
-          },
-        }}
-      >
-        <DialogContent sx={{ p: 0 }}>
-          <Suspense fallback={<LoadingLogo />}>
-            <LoginForm
-              onClose={() => setShowLogin(false)}
-              setCurrentUser={setCurrentUser}
-              setIsLoggedIn={setIsLoggedIn}
-            />
-          </Suspense>
-        </DialogContent>
-      </Dialog>
-
+      <ListItem>
+        <Dialog
+          open={showLogin}
+          onClose={() => setShowLogin(false)}
+          maxWidth="xs"
+          fullWidth
+          disableRestoreFocus
+          keepMounted={false}
+          sx={{
+            '& .MuiDialog-container': {
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 2,
+            },
+            '& .MuiDialog-paper': {
+              margin: { xs: 1, sm: 2 },
+              width: { xs: 'calc(100vw - 2rem)', sm: 'auto' },
+              maxWidth: { xs: 'none', sm: '25rem' },
+            },
+          }}
+        >
+          <DialogContent sx={{ p: 0 }}>
+            <Suspense fallback={<LoadingLogo />}>
+              <LoginForm
+                onClose={() => setShowLogin(false)}
+                setCurrentUser={setCurrentUser}
+                setIsLoggedIn={setIsLoggedIn}
+              />
+            </Suspense>
+          </DialogContent>
+        </Dialog>
+      </ListItem>
       {/* Add Cafe Dialog */}
-      <Dialog
-        open={showAddCafe}
-        onClose={() => setShowAddCafe(false)}
-        maxWidth="sm"
-        fullWidth
-        sx={{
-          '& .MuiDialog-container': {
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
-          },
-        }}
-        PaperProps={{
-          sx: {
-            position: 'absolute',
-            top: '5.5rem',
-            left: open ? `calc(${drawerWidth} + 1.5rem)` : '5.5rem',
-          },
-        }}
-      >
-        <DialogContent sx={{ p: 0 }}>
-          <Suspense fallback={<LoadingLogo />}>
-            <NewCafeForm onClose={() => setShowAddCafe(false)} />
-          </Suspense>
-        </DialogContent>
-      </Dialog>
+      <ListItem>
+        <Dialog
+          open={showAddCafe}
+          onClose={() => setShowAddCafe(false)}
+          maxWidth="sm"
+          fullWidth
+          sx={{
+            '& .MuiDialog-container': {
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+            },
+          }}
+          PaperProps={{
+            sx: {
+              position: 'absolute',
+              top: '5.5rem',
+              left: open ? `calc(${drawerWidth} + 1.5rem)` : '5.5rem',
+            },
+          }}
+        >
+          <DialogContent sx={{ p: 0 }}>
+            <Suspense fallback={<LoadingLogo />}>
+              <NewCafeForm onClose={() => setShowAddCafe(false)} />
+            </Suspense>
+          </DialogContent>
+        </Dialog>
+      </ListItem>
     </Box>
   );
 };

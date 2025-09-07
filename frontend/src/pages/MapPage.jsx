@@ -77,7 +77,15 @@ const MapPage = () => {
   // Check if any filters are active
   const cafeTypeFilter = useCafeStore((state) => state.cafeTypeFilter);
   const neighborhoodFilter = useCafeStore((state) => state.neighborhoodFilter);
+  const setCafeTypeFilter = useCafeStore((state) => state.setCafeTypeFilter);
+  const setNeighborhoodFilter = useCafeStore((state) => state.setNeighborhoodFilter);
   const hasActiveFilters = cafeTypeFilter || neighborhoodFilter;
+
+  // Compute filter options from cafes data
+  const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
+  const neighborhoods = Array.from(
+    new Set(cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
+  );
 
   const cafesToShow =
     searchResults.length > 0 ? searchResults : hasActiveFilters ? filteredCafes : cafes;

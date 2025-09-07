@@ -28,11 +28,16 @@ export const useCafeStore = create((set) => ({
   cafes: [],
   setCafes: (cafes) =>
     set((state) => {
+      // Deduplicate cafes by _id to prevent duplicate keys in React
+      const uniqueCafes = Array.isArray(cafes)
+        ? cafes.filter((cafe, index, self) => index === self.findIndex((c) => c._id === cafe._id))
+        : [];
+
       const filteredCafes =
         state.cafeTypeFilter || state.neighborhoodFilter
-          ? applyFilters(cafes, state.cafeTypeFilter, state.neighborhoodFilter)
+          ? applyFilters(uniqueCafes, state.cafeTypeFilter, state.neighborhoodFilter)
           : state.filteredCafes;
-      return { cafes, filteredCafes };
+      return { cafes: uniqueCafes, filteredCafes };
     }),
   searchQuery: '',
   setSearchQuery: (query) => set({ searchQuery: query }),
@@ -98,7 +103,14 @@ export const useCafeStore = create((set) => ({
         }
       }
 
-      set({ tastings: Array.isArray(allTastings) ? allTastings : [] });
+      // Deduplicate tastings by _id to prevent duplicate keys in React
+      const uniqueTastings = Array.isArray(allTastings)
+        ? allTastings.filter(
+            (tasting, index, self) => index === self.findIndex((t) => t._id === tasting._id)
+          )
+        : [];
+
+      set({ tastings: uniqueTastings });
     } catch (error) {
       console.error('Error fetching tastings:', error);
       // Only set empty array if we have no tastings at all
@@ -133,6 +145,6 @@ export const useCafeStore = create((set) => ({
   // Pagination
   currentPage: 1,
   setCurrentPage: (page) => set({ currentPage: page }),
-  tastingsPerPage: 10,
+  tastingsPerPage: 12,
   setTastingsPerPage: (num) => set({ tastingsPerPage: num }),
 }));

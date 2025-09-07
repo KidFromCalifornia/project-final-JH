@@ -25,20 +25,20 @@ import Grid from '@mui/material/Grid';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
-const TastingForm = ({ onSubmit, initialValues = {} }) => {
+const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const theme = useTheme();
   const { showSnackbar } = useAlert();
 
   const textFieldStyles = {
     '& .MuiOutlinedInput-root': {
       backgroundColor:
-        theme.palette.mode === 'dark' ? theme.palette.background.paper : theme.palette.common.white,
+        theme.palette.mode === 'dark' ? theme.palette.background.paper : theme.palette.light.main,
       minHeight: { xs: '3.5rem', sm: '3rem' },
       '& fieldset': { borderColor: theme.palette.text.primary },
       '&:hover fieldset': { borderColor: theme.palette.primary.main },
       '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
       '& input': {
-        color: theme.palette.text.primary,
+        color: theme.palette.text.secondary,
         fontSize: { xs: '1.125rem', sm: '1rem' },
         wordWrap: 'break-word',
         overflowWrap: 'break-word',
@@ -49,29 +49,29 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         },
       },
       '& textarea': {
-        color: theme.palette.text.primary,
+        color: theme.palette.text.secondary,
         fontSize: { xs: '1.125rem', sm: '1rem' },
         wordWrap: 'break-word',
         overflowWrap: 'break-word',
         whiteSpace: 'pre-wrap',
         '&::placeholder': {
-          color: theme.palette.text.primary,
+          color: theme.palette.text.secondary,
           opacity: 0.7,
         },
       },
     },
     '& .MuiInputLabel-root': {
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
       '&.Mui-focused': { color: theme.palette.primary.main },
       wordWrap: 'break-word',
       overflowWrap: 'break-word',
     },
     '& .MuiInputBase-input::placeholder': {
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
       opacity: 0.7,
     },
     '& .MuiSelect-select': {
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
       fontSize: { xs: '1.125rem', sm: '1rem' },
     },
   };
@@ -84,7 +84,7 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         border: `1px solid ${theme.palette.divider}`,
         boxShadow: theme.shadows[8],
         '& .MuiMenuItem-root': {
-          color: theme.palette.text.primary,
+          color: theme.palette.text.secondary,
           fontSize: { xs: '1.125rem', sm: '1rem' },
           backgroundColor: 'transparent',
           '&:hover': {
@@ -158,9 +158,25 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
-        if (error.code === 'NETWORK_ERROR' || error.message?.includes('fetch') || !error.response) {
-          showSnackbar("We couldn't reach the server. Please try again later.", 'error');
+        console.log('Form options fetch error:', error); // Debug log
+
+        // Check for actual network connectivity issues
+        if (
+          (error.name === 'TypeError' && error.message.includes('fetch')) ||
+          error.message.includes('NetworkError') ||
+          error.message.includes('Failed to fetch') ||
+          !navigator.onLine
+        ) {
+          // True network error - no internet or server unreachable
+          showSnackbar(
+            "We couldn't reach the server. Please check your internet connection and try again.",
+            'error'
+          );
+        } else if (error.message.includes('timeout') || error.message.includes('Request timeout')) {
+          // Request timeout
+          showSnackbar('Request timed out. Please try again.', 'error');
         } else {
+          // Server errors (API errors, etc.)
           setFetchError("We couldn't load form options. Please try again.");
         }
       }
@@ -268,9 +284,9 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                   <MenuItem value="" sx={selectMenuStyles['& .MuiMenuItem-root']}>
                     Select a cafe
                   </MenuItem>
-                  {cafes.map((cafe) => (
+                  {cafes.map((cafe, index) => (
                     <MenuItem
-                      key={cafe._id}
+                      key={cafe._id || `cafe-${index}`}
                       value={cafe._id}
                       sx={selectMenuStyles['& .MuiMenuItem-root']}
                     >
@@ -667,43 +683,61 @@ const TastingForm = ({ onSubmit, initialValues = {} }) => {
                   label="Make this tasting public"
                   sx={{ color: theme.palette.text.primary }}
                 />
-                <Tooltip
-                  title={
-                    !form.cafeId ||
-                    !form.coffeeName ||
-                    !form.brewMethod ||
-                    form.tastingNotes.length === 0
-                      ? 'Please fill in all required fields'
-                      : 'Submit your experience.'
-                  }
-                  placement="top"
-                  arrow
-                >
-                  <span>
-                    {' '}
-                    {/* Added span wrapper for disabled button */}
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  {onClose && (
                     <Button
-                      type="submit"
-                      variant="contained"
+                      onClick={onClose}
+                      variant="outlined"
                       size="large"
-                      disabled={
-                        !form.cafeId ||
-                        !form.coffeeName ||
-                        !form.brewMethod ||
-                        form.tastingNotes.length === 0
-                      }
                       sx={{
-                        minWidth: '10rem',
+                        minWidth: '8rem',
                         py: 1.5,
                         fontSize: '1.1rem',
                         fontWeight: 600,
                       }}
-                      aria-label={initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                      aria-label="Cancel"
                     >
-                      {initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                      Cancel
                     </Button>
-                  </span>
-                </Tooltip>
+                  )}
+                  <Tooltip
+                    title={
+                      !form.cafeId ||
+                      !form.coffeeName ||
+                      !form.brewMethod ||
+                      form.tastingNotes.length === 0
+                        ? 'Please fill in all required fields'
+                        : 'Submit your experience.'
+                    }
+                    placement="top"
+                    arrow
+                  >
+                    <span>
+                      {' '}
+                      {/* Added span wrapper for disabled button */}
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        disabled={
+                          !form.cafeId ||
+                          !form.coffeeName ||
+                          !form.brewMethod ||
+                          form.tastingNotes.length === 0
+                        }
+                        sx={{
+                          minWidth: '10rem',
+                          py: 1.5,
+                          fontSize: '1.1rem',
+                          fontWeight: 600,
+                        }}
+                        aria-label={initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                      >
+                        {initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                      </Button>
+                    </span>
+                  </Tooltip>
+                </Box>
               </Box>
             </Paper>
           </Grid>

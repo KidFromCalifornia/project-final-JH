@@ -11,7 +11,7 @@ export const themeConfig = {
   },
 
   borderRadius: 8, // 0.5rem converted to pixels
-  shadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
+  shadow: '0 0.125rem 0.5rem rgba(0, 3, 36, 0.08)',
 
   spacing: {
     xs: '0.25rem',
@@ -54,11 +54,11 @@ export const createPalette = (themeMode, colors, colorsDarkmode) => {
     text: {
       primary: colorPalette.mainText,
       secondary: textSecondaryColor,
-      disabled: themeMode === 'dark' ? 'rgba(95, 155, 223, 0.5)' : 'rgba(3, 33, 62, 0.5)',
+      disabled: themeMode === 'dark' ? 'rgba(105, 175, 255, 0.5)' : 'rgba(3, 33, 62, 0.5)',
     },
     muted: { main: colorPalette.textMuted },
 
-    divider: themeMode === 'dark' ? 'rgba(235,242,250,0.06)' : 'rgba(10,31,51,0.08)',
+    divider: themeMode === 'dark' ? 'rgba(0, 119, 255, 0.06)' : 'rgba(10,31,51,0.08)',
 
     action: {
       hover: themeMode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',

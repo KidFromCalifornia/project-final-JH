@@ -87,93 +87,90 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
   }, [isMobile, tasting?._id, touchStart, hasBeenFlipped]);
 
   // Memoize card content to avoid unnecessary re-renders
-  const frontContent = useMemo(
-    () => {
-      if (!tasting) return null;
-      return (
-        <StyledCard>
-          <BoxMain minHeight={280} position="relative">
-            <StyledDivContent>
-              <TypographyTitle variant="h2">{toTitleCase(tasting.coffeeName)}</TypographyTitle>
-              {/* Tasting Notes in the gradient overlay */}
-              {Array.isArray(tasting.tastingNotes) && tasting.tastingNotes.length > 0 && (
-                <TastingNotesContainer>
-                  {tasting.tastingNotes.slice(0, 4).map((note, index) => (
-                    <Chip
-                      key={index}
-                      label={toTitleCase(note)}
-                      size="small"
-                      sx={{
-                        fontWeight: theme.typography.fontWeightMedium,
-                        fontSize: theme.typography.caption.fontSize,
-                        bgcolor: 'transparent',
-                        color: theme.palette.text.secondary,
-                        border: 'none',
-                        borderRadius: 0,
-                        backdropFilter: 'blur(8px)',
+  const frontContent = useMemo(() => {
+    if (!tasting) return null;
+    return (
+      <StyledCard>
+        <BoxMain minHeight={280} position="relative">
+          <StyledDivContent>
+            <TypographyTitle variant="h2">{toTitleCase(tasting.coffeeName)}</TypographyTitle>
+            {/* Tasting Notes in the gradient overlay */}
+            {Array.isArray(tasting.tastingNotes) && tasting.tastingNotes.length > 0 && (
+              <TastingNotesContainer>
+                {tasting.tastingNotes.slice(0, 4).map((note, index) => (
+                  <Chip
+                    key={index}
+                    label={toTitleCase(note)}
+                    size="small"
+                    sx={{
+                      fontWeight: theme.typography.fontWeightMedium,
+                      fontSize: theme.typography.caption.fontSize,
+                      bgcolor: 'transparent',
+                      color: theme.palette.text.secondary,
+                      border: 'none',
+                      borderRadius: 0,
+                      backdropFilter: 'blur(8px)',
+                      padding: '0 !important',
+                      margin: '0 !important',
+                      minHeight: 'unset',
+                      height: 'unset',
+
+                      '& .MuiChip-label': {
                         padding: '0 !important',
                         margin: '0 !important',
-                        minHeight: 'unset',
-                        height: 'unset',
+                        lineHeight: 1,
+                      },
 
-                        '& .MuiChip-label': {
-                          padding: '0 !important',
-                          margin: '0 !important',
-                          lineHeight: 1,
-                        },
+                      '&.MuiChip-root': {
+                        padding: '0 !important',
+                        margin: '0 !important',
+                      },
+                    }}
+                  />
+                ))}
+              </TastingNotesContainer>
+            )}
+          </StyledDivContent>
+        </BoxMain>
 
-                        '&.MuiChip-root': {
-                          padding: '0 !important',
-                          margin: '0 !important',
-                        },
-                      }}
-                    />
-                  ))}
-                </TastingNotesContainer>
-              )}
-            </StyledDivContent>
-          </BoxMain>
-
-          <RowAuthor>
-            <Box
+        <RowAuthor>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignSelf: 'center',
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+            <Typography
+              fontFamily="font.main"
+              textTransform={'uppercase'}
+              fontSize={16}
               sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignSelf: 'center',
-                flex: 1,
-                minWidth: 0,
+                mb: 0,
+                color: theme.palette.text.primary,
+                fontWeight: 500,
               }}
             >
-              <Typography
-                fontFamily="font.main"
-                textTransform={'uppercase'}
-                fontSize={16}
-                sx={{
-                  mb: 0,
-                  color: theme.palette.text.primary,
-                  fontWeight: 500,
-                }}
-              >
-                {tasting.userId?.username || 'Anonymous'}
-              </Typography>
-              <Typography
-                sx={{
-                  color: theme.palette.text.secondary,
-                  fontSize: '1rem',
-                }}
-              >
-                {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
-              </Typography>
-            </Box>
-          </RowAuthor>
-          <Shadow className="Shadow1" />
-          <Shadow className="Shadow2" />
-        </StyledCard>
-      );
-    },
-    [tasting, theme]
-  );
+              {tasting.userId?.username || 'Anonymous'}
+            </Typography>
+            <Typography
+              sx={{
+                color: theme.palette.text.secondary,
+                fontSize: '1rem',
+              }}
+            >
+              {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
+            </Typography>
+          </Box>
+        </RowAuthor>
+        <Shadow className="Shadow1" />
+        <Shadow className="Shadow2" />
+      </StyledCard>
+    );
+  }, [tasting, theme]);
 
   const backContent = useMemo(() => {
     if (!tasting || (!isFlipped && !hasBeenFlipped)) return null;

@@ -97,8 +97,15 @@ const AdminPage = () => {
           Edit Cafes
         </Typography>
         <Divider sx={{ mb: 2 }} />
-        {cafes.map((cafe) => (
-          <Box key={cafe._id} mb={2} p={2} border={1} borderColor="grey.200" borderRadius={2}>
+        {cafes.map((cafe, index) => (
+          <Box
+            key={cafe._id || `cafe-${index}`}
+            mb={2}
+            p={2}
+            border={1}
+            borderColor="grey.200"
+            borderRadius={2}
+          >
             <Typography variant="subtitle1" fontWeight="bold">
               {cafe.name}
             </Typography>
@@ -131,8 +138,15 @@ const AdminPage = () => {
           Approve/Edit Cafe Submissions
         </Typography>
         <Divider sx={{ mb: 2 }} />
-        {submissions.map((sub) => (
-          <Box key={sub._id} mb={2} p={2} border={1} borderColor="grey.200" borderRadius={2}>
+        {submissions.map((sub, index) => (
+          <Box
+            key={sub._id || `submission-${index}`}
+            mb={2}
+            p={2}
+            border={1}
+            borderColor="grey.200"
+            borderRadius={2}
+          >
             <Typography variant="subtitle1" fontWeight="bold">
               {sub.name}
             </Typography>
@@ -171,8 +185,15 @@ const AdminPage = () => {
           Delete Tasting Notes
         </Typography>
         <Divider sx={{ mb: 2 }} />
-        {tastings.map((tasting) => (
-          <Box key={tasting._id} mb={2} p={2} border={1} borderColor="grey.200" borderRadius={2}>
+        {tastings.map((tasting, index) => (
+          <Box
+            key={tasting._id || `tasting-${index}`}
+            mb={2}
+            p={2}
+            border={1}
+            borderColor="grey.200"
+            borderRadius={2}
+          >
             <Typography variant="subtitle1" fontWeight="bold">
               {tasting.cafeName}
             </Typography>

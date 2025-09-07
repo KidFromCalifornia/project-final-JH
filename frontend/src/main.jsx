@@ -5,10 +5,10 @@ import './styles/fontLoader.js';
 import ReactDOM from 'react-dom/client';
 
 if (process.env.NODE_ENV !== 'production') {
-  import('@axe-core/react').then((axe) => {
-    axe.default(React, ReactDOM, 1000);
-    console.log('Accessibility testing enabled with axe-core');
-  });
+  // import('@axe-core/react').then((axe) => {
+  //   axe.default(React, ReactDOM, 1000);
+  //   //console.log('Accessibility testing enabled with axe-core');
+  // });
 }
 
 const container = document.getElementById('root');

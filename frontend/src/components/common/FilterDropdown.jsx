@@ -48,6 +48,7 @@ const FilterDropdown = ({ label, options, value, onChange, iconComponent }) => {
             onChange('');
             setAnchorEl(null);
           }}
+          sx={{ color: 'text.secondary' }}
         >
           All
         </MenuItem>
@@ -59,6 +60,7 @@ const FilterDropdown = ({ label, options, value, onChange, iconComponent }) => {
               onChange(opt);
               setAnchorEl(null);
             }}
+            sx={{ color: 'text.secondary' }}
           >
             {opt.charAt(0).toUpperCase() + opt.slice(1)}
           </MenuItem>

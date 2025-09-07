@@ -11,7 +11,7 @@ const getCustomIcon = (category, theme, themeMode, options = {}) => {
   // Simple color map
   const colors = {
     thirdwave: theme.palette.accentStrong.main,
-    specialty: '#194f84', // Always use light theme primary color
+    specialty: themeMode === 'light' ? theme.palette.primary.main : theme.palette.info.main,
     roaster: theme.palette.error.main,
     geotag: theme.palette.success.main,
     default: theme.palette.primary.main,

@@ -169,6 +169,11 @@ const MobileBottomNav = () => {
             alignItems: 'center',
             overflowX: 'auto',
             gap: 0.5,
+            '&::-webkit-scrollbar': {
+              display: 'none',
+            },
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -176,8 +181,9 @@ const MobileBottomNav = () => {
               <IconButton
                 color="inherit"
                 size="large"
+                aria-label="Open main menu"
                 sx={{
-                  p: 1,
+                  p: 0.75,
                   bgcolor: drawerOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
                   transition: 'background-color 200ms ease',
                   '&:hover': {
@@ -200,8 +206,9 @@ const MobileBottomNav = () => {
               <IconButton
                 color="inherit"
                 size="large"
+                aria-label="Navigate to coffee tastings"
                 sx={{
-                  p: 1,
+                  p: 0.75,
                   bgcolor:
                     location.pathname === '/tastings' ? 'rgba(255,255,255,0.15)' : 'transparent',
                   transition: 'background-color 200ms ease',
@@ -233,8 +240,9 @@ const MobileBottomNav = () => {
               <IconButton
                 color="inherit"
                 size="large"
+                aria-label="Toggle cafe search"
                 sx={{
-                  p: 1,
+                  p: 0.75,
                   bgcolor: searchOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
                   transition: 'background-color 200ms ease',
                   '&:hover': {
@@ -257,8 +265,9 @@ const MobileBottomNav = () => {
               <IconButton
                 color="inherit"
                 size="large"
+                aria-label="Toggle filter options"
                 sx={{
-                  p: 1,
+                  p: 0.75,
                   bgcolor: filterDrawerOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
                   transition: 'background-color 200ms ease',
                   '&:hover': {
@@ -283,8 +292,9 @@ const MobileBottomNav = () => {
                 <IconButton
                   color="inherit"
                   size="large"
+                  aria-label="Logout"
                   sx={{
-                    p: 1,
+                    p: 0.75,
                     '&:hover': {
                       bgcolor: 'rgba(255,255,255,0.1)',
                     },
@@ -305,8 +315,9 @@ const MobileBottomNav = () => {
                 <IconButton
                   color="inherit"
                   size="large"
+                  aria-label="Login"
                   sx={{
-                    p: 1,
+                    p: 0.75,
                     bgcolor: showLogin ? 'rgba(255,255,255,0.15)' : 'transparent',
                     transition: 'background-color 200ms ease',
                     '&:hover': {
@@ -367,8 +378,9 @@ const MobileBottomNav = () => {
           zIndex: 1199, // just below AppBar
         }}
       >
-        <List sx={{ pt: 0 }}>
+        <List aria-label="Main navigation" sx={{ pt: 0 }}>
           <ListItem
+            role="listitem"
             disablePadding
             sx={{
               backgroundColor: theme.palette.primary.dark,
@@ -382,7 +394,7 @@ const MobileBottomNav = () => {
             <Box component="span" sx={{ fontWeight: 500, fontSize: '1.2rem', color: navIconColor }}>
               Menu
             </Box>
-            <IconButton onClick={closeDrawers}>
+            <IconButton onClick={closeDrawers} sx={{ p: 0.75 }}>
               <KeyboardArrowDownIcon sx={{ color: navIconColor }} />
             </IconButton>
           </ListItem>
@@ -400,7 +412,7 @@ const MobileBottomNav = () => {
                 },
               }}
             >
-              <ListItemIcon>
+              <ListItemIcon aria-hidden="true">
                 <MapIcon
                   sx={{
                     color:
@@ -708,7 +720,7 @@ const MobileBottomNav = () => {
             <Box component="span" sx={{ fontWeight: 500, fontSize: '1.2rem', color: navIconColor }}>
               Filter Cafes
             </Box>
-            <IconButton onClick={closeDrawers}>
+            <IconButton onClick={closeDrawers} sx={{ p: 0.75 }}>
               <KeyboardArrowDownIcon sx={{ color: navIconColor }} />
             </IconButton>
           </ListItem>
@@ -734,11 +746,15 @@ const MobileBottomNav = () => {
               startAdornment: <StorefrontIcon sx={{ color: navIconColor, mr: 1 }} />,
             }}
           >
-            <MenuItem sx={{ color: theme.palette.light.main, fontWeight: 500 }} value="all">
+            <MenuItem sx={{ color: theme.palette.text.secondary, fontWeight: 500 }} value="all">
               All Types
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem key={category} sx={{ color: theme.palette.light.main }} value={category}>
+              <MenuItem
+                key={category}
+                sx={{ color: theme.palette.text.secondary }}
+                value={category}
+              >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </MenuItem>
             ))}
@@ -763,13 +779,13 @@ const MobileBottomNav = () => {
               startAdornment: <TravelExploreIcon sx={{ color: navIconColor, mr: 1 }} />,
             }}
           >
-            <MenuItem sx={{ color: theme.palette.light.main, fontWeight: 500 }} value="all">
+            <MenuItem sx={{ color: theme.palette.text.secondary, fontWeight: 500 }} value="all">
               All Neighborhoods
             </MenuItem>
             {neighborhoods.map((neighborhood) => (
               <MenuItem
                 key={neighborhood}
-                sx={{ color: theme.palette.light.main }}
+                sx={{ color: theme.palette.text.secondary }}
                 value={neighborhood}
               >
                 {neighborhood.charAt(0).toUpperCase() + neighborhood.slice(1)}
@@ -866,9 +882,9 @@ const MobileBottomNav = () => {
                       (cafe.roaster || '').toLowerCase().includes(searchQuery.toLowerCase())
                   )
                   .slice(0, 5) // Limit results
-                  .map((cafe) => (
+                  .map((cafe, index) => (
                     <ListItem
-                      key={cafe._id}
+                      key={cafe._id || `cafe-${index}`}
                       button
                       onClick={() => {
                         navigate(`/cafe/${cafe._id}`);

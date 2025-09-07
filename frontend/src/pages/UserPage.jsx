@@ -418,14 +418,16 @@ const UserPage = () => {
                   </Alert>
                 </Tooltip>
               ) : (
-                <List>
-                  {userSubmissions.map((sub) => (
+                <List role="list" aria-label="User submissions">
+                  {userSubmissions.map((sub, index) => (
                     <Tooltip
-                      key={sub._id}
+                      key={sub._id || `submission-${index}`}
                       title={`${sub.isApproved ? 'This cafe has been approved and added to the map' : 'This submission is being reviewed by our team'}`}
                       arrow
                     >
                       <ListItem
+                        role="listitem"
+                        aria-label={`Submission: ${sub.name} - ${sub.isApproved ? 'Approved' : 'Pending Review'}`}
                         sx={{
                           flexDirection: 'column',
                           alignItems: 'flex-start',
@@ -570,9 +572,9 @@ const UserPage = () => {
                         No tastings to display for this page.
                       </Typography>
                     ) : (
-                      currentTastings.map((tasting) => (
+                      currentTastings.map((tasting, index) => (
                         <FlipTastingCard
-                          key={tasting._id}
+                          key={tasting._id || `tasting-${index}`}
                           tasting={tasting}
                           isLoggedIn={isLoggedIn}
                           setEditingTasting={handleEditTasting}

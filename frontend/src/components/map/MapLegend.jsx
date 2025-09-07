@@ -92,7 +92,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
         }}
       >
         <Typography
-          variant="h2"
+          variant="Subtitle1"
           color={theme.palette.text.secondary}
           fontSize={theme.typography.h3.fontSize}
         >
@@ -124,18 +124,25 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
           scrollbarWidth: 'none', // Firefox
         }}
       >
-        <List disablePadding>
+        <List disablePadding role="list" aria-label="Map legend items">
           {legendItems.map((item, index) => (
-            <ListItem key={index} sx={{ py: 0.5, px: 0 }}>
-              <ListItemIcon>{getCustomIcon(item.category, theme, theme.palette.mode)}</ListItemIcon>
+            <ListItem
+              key={index}
+              sx={{ py: 0.5, px: 0 }}
+              role="listitem"
+              aria-label={`${item.label}: ${item.description}`}
+            >
+              <ListItemIcon aria-hidden="true">
+                {getCustomIcon(item.category, theme, theme.palette.mode)}
+              </ListItemIcon>
               <ListItemText
                 primary={
-                  <Typography variant="subtitle2" fontWeight="medium" color="color.primary">
+                  <Typography variant="subtitle2" fontWeight="medium" color="primary">
                     {item.label}
                   </Typography>
                 }
                 secondary={
-                  <Typography variant="body2" color="text.primary">
+                  <Typography variant="body2" color="text.secondary">
                     {item.description}
                   </Typography>
                 }

@@ -1,7 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { useCafeStore } from '../stores/useCafeStore';
 import Container from '@mui/material/Container';
-import { Box, Typography, Button, Alert, Tooltip, useTheme } from '@mui/material';
+import { Box, Typography, Button, Alert, useTheme } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
 import CafeSearchBar from '../components/common/CafeSearchBar';
 import FlipTastingCard from '../components/common/FlipTastingCard';
@@ -19,25 +19,38 @@ const TastingsPage = () => {
   const setDeletingTasting = useCafeStore((state) => state.setDeletingTasting);
   const searchQuery = useCafeStore((state) => state.searchQuery);
   const setSearchQuery = useCafeStore((state) => state.setSearchQuery);
-  const currentPage = useCafeStore((state) => state.currentPage);
-  const setCurrentPage = useCafeStore((state) => state.setCurrentPage);
   const tastingsPerPage = useCafeStore((state) => state.tastingsPerPage);
   const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
 
   const [showTastingForm, setShowTastingForm] = React.useState(false);
+  const [displayedCount, setDisplayedCount] = React.useState(12); // Start with 12 items
 
   const theme = useTheme();
   const fetchTastings = useCafeStore((state) => state.fetchTastings);
 
   const handleTastingSubmit = async (formData) => {
     try {
-      const result = await tastingAPI.create(formData);
+      let result;
+      if (editingTasting) {
+        // Update existing tasting
+        result = await tastingAPI.update(editingTasting._id, formData);
+        if (result.success) {
+          setTastings((prev) => prev.map((t) => (t._id === editingTasting._id ? result.data : t)));
+        }
+      } else {
+        // Create new tasting
+        result = await tastingAPI.create(formData);
+        if (result.success) {
+          setTastings((prev) => [result.data, ...prev]);
+        }
+      }
+
       if (result.success) {
-        setTastings((prev) => [result.data, ...prev]);
         setShowTastingForm(false);
+        setEditingTasting(null);
       }
     } catch (error) {
-      console.error('Error creating tasting:', error);
+      console.error('Error saving tasting:', error);
     }
   };
 
@@ -51,11 +64,6 @@ const TastingsPage = () => {
   useEffect(() => {
     fetchTastings(isLoggedIn);
   }, [isLoggedIn, fetchTastings]);
-
-  // Reset to page 1 when search changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, setCurrentPage]);
 
   // Delete function - called when delete is triggered
   const handleDeleteTasting = async (tastingToDelete) => {
@@ -113,11 +121,18 @@ const TastingsPage = () => {
     return allFields.includes(query);
   });
 
-  // Pagination logic
-  const indexOfLastTasting = currentPage * tastingsPerPage;
-  const indexOfFirstTasting = indexOfLastTasting - tastingsPerPage;
-  const currentTastings = filteredTastings.slice(indexOfFirstTasting, indexOfLastTasting);
-  const totalPages = Math.ceil(filteredTastings.length / tastingsPerPage);
+  // Load More logic
+  const currentTastings = filteredTastings.slice(0, displayedCount);
+  const hasMoreItems = displayedCount < filteredTastings.length;
+
+  const handleLoadMore = () => {
+    setDisplayedCount((prev) => prev + tastingsPerPage);
+  };
+
+  // Reset displayed count when search query changes
+  useEffect(() => {
+    setDisplayedCount(tastingsPerPage);
+  }, [searchQuery, tastingsPerPage]);
 
   return (
     <Container
@@ -125,13 +140,13 @@ const TastingsPage = () => {
       sx={{
         display: 'flex',
         width: '100%',
-        minHeight: '100vh',
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
         flexDirection: 'column',
-        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
         p: { xs: 2, sm: 3 },
-        overflow: 'visible',
+        pt: { xs: 2, sm: 4 },
       }}
     >
       <Typography variant="h1" hidden gutterBottom>
@@ -236,13 +251,12 @@ const TastingsPage = () => {
       {showTastingForm && (
         <Suspense fallback={<LoadingLogo />}>
           <TastingForm
-            open={showTastingForm}
+            onSubmit={handleTastingSubmit}
+            initialValues={editingTasting || {}}
             onClose={() => {
               setShowTastingForm(false);
               setEditingTasting(null);
             }}
-            onSubmit={handleTastingSubmit}
-            editingTasting={editingTasting}
           />
         </Suspense>
       )}
@@ -253,19 +267,20 @@ const TastingsPage = () => {
           {!isLoggedIn && ' Please log in to add tastings.'}
         </Alert>
       ) : (
-        <Box sx={{ flex: 1, overflow: 'visible' }}>
+        <Box sx={{ width: '100%', maxWidth: '1200px', overflow: 'visible' }}>
           <Box
             sx={{
               display: 'grid',
               gridTemplateColumns: {
                 xs: '1fr',
-                sm: 'repeat(auto-fill, minmax(280px, 1fr))',
-                md: 'repeat(auto-fill, minmax(320px, 1fr))',
+                sm: 'repeat(auto-fit, minmax(280px, 1fr))',
+                md: 'repeat(auto-fit, minmax(320px, 1fr))',
               },
-              gap: 2,
+              gap: 3,
               mt: 2,
               padding: { xs: '0 0.25rem 0.5rem 0.25rem', sm: '0 0.5rem 0.5rem 0.5rem' },
               overflow: 'visible',
+              width: '100%',
             }}
           >
             {currentTastings.length === 0 ? (
@@ -274,12 +289,14 @@ const TastingsPage = () => {
                 color="text.primary"
                 sx={{ textAlign: 'center', py: 4, gridColumn: '1 / -1' }}
               >
-                No tasting cards to display.
+                {filteredTastings.length === 0
+                  ? 'No tasting cards to display.'
+                  : 'No more items to display.'}
               </Typography>
             ) : (
-              currentTastings.map((tasting) => (
+              currentTastings.map((tasting, index) => (
                 <FlipTastingCard
-                  key={tasting._id}
+                  key={tasting._id || `tasting-${index}`}
                   tasting={tasting}
                   isLoggedIn={isLoggedIn}
                   setEditingTasting={setEditingTasting}
@@ -290,70 +307,36 @@ const TastingsPage = () => {
             )}
           </Box>
 
-          {totalPages > 1 && (
+          {hasMoreItems && (
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
                 justifyContent: 'center',
                 alignItems: 'center',
-                gap: { xs: 1, sm: 0 },
                 mt: 4,
-                mb: 2,
-                position: 'sticky',
-                bottom: 0,
-                backgroundColor: theme.palette.background.default,
+                mb: 4,
                 py: 2,
-                px: { xs: 1, sm: 0 },
               }}
             >
-              <Tooltip title="Go to previous page" arrow>
-                <span>
-                  <Button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    variant="outlined"
-                    size="small"
-                    sx={{
-                      mx: { xs: 0, sm: 1 },
-                      minWidth: { xs: '70px', sm: '80px' },
-                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    }}
-                  >
-                    Previous
-                  </Button>
-                </span>
-              </Tooltip>
-
-              <Typography
-                variant="body2"
+              <Button
+                onClick={handleLoadMore}
+                variant="contained"
+                size="large"
                 sx={{
-                  mx: { xs: 0, sm: 2 },
-                  fontSize: { xs: '0.875rem', sm: '1rem' },
-                  textAlign: 'center',
-                  minWidth: 'fit-content',
+                  minWidth: '200px',
+                  py: 1.5,
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  backgroundColor: theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.dark,
+                  },
                 }}
+                aria-label="Load more tastings"
               >
-                Page {currentPage} of {totalPages}
-              </Typography>
-
-              <Tooltip title="Go to next page" arrow>
-                <span>
-                  <Button
-                    onClick={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
-                    disabled={currentPage === totalPages || filteredTastings.length === 0}
-                    variant="outlined"
-                    size="small"
-                    sx={{
-                      mx: { xs: 0, sm: 1 },
-                      minWidth: { xs: '70px', sm: '80px' },
-                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    }}
-                  >
-                    Next
-                  </Button>
-                </span>
-              </Tooltip>
+                Load More ({filteredTastings.length - displayedCount} remaining)
+              </Button>
             </Box>
           )}
         </Box>

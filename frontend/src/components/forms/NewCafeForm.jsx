@@ -56,7 +56,7 @@ const NewCafeForm = ({ onClose }) => {
       '&:hover fieldset': { borderColor: theme.palette.primary.main },
       '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main },
       '& input': {
-        color: theme.palette.text.primary,
+        color: theme.palette.text.secondary,
         fontSize: { xs: '18px', sm: '16px' },
         wordWrap: 'break-word',
         overflowWrap: 'break-word',
@@ -67,7 +67,7 @@ const NewCafeForm = ({ onClose }) => {
         },
       },
       '& textarea': {
-        color: theme.palette.text.primary,
+        color: theme.palette.text.secondary,
         fontSize: { xs: '18px', sm: '16px' },
         wordWrap: 'break-word',
         overflowWrap: 'break-word',
@@ -79,7 +79,7 @@ const NewCafeForm = ({ onClose }) => {
       },
     },
     '& .MuiInputLabel-root': {
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
       '&.Mui-focused': { color: theme.palette.primary.main },
       wordWrap: 'break-word',
       overflowWrap: 'break-word',
@@ -89,7 +89,7 @@ const NewCafeForm = ({ onClose }) => {
       opacity: 0.7,
     },
     '& .MuiSelect-select': {
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
       fontSize: { xs: '18px', sm: '16px' },
     },
   };
@@ -102,7 +102,7 @@ const NewCafeForm = ({ onClose }) => {
         border: `1px solid ${theme.palette.divider}`,
         boxShadow: theme.shadows[8],
         '& .MuiMenuItem-root': {
-          color: theme.palette.text.primary,
+          color: theme.palette.text.secondary,
           fontSize: { xs: '18px', sm: '16px' },
           backgroundColor: 'transparent',
           '&:hover': {
@@ -323,11 +323,27 @@ const NewCafeForm = ({ onClose }) => {
         setStatus(result.error || "We couldn't add this cafe. Please check and try again.");
       }
     } catch (err) {
-      if (err.code === 'NETWORK_ERROR' || err.message?.includes('fetch') || !err.response) {
-        showSnackbar("We couldn't reach the server. Please try again later.", 'error');
+      console.log('New cafe submission error:', err); // Debug log
+
+      // Check for actual network connectivity issues
+      if (
+        (err.name === 'TypeError' && err.message.includes('fetch')) ||
+        err.message.includes('NetworkError') ||
+        err.message.includes('Failed to fetch') ||
+        !navigator.onLine
+      ) {
+        // True network error - no internet or server unreachable
+        showSnackbar(
+          "We couldn't reach the server. Please check your internet connection and try again.",
+          'error'
+        );
+      } else if (err.message.includes('timeout') || err.message.includes('Request timeout')) {
+        // Request timeout
+        showSnackbar('Request timed out. Please try again.', 'error');
       } else {
-        // For other errors, use inline status display
-        setStatus("We couldn't submit your suggestion. Please try again.");
+        // Server errors (validation errors, etc.)
+        const errorMessage = err.message || "We couldn't submit your suggestion. Please try again.";
+        setStatus(errorMessage);
         setStatusType('error');
       }
     }

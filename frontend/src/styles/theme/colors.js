@@ -6,7 +6,7 @@ export const colors = {
   accent: '#fde113', // Schoolbus Yellow
   accentStrong: '#e0b404', // Strong Yellow
   background: '#ebf2fa', // Alice Blue
-  paper: '#1d5995', // Azel Blue for cards/panels
+  paper: '#194f84', // Azel Blue for cards/panels
   light: '#ebf2fa', // Alice Blue (for light text)
   mainText: '#0a1f33', // Oxford Blue (text)
   versoText: '#ebf2fa', // Alice Blue (on dark)
@@ -14,7 +14,7 @@ export const colors = {
   error: '#ef6461', // Bittersweet Red
   success: '#7eb77f', // Olivine Green
   info: '#5bc0de', // Soft Cyan
-  warning: '#f5a623', // Warm Orange
+  warning: '#ea950dff', // Warm Orange
 };
 
 export const colorsDarkmode = {
@@ -30,6 +30,6 @@ export const colorsDarkmode = {
   textMuted: '#a0b0c0', // Muted Blue Gray
   error: '#ff7b76', // Bright Bittersweet
   success: '#90c68f', // Soft Olivine
-  info: '#5bc0de', // Soft Cyan
-  warning: '#f5a623', // Warm Orange
+  info: '#48a4c0ff', // Soft Cyan
+  warning: '#ea950dff', // Warm Orange
 };
