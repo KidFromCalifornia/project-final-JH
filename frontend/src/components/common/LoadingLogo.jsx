@@ -1,4 +1,6 @@
 import { Box, Typography, useTheme } from '@mui/material';
+import logoText from '../assets/images/scc_logo_text.svg';
+import logoShield from '../assets/images/scc_shield.svg';
 
 const spinKeyframes = {
   '@keyframes spin': {
@@ -34,7 +36,7 @@ const LoadingLogo = () => {
       >
         <Box
           component="img"
-          src="/src/assets/images/scc_logo_text.svg"
+          src={logoText}
           alt="Logo Text"
           sx={{
             position: 'absolute',
@@ -53,7 +55,7 @@ const LoadingLogo = () => {
         />
         <Box
           component="img"
-          src="/src/assets/images/scc_shield.svg"
+          src={logoShield}
           alt="Logo Shield"
           sx={{
             position: 'absolute',
