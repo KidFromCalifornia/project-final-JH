@@ -221,7 +221,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
               {/* Origin fields side by side */}
               <Box
-                background="background.default"
                 sx={{
                   backgroundColor: theme.palette.background.paper,
                   display: 'flex',

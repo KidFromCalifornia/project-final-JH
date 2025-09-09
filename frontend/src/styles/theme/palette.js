@@ -1,7 +1,10 @@
+import { colors } from '@mui/material';
+
 // Theme configuration constants
 export const themeConfig = {
   button: {
     background: '#2570bb',
+    colors: '#ffffff',
     borderRadius: 8, // 0.5rem converted to pixels
     shadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
     spacing: '0.5rem',

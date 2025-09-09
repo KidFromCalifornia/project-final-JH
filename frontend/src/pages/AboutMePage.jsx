@@ -60,10 +60,29 @@ const AboutMePage = () => {
         }}
       >
         <Box sx={{ mb: 3, alignContent: 'center' }}>
+          {/* Screen reader accessible H1 */}
           <Typography
-            mt={2}
             variant="h1"
             component="h1"
+            sx={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0, 0, 0, 0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+            }}
+          >
+            Stockholm's Coffee Club
+          </Typography>
+
+          <Typography
+            mt={2}
+            variant="h2"
+            component="h2"
             gutterBottom
             color={theme.palette.text.secondary}
             sx={{

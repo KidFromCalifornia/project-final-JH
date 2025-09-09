@@ -69,6 +69,25 @@ const CafePage = () => {
 
   return (
     <Box maxWidth="sm" mx="auto" mt={4}>
+      {/* Screen reader accessible H1 */}
+      <Typography
+        variant="h1"
+        component="h1"
+        sx={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        {cafe?.name || 'Cafe Details'}
+      </Typography>
+
       <Paper elevation={2} sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
           {cafe.name}

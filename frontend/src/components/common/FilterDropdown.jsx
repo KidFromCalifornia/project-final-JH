@@ -30,7 +30,7 @@ const FilterDropdown = ({ label, options, value, onChange, iconComponent }) => {
             sx={{ width: '100%', justifyContent: 'flex-start', minHeight: 48 }}
           >
             <ListItemIcon>{iconComponent}</ListItemIcon>
-            <ListItemText secondary={label} />
+            <ListItemText />
           </ListItemButton>
         </Tooltip>
       </Box>
@@ -48,7 +48,6 @@ const FilterDropdown = ({ label, options, value, onChange, iconComponent }) => {
             onChange('');
             setAnchorEl(null);
           }}
-          sx={{ color: 'text.secondary' }}
         >
           All
         </MenuItem>
@@ -60,7 +59,6 @@ const FilterDropdown = ({ label, options, value, onChange, iconComponent }) => {
               onChange(opt);
               setAnchorEl(null);
             }}
-            sx={{ color: 'text.secondary' }}
           >
             {opt.charAt(0).toUpperCase() + opt.slice(1)}
           </MenuItem>

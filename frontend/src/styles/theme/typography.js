@@ -6,7 +6,7 @@ export const fonts = {
 };
 
 export const createTypography = (customTheme, colors, themeMode) => {
-  const textColor = themeMode === 'dark' ? colors.versoText : colors.mainText;
+  const textColor = themeMode === 'dark' ? colors.versoText : colors.versoText;
 
   return {
     fontFamily: customTheme.fonts.main,
@@ -121,6 +121,7 @@ export const createTypography = (customTheme, colors, themeMode) => {
     },
     button: {
       fontSize: 16, // 1rem converted to pixels
+      lineHeight: 1.75,
       textTransform: 'none',
       fontWeight: 600,
       letterSpacing: '0.2px',

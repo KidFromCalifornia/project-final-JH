@@ -81,6 +81,7 @@ const createComponents = (customTheme) => ({
         },
       // Prevent body scrolling when modals are open
       '.MuiDialog-root body, .MuiDrawer-root body': {
+        color: customTheme.colors.light,
         overflow: 'hidden !important',
       },
     }),
@@ -109,7 +110,7 @@ const createComponents = (customTheme) => ({
     styleOverrides: {
       paper: {
         borderRadius: customTheme.borderRadius,
-        color: customTheme.colors.versoText,
+        color: customTheme.colors.light,
         // Prevent dialog scrollbars
         maxHeight: '90vh',
         overflow: 'auto',
@@ -196,6 +197,16 @@ const createComponents = (customTheme) => ({
       }),
     },
   },
+  MuiMenuItem: {
+    styleOverrides: {
+      root: {
+        fontColor: customTheme.colors.light || customTheme.colors.versoText,
+        '&:hover': {
+          color: customTheme.colors.accent,
+        },
+      },
+    },
+  },
 
   MuiTextField: {
     styleOverrides: {
@@ -241,7 +252,7 @@ const createComponents = (customTheme) => ({
       root: {
         borderRadius: 12,
         backgroundColor: customTheme.colors.primary,
-        color: customTheme.colors.versoText,
+        color: customTheme.colors.light,
         boxShadow: customTheme.shadow,
         transition: 'box-shadow 0.2s ease-in-out',
         '&:hover': {

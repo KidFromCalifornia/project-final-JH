@@ -265,7 +265,22 @@ const UserPage = () => {
         overflow: 'visible',
       }}
     >
-      <Typography variant="h1" hidden gutterBottom>
+      {/* Screen reader accessible H1 */}
+      <Typography
+        variant="h1"
+        component="h1"
+        sx={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
         Your Dashboard
       </Typography>
 
@@ -372,7 +387,7 @@ const UserPage = () => {
                     sx={{
                       backgroundColor: showCafeForm ? 'transparent' : theme.palette.primary.main,
                       color: showCafeForm
-                        ? theme.palette.primary.main
+                        ? theme.palette.primary.secondary
                         : theme.palette.primary.contrastText,
                       border: `2px solid ${theme.palette.primary.main}`,
                       minWidth: { xs: '7.5rem', sm: '8.75rem' },
@@ -382,7 +397,7 @@ const UserPage = () => {
                       '&:hover': {
                         backgroundColor: showCafeForm
                           ? theme.palette.primary.light
-                          : theme.palette.primary.dark,
+                          : theme.palette.primary.secondary,
                         color: theme.palette.primary.contrastText,
                       },
                     }}
@@ -482,7 +497,7 @@ const UserPage = () => {
                     sx={{
                       backgroundColor: showTastingForm ? 'transparent' : theme.palette.primary.main,
                       color: showTastingForm
-                        ? theme.palette.primary.main
+                        ? theme.palette.secondary.main
                         : theme.palette.primary.contrastText,
                       border: `2px solid ${theme.palette.primary.main}`,
                       minWidth: { xs: '7.5rem', sm: '8.75rem' },
@@ -492,7 +507,7 @@ const UserPage = () => {
                       '&:hover': {
                         backgroundColor: showTastingForm
                           ? theme.palette.primary.light
-                          : theme.palette.primary.dark,
+                          : theme.palette.primary.secondary,
                         color: theme.palette.primary.contrastText,
                       },
                     }}

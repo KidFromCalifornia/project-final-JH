@@ -147,8 +147,23 @@ const TastingsPage = () => {
         pt: { xs: 2, sm: 4 },
       }}
     >
-      <Typography variant="h1" hidden gutterBottom>
-        Current User Coffee Tasting
+      {/* Screen reader accessible H1 */}
+      <Typography
+        variant="h1"
+        component="h1"
+        sx={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        Coffee Tastings
       </Typography>
 
       <Typography
