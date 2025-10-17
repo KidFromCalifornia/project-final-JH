@@ -51,6 +51,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
       if (data.token || data.accessToken) {
         // Success case - user exists and credentials are correct
         const token = data.token || data.accessToken;
+        // Update localStorage
         localStorage.setItem('userToken', token);
         localStorage.setItem('userId', data.user.id);
         localStorage.setItem('username', data.user?.username || trimmedIdentifier);
@@ -67,7 +68,10 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           localStorage.setItem('admin', 'false');
         }
 
-        setIsLoggedIn(true);
+        // Update both local state and store state
+        const setStoreIsLoggedIn = useCafeStore.getState().setIsLoggedIn;
+        setStoreIsLoggedIn(true); // Update store first
+        setIsLoggedIn(true); // Then update local state
         setCurrentUser({ username: data.user?.username || trimmedIdentifier });
         onClose();
       } else {

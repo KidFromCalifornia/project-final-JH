@@ -30,7 +30,7 @@ const FilterDropdown = ({ label, options, value, onChange, iconComponent }) => {
             sx={{ width: '100%', justifyContent: 'flex-start', minHeight: 48 }}
           >
             <ListItemIcon>{iconComponent}</ListItemIcon>
-            <ListItemText />
+            <ListItemText primary={label} />
           </ListItemButton>
         </Tooltip>
       </Box>

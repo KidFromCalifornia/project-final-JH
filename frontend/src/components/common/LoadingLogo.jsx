@@ -64,7 +64,7 @@ const LoadingLogo = () => {
           }}
         />
       </Box>
-      <Typography color="common.black" variant="subtitle1" mt={2}>
+      <Typography variant="subtitle1" mt={2} sx={{ color: theme.palette.text.primary }}>
         Currently Brewing...
       </Typography>
     </Box>

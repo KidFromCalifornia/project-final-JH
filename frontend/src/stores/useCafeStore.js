@@ -18,11 +18,19 @@ const applyFilters = (cafes, cafeTypeFilter, neighborhoodFilter) => {
   return filtered;
 };
 
-export const useCafeStore = create((set) => ({
+export const useCafeStore = create((set, get) => ({
   themeMode: localStorage.getItem('themeMode') || 'light',
+  isLoggedIn: Boolean(localStorage.getItem('userToken')),
+
   setThemeMode: (mode) => {
     localStorage.setItem('themeMode', mode);
     set({ themeMode: mode });
+  },
+
+  setIsLoggedIn: (loggedIn) => {
+    set({ isLoggedIn: loggedIn });
+    // Refresh tastings when login state changes
+    get().fetchTastings(loggedIn);
   },
 
   cafes: [],
@@ -130,8 +138,6 @@ export const useCafeStore = create((set) => ({
   setUsername: (username) => set({ username }),
   userToken: localStorage.getItem('userToken') || null,
   setUserToken: (token) => set({ userToken: token }),
-  isLoggedIn: !!localStorage.getItem('userToken'),
-  setIsLoggedIn: (val) => set({ isLoggedIn: val }),
 
   //user Submissions
 

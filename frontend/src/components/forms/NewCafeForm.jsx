@@ -15,6 +15,8 @@ import {
   MenuItem,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import { light } from '@mui/material/styles/createPalette';
+import { alpha } from '@mui/material/styles';
 
 const CATEGORY_OPTIONS = ['specialty', 'roaster', 'thirdwave'];
 
@@ -34,8 +36,6 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
   });
 
   const [errors, setErrors] = useState({});
-  const loading = useCafeStore((state) => state.loading);
-  const setLoading = useCafeStore((state) => state.setLoading);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +59,6 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setLoading(true);
     try {
       const response = await apiCall('/cafes', 'POST', formData);
       showSnackbar('Cafe added successfully!', 'success');
@@ -88,8 +87,6 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
         const errorMessage = err.message || 'Failed to add cafe. Please try again.';
         showSnackbar(errorMessage, 'error');
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -98,9 +95,9 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
       elevation={6}
       sx={{
         width: '100%',
+        height: '100%',
         maxWidth: { xs: '100%', md: '800px' },
-        mx: 'auto',
-        p: { xs: 2, sm: 3 },
+        p: { xs: 1, sm: 2 },
         borderRadius: 2,
       }}
     >
@@ -109,7 +106,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
         component="h2"
         align="center"
         gutterBottom
-        color="primary"
+        color={theme.palette.light}
         sx={{
           mb: 3,
           fontSize: { xs: '1.5rem', sm: '2.125rem' },
@@ -122,13 +119,18 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
         <Grid container spacing={{ xs: 2, md: 3 }}>
           {/* Basic Information Section */}
           <Grid item xs={12} md={6}>
-            <Paper
+            <Box
+              color={theme.palette.primary.main}
               sx={{
-                backgroundColor: 'background.default',
                 p: 2,
+                boxShadow: theme.shadows[2],
+                borderRadius: 1,
+                backgroundColor: alpha(theme.palette.secondary.main, 0.2),
               }}
             >
-              <Typography variant="h6">Basic Information</Typography>
+              <Typography color={theme.palette.light} variant="h6">
+                Basic Information
+              </Typography>
 
               <Tooltip title="Enter the name of the cafe." placement="top" arrow>
                 <TextField
@@ -205,15 +207,17 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                   ))}
                 </TextField>
               </Tooltip>
-            </Paper>
+            </Box>
           </Grid>
 
           {/* Contact Information Section */}
           <Grid item xs={12} md={6}>
-            <Paper
+            <Box
               sx={{
-                backgroundColor: 'background.default',
                 p: 2,
+                boxShadow: theme.shadows[2],
+                borderRadius: 1,
+                backgroundColor: alpha(theme.palette.secondary.main, 0.2),
               }}
             >
               <Typography variant="h6">Contact Information</Typography>
@@ -259,15 +263,17 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                   placeholder="Mon-Fri 8AM-6PM, Sat-Sun 9AM-5PM"
                 />
               </Tooltip>
-            </Paper>
+            </Box>
           </Grid>
 
           {/* Description Section */}
           <Grid item xs={12}>
-            <Paper
+            <Box
               sx={{
-                backgroundColor: 'background.default',
                 p: 2,
+                boxShadow: theme.shadows[2],
+                borderRadius: 1,
+                backgroundColor: alpha(theme.palette.secondary.main, 0.2),
               }}
             >
               <Typography variant="h6">Description</Typography>
@@ -287,7 +293,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                   placeholder="Tell us about this cafe's atmosphere, specialties, or unique features..."
                 />
               </Tooltip>
-            </Paper>
+            </Box>
           </Grid>
 
           {/* Actions Section */}
@@ -297,7 +303,6 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                 display: 'flex',
                 justifyContent: 'flex-end',
                 gap: 2,
-                mt: 2,
               }}
             >
               <Button
@@ -309,6 +314,9 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                   py: 1.5,
                   fontSize: '1.1rem',
                   fontWeight: 600,
+                  boxShadow: theme.shadows[2],
+                  backgroundColor: alpha(theme.palette.secondary.main, 0.2),
+                  color: theme.palette.light.main,
                 }}
                 aria-label="Cancel"
               >
@@ -329,20 +337,18 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                     variant="contained"
                     size="large"
                     disabled={
-                      loading ||
-                      !formData.name.trim() ||
-                      !formData.address.trim() ||
-                      !formData.category
+                      !formData.name.trim() || !formData.address.trim() || !formData.category
                     }
                     sx={{
                       minWidth: '10rem',
                       py: 1.5,
                       fontSize: '1.1rem',
                       fontWeight: 600,
+                      backgroundColor: theme.palette.secondary.dark,
                     }}
                     aria-label="Add Cafe"
                   >
-                    {loading ? 'Adding...' : 'Add Cafe'}
+                    Add Cafe
                   </Button>
                 </span>
               </Tooltip>

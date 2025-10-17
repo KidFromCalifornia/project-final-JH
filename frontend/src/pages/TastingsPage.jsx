@@ -21,6 +21,8 @@ const TastingsPage = () => {
   const setSearchQuery = useCafeStore((state) => state.setSearchQuery);
   const tastingsPerPage = useCafeStore((state) => state.tastingsPerPage);
   const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
+  const cafeTypeFilter = useCafeStore((state) => state.cafeTypeFilter);
+  const neighborhoodFilter = useCafeStore((state) => state.neighborhoodFilter);
 
   const [showTastingForm, setShowTastingForm] = React.useState(false);
   const [displayedCount, setDisplayedCount] = React.useState(12); // Start with 12 items
@@ -61,9 +63,18 @@ const TastingsPage = () => {
     }
   };
 
+  const clearFilters = useCafeStore((state) => state.clearFilters);
+
+  // Initial fetch and login state change handler
   useEffect(() => {
+    console.log('Login state changed:', isLoggedIn);
     fetchTastings(isLoggedIn);
-  }, [isLoggedIn, fetchTastings]);
+    setDisplayedCount(tastingsPerPage); // Reset pagination when login state changes
+
+    return () => {
+      clearFilters(); // Clean up filters when component unmounts
+    };
+  }, [isLoggedIn, fetchTastings, clearFilters, tastingsPerPage]);
 
   const handleDeleteTasting = async (tastingToDelete) => {
     try {
@@ -97,8 +108,24 @@ const TastingsPage = () => {
   const filteredTastings = (Array.isArray(tastings) ? tastings : []).filter((tasting) => {
     if (!tasting || !tasting._id || tasting._id === 'error') return false;
 
-    if (!searchQuery) return true;
+    // Apply cafe type filter if set
+    if (cafeTypeFilter && cafeTypeFilter !== '') {
+      const cafeCategory = tasting.cafeId?.category;
+      if (!cafeCategory || cafeCategory !== cafeTypeFilter) {
+        return false;
+      }
+    }
 
+    // Apply neighborhood filter if set
+    if (neighborhoodFilter && neighborhoodFilter !== '') {
+      const cafeNeighborhood = tasting.cafeId?.locations?.[0]?.neighborhood;
+      if (!cafeNeighborhood || cafeNeighborhood !== neighborhoodFilter) {
+        return false;
+      }
+    }
+
+    // Apply search query
+    if (!searchQuery) return true;
     const query = normalize(searchQuery);
 
     const searchableFields = [
@@ -166,20 +193,6 @@ const TastingsPage = () => {
         Coffee Tastings
       </Typography>
 
-      <Typography
-        variant="h2"
-        color="text.primary"
-        gutterBottom
-        sx={{
-          textAlign: 'center',
-          mb: 3,
-          fontSize: { xs: '1.75rem', sm: '2.125rem' },
-        }}
-        id="tastings-heading"
-      >
-        Coffee Tastings
-      </Typography>
-
       <Box
         sx={{
           display: 'flex',
@@ -214,11 +227,9 @@ const TastingsPage = () => {
               textWrap: 'nowrap',
               '&:hover': {
                 backgroundColor: showTastingForm
-                  ? theme.palette.primary.light
+                  ? theme.palette.text.muted
                   : theme.palette.primary.dark,
-                color: showTastingForm
-                  ? theme.palette.primary.contrastText
-                  : theme.palette.primary.contrastText,
+                color: showTastingForm ? theme.palette.primary.dark : theme.palette.primary.light,
               },
             }}
           >
@@ -228,17 +239,22 @@ const TastingsPage = () => {
           <Tooltip title="Please log in to add tastings" placement="bottom" arrow>
             <span>
               <Button
-                variant="outlined"
+                variant="focused"
                 startIcon={<AddIcon aria-hidden="true" />}
                 disabled
                 aria-label="Add tasting (login required)"
                 sx={{
                   minWidth: { xs: '7.5rem', sm: '8.75rem' },
+                  py: 1.75,
+                  height: 'fit-content',
                   opacity: 0.6,
                   fontSize: { xs: '0.875rem', sm: '1rem' },
                   whiteSpace: 'nowrap',
                   overflow: 'visible',
                   textWrap: 'nowrap',
+                  backgroundColor: theme.palette.background.secondary,
+                  color: theme.palette.primary.light,
+                  outline: theme === 'dark' ? `2px solid ${theme.palette.primary.light}` : 'none',
                 }}
               >
                 Add Tasting
@@ -288,7 +304,7 @@ const TastingsPage = () => {
         <Box
           sx={{ width: '100%', maxWidth: '1200px', overflow: 'visible' }}
           role="region"
-          aria-labelledby="tastings-heading"
+          aria-label="Coffee tastings section"
         >
           <Box
             sx={{
@@ -305,7 +321,6 @@ const TastingsPage = () => {
               width: '100%',
             }}
             role="grid"
-            aria-labelledby="tastings-heading"
             aria-label="Coffee tasting cards grid"
           >
             {currentTastings.length === 0 ? (

@@ -265,7 +265,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 p: 2,
               }}
             >
-              <Typography variant="h6">Taste Profile</Typography>
+              <Typography variant="h4">Taste Profile</Typography>
 
               {/* Brew method and roast level side by side */}
               <Box

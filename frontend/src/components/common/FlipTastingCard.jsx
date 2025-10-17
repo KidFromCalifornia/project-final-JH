@@ -91,8 +91,10 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
     return (
       <StyledCard>
         <BoxMain minHeight={280} position="relative">
-          <StyledDivContent>
-            <TypographyTitle variant="h2">{toTitleCase(tasting.coffeeName)}</TypographyTitle>
+          <StyledDivContent className="tasting-cd">
+            <TypographyTitle role="title" variant="h3">
+              {toTitleCase(tasting.coffeeName)}
+            </TypographyTitle>
             {/* Tasting Notes in the gradient overlay */}
             {Array.isArray(tasting.tastingNotes) && tasting.tastingNotes.length > 0 && (
               <TastingNotesContainer>
@@ -100,12 +102,14 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                   <Chip
                     key={index}
                     label={toTitleCase(note)}
+                    id={`tasting-note-${tasting._id}-${index}`}
+                    role="presentation"
                     size="small"
                     sx={{
                       fontWeight: theme.typography.fontWeightMedium,
                       fontSize: theme.typography.caption.fontSize,
                       bgcolor: 'transparent',
-                      color: theme.palette.text.secondary,
+                      color: theme.palette.card.main,
                       border: 'none',
                       borderRadius: 0,
                       backdropFilter: 'blur(8px)',
@@ -190,7 +194,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
             variant="h4"
             component="h2"
             sx={{
-              color: theme.palette.text.secondary,
+              color: theme.palette.card.color,
               fontWeight: theme.typography.fontWeightBold,
               textAlign: 'center',
             }}
@@ -210,11 +214,14 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                 <Typography
                   textTransform={'uppercase'}
                   variant="body"
-                  sx={{ fontWeight: 'bold', color: theme.palette.text.secondary }}
+                  sx={{
+                    fontWeight: 'bold',
+                    color: theme.palette.card?.color || '#ffffff',
+                  }}
                 >
                   Roaster:
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+                <Typography variant="body2" color="card.color" sx={{ pl: 1 }}>
                   {toTitleCase(tasting.coffeeRoaster)}
                 </Typography>
               </Box>
@@ -225,11 +232,14 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                 <Typography
                   textTransform={'uppercase'}
                   variant="body2"
-                  sx={{ fontWeight: 'bold', color: theme.palette.text.secondary }}
+                  sx={{
+                    fontWeight: 'bold',
+                    color: theme.palette.card?.color || theme.palette.light?.main || '#ffffff',
+                  }}
                 >
                   Brew Method:
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+                <Typography variant="body2" color="card.color" sx={{ pl: 1 }}>
                   {toTitleCase(tasting.brewMethod)}
                 </Typography>
               </Box>
@@ -250,13 +260,13 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                     variant="caption"
                     sx={{
                       fontWeight: 'bold',
-                      color: theme.palette.text.secondary,
+                      color: theme.palette.card?.color || '#ffffff',
                       display: 'block',
                     }}
                   >
                     Roast:
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="card.color">
                     {toTitleCase(tasting.roastLevel)}
                   </Typography>
                 </Box>
@@ -269,13 +279,13 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                     variant="caption"
                     sx={{
                       fontWeight: 'bold',
-                      color: theme.palette.text.secondary,
+                      color: theme.palette.card?.color || theme.palette.light?.main || '#ffffff',
                       display: 'block',
                     }}
                   >
                     Acidity:
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="card.color">
                     {toTitleCase(tasting.acidity)}
                   </Typography>
                 </Box>
@@ -288,13 +298,13 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                     variant="caption"
                     sx={{
                       fontWeight: 'bold',
-                      color: theme.palette.text.secondary,
+                      color: theme.palette.card?.color || theme.palette.light?.main || '#ffffff',
                       display: 'block',
                     }}
                   >
                     Body:
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="card.color ">
                     {toTitleCase(tasting.mouthFeel)}
                   </Typography>
                 </Box>
@@ -314,7 +324,11 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
               textAlign: 'center', // CENTERED footer
             }}
           >
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+            <Typography
+              variant="caption"
+              color="color.secondary"
+              sx={{ display: 'block', mb: 0.5 }}
+            >
               <strong>{toTitleCase(cafe.name) || 'Unknown Cafe'}</strong>
               {cafe.locations?.[0]?.neighborhood &&
                 ` • ${toTitleCase(cafe.locations[0].neighborhood)}`}
@@ -369,6 +383,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                 theme.palette.mode === 'dark'
                   ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
                   : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
+              color: theme.palette.card?.color || theme.palette.light?.main || '#ffffff',
             }}
           >
             {backContent}

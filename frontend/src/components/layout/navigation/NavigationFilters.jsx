@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider } from '@mui/material';
+import { Divider, List, ListItem } from '@mui/material';
 import {
   Storefront as StorefrontIcon,
   TravelExplore as TravelExploreIcon,
@@ -19,22 +19,27 @@ const NavigationFilters = ({
   return (
     <>
       <Divider />
+      <List>
+        <ListItem disablePadding>
+          <FilterDropdown
+            label="Filter by Cafe Type"
+            options={categories}
+            value={cafeTypeQuery}
+            onChange={setCafeTypeQuery}
+            iconComponent={<StorefrontIcon sx={{ color: navIconColor }} />}
+          />
+        </ListItem>
 
-      <FilterDropdown
-        label="Filter by Cafe Type"
-        options={categories}
-        value={cafeTypeQuery}
-        onChange={setCafeTypeQuery}
-        iconComponent={<StorefrontIcon sx={{ color: navIconColor }} />}
-      />
-
-      <FilterDropdown
-        label="Filter by neighborhood"
-        options={neighborhoods}
-        value={neighborhoodQuery}
-        onChange={setNeighborhoodQuery}
-        iconComponent={<TravelExploreIcon sx={{ color: navIconColor }} />}
-      />
+        <ListItem disablePadding>
+          <FilterDropdown
+            label="Filter by neighborhood"
+            options={neighborhoods}
+            value={neighborhoodQuery}
+            onChange={setNeighborhoodQuery}
+            iconComponent={<TravelExploreIcon sx={{ color: navIconColor }} />}
+          />
+        </ListItem>
+      </List>
     </>
   );
 };

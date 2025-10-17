@@ -73,7 +73,7 @@ const NavigationItems = ({
         )}
       </List>
       <List>
-        <ListItem sx={{ display: 'block', padding: 0 }}>
+        <ListItem disablePadding>
           <Tooltip title="Map" arrow placement="right" disableHoverListener={open}>
             <ListItemButton component={Link} to="/">
               <ListItemIcon>
@@ -85,7 +85,7 @@ const NavigationItems = ({
         </ListItem>
 
         {isLoggedIn && (
-          <ListItem sx={{ display: 'block', padding: 0 }}>
+          <ListItem disablePadding>
             <Tooltip title="Add Cafe" arrow placement="right" disableHoverListener={open}>
               <ListItemButton onClick={() => setShowAddCafe(true)}>
                 <ListItemIcon>
@@ -96,7 +96,8 @@ const NavigationItems = ({
             </Tooltip>
           </ListItem>
         )}
-        <ListItem sx={{ display: 'block', padding: 0 }}>
+
+        <ListItem disablePadding>
           <Tooltip title="Tastings" arrow placement="right" disableHoverListener={open}>
             <ListItemButton component={Link} to="/tastings">
               <ListItemIcon>

@@ -1,9 +1,10 @@
+import { WorkHistoryTwoTone } from '@mui/icons-material';
 import { colors } from '@mui/material';
 
 // Theme configuration constants
 export const themeConfig = {
   button: {
-    background: '#2570bb',
+    background: '#022d58ff',
     colors: '#ffffff',
     borderRadius: 8, // 0.5rem converted to pixels
     shadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
@@ -53,6 +54,8 @@ export const createPalette = (themeMode, colors, colorsDarkmode) => {
       default: backgroundDefault,
       paper: paperBackground,
     },
+
+    card: { main: colorPalette.light || '#ffffff' },
 
     muted: { main: colorPalette.textMuted },
 

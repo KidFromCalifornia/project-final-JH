@@ -37,38 +37,46 @@ const SearchBar = ({ type = 'cafes' }) => {
         label={`Search ${type}...`}
         variant="outlined"
         type="text"
-        placeholder={`Search ${type}...`}
         value={searchQuery}
         onChange={handleChange}
         autoComplete="on"
         role="searchbox"
         aria-label={`Search ${type}`}
+        className="search-textfield"
         sx={{
-          '& .MuiOutlinedInput-root': {
+          '&.search-textfield .MuiOutlinedInput-root': {
             backgroundColor:
-              theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+              theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+            '& input': {
+              color:
+                theme.palette.mode === 'dark'
+                  ? theme.palette.common.white
+                  : theme.palette.common.black,
+            },
             '& fieldset': {
-              borderColor: theme.palette.primary.main,
+              borderColor:
+                theme.palette.mode === 'dark'
+                  ? 'rgba(255, 255, 255, 0.8)' // Increased contrast for dark mode
+                  : 'rgba(0, 0, 0, 0.8)', // Increased contrast for light mode
+              borderWidth: '2px',
             },
             '&:hover fieldset': {
-              borderColor: theme.palette.primary.dark,
+              borderColor: theme.palette.primary.main,
+              borderWidth: '2px',
             },
             '&.Mui-focused fieldset': {
               borderColor: theme.palette.primary.main,
+              borderWidth: '2px',
             },
           },
-          '& .MuiOutlinedInput-input': {
-            color: theme.palette.text.primary,
-            '&::placeholder': {
-              color: theme.palette.text.primary,
-              opacity: 0.7,
-            },
+          '& label': {
+            color:
+              theme.palette.mode === 'dark'
+                ? 'rgba(255, 255, 255, 0.8)' // Increased contrast for dark mode
+                : 'rgba(0, 0, 0, 0.8)', // Increased contrast for light mode
           },
-          '& .MuiInputLabel-root': {
-            color: theme.palette.text.primary,
-            '&.Mui-focused': {
-              color: theme.palette.primary.main,
-            },
+          '& label.Mui-focused': {
+            color: theme.palette.primary.main,
           },
         }}
       />

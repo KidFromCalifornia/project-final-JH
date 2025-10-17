@@ -31,8 +31,8 @@ export const BoxMain = styled(Box)(({ theme }) => ({
   zIndex: 1,
   background:
     theme.palette.mode === 'dark'
-      ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
-      : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
+      ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
+      : `linear-gradient(135deg, ${theme.palette.background.paper} 20%, ${theme.palette.primary.main} 100%)`,
   position: 'relative',
 
   '&:after': {
@@ -44,8 +44,8 @@ export const BoxMain = styled(Box)(({ theme }) => ({
     height: '100%',
     background:
       theme.palette.mode === 'dark'
-        ? 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))'
-        : 'linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0))',
+        ? 'linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0))'
+        : 'linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0))',
   },
 }));
 

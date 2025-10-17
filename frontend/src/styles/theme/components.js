@@ -121,35 +121,81 @@ const createComponents = (customTheme) => ({
     styleOverrides: {
       root: ({ theme, ownerState }) => ({
         borderRadius: customTheme.button.borderRadius,
-        backgroundColor: `${customTheme.colors.secondary}cc`,
-        color: customTheme.colors.light,
         fontWeight: 500,
         textTransform: 'none',
         boxShadow: 'none',
-        border: 'none',
         outline: 'none',
+        minHeight: { xs: 48, sm: 42 },
         transition: 'all 0.2s ease-in-out',
+        padding: '8px 24px',
+
+        // Consistent hover effects
         '&:hover': {
-          transform: 'translateY(-0.0625rem)',
-          boxShadow: 'none',
-          border: 'none',
+          transform: 'translateY(-1px)',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
         },
+
+        // Active state
         '&:active': {
           transform: 'translateY(0)',
-          backgroundColor: `${customTheme.colors.primary}cc`,
-          fontWeight: 600,
+          boxShadow: 'none',
         },
+
+        // Focus state
         '&:focus': {
           outline: 'none',
-          boxShadow: `0 0 0 0.2rem ${customTheme.colors.primary}33`,
+          boxShadow: `0 0 0 2px ${customTheme.colors.primary}33`,
         },
+
+        // Disabled state
+        '&.Mui-disabled': {
+          backgroundColor: `${customTheme.colors.textMuted}40`,
+          color: customTheme.colors.textMuted,
+        },
+
+        // Contained variant (default)
         ...(ownerState.variant === 'contained' && {
+          backgroundColor: customTheme.colors.primary,
+          color: customTheme.colors.light,
+          border: 'none',
           '&:hover': {
-            backgroundColor: `${customTheme.colors.secondary}33`,
-            transform: 'translateY(-0.0625rem)',
-            outline: customTheme.colors.secondary,
+            backgroundColor: customTheme.colors.secondary,
+            transform: 'translateY(-1px)',
           },
         }),
+
+        // Outlined variant
+        ...(ownerState.variant === 'outlined' && {
+          backgroundColor: 'transparent',
+          color: customTheme.colors.primary,
+          border: `2px solid ${customTheme.colors.primary}`,
+          '&:hover': {
+            backgroundColor: `${customTheme.colors.primary}10`,
+            borderColor: customTheme.colors.secondary,
+            color: customTheme.colors.secondary,
+          },
+        }),
+
+        // Text variant
+        ...(ownerState.variant === 'text' && {
+          backgroundColor: 'transparent',
+          color: customTheme.colors.primary,
+          '&:hover': {
+            backgroundColor: `${customTheme.colors.primary}10`,
+            transform: 'none',
+            boxShadow: 'none',
+          },
+        }),
+
+        // Custom class modifiers
+        '&.tasting-toggle': {
+          minWidth: '8.75rem',
+          whiteSpace: 'nowrap',
+        },
+        '&.load-more': {
+          minWidth: '200px',
+          fontWeight: 600,
+        },
       }),
     },
   },
