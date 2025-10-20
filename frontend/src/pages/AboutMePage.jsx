@@ -12,8 +12,7 @@ import {
   List,
   ListItem,
 } from '@mui/material';
-
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha } from '@mui/material/styles';
 import {
   GitHub as GitHubIcon,
   LinkedIn as LinkedInIcon,
@@ -53,7 +52,10 @@ const AboutMePage = () => {
           justifyContent: { sx: 'center', sm: 'flex-start' },
           p: { xs: 2, sm: 3, md: 4 },
           borderRadius: 2,
-          backgroundColor: theme.palette.background.paper,
+          backgroundColor:
+            theme.palette.mode === 'dark'
+              ? alpha(theme.palette.secondary.main, 0.6)
+              : theme.palette.background.paper,
           mb: 4,
           boxShadow: theme.shadows[3],
           mt: 4,
@@ -84,7 +86,7 @@ const AboutMePage = () => {
             variant="h2"
             component="h2"
             gutterBottom
-            color={theme.palette.text.secondary}
+            color={theme.palette.light.main}
             sx={{
               textTransform: 'uppercase',
               fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem' },
@@ -96,7 +98,7 @@ const AboutMePage = () => {
 
           <Typography
             variant="body1"
-            color={theme.palette.text.secondary}
+            color={theme.palette.light.main}
             paragraph
             sx={{
               fontSize: { xs: '0.9rem', sm: '1.1rem' },
@@ -112,7 +114,7 @@ const AboutMePage = () => {
 
           <Typography
             variant="body1"
-            color={theme.palette.text.secondary}
+            color={theme.palette.light.main}
             paragraph
             sx={{
               fontSize: { xs: '0.9rem', sm: '1.1rem' },
@@ -128,7 +130,7 @@ const AboutMePage = () => {
 
           <Typography
             variant="body1"
-            color={theme.palette.text.secondary}
+            color={theme.palette.light.main}
             paragraph
             sx={{
               fontSize: { xs: '0.9rem', sm: '1.1rem' },
@@ -162,7 +164,7 @@ const AboutMePage = () => {
               <Typography
                 textTransform="uppercase"
                 fontWeight="bold"
-                color={theme.palette.accentStrong?.main || theme.palette.primary.main}
+                color={theme.palette.accentStrong?.main || theme.palette.light.main}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -193,7 +195,7 @@ const AboutMePage = () => {
               <Typography
                 textTransform="uppercase"
                 fontWeight="bold"
-                color={theme.palette.accentStrong?.main || theme.palette.primary.main}
+                color={theme.palette.accentStrong?.main || theme.palette.light.main}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -222,13 +224,14 @@ const AboutMePage = () => {
         <Grid container spacing={2} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={6}>
             <Paper
-              elevation={2}
+              elevation={4}
               sx={{
                 p: { xs: 2, sm: 2.5 },
                 height: '100%',
+
                 backgroundColor:
                   theme.palette.mode === 'dark'
-                    ? theme.palette.background.paper
+                    ? alpha(theme.palette.secondary.main, 0.7)
                     : theme.palette.background.default,
               }}
             >
@@ -236,7 +239,13 @@ const AboutMePage = () => {
                 variant="subtitle1"
                 gutterBottom
                 fontWeight="bold"
-                sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}
+                sx={{
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
+                  color:
+                    theme.palette.mode === 'dark'
+                      ? theme.palette.light.main
+                      : theme.palette.primary.main,
+                }}
               >
                 Key Features
               </Typography>
@@ -251,6 +260,10 @@ const AboutMePage = () => {
                     display: 'list-item',
                     p: 0,
                     pb: 0.75,
+                    color:
+                      theme.palette.mode === 'dark'
+                        ? theme.palette.light.main
+                        : theme.palette.primary.main,
                   },
                 }}
               >
@@ -271,19 +284,30 @@ const AboutMePage = () => {
               sx={{
                 p: { xs: 2, sm: 2.5 },
                 height: '100%',
+
                 backgroundColor:
                   theme.palette.mode === 'dark'
-                    ? theme.palette.background.paper
+                    ? alpha(theme.palette.secondary.main, 0.6)
                     : theme.palette.background.default,
+                color:
+                  theme.palette.mode === 'dark'
+                    ? theme.palette.light.main
+                    : theme.palette.primary.main,
               }}
             >
               <Typography
                 variant="subtitle1"
                 gutterBottom
                 fontWeight="bold"
-                sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}
+                sx={{
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
+                  color:
+                    theme.palette.mode === 'dark'
+                      ? theme.palette.light.main
+                      : theme.palette.primary.main,
+                }}
               >
-                Technologies Used
+                Technologies
               </Typography>
 
               <List
@@ -345,7 +369,7 @@ const AboutMePage = () => {
             <Typography
               variant="h2"
               component="h2"
-              color="text.secondary"
+              color={theme.palette.light.main}
               sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem' } }}
               mb={2}
             >
@@ -354,7 +378,7 @@ const AboutMePage = () => {
 
             <Typography
               variant="subtitle2"
-              color="text.secondary"
+              color={theme.palette.light.main}
               sx={{
                 fontSize: { xs: '0.9rem', sm: '1rem' },
                 textAlign: { xs: 'center', sm: 'left' },
@@ -362,14 +386,14 @@ const AboutMePage = () => {
               }}
               mb={1}
             >
-              Full Stack Developer | Veteran Coffee Professional
+              Web Developer | Veteran Coffee Professional
             </Typography>
 
             <Typography
-              color="text.secondary"
               variant="body1"
               paragraph
               sx={{
+                color: theme.palette.light.main,
                 fontSize: { xs: '0.9rem', sm: '1rem' },
                 textAlign: { xs: 'center', sm: 'left' },
                 mb: 2,
@@ -394,7 +418,7 @@ const AboutMePage = () => {
                 rel="noopener noreferrer"
                 aria-label="GitHub profile (opens in new tab)"
                 sx={{
-                  color: theme.palette.text.secondary,
+                  color: theme.palette.light.main,
                   padding: { xs: '0.5rem', sm: '0.5rem' },
                   '& .MuiSvgIcon-root': {
                     fontSize: { xs: '1.3rem', sm: '1.5rem' },
@@ -416,14 +440,14 @@ const AboutMePage = () => {
                 rel="noopener noreferrer"
                 aria-label="LinkedIn profile (opens in new tab)"
                 sx={{
-                  color: theme.palette.text.secondary,
+                  color: theme.palette.light.main,
                   padding: { xs: '0.5rem', sm: '0.5rem' },
                   '& .MuiSvgIcon-root': {
                     fontSize: { xs: '1.3rem', sm: '1.5rem' },
                   },
                   transition: 'transform 150ms ease-in-out, background-color 120ms ease',
                   '&:hover': {
-                    backgroundColor: theme.palette.light?.main || theme.palette.grey[300],
+                    bgcolor: 'none',
                     transform: 'scale(1.05)',
                   },
                 }}
@@ -438,7 +462,7 @@ const AboutMePage = () => {
                 rel="noopener noreferrer"
                 aria-label="Email Jonny (opens mail client)"
                 sx={{
-                  color: theme.palette.text.secondary,
+                  color: theme.palette.light.main,
                   padding: { xs: '0.5rem', sm: '0.5rem' },
                   '& .MuiSvgIcon-root': {
                     fontSize: { xs: '1.3rem', sm: '1.5rem' },
@@ -460,7 +484,7 @@ const AboutMePage = () => {
                 rel="noopener noreferrer"
                 aria-label="Instagram profile (opens in new tab)"
                 sx={{
-                  color: theme.palette.text.secondary,
+                  color: theme.palette.light.main,
                   padding: { xs: '0.5rem', sm: '0.5rem' },
                   '& .MuiSvgIcon-root': {
                     fontSize: { xs: '1.3rem', sm: '1.5rem' },
@@ -483,7 +507,7 @@ const AboutMePage = () => {
         <Typography
           variant="h2"
           component="h2"
-          color={theme.palette.text.secondary}
+          color={theme.palette.light.main}
           gutterBottom
           textTransform="uppercase"
           mb={3}
@@ -512,19 +536,19 @@ const AboutMePage = () => {
               sx={{
                 fontWeight: 500,
                 bgcolor:
-                  theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0,0,0,0.06)',
-                color:
                   theme.palette.mode === 'dark'
-                    ? theme.palette.text.primary
-                    : theme.palette.text.secondary,
+                    ? alpha(theme.palette.secondary.main)
+                    : alpha(theme.palette.secondary.main, 0.09),
+                color: theme.palette.light.main,
                 m: { xs: 0.3, sm: 0.5 },
                 height: { xs: '28px', sm: '32px' },
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 '&:hover': {
                   bgcolor:
-                    theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.12)',
-
-                  fontWeight: 600,
+                    theme.palette.mode === 'dark'
+                      ? alpha(theme.palette.secondary.main)
+                      : alpha(theme.palette.secondary.main),
+                  transform: 'scale(1.25)',
                 },
                 transition: 'all 120ms ease',
               }}
@@ -534,7 +558,7 @@ const AboutMePage = () => {
 
         <Typography
           variant="body2"
-          color="text.secondary"
+          color={theme.palette.light.main}
           sx={{
             mt: 4,
             textAlign: 'center',

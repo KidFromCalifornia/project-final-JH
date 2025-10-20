@@ -5,6 +5,7 @@ import {
   MyLocation as MyLocationIcon,
   Clear as ClearIcon,
   Map as MapIcon,
+  Signpost as SignpostIcon,
 } from '@mui/icons-material';
 import MapLegend from '../components/map/MapLegend';
 import ReusableFab from '../components/common/ReusableFab';
@@ -160,7 +161,7 @@ const MapPage = () => {
           />
 
           <ReusableFab
-            icon={<MapIcon fontSize="large" />}
+            icon={<SignpostIcon fontSize="large" />}
             tooltipTitle="Display Map Legend"
             onClick={() => setLegendOpen(true)}
             ariaLabel="map legend"

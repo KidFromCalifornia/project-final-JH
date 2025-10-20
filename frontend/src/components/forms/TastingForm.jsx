@@ -21,10 +21,10 @@ import {
   useTheme,
   Alert,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-
 const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const theme = useTheme();
   const { showSnackbar } = useAlert();
@@ -145,6 +145,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         sx={{
           mb: 3,
           fontSize: { xs: '1.5rem', sm: '2.125rem' },
+          color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
         }}
       >
         {initialValues.cafeId ? 'Edit Coffee Tasting' : 'Add New Coffee Tasting'}
@@ -160,13 +161,14 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         <Grid container spacing={{ xs: 2, md: 3 }}>
           {/* Basic Coffee Info Section */}
           <Grid item xs={12} lg={6}>
-            <Paper
+            <Box
               sx={{
-                backgroundColor: 'background.default',
+                borderRadius: 1,
+                backgroundColor: alpha(theme.palette.secondary.main, 0.2),
                 p: 2,
               }}
             >
-              <Typography color="text.secondary" variant="h6">
+              <Typography color="light.main" variant="h3">
                 Coffee Details
               </Typography>
 
@@ -222,7 +224,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
               {/* Origin fields side by side */}
               <Box
                 sx={{
-                  backgroundColor: theme.palette.background.paper,
+                  borderRadius: 1,
+                  backgroundColor: 'none',
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
                   gap: 1,
@@ -254,27 +257,32 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   />
                 </Tooltip>
               </Box>
-            </Paper>
+            </Box>
           </Grid>
 
           {/* Taste Profile Section */}
           <Grid item xs={12} lg={6}>
-            <Paper
+            <Box
               sx={{
-                backgroundColor: 'background.default',
+                borderRadius: 1,
+                backgroundColor: alpha(theme.palette.secondary.main, 0.2),
                 p: 2,
               }}
             >
-              <Typography variant="h4">Taste Profile</Typography>
+              <Typography p={2} color="light.main" variant="h3">
+                Taste Profile
+              </Typography>
 
               {/* Brew method and roast level side by side */}
               <Box
-                background="background.default"
                 sx={{
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
+                  justifyContent: 'space-between',
                   gap: 1,
                   mb: 2,
+                  borderRadius: 1,
+                  backgroundColor: alpha(theme.palette.secondary.main, 0.2),
                 }}
               >
                 <Tooltip title="Select the brew method for the coffee." placement="top" arrow>
@@ -374,14 +382,17 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 </Tooltip>
               </Box>
 
-              <FormControl fullWidth margin="normal">
-                <FormLabel>Overall Rating</FormLabel>
+              <FormControl fullWidth margin="normal" sx={{ color: theme.palette.light, gap: 0.5 }}>
+                <FormLabel>
+                  <Typography variant="h6">Overall Rating</Typography>
+                </FormLabel>
                 <Tooltip
                   title="Rate your overall coffee experience from 1-5 hearts"
                   arrow
                   placement="top"
                 >
                   <Rating
+                    color={theme.palette.accent.main}
                     name="rating"
                     value={form.rating}
                     precision={0.5}
@@ -391,25 +402,45 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     onChange={(_, value) => setForm((prev) => ({ ...prev, rating: value || 1 }))}
                   />
                 </Tooltip>
-                <FormHelperText>
-                  {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
+                <FormHelperText color={theme.palette.light.main}>
+                  <Typography tm="small" variant="body2">
+                    {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
+                  </Typography>
                 </FormHelperText>
               </FormControl>
-            </Paper>
+            </Box>
           </Grid>
 
           {/* Tasting Notes - Full Width */}
           <Grid item xs={12}>
-            <Paper
+            <Box
+              backgroundColor={
+                theme.palette.mode === 'dark'
+                  ? alpha(theme.palette.secondary.main, 0.2)
+                  : theme.palette.background.default
+              }
               sx={{
-                backgroundColor: 'background.default',
                 p: 2,
+                borderRadius: 1,
               }}
             >
-              <Typography variant="h6">Tasting Notes</Typography>
+              <Typography
+                color={theme.palette.mode === 'dark' ? 'light.main' : 'primary.main'}
+                variant="h3"
+                sx={{ fontWeight: 700 }}
+              >
+                Tasting Notes
+              </Typography>
 
               <FormControl fullWidth required>
-                <FormLabel sx={{ mb: 1 }}>Select at least one tasting note</FormLabel>
+                <FormLabel sx={{ mb: 1 }}>
+                  <Typography
+                    color={theme.palette.mode === 'dark' ? 'light.main' : 'primary.main'}
+                    variant="body"
+                  >
+                    Select at least one tasting note
+                  </Typography>
+                </FormLabel>
                 <FormGroup
                   sx={{
                     display: 'grid',
@@ -432,10 +463,21 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                           checked={form.tastingNotes.includes(note)}
                           onChange={handleTastingNotesChange}
                           size="small"
+                          sx={{
+                            color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.main',
+                          }}
                         />
                       }
                       label={
-                        <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                        <Typography
+                          variant="body"
+                          sx={{
+                            fontSize: '1rem',
+                            color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.main',
+                            fontWeight: 650,
+                            textTransform: 'capitalize',
+                          }}
+                        >
                           {note}
                         </Typography>
                       }
@@ -449,21 +491,30 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   ))}
                 </FormGroup>
               </FormControl>
-            </Paper>
+            </Box>
           </Grid>
 
           {/* Notes and Actions */}
           <Grid item xs={12}>
-            <Paper
+            <Box
+              backgroundColor={
+                theme.palette.mode === 'dark'
+                  ? alpha(theme.palette.secondary.main, 0.2)
+                  : 'light.main'
+              }
               sx={{
-                backgroundColor: 'background.default',
                 p: 2,
+                borderRadius: 1,
               }}
             >
-              <Typography variant="h6">Additional Details</Typography>
+              <Typography
+                color={theme.palette.mode === 'dark' ? 'light.main' : 'primary.main'}
+                variant="h3"
+              >
+                Additional Details
+              </Typography>
 
               <TextField
-                label="Additional Notes"
                 name="notes"
                 value={form.notes}
                 onChange={handleChange}
@@ -479,7 +530,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
               {/* Actions Section */}
               <Box
-                background="background.default"
                 sx={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -490,9 +540,34 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
               >
                 <FormControlLabel
                   control={
-                    <Checkbox name="isPublic" checked={form.isPublic} onChange={handleChange} />
+                    <Checkbox
+                      title="Make this tasting public"
+                      name="isPublic"
+                      checked={form.isPublic}
+                      onChange={handleChange}
+                      size="small"
+                      sx={{
+                        '&.Mui-checked': {
+                          color:
+                            theme.palette.mode === 'dark'
+                              ? theme.palette.light.main
+                              : theme.palette.primary.main,
+                        },
+                      }}
+                    />
                   }
-                  label="Make this tasting public"
+                  label={
+                    <Typography
+                      sx={{
+                        color:
+                          theme.palette.mode === 'dark'
+                            ? theme.palette.light.main
+                            : theme.palette.primary.main,
+                      }}
+                    >
+                      want to make this tasting public?
+                    </Typography>
+                  }
                 />
                 <Box sx={{ display: 'flex', gap: 2 }}>
                   {onClose && (
@@ -505,6 +580,22 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         py: 1.5,
                         fontSize: '1.1rem',
                         fontWeight: 600,
+                        backgroundColor:
+                          theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.main',
+                        color:
+                          theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
+                        outlineColor:
+                          theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
+                        '&:hover': {
+                          backgroundColor:
+                            theme.palette.mode === 'dark' ? 'muted.main' : 'secondary.main',
+                          color:
+                            theme.palette.mode === 'dark'
+                              ? 'secondary.main'
+                              : 'primary.contrastText',
+                          outlineColor:
+                            theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
+                        },
                       }}
                       aria-label="Cancel"
                     >
@@ -548,7 +639,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   </Tooltip>
                 </Box>
               </Box>
-            </Paper>
+            </Box>
           </Grid>
         </Grid>
       </form>

@@ -15,7 +15,6 @@ import {
   MenuItem,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { light } from '@mui/material/styles/createPalette';
 import { alpha } from '@mui/material/styles';
 
 const CATEGORY_OPTIONS = ['specialty', 'roaster', 'thirdwave'];
@@ -92,6 +91,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
 
   return (
     <Paper
+      anchor="top"
       elevation={6}
       sx={{
         width: '100%',

@@ -13,6 +13,7 @@ import {
   useTheme,
   Paper,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { useAlert } from '../../context/AlertContext';
 
 const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
@@ -25,8 +26,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
   });
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const loading = useCafeStore((state) => state.loading);
-  const setLoading = useCafeStore((state) => state.setLoading);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,10 +68,9 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           localStorage.setItem('admin', 'false');
         }
 
-        // Update both local state and store state
-        const setStoreIsLoggedIn = useCafeStore.getState().setIsLoggedIn;
-        setStoreIsLoggedIn(true); // Update store first
-        setIsLoggedIn(true); // Then update local state
+        // Update login states
+        setIsLoggedIn(true); // Update local state
+        useCafeStore.setState({ isLoggedIn: true }); // Update store state
         setCurrentUser({ username: data.user?.username || trimmedIdentifier });
         onClose();
       } else {
@@ -109,8 +108,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             : 'Invalid credentials. Please check your username/email and password.');
         showSnackbar(errorMessage, 'error');
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -135,14 +132,16 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         p: { xs: 2, sm: 3 },
         display: 'flex',
         flexDirection: 'column',
-        gap: 2,
+        gap: 1,
+        color: theme.palette.light.main,
+        borderRadius: 2,
       }}
       role="dialog"
       aria-labelledby="login-form-title"
       aria-describedby="login-form-description"
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Typography id="login-form-title" color={theme.palette.background.default} variant="h4">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography id="login-form-title" color={theme.palette.light.main} variant="h4">
           {isSignup ? 'Sign Up' : 'Login'}
         </Typography>
         <Tooltip title="Close login form">
@@ -162,14 +161,16 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
       <Paper
         component="form"
         onSubmit={handleSubmit}
-        backgroundColor={'transparent'}
-        style={{
-          padding: 16,
+        sx={{
+          backgroundColor:
+            theme.palette.mode === 'dark'
+              ? alpha(theme.palette.secondary.main, 0.5)
+              : alpha(theme.palette.secondary.main, 0.2),
+          padding: '16px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 16,
+          gap: '16px',
           width: '100%',
-          backgroundColor: 'transparent',
         }}
         aria-labelledby="login-form-title"
       >
@@ -177,7 +178,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
           <Tooltip title="Enter your email address for account registration and notifications">
             <TextField
               label="Email"
-              type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -205,7 +205,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         >
           <TextField
             label={isSignup ? 'Username' : 'Email'}
-            type="text"
             name="identifier"
             value={formData.identifier}
             onChange={handleChange}
@@ -256,7 +255,7 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             <IconButton
               aria-label="Toggle password visibility"
               onClick={() => setShowPassword((prev) => !prev)}
-              color={theme.palette.mode === 'dark' ? 'secondary' : 'default'}
+              color={theme.palette.mode === 'dark' ? 'secondary' : 'primary'}
               sx={{
                 position: 'absolute',
                 right: 8,
@@ -272,7 +271,6 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
         <Tooltip title={isSignup ? 'Create your new account' : 'Sign in to your account'}>
           <Button
             type="submit"
-            disabled={loading}
             variant="contained"
             aria-label={
               loading ? 'Processing authentication' : isSignup ? 'Create account' : 'Sign in'
@@ -281,11 +279,14 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
               py: { xs: 1.5, sm: 1.5 },
               px: { xs: 2, sm: 3 },
               mt: 1,
+              fontWeight: 'bold',
+              backgroundColor: alpha(theme.palette.secondary.main, 0.5),
+              border: `1px solid ${theme.palette.primary.main}`,
               minHeight: { xs: 48, sm: 42 },
               '&:hover': {
-                backgroundColor: theme.palette.muted.main,
-                color: theme.palette.secondary.main,
-                fontWeight: 600,
+                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.light.main,
+                border: `1px solid ${theme.palette.light.main}`,
               },
             }}
           >
@@ -315,9 +316,14 @@ const LoginForm = ({ onClose, setCurrentUser, setIsLoggedIn }) => {
             size="small"
             aria-label={isSignup ? 'Switch to login form' : 'Switch to signup form'}
             sx={{
+              backgroundColor: alpha(theme.palette.secondary.main, 0.5),
               ml: 1,
-              fontWeight: 'bold',
-              '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
+              color: theme.palette.light.main,
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.secondary.main, 0.9),
+                fontWeight: '550',
+                outline: `1px solid ${theme.palette.light.main}`,
+              },
             }}
           >
             {isSignup ? 'Login' : 'Sign Up'}

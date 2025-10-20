@@ -733,31 +733,30 @@ const MobileBottomNav = () => {
           {/* Cafe Type */}
           <TextField
             select
+            variant="filled"
             fullWidth
             label="Filter by Cafe Type"
             value={cafeTypeQuery}
             onChange={(e) => setCafeTypeQuery(e.target.value)}
             sx={{
               mb: 2,
-              '& .MuiOutlinedInput-root': { color: theme.palette.light.main },
-              '& .MuiInputLabel-root': { color: theme.palette.light.main },
-              '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.light.main },
-              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.light.main },
-              '& .MuiSelect-icon': { color: theme.palette.light.main },
             }}
             InputProps={{
-              startAdornment: <StorefrontIcon sx={{ color: navIconColor, mr: 1 }} />,
+              startAdornment: <FilterListIcon sx={{ mr: 1, color: 'primary.main' }} />,
+              disableUnderline: true,
+              sx: {
+                paddingTop: '8px',
+                backgroundColor: theme.palette.mode === 'dark' ? 'muted.main' : 'light.main',
+                borderRadius: 1,
+                '& fieldset': { border: 'none' },
+              },
             }}
           >
-            <MenuItem sx={{ color: theme.palette.text.secondary, fontWeight: 500 }} value="all">
+            <MenuItem sx={{ color: theme.palette.light.main, fontWeight: 500 }} value="all">
               All Types
             </MenuItem>
             {categories.map((category) => (
-              <MenuItem
-                key={category}
-                sx={{ color: theme.palette.text.secondary }}
-                value={category}
-              >
+              <MenuItem key={category} sx={{ color: theme.palette.light.main }} value={category}>
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </MenuItem>
             ))}
@@ -766,29 +765,32 @@ const MobileBottomNav = () => {
           {/* Neighborhood */}
           <TextField
             select
+            variant="filled"
             fullWidth
             label="Filter by Neighborhood"
             value={neighborhoodQuery}
             onChange={(e) => setNeighborhoodQuery(e.target.value)}
             sx={{
               mb: 2,
-              '& .MuiOutlinedInput-root': { color: theme.palette.light.main },
-              '& .MuiInputLabel-root': { color: theme.palette.light.main },
-              '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.light.main },
-              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.light.main },
-              '& .MuiSelect-icon': { color: theme.palette.light.main },
             }}
             InputProps={{
-              startAdornment: <TravelExploreIcon sx={{ color: navIconColor, mr: 1 }} />,
+              startAdornment: <TravelExploreIcon sx={{ mr: 1, color: 'primary.main' }} />,
+              disableUnderline: true,
+              sx: {
+                paddingTop: '8px',
+                backgroundColor: theme.palette.mode === 'dark' ? 'muted.main' : 'light.main',
+                borderRadius: 1,
+                '& fieldset': { border: 'none' },
+              },
             }}
           >
-            <MenuItem sx={{ color: theme.palette.text.secondary, fontWeight: 500 }} value="all">
+            <MenuItem sx={{ color: theme.palette.light.main, fontWeight: 500 }} value="all">
               All Neighborhoods
             </MenuItem>
             {neighborhoods.map((neighborhood) => (
               <MenuItem
                 key={neighborhood}
-                sx={{ color: theme.palette.text.secondary }}
+                sx={{ color: theme.palette.light.main }}
                 value={neighborhood}
               >
                 {neighborhood.charAt(0).toUpperCase() + neighborhood.slice(1)}

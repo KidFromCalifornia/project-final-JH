@@ -213,23 +213,17 @@ const TastingsPage = () => {
             onClick={handleToggleTastingForm}
             aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
             sx={{
-              backgroundColor: showTastingForm ? 'transparent' : theme.palette.primary.main,
-              color: showTastingForm
-                ? theme.palette.primary.main
-                : theme.palette.primary.contrastText,
-              border: `2px solid ${theme.palette.primary.main}`,
-              minWidth: { xs: '7.5rem', sm: '8.75rem' },
+              minWidth: '8rem',
               py: 1.5,
-              height: 'fit-content',
-              fontSize: { xs: '0.875rem', sm: '1rem' },
-              whiteSpace: 'nowrap',
-              overflow: 'visible',
-              textWrap: 'nowrap',
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              backgroundColor: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.main',
+              color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
+              outlineColor: theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
               '&:hover': {
-                backgroundColor: showTastingForm
-                  ? theme.palette.text.muted
-                  : theme.palette.primary.dark,
-                color: showTastingForm ? theme.palette.primary.dark : theme.palette.primary.light,
+                backgroundColor: theme.palette.mode === 'dark' ? 'muted.main' : 'secondary.main',
+                color: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.contrastText',
+                outlineColor: theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
               },
             }}
           >

@@ -31,9 +31,8 @@ import { AppBar, Drawer, DrawerHeader, drawerWidth } from './navigation/Navigati
 import LoadingLogo from '../common/LoadingLogo';
 import { useCafeStore } from '../../stores/useCafeStore';
 
-// Lazy load forms for better performance
-const LoginForm = React.lazy(() => import('../forms/LoginForm'));
-const NewCafeForm = React.lazy(() => import('../forms/NewCafeForm'));
+import LoginForm from '../forms/LoginForm';
+import NewCafeForm from '../forms/NewCafeForm';
 
 const DesktopNavBar = ({
   searchResults = [],
@@ -257,13 +256,11 @@ const DesktopNavBar = ({
         }}
       >
         <DialogContent sx={{ p: 0 }}>
-          <Suspense fallback={<LoadingLogo />}>
-            <LoginForm
-              onClose={() => setShowLogin(false)}
-              setCurrentUser={setCurrentUser}
-              setIsLoggedIn={setIsLoggedIn}
-            />
-          </Suspense>
+          <LoginForm
+            onClose={() => setShowLogin(false)}
+            setCurrentUser={setCurrentUser}
+            setIsLoggedIn={setIsLoggedIn}
+          />
         </DialogContent>
       </Dialog>
 
@@ -288,9 +285,7 @@ const DesktopNavBar = ({
         }}
       >
         <DialogContent sx={{ p: 0 }}>
-          <Suspense fallback={<LoadingLogo />}>
-            <NewCafeForm onClose={() => setShowAddCafe(false)} />
-          </Suspense>
+          <NewCafeForm onClose={() => setShowAddCafe(false)} />
         </DialogContent>
       </Dialog>
     </Box>

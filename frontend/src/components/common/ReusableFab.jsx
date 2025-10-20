@@ -1,6 +1,6 @@
 import React from 'react';
 import { Fab, Tooltip } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha } from '@mui/material/styles';
 import { useCafeStore } from '../../stores/useCafeStore';
 
 const ReusableFab = ({
@@ -24,13 +24,14 @@ const ReusableFab = ({
     <Tooltip title={tooltipTitle} arrow placement={placement}>
       <Fab
         onClick={onClick}
-        color={isDarkMode ? 'secondary' : 'primary'}
+        color={isDarkMode ? 'primary' : 'primary'}
         aria-label={ariaLabel}
         sx={{
           color: theme.palette.light.main,
           width: size,
           height: size,
-          boxShadow: `0.25rem 0.25rem 0.5rem ${theme.palette.secondary.main}40`,
+          border: `1px solid ${isDarkMode ? alpha(theme.palette.light.main, 0.3) : theme.palette.secondary.main}`,
+          boxShadow: `0.25rem 0.25rem 0.5rem ${theme.palette.primary.main}40`,
           '&:hover': {
             color: theme.palette.accentStrong.main,
           },

@@ -3,7 +3,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import maplibregl from 'maplibre-gl';
 import { LIGHT_MAP_STYLE, DARK_MAP_STYLE } from '../../styles/mapStyles';
 import { Box, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha } from '@mui/material/styles';
 
 export default function MapLibreMap({
   cafesToShow,
@@ -89,13 +89,19 @@ export default function MapLibreMap({
                 latitude={coords[1]}
                 onClose={() => setSelectedCafe(null)}
                 closeOnClick={false}
+                className={`map-popup ${themeMode}`}
+                style={{
+                  backgroundColor: 'none',
+                  borderRadius: theme.shape.borderRadius,
+                  padding: theme.spacing(2),
+                }}
               >
                 <Typography
                   variant="h6"
                   component="h3"
                   sx={{
-                    mb: 1.5,
-                    color: theme.palette.text.secondary,
+                    color: theme.palette.secondary.main,
+                    mb: 1,
                     fontWeight: 600,
                     fontSize: { xs: '1.1rem', sm: '1.25rem' },
                   }}
@@ -108,15 +114,15 @@ export default function MapLibreMap({
                   <Typography
                     variant="caption"
                     sx={{
-                      backgroundColor: theme.palette.primary.main,
+                      backgroundColor: alpha(theme.palette.secondary.main, 0.6),
                       color: theme.palette.primary.contrastText,
                       px: 1.5,
                       py: 0.5,
-                      borderRadius: 1,
+                      borderRadius: 0.5,
                       textTransform: 'capitalize',
                       display: 'inline-block',
-                      mb: 1.5,
-                      fontWeight: 500,
+                      mb: 1,
+                      fontWeight: 600,
                       fontSize: '0.75rem',
                     }}
                   >
@@ -127,8 +133,12 @@ export default function MapLibreMap({
                 {/* Address */}
                 <Typography
                   variant="body2"
-                  color="text.secondary"
                   sx={{
+                    color:
+                      themeMode === 'Dark'
+                        ? theme.palette.light.main
+                        : theme.palette.secondary.main,
+
                     mb: 0.5,
                     fontSize: '0.875rem',
                     lineHeight: 1.4,
@@ -142,12 +152,13 @@ export default function MapLibreMap({
                 {selectedLocation.neighborhood && (
                   <Typography
                     variant="body2"
-                    color="text.secondary"
+                    color="text.default"
                     sx={{
                       mb: 1.5,
                       fontSize: '0.8rem',
                       lineHeight: 1.4,
-                      fontWeight: 500,
+                      fontWeight: 550,
+                      color: theme.palette.secondary.main,
                     }}
                   >
                     {selectedLocation.neighborhood}
@@ -162,12 +173,10 @@ export default function MapLibreMap({
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
-                        color: theme.palette.primary.main,
-                        textDecoration: 'none',
+                        color: theme.palette.secondary.main,
                         fontWeight: 500,
                         fontSize: '0.875rem',
-                        borderBottom: `1px solid ${theme.palette.primary.main}`,
-                        paddingBottom: '2px',
+                        '&p:hover': { fontSize: '1rem' },
                       }}
                     >
                       Visit Website

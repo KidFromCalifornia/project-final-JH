@@ -159,7 +159,7 @@ const createComponents = (customTheme) => ({
           color: customTheme.colors.light,
           border: 'none',
           '&:hover': {
-            backgroundColor: customTheme.colors.secondary,
+            backgroundColor: customTheme.colors.primary,
             transform: 'translateY(-1px)',
           },
         }),
@@ -171,8 +171,8 @@ const createComponents = (customTheme) => ({
           border: `2px solid ${customTheme.colors.primary}`,
           '&:hover': {
             backgroundColor: `${customTheme.colors.primary}10`,
-            borderColor: customTheme.colors.secondary,
-            color: customTheme.colors.secondary,
+            borderColor: customTheme.colors.primary,
+            color: customTheme.colors.primary,
           },
         }),
 
@@ -262,7 +262,7 @@ const createComponents = (customTheme) => ({
           backgroundColor: customTheme.colors.background,
           transition: 'all 0.4s ease-in-out',
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: customTheme.colors.primary,
+            borderColor: customTheme.colors.secondary,
             borderWidth: 2,
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
@@ -272,12 +272,12 @@ const createComponents = (customTheme) => ({
           },
         },
         '& .MuiInputLabel-root': {
-          color: customTheme.colors.primary,
+          color: customTheme.colors.secondary,
           fontWeight: 600,
           '&.Mui-focused': {
             color: customTheme.colors.versoText || customTheme.colors.secondary,
             fontWeight: 600,
-            backgroundColor: customTheme.colors.primary,
+            backgroundColor: customTheme.colors.secondary,
             borderRadius: customTheme.borderRadius / 2,
             padding: '1px 12px',
           },
@@ -297,7 +297,7 @@ const createComponents = (customTheme) => ({
     styleOverrides: {
       root: {
         borderRadius: 12,
-        backgroundColor: customTheme.colors.primary,
+
         color: customTheme.colors.light,
         boxShadow: customTheme.shadow,
         transition: 'box-shadow 0.2s ease-in-out',
@@ -341,7 +341,7 @@ const createComponents = (customTheme) => ({
           color: customTheme.colors.primary,
           fontWeight: 500,
           '&.Mui-focused': {
-            color: customTheme.colors.primary,
+            color: customTheme.colors.secondary,
           },
         },
       },
@@ -391,7 +391,7 @@ const createComponents = (customTheme) => ({
   MuiRating: {
     styleOverrides: {
       root: {
-        color: customTheme.colors.secondary || customTheme.colors.primary,
+        color: customTheme.colors.accent || 'white',
         '&.MuiRating-readOnly': {
           opacity: 0.7,
         },
@@ -413,6 +413,23 @@ const createComponents = (customTheme) => ({
       },
       label: {
         color: customTheme.colors.primary,
+      },
+    },
+  },
+
+  MuiTabScrollButton: {
+    styleOverrides: {
+      root: {
+        '&::-webkit-scrollbar': {
+          width: '8px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: customTheme.colors.secondary,
+          borderRadius: '4px',
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          backgroundColor: customTheme.colors.primary,
+        },
       },
     },
   },

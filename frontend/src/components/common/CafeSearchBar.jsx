@@ -45,19 +45,15 @@ const SearchBar = ({ type = 'cafes' }) => {
         className="search-textfield"
         sx={{
           '&.search-textfield .MuiOutlinedInput-root': {
-            backgroundColor:
-              theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: theme.palette.mode === 'dark' ? 'muted.main' : 'light.main',
             '& input': {
-              color:
-                theme.palette.mode === 'dark'
-                  ? theme.palette.common.white
-                  : theme.palette.common.black,
+              color: theme.palette.mode === 'dark' ? 'light.main' || '#fff' : 'primary.main',
             },
             '& fieldset': {
               borderColor:
                 theme.palette.mode === 'dark'
-                  ? 'rgba(255, 255, 255, 0.8)' // Increased contrast for dark mode
-                  : 'rgba(0, 0, 0, 0.8)', // Increased contrast for light mode
+                  ? 'light.main' // Increased contrast for dark mode
+                  : 'primary.main', // Increased contrast for light mode
               borderWidth: '2px',
             },
             '&:hover fieldset': {
@@ -72,11 +68,11 @@ const SearchBar = ({ type = 'cafes' }) => {
           '& label': {
             color:
               theme.palette.mode === 'dark'
-                ? 'rgba(255, 255, 255, 0.8)' // Increased contrast for dark mode
-                : 'rgba(0, 0, 0, 0.8)', // Increased contrast for light mode
+                ? 'light.main' // Increased contrast for dark mode
+                : 'secondary.main', // Increased contrast for light mode
           },
           '& label.Mui-focused': {
-            color: theme.palette.primary.main,
+            color: theme.palette.accent.main,
           },
         }}
       />
