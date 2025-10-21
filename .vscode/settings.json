@@ -1,8 +1,0 @@
-{
-  "editor.linkedEditing": true,
-  "workbench.colorTheme": "Earthbound - Moonside",
-  "workbench.preferredDarkColorTheme": "Default Dark+",
-  "workbench.iconTheme": "catppuccin-perfect-aura",
-  "terminal.integrated.tabs.defaultColor": "terminal.ansiGreen",
-  "outline.icons": true
-}
