@@ -47,12 +47,13 @@ const SearchBar = ({ type = 'cafes' }) => {
           '&.search-textfield .MuiOutlinedInput-root': {
             backgroundColor: theme.palette.mode === 'dark' ? 'muted.main' : 'light.main',
             '& input': {
-              color: theme.palette.mode === 'dark' ? 'light.main' || '#fff' : 'primary.main',
+              color: theme.palette.mode === 'dark' ? 'secondary.main' || '#fff' : 'primary.main',
+              fontWeight: '550',
             },
             '& fieldset': {
               borderColor:
                 theme.palette.mode === 'dark'
-                  ? 'light.main' // Increased contrast for dark mode
+                  ? 'primary.main' // Increased contrast for dark mode
                   : 'primary.main', // Increased contrast for light mode
               borderWidth: '2px',
             },
