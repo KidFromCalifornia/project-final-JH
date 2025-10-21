@@ -10,10 +10,25 @@
     "start": "cd backend && npm start",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "clean:empty": "node -e \"const {execSync}=require('child_process');try{execSync('find . -type f -empty -not -path \\\"*/node_modules/*\\\" -not -path \\\"./.git/*\\\" -delete');execSync('find . -type d -empty -not -path \\\"*/node_modules/*\\\" -not -path \\\"./.git/*\\\" -delete')}catch(e){console.error(e.message)} console.log('Empty files and directories removed');\""
+    "clean:empty": "node -e \"const {execSync}=require('child_process');try{execSync('find . -type f -empty -not -path \\\"*/node_modules/*\\\" -not -path \\\"./.git/*\\\" -delete');execSync('find . -type d -empty -not -path \\\"*/node_modules/*\\\" -not -path \\\"./.git/*\\\" -delete')}catch(e){console.error(e.message)} console.log('Empty files and directories removed');\"",
+    "clean:comments": "node scripts/cleanComments.js",
+    "check:unused": "node scripts/checkUnused.js"
   },
-  "dependencies": {},
   "devDependencies": {
     "prettier": "^3.6.2"
-  }
+  },
+  "description": "Welcome to Stockholm Coffee Club — a fullstack app that helps you discover the city’s best specialty coffee spots. Whether you’re a local on the hunt for your next flat white or a visitor exploring Stockholm’s café culture, this app’s got you covered.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KidFromCalifornia/project-final-JH.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/KidFromCalifornia/project-final-JH/issues"
+  },
+  "homepage": "https://github.com/KidFromCalifornia/project-final-JH#readme"
 }

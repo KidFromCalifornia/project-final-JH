@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "seed:users": "node src/scripts/seedUsers.js",
-    "seed:cafes": "node src/scripts/seedCafes.js",
-    "seed:tastings": "node src/scripts/seedTasting.js",
+    "seed:users": "node ../scripts/seedUsers.js",
+    "seed:cafes": "node ../scripts/seedCafes.js",
+    "seed:tastings": "node ../scripts/seedTasting.js",
     "seed:all": "npm run seed:users && npm run seed:cafes && npm run seed:tastings"
   },
   "author": "Jonny Hicks aka Kidfromcalifornia",
