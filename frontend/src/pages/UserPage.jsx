@@ -19,6 +19,7 @@ import CafeSearchBar from '../components/common/CafeSearchBar';
 import FlipTastingCard from '../components/common/FlipTastingCard';
 import { tastingAPI } from '../services/api';
 import LoadingLogo from '../components/common/LoadingLogo';
+import { alpha } from '@mui/material/styles';
 
 // Lazy load forms
 const TastingForm = React.lazy(() => import('../components/forms/TastingForm'));
@@ -239,7 +240,7 @@ const UserPage = () => {
   const totalPages = Math.ceil(filteredTastings.length / tastingsPerPage);
 
   // Handle tab change
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (event, newValue, thememode) => {
     setActiveTab(newValue);
     if (newValue === 1) {
       setSearchQuery('');
@@ -258,7 +259,7 @@ const UserPage = () => {
         width: '100%',
         minHeight: '100vh',
         backgroundColor: theme.palette.background.default,
-        color: theme.palette.text.primary,
+       
         flexDirection: 'column',
         alignSelf: 'center',
         p: 2,
@@ -305,32 +306,36 @@ const UserPage = () => {
       ) : (
         <>
           {/* Navigation Tabs - ✅ Fixed */}
-          <Paper elevation={1} sx={{ mb: 3 }}>
+          <Paper backgroundColor={alpha(theme.palette.background.paper, 0.8)} elevation={1} sx={{ mb: 3 }}>
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
               variant="fullWidth"
               color="primary"
+              borderRadius={1}
               sx={{
                 '& .MuiTab-root': {
                   minHeight: 48,
                   textTransform: 'none',
                   fontSize: '1rem',
                   fontWeight: 500,
-                  color: theme.palette.text.secondary,
+                  borderRadius: 3,
+                color:   theme.palette.mode === 'dark' ? theme.palette.light.main : theme.palette.light.main,
                   backgroundColor: theme.palette.background.paper,
                   border: `1px solid ${theme.palette.divider}`,
                   borderBottom: 'none',
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     backgroundColor: theme.palette.action.hover,
-                    color: theme.palette.text.primary,
+                    color: theme.palette.accent.primary,
                   },
                   '&.Mui-selected': {
                     backgroundColor: theme.palette.primary.main,
                     color: theme.palette.primary.contrastText,
                     fontWeight: 700,
                     boxShadow: theme.shadows[2],
+                   opacity: 1,
+                    borderRadius: 1,
                     '&:hover': {
                       backgroundColor: theme.palette.primary.dark,
                     },
@@ -609,7 +614,7 @@ const UserPage = () => {
                         mb: 2,
                         position: 'sticky',
                         bottom: 0,
-                        backgroundColor: theme.palette.background.default,
+                        backgroundColor: alpha(theme.palette.background.default, 0.8),
                         py: 2,
                       }}
                     >
@@ -618,9 +623,9 @@ const UserPage = () => {
                           <Button
                             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                             disabled={currentPage === 1}
-                            variant="outlined"
+                            variant="contained"
                             size="small"
-                            sx={{ mx: 1, minWidth: '80px' }}
+                            sx={{ mx: 1, minWidth: '80px', border: `1px solid ${theme.palette.mode === "dark" ? 'light.main' : 'secondary.main'}` }}
                           >
                             Previous
                           </Button>
@@ -643,7 +648,7 @@ const UserPage = () => {
                               setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
                             }
                             disabled={currentPage === totalPages}
-                            variant="outlined"
+                            variant="contained"
                             size="small"
                             sx={{ mx: 1, minWidth: '80px' }}
                           >

@@ -1,7 +1,4 @@
-import { Typography } from '@mui/material';
-import { colors, colorsDarkmode } from './colors';
-import { light } from '@mui/material/styles/createPalette';
-import { fontGrid } from '@mui/material/styles/cssUtils';
+
 
 const createComponents = (customTheme) => ({
   MuiCssBaseline: {
@@ -154,15 +151,23 @@ const createComponents = (customTheme) => ({
         },
 
         // Contained variant (default)
-        ...(ownerState.variant === 'contained' && {
-          backgroundColor: customTheme.colors.primary,
-          color: customTheme.colors.light,
-          border: 'none',
-          '&:hover': {
-            backgroundColor: customTheme.colors.primary,
-            transform: 'translateY(-1px)',
-          },
-        }),
+...(ownerState.variant === 'contained' && {
+  backgroundColor: customTheme.colors.primary,
+  color: customTheme.colors.light,
+  fontWeight: 600,
+  border: theme.palette.mode === "dark" 
+    ? `2px solid ${customTheme.colors.light}` 
+    : `2px solid ${customTheme.colors.secondary}`,
+  boxShadow: `0 0.125rem 0.5rem ${customTheme.colors.secondary}40`,
+  '&:hover': {
+    backgroundColor: customTheme.colors.secondary,
+    transform: 'scale(1.05)',
+  },
+  '&:focus': {
+    boxShadow: `inset 0 0 0 2px ${customTheme.colors.primary}33`,
+    transform: 'scale(1.07)',
+  }
+}),
 
         // Outlined variant
         ...(ownerState.variant === 'outlined' && {
