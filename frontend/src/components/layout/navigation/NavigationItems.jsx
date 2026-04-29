@@ -45,7 +45,7 @@ const NavigationItems = ({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <List>
+      {/* <List> 
         {!isLoggedIn && (
           <ListItem sx={{ display: 'block', padding: 0 }}>
             <Tooltip title="Login" arrow placement="right" disableHoverListener={open}>
@@ -71,7 +71,7 @@ const NavigationItems = ({
             </Tooltip>
           </ListItem>
         )}
-      </List>
+      </List>' */}
       <List>
         <ListItem disablePadding>
           <Tooltip title="Map" arrow placement="right" disableHoverListener={open}>
@@ -84,18 +84,16 @@ const NavigationItems = ({
           </Tooltip>
         </ListItem>
 
-        {isLoggedIn && (
-          <ListItem disablePadding>
-            <Tooltip title="Add Cafe" arrow placement="right" disableHoverListener={open}>
-              <ListItemButton onClick={() => setShowAddCafe(true)}>
-                <ListItemIcon>
-                  <AddLocationIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Add Cafe" />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-        )}
+        <ListItem disablePadding>
+          <Tooltip title="Add Cafe" arrow placement="right" disableHoverListener={open}>
+            <ListItemButton onClick={() => setShowAddCafe(true)}>
+              <ListItemIcon>
+                <AddLocationIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
+              <ListItemText primary="Add Cafe" />
+            </ListItemButton>
+          </Tooltip>
+        </ListItem>
 
         <ListItem disablePadding>
           <Tooltip title="Tastings" arrow placement="right" disableHoverListener={open}>

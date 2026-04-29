@@ -9,7 +9,6 @@ import { Box, useTheme, useMediaQuery } from '@mui/material';
 const MapPage = lazy(() => import('./pages/MapPage.jsx'));
 const TastingsPage = lazy(() => import('./pages/TastingsPage.jsx'));
 const CafePage = lazy(() => import('./pages/CafePage.jsx'));
-const UserPage = lazy(() => import('./pages/UserPage.jsx'));
 const AdminPage = lazy(() => import('./pages/AdminPage.jsx'));
 const AboutMePage = lazy(() => import('./pages/AboutMePage.jsx'));
 
@@ -113,7 +112,6 @@ const App = () => {
                 }
               />
               <Route path="/cafes/:cafeId" element={<CafePage />} />
-              <Route path="/user" element={<UserPage isLoggedIn={isLoggedIn} />} />
               <Route
                 path="/admin"
                 element={<AdminPage isLoggedIn={isLoggedIn} currentUser={currentUser} />}

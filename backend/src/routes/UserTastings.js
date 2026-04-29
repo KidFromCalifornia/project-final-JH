@@ -115,11 +115,12 @@ router.get('/', authenticateToken, async (req, res) => {
 });
 
 // Create new tasting note
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const tastingNoteData = {
       ...req.body,
-      userId: req.user.userId,
+      // userId is optional - only set if user is authenticated
+      userId: req.user?.userId || null,
     };
 
     const newTastingNote = new CoffeeTasting(tastingNoteData);
@@ -193,8 +194,11 @@ router.put('/:id', validateObjectId(), authenticateToken, async (req, res) => {
       });
     }
 
-    // Users can only edit their own tasting notes
-    if (tastingNote.userId.toString() !== req.user.userId) {
+    // Users can only edit their own tasting notes, but admins can edit any
+    const isOwner = tastingNote.userId && tastingNote.userId.toString() === req.user.userId;
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({
         success: false,
         error: 'You can only edit your own tasting notes',
@@ -214,7 +218,7 @@ router.put('/:id', validateObjectId(), authenticateToken, async (req, res) => {
       data: updatedTastingNote,
     });
   } catch (error) {
-    console.error('Error in route:', error); // Add logging
+    console.error('Error in route:', error);
     res.status(500).json({
       success: false,
       error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message, // Hide details in production
@@ -222,7 +226,7 @@ router.put('/:id', validateObjectId(), authenticateToken, async (req, res) => {
   }
 });
 
-// Delete tasting note (user's own only)
+// Delete tasting note (user's own or admin can delete any)
 router.delete('/:id', validateObjectId(), authenticateToken, async (req, res) => {
   try {
     const tastingNote = await CoffeeTasting.findById(req.params.id);
@@ -234,8 +238,11 @@ router.delete('/:id', validateObjectId(), authenticateToken, async (req, res) =>
       });
     }
 
-    // Users can only delete their own tasting notes
-    if (tastingNote.userId.toString() !== req.user.userId) {
+    // Users can only delete their own tasting notes, but admins can delete any
+    const isOwner = tastingNote.userId && tastingNote.userId.toString() === req.user.userId;
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({
         success: false,
         error: 'You can only delete your own tasting notes',
@@ -249,10 +256,10 @@ router.delete('/:id', validateObjectId(), authenticateToken, async (req, res) =>
       message: 'Tasting note deleted successfully',
     });
   } catch (error) {
-    console.error('Error in route:', error); // Add logging
+    console.error('Error in route:', error);
     res.status(500).json({
       success: false,
-      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message, // Hide details in production
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });

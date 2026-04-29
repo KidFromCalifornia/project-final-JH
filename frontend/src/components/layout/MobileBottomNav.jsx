@@ -24,12 +24,10 @@ import Tooltip from '@mui/material/Tooltip';
 import LoadingLogo from '../common/LoadingLogo';
 
 // Lazy load forms for better performance
-const LoginForm = React.lazy(() => import('../forms/LoginForm'));
+
 const NewCafeForm = React.lazy(() => import('../forms/NewCafeForm'));
 
 import {
-  Login as LoginIcon,
-  Logout as LogoutIcon,
   DoorFront as DoorFrontIcon,
   Menu as MenuIcon,
   AdminPanelSettings as AdminPanelSettingsIcon,
@@ -54,9 +52,6 @@ const MobileBottomNav = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
-  const setIsLoggedIn = useCafeStore((state) => state.setIsLoggedIn);
   const cafes = useCafeStore((state) => state.cafes);
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
@@ -84,7 +79,7 @@ const MobileBottomNav = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showLogin, setShowLogin] = useState(false);
+
   const [showAddCafe, setShowAddCafe] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   console.log('Cafes count:', cafes.length);
@@ -287,55 +282,6 @@ const MobileBottomNav = () => {
                 />
               </IconButton>
             </Tooltip>
-            {isLoggedIn ? (
-              <Tooltip title="Logout" arrow>
-                <IconButton
-                  color="inherit"
-                  size="large"
-                  aria-label="Logout"
-                  sx={{
-                    p: 0.75,
-                    '&:hover': {
-                      bgcolor: 'rgba(255,255,255,0.1)',
-                    },
-                  }}
-                  onClick={() => {
-                    localStorage.removeItem('userToken');
-                    localStorage.removeItem('username');
-                    localStorage.removeItem('admin');
-                    setIsLoggedIn(false);
-                    handleNav('/');
-                  }}
-                >
-                  <LogoutIcon fontSize="medium" sx={{ color: navIconColor }} />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <Tooltip title="Login" arrow>
-                <IconButton
-                  color="inherit"
-                  size="large"
-                  aria-label="Login"
-                  sx={{
-                    p: 0.75,
-                    bgcolor: showLogin ? 'rgba(255,255,255,0.15)' : 'transparent',
-                    transition: 'background-color 200ms ease',
-                    '&:hover': {
-                      bgcolor: showLogin ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
-                    },
-                  }}
-                  onClick={() => setShowLogin(!showLogin)}
-                >
-                  <LoginIcon
-                    fontSize="medium"
-                    sx={{
-                      color: showLogin ? theme.palette.accent?.main || navIconColor : navIconColor,
-                      transition: 'color 200ms ease',
-                    }}
-                  />
-                </IconButton>
-              </Tooltip>
-            )}
           </Box>
         </Toolbar>
       </AppBar>
@@ -457,35 +403,31 @@ const MobileBottomNav = () => {
             </ListItemButton>
           </ListItem>
 
-          {isLoggedIn && (
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  setShowAddCafe(!showAddCafe);
-                  closeDrawers();
-                }}
-                sx={{
-                  bgcolor: showAddCafe ? 'rgba(255,255,255,0.1)' : 'transparent',
-                  '&:hover': {
-                    bgcolor: showAddCafe ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
-                  },
-                }}
-              >
-                <ListItemIcon>
-                  <AddLocationIcon
-                    sx={{
-                      color: showAddCafe
-                        ? theme.palette.accent?.main || navIconColor
-                        : navIconColor,
-                    }}
-                  />
-                </ListItemIcon>
-                <ListItemText primary="Add Cafe" />
-              </ListItemButton>
-            </ListItem>
-          )}
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={() => {
+                setShowAddCafe(!showAddCafe);
+                closeDrawers();
+              }}
+              sx={{
+                bgcolor: showAddCafe ? 'rgba(255,255,255,0.1)' : 'transparent',
+                '&:hover': {
+                  bgcolor: showAddCafe ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
+                },
+              }}
+            >
+              <ListItemIcon>
+                <AddLocationIcon
+                  sx={{
+                    color: showAddCafe ? theme.palette.accent?.main || navIconColor : navIconColor,
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Add Cafe" />
+            </ListItemButton>
+          </ListItem>
 
-          {isLoggedIn && isAdmin && (
+          {isAdmin && (
             <ListItem disablePadding>
               <ListItemButton
                 component={Link}
@@ -515,90 +457,6 @@ const MobileBottomNav = () => {
               </ListItemButton>
             </ListItem>
           )}
-
-          {isLoggedIn && !isAdmin && (
-            <ListItem disablePadding>
-              <ListItemButton
-                component={Link}
-                to="/user"
-                onClick={closeDrawers}
-                sx={{
-                  bgcolor: location.pathname === '/user' ? 'rgba(255,255,255,0.1)' : 'transparent',
-                  '&:hover': {
-                    bgcolor:
-                      location.pathname === '/user'
-                        ? 'rgba(255,255,255,0.15)'
-                        : 'rgba(255,255,255,0.05)',
-                  },
-                }}
-              >
-                <ListItemIcon>
-                  <DoorFrontIcon
-                    sx={{
-                      color:
-                        location.pathname === '/user'
-                          ? theme.palette.accent?.main || navIconColor
-                          : navIconColor,
-                    }}
-                  />
-                </ListItemIcon>
-                <ListItemText primary="Userpage" />
-              </ListItemButton>
-            </ListItem>
-          )}
-
-          <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
-
-          {!isLoggedIn ? (
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  setShowLogin(!showLogin);
-                  closeDrawers();
-                }}
-                sx={{
-                  bgcolor: showLogin ? 'rgba(255,255,255,0.1)' : 'transparent',
-                  '&:hover': {
-                    bgcolor: showLogin ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
-                  },
-                }}
-              >
-                <ListItemIcon>
-                  <LoginIcon
-                    sx={{
-                      color: showLogin ? theme.palette.accent?.main || navIconColor : navIconColor,
-                    }}
-                  />
-                </ListItemIcon>
-                <ListItemText primary="Login" />
-              </ListItemButton>
-            </ListItem>
-          ) : (
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  localStorage.removeItem('userToken');
-                  localStorage.removeItem('username');
-                  localStorage.removeItem('admin');
-                  setIsLoggedIn(false);
-                  closeDrawers();
-                  navigate('/');
-                }}
-                sx={{
-                  '&:hover': {
-                    bgcolor: 'rgba(255,255,255,0.05)',
-                  },
-                }}
-              >
-                <ListItemIcon>
-                  <LogoutIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Logout" />
-              </ListItemButton>
-            </ListItem>
-          )}
-
-          <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
 
           <ListItem>
             <Box
@@ -799,22 +657,6 @@ const MobileBottomNav = () => {
           </TextField>
         </Box>
       </Drawer>
-
-      {/* Login dialog */}
-      <Dialog
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-        maxWidth="xs"
-        fullWidth
-        disableRestoreFocus
-        keepMounted={false}
-      >
-        <DialogContent sx={{ p: 0 }}>
-          <Suspense fallback={<LoadingLogo />}>
-            <LoginForm onClose={() => setShowLogin(false)} setIsLoggedIn={setIsLoggedIn} />
-          </Suspense>
-        </DialogContent>
-      </Dialog>
 
       {/* New cafe dialog */}
       <Dialog

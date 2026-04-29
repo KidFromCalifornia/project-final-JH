@@ -26,7 +26,6 @@ const MapPage = () => {
   const themeMode = useCafeStore((state) => state.themeMode);
   const [showUserPin, setShowUserPin] = useState(false);
   const [legendOpen, setLegendOpen] = useState(false);
-  const setUser = useCafeStore((state) => state.setUser);
   const [selectedCafe, setSelectedCafe] = useState(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 

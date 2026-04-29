@@ -132,7 +132,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
           scrollbarWidth: 'none', // Firefox
         }}
       >
-        <List colordisablePadding role="list" aria-label="Map legend items">
+        <List disablePadding role="list" aria-label="Map legend items">
           {legendItems.map((item, index) => (
             <ListItem
               key={index}

@@ -4,9 +4,9 @@ import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// POST create new cafe submission
+// POST create new cafe submission (no authentication required - open to all users)
 
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', async (req, res) => {
   // Simple validation - check required fields
   const { name, locations, category, features } = req.body;
 
@@ -27,7 +27,8 @@ router.post('/', authenticateToken, async (req, res) => {
   try {
     const submissionData = {
       ...req.body,
-      submittedBy: req.user.userId,
+      // submittedBy is optional - only set if user is authenticated
+      submittedBy: req.user?.userId || null,
       isApproved: false,
     };
 

@@ -28,7 +28,6 @@ import {
 import NavigationHeader from './navigation/NavigationHeader';
 import NavigationItems from './navigation/NavigationItems';
 import { AppBar, Drawer, DrawerHeader, drawerWidth } from './navigation/NavigationStyles';
-import LoadingLogo from '../common/LoadingLogo';
 import { useCafeStore } from '../../stores/useCafeStore';
 
 import LoginForm from '../forms/LoginForm';
@@ -36,8 +35,6 @@ import NewCafeForm from '../forms/NewCafeForm';
 
 const DesktopNavBar = ({
   searchResults = [],
-  showLogin = false,
-  setShowLogin = () => {},
   isLoggedIn = false,
   setIsLoggedIn = () => {},
   setCurrentUser = () => {},
@@ -180,7 +177,6 @@ const DesktopNavBar = ({
           isAdmin={isAdmin}
           navIconColor={navIconColor}
           open={open}
-          setShowLogin={setShowLogin}
           setShowAddCafe={setShowAddCafe}
           setIsLoggedIn={setIsLoggedIn}
           categories={categories}
@@ -195,7 +191,7 @@ const DesktopNavBar = ({
         <Box sx={{ flexGrow: 1 }} />
 
         <Divider />
-        {isLoggedIn && isAdmin && (
+        {isAdmin && (
           <ListItem sx={{ display: 'block', padding: 0 }}>
             <Tooltip title="Admin" arrow placement="right" disableHoverListener={open}>
               <ListItemButton component={Link} to="/admin">
@@ -208,18 +204,6 @@ const DesktopNavBar = ({
           </ListItem>
         )}
 
-        {isLoggedIn && !isAdmin && (
-          <ListItem sx={{ display: 'block', padding: 0 }}>
-            <Tooltip title="UserPage" arrow placement="right" disableHoverListener={open}>
-              <ListItemButton component={Link} to="/user">
-                <ListItemIcon>
-                  <DoorFrontIcon sx={{ color: navIconColor }} />
-                </ListItemIcon>
-                <ListItemText primary="Profile" />
-              </ListItemButton>
-            </Tooltip>
-          </ListItem>
-        )}
         <List>
           <ListItem sx={{ display: 'block', padding: 0 }}>
             <Tooltip title="About Me" disableHoverListener={open}>
@@ -233,36 +217,6 @@ const DesktopNavBar = ({
           </ListItem>
         </List>
       </Drawer>
-
-      {/* Login Dialog */}
-      <Dialog
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-        maxWidth="xs"
-        fullWidth
-        disableRestoreFocus
-        keepMounted={false}
-        sx={{
-          '& .MuiDialog-container': {
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 2,
-          },
-          '& .MuiDialog-paper': {
-            margin: { xs: 1, sm: 2 },
-            width: { xs: 'calc(100vw - 2rem)', sm: 'auto' },
-            maxWidth: { xs: 'none', sm: '25rem' },
-          },
-        }}
-      >
-        <DialogContent sx={{ p: 0 }}>
-          <LoginForm
-            onClose={() => setShowLogin(false)}
-            setCurrentUser={setCurrentUser}
-            setIsLoggedIn={setIsLoggedIn}
-          />
-        </DialogContent>
-      </Dialog>
 
       {/* Add Cafe Dialog */}
       <Dialog

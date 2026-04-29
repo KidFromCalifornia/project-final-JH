@@ -17,6 +17,7 @@ export default function MapLibreMap({
   const theme = useTheme();
   return (
     <Map
+      key={themeMode}
       mapLib={maplibregl}
       initialViewState={{ longitude: 18.0686, latitude: 59.3293, zoom: 12 }}
       style={{

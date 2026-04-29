@@ -8,50 +8,34 @@ import ThirdWavePinIcon from '../../assets/icons/thirdWaveIcon.svg?react';
 import GeotagPinIcon from '../../assets/icons/geotagPinIcon.svg?react';
 
 const getCustomIcon = (category, theme, themeMode, options = {}) => {
-  // Simple color map
-  const colors = {
-    thirdwave: theme.palette.accentStrong.main,
-    specialty: themeMode === 'light' ? theme.palette.primary.main : theme.palette.info.main,
-    roaster: theme.palette.error.main,
-    geotag: theme.palette.success.main,
-    default: theme.palette.primary.main,
-  };
+  // Use accentStrong in light mode, accent in dark mode
+  const iconColor = themeMode === 'dark' ? theme.palette.accent.main : theme.palette.secondary.main;
 
-  const color = colors[category] || colors.default;
-
-  // Add outline effect for light mode to increase visibility
+  // Consistent icon styling
   const iconProps = {
     sx: {
       fontSize: options.fontSize || '2rem',
-      color,
-    },
-  };
-
-  // For SVG icons, we need a stronger outline in light mode with sharp edges
-  const svgIconProps = {
-    ...iconProps,
-    sx: {
-      ...iconProps.sx,
-      // Create a sharper outline by using multiple stacked shadows with 0 blur radius
+      color: iconColor,
+      // Add subtle shadow for depth and visibility
       filter:
         themeMode === 'light'
-          ? 'drop-shadow(1px 2px 0px rgba(7, 42, 103, .03)) drop-shadow(1px 1px 0px rgba(7, 42, 103, 1.0)) '
-          : 'drop-shadow(2px 3px 0px #072a677f)',
+          ? 'drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.40))'
+          : 'drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5))',
     },
   };
 
-  // SVG icons with proper outline effect
+  // Icons change color based on category
   switch (category) {
     case 'thirdwave':
-      return <SvgIcon component={ThirdWavePinIcon} inheritViewBox {...svgIconProps} />;
+      return <SvgIcon component={ThirdWavePinIcon} inheritViewBox {...iconProps} />;
     case 'specialty':
-      return <SvgIcon component={SpecialtyPinIcon} inheritViewBox {...svgIconProps} />;
+      return <SvgIcon component={SpecialtyPinIcon} inheritViewBox {...iconProps} />;
     case 'roaster':
-      return <SvgIcon component={RoasterPinIcon} inheritViewBox {...svgIconProps} />;
+      return <SvgIcon component={RoasterPinIcon} inheritViewBox {...iconProps} />;
     case 'geotag':
-      return <SvgIcon component={GeotagPinIcon} inheritViewBox {...svgIconProps} />;
+      return <SvgIcon component={GeotagPinIcon} inheritViewBox {...iconProps} />;
     default:
-      return <SvgIcon component={PinIcon} inheritViewBox {...svgIconProps} />;
+      return <SvgIcon component={PinIcon} inheritViewBox {...iconProps} />;
   }
 };
 

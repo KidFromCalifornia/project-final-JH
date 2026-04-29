@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useCafeStore } from '../../stores/useCafeStore';
 import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
+import { handleApiError } from '../../utils/errorHandler';
 import {
   TextField,
   Button,
@@ -64,28 +65,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
       onSuccess?.(response);
       onClose();
     } catch (err) {
-      console.log('Add cafe error:', err);
-
-      // Check for actual network connectivity issues
-      if (
-        (err.name === 'TypeError' && err.message.includes('fetch')) ||
-        err.message.includes('NetworkError') ||
-        err.message.includes('Failed to fetch') ||
-        !navigator.onLine
-      ) {
-        // True network error - no internet or server unreachable
-        showSnackbar(
-          "We couldn't reach the server. Please check your internet connection and try again.",
-          'error'
-        );
-      } else if (err.message.includes('timeout') || err.message.includes('Request timeout')) {
-        // Request timeout
-        showSnackbar('Request timed out. Please try again.', 'error');
-      } else {
-        // Server errors (validation errors, duplicate entries, etc.)
-        const errorMessage = err.message || 'Failed to add cafe. Please try again.';
-        showSnackbar(errorMessage, 'error');
-      }
+      handleApiError(err, showSnackbar, 'Failed to add cafe. Please try again.');
     }
   };
 

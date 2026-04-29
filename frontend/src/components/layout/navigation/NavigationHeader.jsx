@@ -1,21 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Typography, IconButton, Tooltip, Switch } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, Switch, Button } from '@mui/material';
 import {
-  AccountCircle as AccountCircleIcon,
+  Map as MapIcon,
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
 } from '@mui/icons-material';
 import sccLogoMono from '../../../assets/images/whiteCup_logo.svg';
 
-const NavigationHeader = ({
-  theme,
-  open,
-  darkMode,
-  isLoggedIn,
-  navIconColor,
-  handleToggleDarkMode,
-}) => {
+const NavigationHeader = ({ theme, open, darkMode, navIconColor, handleToggleDarkMode }) => {
   return (
     <Box
       sx={{
@@ -62,7 +55,6 @@ const NavigationHeader = ({
           display: 'flex',
           alignItems: 'center',
           marginLeft: 'auto',
-          gap: 1,
         }}
       >
         <Tooltip title="Theme" arrow>
@@ -81,18 +73,6 @@ const NavigationHeader = ({
           onChange={handleToggleDarkMode}
           inputProps={{ 'aria-label': 'toggle dark mode' }}
         />
-
-        {isLoggedIn && (
-          <Tooltip title="Profile" arrow>
-            <IconButton component={Link} to="/user" sx={{ p: 1 }} aria-label="User Page">
-              <AccountCircleIcon
-                sx={{
-                  color: theme.palette.accent.main,
-                }}
-              />
-            </IconButton>
-          </Tooltip>
-        )}
       </Box>
     </Box>
   );

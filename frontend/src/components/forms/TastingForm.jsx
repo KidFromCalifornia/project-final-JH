@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useCafeStore } from '../../stores/useCafeStore';
 import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
+import { handleApiError } from '../../utils/errorHandler';
 import {
   TextField,
   Checkbox,
@@ -65,27 +66,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
-        console.log('Form options fetch error:', error);
-
-        // Check for actual network connectivity issues
-        if (
-          (error.name === 'TypeError' && error.message.includes('fetch')) ||
-          error.message.includes('NetworkError') ||
-          error.message.includes('Failed to fetch') ||
-          !navigator.onLine
-        ) {
-          // True network error - no internet or server unreachable
-          showSnackbar(
-            "We couldn't reach the server. Please check your internet connection and try again.",
-            'error'
-          );
-        } else if (error.message.includes('timeout') || error.message.includes('Request timeout')) {
-          // Request timeout
-          showSnackbar('Request timed out. Please try again.', 'error');
-        } else {
-          // Server errors (API errors, etc.)
-          setFetchError("We couldn't load form options. Please try again.");
-        }
+        handleApiError(error, showSnackbar, "We couldn't load form options. Please try again.");
       }
     };
     if (!cafes || cafes.length === 0) {
