@@ -58,14 +58,19 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const fetchError = useCafeStore((state) => state.fetchError);
   const setFetchError = useCafeStore((state) => state.setFetchError);
 
+  console.log('TastingForm cafes:', cafes);
+
   // Fetch cafes and options
   useEffect(() => {
     const fetchData = async () => {
+      console.log('Fetching form options from metadata');
       try {
         const data = await apiCall('/metadata/form-options');
+        console.log('Fetched data:', data);
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
+        console.error('Error fetching form options:', error);
         handleApiError(error, showSnackbar, "We couldn't load form options. Please try again.");
       }
     };

@@ -102,5 +102,5 @@ const cafeSchema = new mongoose.Schema(
 
 cafeSchema.index({ 'locations.coordinates': '2dsphere' });
 
-export const Cafe = mongoose.model('Cafe', cafeSchema);
+export const Cafe = mongoose.model('Cafes', cafeSchema);
 export const CafeSubmission = mongoose.model('CafeSubmission', cafeSchema);

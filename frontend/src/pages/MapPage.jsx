@@ -60,10 +60,13 @@ const MapPage = () => {
   };
 
   useEffect(() => {
+    console.log('MapPage cafes:', cafes);
     if (cafes.length === 0) {
       const fetchCafes = async () => {
+        console.log('Fetching cafes from /cafes');
         try {
           const data = await cafeAPI.getAll();
+          console.log('Fetched cafes data:', data);
           setCafes(data.data || []);
         } catch (error) {
           console.error('Error fetching cafes:', error);
