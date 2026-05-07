@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { tastingAPI } from '../services/api.js';
 
 // Helper function to apply filters
-const applyFilters = (cafes, cafeTypeFilter, neighborhoodFilter) => {
-  if (!cafes) return [];
+const applyFilters = (cafe, cafeTypeFilter, neighborhoodFilter) => {
+  if (!cafe) return [];
 
-  let filtered = cafes;
+  let filtered = cafe;
 
   if (cafeTypeFilter && cafeTypeFilter !== 'all') {
     filtered = filtered.filter((cafe) => cafe.category === cafeTypeFilter);
@@ -20,17 +20,10 @@ const applyFilters = (cafes, cafeTypeFilter, neighborhoodFilter) => {
 
 export const useCafeStore = create((set, get) => ({
   themeMode: localStorage.getItem('themeMode') || 'light',
-  isLoggedIn: Boolean(localStorage.getItem('userToken')),
 
   setThemeMode: (mode) => {
     localStorage.setItem('themeMode', mode);
     set({ themeMode: mode });
-  },
-
-  setIsLoggedIn: (loggedIn) => {
-    set({ isLoggedIn: loggedIn });
-    // Refresh tastings when login state changes
-    get().fetchTastings(loggedIn);
   },
 
   cafes: [],
@@ -102,7 +95,6 @@ export const useCafeStore = create((set, get) => ({
           const userTastings = await tastingAPI.getUserTastings();
           console.log('User tastings fetched:', userTastings);
           const userTastingsData = userTastings.data || [];
-
           // Merge user tastings with public tastings (user tastings first)
           allTastings = [...userTastingsData, ...allTastings];
         } catch (userError) {

@@ -64,10 +64,12 @@ const MobileBottomNav = () => {
   const setCafeTypeQuery = useCafeStore((state) => state.setCafeTypeFilter);
   const setNeighborhoodQuery = useCafeStore((state) => state.setNeighborhoodFilter);
 
-  const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
+  const categories = Array.from(
+    new Set((cafes || []).map((cafe) => cafe.category).filter(Boolean))
+  );
 
   const neighborhoods = Array.from(
-    new Set(cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
+    new Set((cafes || []).map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
   );
 
   let isAdmin = false;

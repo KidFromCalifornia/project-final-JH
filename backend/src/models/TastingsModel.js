@@ -2,10 +2,15 @@ import mongoose from 'mongoose';
 
 const coffeeTastingSchema = new mongoose.Schema(
   {
+    username: {
+      type: String,
+      trim: true,
+      default: 'Anonymous',
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
     cafeId: {
       type: mongoose.Schema.Types.ObjectId,

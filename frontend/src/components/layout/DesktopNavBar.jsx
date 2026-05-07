@@ -59,10 +59,12 @@ const DesktopNavBar = ({
   const clearFilters = useCafeStore((state) => state.clearFilters);
 
   // Computed values
-  const cafes = searchResults.length > 0 ? searchResults : allCafes;
-  const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
+  const cafes = searchResults && searchResults.length > 0 ? searchResults : allCafes || [];
+  const categories = Array.from(
+    new Set((cafes || []).map((cafe) => cafe.category).filter(Boolean))
+  );
   const neighborhoods = Array.from(
-    new Set(cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
+    new Set((cafes || []).map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
   );
 
   let isAdmin = false;

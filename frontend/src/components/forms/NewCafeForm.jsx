@@ -60,7 +60,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
     if (!validateForm()) return;
 
     try {
-      const response = await apiCall('/cafes', 'POST', formData);
+      const response = await apiCall('/cafeSubmissions', 'POST', formData);
       showSnackbar('Cafe added successfully!', 'success');
       onSuccess?.(response);
       onClose();

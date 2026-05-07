@@ -15,6 +15,7 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  MenuItem,
   useTheme,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
@@ -357,15 +358,184 @@ const AdminPage = () => {
             }}
           />
         </Box>
-        <Dialog open={!!editingId} onClose={() => setEditingId(null)} maxWidth="sm" fullWidth>
-          <DialogTitle>Edit</DialogTitle>
+        <Dialog open={!!editingId} onClose={() => setEditingId(null)} maxWidth="md" fullWidth>
+          <DialogTitle>Edit {editType}</DialogTitle>
           <DialogContent>
-            <TextField
-              fullWidth
-              label="Name"
-              value={editData.name || ''}
-              onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-            />
+            {editType === 'cafe' && (
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label="Name"
+                  value={editData.name || ''}
+                  onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                />
+                <TextField
+                  fullWidth
+                  label="Website"
+                  value={editData.website || ''}
+                  onChange={(e) => setEditData({ ...editData, website: e.target.value })}
+                />
+                <TextField
+                  select
+                  fullWidth
+                  label="Category"
+                  value={editData.category || ''}
+                  onChange={(e) => setEditData({ ...editData, category: e.target.value })}
+                >
+                  <MenuItem value="specialty">Specialty</MenuItem>
+                  <MenuItem value="roaster">Roaster</MenuItem>
+                  <MenuItem value="thirdwave">Third Wave</MenuItem>
+                </TextField>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Description"
+                  value={editData.description || ''}
+                  onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                />
+                <Typography variant="h6">Features</Typography>
+                <FormGroup row>
+                  {[
+                    'outdoor_seating',
+                    'wheelchair_accessible',
+                    'lunch',
+                    'pour_over',
+                    'takeaway',
+                    'vegan_options',
+                    'breakfast',
+                    'iced_drinks',
+                    'pastries',
+                    'multi_roaster',
+                    'decaf',
+                    'no_coffee_bar',
+                    'limited_sitting',
+                    'roaster_only',
+                  ].map((feature) => (
+                    <FormControlLabel
+                      key={feature}
+                      control={
+                        <Checkbox
+                          checked={(editData.features || []).includes(feature)}
+                          onChange={(e) => {
+                            const features = editData.features || [];
+                            if (e.target.checked) {
+                              setEditData({ ...editData, features: [...features, feature] });
+                            } else {
+                              setEditData({
+                                ...editData,
+                                features: features.filter((f) => f !== feature),
+                              });
+                            }
+                          }}
+                        />
+                      }
+                      label={feature.replace('_', ' ')}
+                    />
+                  ))}
+                </FormGroup>
+              </Stack>
+            )}
+            {editType === 'submission' && (
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label="Name"
+                  value={editData.name || ''}
+                  onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                />
+                <TextField
+                  fullWidth
+                  label="Website"
+                  value={editData.website || ''}
+                  onChange={(e) => setEditData({ ...editData, website: e.target.value })}
+                />
+                <TextField
+                  select
+                  fullWidth
+                  label="Category"
+                  value={editData.category || ''}
+                  onChange={(e) => setEditData({ ...editData, category: e.target.value })}
+                >
+                  <MenuItem value="specialty">Specialty</MenuItem>
+                  <MenuItem value="roaster">Roaster</MenuItem>
+                  <MenuItem value="thirdwave">Third Wave</MenuItem>
+                </TextField>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Description"
+                  value={editData.description || ''}
+                  onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                />
+                <Typography variant="h6">Features</Typography>
+                <FormGroup row>
+                  {[
+                    'outdoor_seating',
+                    'wheelchair_accessible',
+                    'lunch',
+                    'pour_over',
+                    'takeaway',
+                    'vegan_options',
+                    'breakfast',
+                    'iced_drinks',
+                    'pastries',
+                    'multi_roaster',
+                    'decaf',
+                    'no_coffee_bar',
+                    'limited_sitting',
+                    'roaster_only',
+                  ].map((feature) => (
+                    <FormControlLabel
+                      key={feature}
+                      control={
+                        <Checkbox
+                          checked={(editData.features || []).includes(feature)}
+                          onChange={(e) => {
+                            const features = editData.features || [];
+                            if (e.target.checked) {
+                              setEditData({ ...editData, features: [...features, feature] });
+                            } else {
+                              setEditData({
+                                ...editData,
+                                features: features.filter((f) => f !== feature),
+                              });
+                            }
+                          }}
+                        />
+                      }
+                      label={feature.replace('_', ' ')}
+                    />
+                  ))}
+                </FormGroup>
+              </Stack>
+            )}
+            {editType === 'tasting' && (
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label="Coffee Name"
+                  value={editData.coffeeName || ''}
+                  onChange={(e) => setEditData({ ...editData, coffeeName: e.target.value })}
+                />
+                <TextField
+                  fullWidth
+                  label="Rating"
+                  type="number"
+                  value={editData.rating || ''}
+                  onChange={(e) => setEditData({ ...editData, rating: e.target.value })}
+                />
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Notes"
+                  value={editData.notes || ''}
+                  onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
+                />
+              </Stack>
+            )}
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setEditingId(null)}>Cancel</Button>

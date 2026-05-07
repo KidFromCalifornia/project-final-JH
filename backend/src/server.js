@@ -4,6 +4,11 @@ import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 import { seedCafes } from './scripts/seedCafes.js';
 
+// Import models to register them
+import './models/cafeModel.js';
+import './models/TastingsModel.js';
+import './models/User.js';
+
 // Import routes
 import cafeRoutes from './routes/cafes.js';
 import authRoutes from './routes/auth.js';
@@ -98,7 +103,7 @@ app.get('/api', (_, res) => {
         'GET /api/tastings/public': 'Get public tasting notes',
         'GET /api/tastings/public/search': 'Search public tastings',
         'GET /api/tastings': "Get user's tastings (auth required)",
-        'POST /api/tastings': 'Create new tasting (auth required)',
+        'POST /api/tastings': 'Create new tasting (username optional)',
         'PUT /api/tastings/:id': 'Update tasting (auth required)',
         'DELETE /api/tastings/:id': 'Delete tasting (auth required)',
       },

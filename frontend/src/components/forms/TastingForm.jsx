@@ -389,9 +389,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   />
                 </Tooltip>
                 <FormHelperText color={theme.palette.light.main}>
-                  <Typography tm="small" variant="body2">
-                    {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
-                  </Typography>
+                  {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
                 </FormHelperText>
               </FormControl>
             </Box>

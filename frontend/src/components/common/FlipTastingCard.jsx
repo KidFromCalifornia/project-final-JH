@@ -329,7 +329,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
               color="color.secondary"
               sx={{ display: 'block', mb: 0.5 }}
             >
-              <strong>{toTitleCase(cafe.name) || 'Unknown Cafe'}</strong>
+              <strong>{toTitleCase(cafe.name) || 'can not retrieve cafe name'}</strong>
               {cafe.locations?.[0]?.neighborhood &&
                 ` • ${toTitleCase(cafe.locations[0].neighborhood)}`}
             </Typography>

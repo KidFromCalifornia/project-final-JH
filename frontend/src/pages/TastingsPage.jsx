@@ -67,14 +67,14 @@ const TastingsPage = () => {
 
   // Initial fetch and login state change handler
   useEffect(() => {
-    console.log('Login state changed:', isLoggedIn);
-    fetchTastings(isLoggedIn);
+    console.log('Login state changed:');
+    fetchTastings();
     setDisplayedCount(tastingsPerPage); // Reset pagination when login state changes
 
     return () => {
       clearFilters(); // Clean up filters when component unmounts
     };
-  }, [isLoggedIn, fetchTastings, clearFilters, tastingsPerPage]);
+  }, [, fetchTastings, clearFilters, tastingsPerPage]);
 
   const handleDeleteTasting = async (tastingToDelete) => {
     try {
@@ -204,76 +204,31 @@ const TastingsPage = () => {
           px: { xs: 1, sm: 3 },
         }}
       >
-        {isLoggedIn ? (
-          <Button
-            variant={showTastingForm ? 'outlined' : 'contained'}
-            startIcon={
-              showTastingForm ? <CloseIcon aria-hidden="true" /> : <AddIcon aria-hidden="true" />
-            }
-            onClick={handleToggleTastingForm}
-            aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
-            sx={{
-              minWidth: '8rem',
-              py: 1.5,
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              backgroundColor: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.main',
-              color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
-              outlineColor: theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
-              '&:hover': {
-                backgroundColor: theme.palette.mode === 'dark' ? 'muted.main' : 'secondary.main',
-                color: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.contrastText',
-                outlineColor: theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
-              },
-            }}
-          >
-            {showTastingForm ? 'Close' : 'Add Tasting'} {/* ✅ Dynamic text */}
-          </Button>
-        ) : (
-          <Tooltip title="Please log in to add tastings" placement="bottom" arrow>
-            <span>
-              <Button
-                variant="focused"
-                startIcon={<AddIcon aria-hidden="true" />}
-                disabled
-                aria-label="Add tasting (login required)"
-                sx={{
-                  minWidth: { xs: '7.5rem', sm: '8.75rem' },
-                  py: 1.75,
-                  height: 'fit-content',
-                  opacity: 0.6,
-                  fontSize: { xs: '0.875rem', sm: '1rem' },
-                  whiteSpace: 'nowrap',
-                  overflow: 'visible',
-                  textWrap: 'nowrap',
-                  backgroundColor: theme.palette.background.secondary,
-                  color: theme.palette.primary.light,
-                  outline: theme === 'dark' ? `2px solid ${theme.palette.primary.light}` : 'none',
-                }}
-              >
-                Add Tasting
-              </Button>
-            </span>
-          </Tooltip>
-        )}
-
-        <CafeSearchBar
-          setSearchQuery={setSearchQuery}
-          type="tastings"
+        <Button
+          variant={showTastingForm ? 'outlined' : 'contained'}
+          startIcon={
+            showTastingForm ? <CloseIcon aria-hidden="true" /> : <AddIcon aria-hidden="true" />
+          }
+          onClick={handleToggleTastingForm}
+          aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
           sx={{
-            width: { xs: '100%', sm: '50%' },
-            minWidth: { xs: 'unset', sm: '200px' },
+            minWidth: '8rem',
+            py: 1.5,
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            backgroundColor: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.main',
+            color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
+            outlineColor: theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
+            '&:hover': {
+              backgroundColor: theme.palette.mode === 'dark' ? 'muted.main' : 'secondary.main',
+              color: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.contrastText',
+              outlineColor: theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
+            },
           }}
-        />
+        >
+          {showTastingForm ? 'Close' : 'Add Tasting'} {/* ✅ Dynamic text */}
+        </Button>
       </Box>
-
-      {/* ✅ Alert for non-logged-in users */}
-      {!isLoggedIn && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          You must be logged in to add coffee tastings. Please log in to share your coffee
-          experiences!
-        </Alert>
-      )}
 
       {/* ✅ TastingForm modal */}
       {showTastingForm && (
@@ -332,7 +287,6 @@ const TastingsPage = () => {
                 <FlipTastingCard
                   key={tasting._id || `tasting-${index}`}
                   tasting={tasting}
-                  isLoggedIn={isLoggedIn}
                   setEditingTasting={setEditingTasting}
                   setDeletingTasting={setDeletingTasting}
                   sx={{ width: '100%' }}
