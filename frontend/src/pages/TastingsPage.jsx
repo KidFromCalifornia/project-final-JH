@@ -235,13 +235,9 @@ const TastingsPage = () => {
                 variant="contained"
                 size="large"
                 sx={{
-                  minWidth: '200px',
+                  minWidth: '10rem',
                   py: 1.5,
-                  fontSize: '1rem',
                   fontWeight: 600,
-                  borderRadius: 2,
-                  backgroundColor: theme.palette.primary.main,
-                  '&:hover': { backgroundColor: theme.palette.primary.dark },
                 }}
                 aria-label="Load more tastings"
               >

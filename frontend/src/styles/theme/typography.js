@@ -1,144 +1,113 @@
 // Stockholm typography guidelines
 export const fonts = {
-  main: 'Verdana, Arial, sans-serif', // Stockholm's official body text font
-  heading: "'Stockholm Type', Verdana, Arial, sans-serif", // Stockholm's official heading font with Verdana fallback
-  size: { sm: 16, md: 24, lg: 32, xl: 40 }, // Font sizes in pixels (converted from rem)
+  main: 'Verdana, Arial, sans-serif',
+  heading: "'Stockholm Type', Verdana, Arial, sans-serif",
+  size: { sm: 16, md: 24, lg: 32, xl: 40 },
 };
 
 export const createTypography = (customTheme, colors, themeMode) => {
-  const textColor = themeMode === 'dark' ? colors.versoText : colors.versoText;
+  // No hardcoded color on variants — let palette.text.primary and
+  // container-level color (Paper, Dialog) handle inheritance correctly.
+  // This prevents dark text bleeding into dark-background dialogs/cards.
 
   return {
     fontFamily: customTheme.fonts.main,
-    fontSize: 16, // 1rem converted to pixels
-    color: textColor,
+    fontSize: 16,
 
     h1: {
       fontFamily: customTheme.fonts.heading,
       fontWeight: 800,
-      fontSize: customTheme.fonts.size.xl, // 40px
+      fontSize: 36,
       lineHeight: 1.2,
       letterSpacing: '0.5px',
       textTransform: 'uppercase',
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: customTheme.fonts.size.lg, // 32px
-      },
+      '@media (max-width:600px)': { fontSize: 28 },
     },
     h2: {
       fontFamily: customTheme.fonts.heading,
       fontWeight: 700,
-      fontSize: customTheme.fonts.size.lg, // 32px
+      fontSize: 28,
       lineHeight: 1.25,
       letterSpacing: '0.5px',
       textTransform: 'uppercase',
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: customTheme.fonts.size.md, // 24px
-      },
+      '@media (max-width:600px)': { fontSize: 22 },
     },
     h3: {
       fontFamily: customTheme.fonts.heading,
       fontWeight: 700,
-      letterSpacing: '0.5px',
-      fontSize: customTheme.fonts.size.md, // 24px
+      fontSize: 22,
       lineHeight: 1.3,
+      letterSpacing: '0.5px',
       textTransform: 'uppercase',
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 22, // 1.375rem converted to pixels
-      },
+      '@media (max-width:600px)': { fontSize: 20 },
     },
     h4: {
+      fontFamily: customTheme.fonts.heading,
       fontWeight: 700,
+      fontSize: 20,
+      lineHeight: 1.3,
       letterSpacing: '0.5px',
       textTransform: 'uppercase',
-      fontFamily: customTheme.fonts.heading,
-      fontSize: 22, // 1.375rem converted to pixels
-      lineHeight: 1.3,
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 20, // 1.25rem converted to pixels
-      },
+      '@media (max-width:600px)': { fontSize: 18 },
     },
     h5: {
       fontFamily: customTheme.fonts.heading,
-      letterSpacing: '0.5px',
       fontWeight: 600,
-      fontSize: 20, // 1.25rem converted to pixels
+      fontSize: 18,
       lineHeight: 1.35,
+      letterSpacing: '0.3px',
       textTransform: 'uppercase',
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 18, // 1.125rem converted to pixels
-      },
+      '@media (max-width:600px)': { fontSize: 16 },
     },
     h6: {
       fontFamily: customTheme.fonts.heading,
       fontWeight: 600,
-      textTransform: 'uppercase',
-      fontSize: 18, // 1.125rem converted to pixels
+      fontSize: 16,
       lineHeight: 1.4,
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 16, // 1rem converted to pixels
-      },
+      letterSpacing: '0.3px',
+      textTransform: 'uppercase',
+      '@media (max-width:600px)': { fontSize: 15 },
     },
     subtitle1: {
       fontFamily: customTheme.fonts.main,
-      fontSize: 22, // 1.375rem converted to pixels
+      fontSize: 16,
       fontWeight: 600,
-      letterSpacing: '0.3px',
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 18, // 1.125rem converted to pixels
-      },
+      letterSpacing: '0.2px',
+      lineHeight: 1.5,
+      '@media (max-width:600px)': { fontSize: 15 },
     },
     subtitle2: {
+      fontFamily: customTheme.fonts.main,
       fontWeight: 600,
-      fontSize: 20, // 1.25rem converted to pixels
-      letterSpacing: '0.3px',
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 16, // 1rem converted to pixels
-      },
+      fontSize: 14,
+      letterSpacing: '0.2px',
+      lineHeight: 1.5,
     },
     body1: {
-      fontSize: 18, // 1.125rem converted to pixels
+      fontSize: 16,
       lineHeight: 1.6,
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 16, // 1rem converted to pixels
-      },
     },
     body2: {
-      fontSize: 16, // 1rem converted to pixels
+      fontSize: 14,
       lineHeight: 1.55,
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 16, // 1rem converted to pixels
-      },
     },
     button: {
-      fontSize: 16, // 1rem converted to pixels
+      fontSize: 14,
       lineHeight: 1.75,
       textTransform: 'none',
       fontWeight: 600,
       letterSpacing: '0.2px',
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 16, // 1rem converted to pixels
-      },
+    },
+    caption: {
+      fontSize: 12,
+      lineHeight: 1.5,
+      letterSpacing: '0.3px',
     },
     overline: {
-      fontSize: 16, // 1rem converted to pixels
+      fontSize: 11,
       fontWeight: 700,
       letterSpacing: '1px',
       textTransform: 'uppercase',
-      color: textColor,
-      '@media (max-width:600px)': {
-        fontSize: 16, // 1rem converted to pixels
-      },
     },
   };
 };

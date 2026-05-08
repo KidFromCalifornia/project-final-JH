@@ -47,7 +47,7 @@ const DesktopNavBar = ({
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
   const darkMode = themeMode === 'dark';
-  const navIconColor = theme.palette.light?.main || '#fff';
+  const navIconColor = theme.palette.light.main;
 
   // Store state
   const allCafes = useCafeStore((state) => state.cafes);
@@ -109,7 +109,7 @@ const DesktopNavBar = ({
             justifyContent: 'space-between',
             backgroundColor: theme.palette.primary.main,
             boxShadow: `0 0.125rem 0.5rem ${theme.palette.secondary.main}40`,
-            color: theme.palette.light?.main || '#fff',
+            color: theme.palette.light.main,
           }}
         >
           <NavigationHeader

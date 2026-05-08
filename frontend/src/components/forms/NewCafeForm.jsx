@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
 import { handleApiError } from '../../utils/errorHandler';
@@ -53,6 +53,16 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
   const theme = useTheme();
   const { showSnackbar } = useAlert();
   const cafes = useCafeStore((state) => state.cafes);
+  const setCafes = useCafeStore((state) => state.setCafes);
+
+  useEffect(() => {
+    if (!cafes || cafes.length === 0) {
+      apiCall('/cafes').then((data) => {
+        const list = Array.isArray(data) ? data : data?.data ?? [];
+        setCafes(list);
+      }).catch(() => {});
+    }
+  }, []);
 
   const [isExistingCafe, setIsExistingCafe] = useState(false);
   const [parentCafe, setParentCafe] = useState(null);
@@ -135,7 +145,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
   };
 
   const sectionBg = alpha(theme.palette.secondary.main, 0.2);
-  const labelColor = theme.palette.mode === 'dark' ? 'light.main' : 'primary.main';
+  const labelColor = 'light.main';
 
   return (
     <Paper
@@ -153,14 +163,13 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
         component="h2"
         align="center"
         gutterBottom
-        sx={{ mb: 3, fontSize: { xs: '1.5rem', sm: '2rem' }, color: labelColor }}
+        sx={{ mb: 3, fontSize: { xs: '1.5rem', sm: '2rem' }, color: theme.palette.text.light }}
       >
         Submit a Cafe
       </Typography>
 
       <form onSubmit={handleSubmit} aria-label="Submit New Cafe Form">
         <Grid container spacing={3}>
-
           {/* Existing cafe checkbox — top of form */}
           <Grid item xs={12}>
             <Box sx={{ p: 2, borderRadius: 1, backgroundColor: sectionBg }}>
@@ -279,7 +288,9 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                 >
                   <MenuItem value="">— Select —</MenuItem>
                   {NEIGHBORHOODS.map((n) => (
-                    <MenuItem key={n} value={n}>{n}</MenuItem>
+                    <MenuItem key={n} value={n}>
+                      {n}
+                    </MenuItem>
                   ))}
                 </TextField>
               </Tooltip>
@@ -338,7 +349,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
               {onClose && (
                 <Button
                   onClick={onClose}
-                  variant="outlined"
+                  variant="filled"
                   size="large"
                   sx={{ minWidth: '8rem', py: 1.5, fontWeight: 600 }}
                 >
@@ -356,7 +367,6 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
               </Button>
             </Box>
           </Grid>
-
         </Grid>
       </form>
     </Paper>

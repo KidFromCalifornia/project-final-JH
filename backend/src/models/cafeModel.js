@@ -78,6 +78,14 @@ const cafeSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    icon: {
+      type: String,
+      trim: true,
+    },
+    image: {
+      type: String,
+      trim: true,
+    },
     images: [String],
     isApproved: {
       type: Boolean,

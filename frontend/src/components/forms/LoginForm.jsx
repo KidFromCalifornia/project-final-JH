@@ -131,10 +131,10 @@ const LoginForm = ({ setIsAdmin, onClose }) => {
             theme.palette.mode === 'dark'
               ? alpha(theme.palette.secondary.main, 0.5)
               : alpha(theme.palette.secondary.main, 0.2),
-          padding: '16px',
+          p: 2,
           display: 'flex',
           flexDirection: 'column',
-          gap: '16px',
+          gap: 2,
           width: '100%',
         }}
         aria-labelledby="login-form-title"
@@ -147,7 +147,7 @@ const LoginForm = ({ setIsAdmin, onClose }) => {
           required
           fullWidth
           autoComplete="username"
-          variant="outlined"
+          variant="filled"
           aria-label="Email or username for login"
           aria-describedby="identifier-helper"
           helperText="Enter your registered email or username"
@@ -167,7 +167,7 @@ const LoginForm = ({ setIsAdmin, onClose }) => {
             required
             fullWidth
             autoComplete="current-password"
-            variant="outlined"
+            variant="filled"
             aria-label="Password for authentication"
             aria-describedby="password-helper"
             helperText="Enter your account password"

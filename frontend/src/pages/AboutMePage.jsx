@@ -101,7 +101,7 @@ const AboutMePage = () => {
             color={theme.palette.light.main}
             paragraph
             sx={{
-              fontSize: { xs: '0.9rem', sm: '1.1rem' },
+              fontSize: { xs: '1rem', sm: '1.1rem' },
               mb: 2,
               textAlign: { xs: 'center', sm: 'left' },
             }}
@@ -117,7 +117,7 @@ const AboutMePage = () => {
             color={theme.palette.light.main}
             paragraph
             sx={{
-              fontSize: { xs: '0.9rem', sm: '1.1rem' },
+              fontSize: { xs: '1rem', sm: '1.1rem' },
               mb: 2,
               textAlign: { xs: 'center', sm: 'left' },
             }}
@@ -133,7 +133,7 @@ const AboutMePage = () => {
             color={theme.palette.light.main}
             paragraph
             sx={{
-              fontSize: { xs: '0.9rem', sm: '1.1rem' },
+              fontSize: { xs: '1rem', sm: '1.1rem' },
               mb: 4,
               textAlign: { xs: 'center', sm: 'left' },
             }}
@@ -447,7 +447,6 @@ const AboutMePage = () => {
                   },
                   transition: 'transform 150ms ease-in-out, background-color 120ms ease',
                   '&:hover': {
-                    bgcolor: 'none',
                     transform: 'scale(1.05)',
                   },
                 }}
@@ -537,17 +536,14 @@ const AboutMePage = () => {
                 fontWeight: 500,
                 bgcolor:
                   theme.palette.mode === 'dark'
-                    ? alpha(theme.palette.secondary.main)
+                    ? alpha(theme.palette.secondary.main, 0.6)
                     : alpha(theme.palette.secondary.main, 0.09),
                 color: theme.palette.light.main,
                 m: { xs: 0.3, sm: 0.5 },
                 height: { xs: '28px', sm: '32px' },
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 '&:hover': {
-                  bgcolor:
-                    theme.palette.mode === 'dark'
-                      ? alpha(theme.palette.secondary.main)
-                      : alpha(theme.palette.secondary.main),
+                  bgcolor: alpha(theme.palette.secondary.main, 0.6),
                   transform: 'scale(1.25)',
                 },
                 transition: 'all 120ms ease',
