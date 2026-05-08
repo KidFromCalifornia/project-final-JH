@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useCafeStore } from '../../stores/useCafeStore';
 import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
@@ -21,6 +21,7 @@ import {
   Tooltip,
   useTheme,
   Alert,
+  Autocomplete,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
@@ -36,6 +37,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
       typeof initialValues.cafeId === 'object' && initialValues.cafeId?._id
         ? initialValues.cafeId._id
         : initialValues.cafeId || '',
+    signature: '',
     coffeeName: initialValues.coffeeName || '',
     coffeeRoaster: initialValues.coffeeRoaster || '',
     coffeeOrigin: initialValues.coffeeOrigin || '',
@@ -47,8 +49,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     roastLevel: initialValues.roastLevel || '',
     rating: initialValues.rating || 3,
     notes: initialValues.notes || '',
-    isPublic: initialValues.isPublic !== undefined ? initialValues.isPublic : true,
   });
+
+  const [signatureSuggestions, setSignatureSuggestions] = useState([]);
 
   // Store hooks
   const cafes = useCafeStore((state) => state.cafes);
@@ -58,15 +61,11 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const fetchError = useCafeStore((state) => state.fetchError);
   const setFetchError = useCafeStore((state) => state.setFetchError);
 
-  console.log('TastingForm cafes:', cafes);
-
   // Fetch cafes and options
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Fetching form options from metadata');
       try {
         const data = await apiCall('/metadata/form-options');
-        console.log('Fetched data:', data);
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
@@ -77,7 +76,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     if (!cafes || cafes.length === 0) {
       fetchData();
     }
-  }, [setCafes, setOptions, setFetchError, cafes]);
+  }, [setCafes, setOptions, setFetchError]);
 
   // Input handlers
   const handleChange = (e) => {
@@ -134,7 +133,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
           color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
         }}
       >
-        {initialValues.cafeId ? 'Edit Coffee Tasting' : 'Add New Coffee Tasting'}
+        Add New Coffee Tasting
       </Typography>
 
       <form onSubmit={handleSubmit} aria-label="Coffee Tasting Form">
@@ -168,7 +167,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   required
                   fullWidth
                   margin="normal"
-                  variant="outlined"
+                  variant="filled"
                   aria-label="Cafe Location"
                 >
                   <MenuItem value="">Select a cafe</MenuItem>
@@ -180,6 +179,24 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 </TextField>
               </Tooltip>
 
+              <Tooltip
+                title="Optional — leave blank to post as Anonymous."
+                placement="top"
+                arrow
+              >
+                <TextField
+                  label="Your signature (optional)"
+                  name="signature"
+                  value={form.signature}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                  variant="filled"
+                  placeholder="Leave blank to post as Anonymous"
+                  aria-label="Signature"
+                />
+              </Tooltip>
+
               <Tooltip title="Enter the name of the coffee." placement="top" arrow>
                 <TextField
                   label="Coffee Name"
@@ -189,7 +206,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   required
                   fullWidth
                   margin="normal"
-                  variant="outlined"
+                  variant="filled"
                   aria-label="Coffee Name"
                 />
               </Tooltip>
@@ -202,7 +219,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   onChange={handleChange}
                   fullWidth
                   margin="normal"
-                  variant="outlined"
+                  variant="filled"
                   aria-label="Coffee Roaster"
                 />
               </Tooltip>
@@ -211,7 +228,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
               <Box
                 sx={{
                   borderRadius: 1,
-                  backgroundColor: 'none',
+                  backgroundColor: 'transparent',
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
                   gap: 1,
@@ -317,7 +334,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
               {/* Acidity and Mouth Feel side by side */}
               <Box
-                background="background.default"
                 sx={{
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
@@ -368,7 +384,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 </Tooltip>
               </Box>
 
-              <FormControl fullWidth margin="normal" sx={{ color: theme.palette.light, gap: 0.5 }}>
+              <FormControl fullWidth margin="normal" sx={{ gap: 0.5 }}>
                 <FormLabel>
                   <Typography variant="h6">Overall Rating</Typography>
                 </FormLabel>
@@ -378,7 +394,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   placement="top"
                 >
                   <Rating
-                    color={theme.palette.accent.main}
                     name="rating"
                     value={form.rating}
                     precision={0.5}
@@ -388,10 +403,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     onChange={(_, value) => setForm((prev) => ({ ...prev, rating: value || 1 }))}
                   />
                 </Tooltip>
-                <FormHelperText color={theme.palette.light.main}>
-                  <Typography tm="small" variant="body2">
-                    {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
-                  </Typography>
+                <FormHelperText>
+                  {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
                 </FormHelperText>
               </FormControl>
             </Box>
@@ -400,18 +413,17 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
           {/* Tasting Notes - Full Width */}
           <Grid item xs={12}>
             <Box
-              backgroundColor={
-                theme.palette.mode === 'dark'
-                  ? alpha(theme.palette.secondary.main, 0.2)
-                  : theme.palette.background.default
-              }
               sx={{
                 p: 2,
                 borderRadius: 1,
+                backgroundColor:
+                  theme.palette.mode === 'dark'
+                    ? alpha(theme.palette.secondary.main, 0.2)
+                    : theme.palette.background.default,
               }}
             >
               <Typography
-                color={theme.palette.mode === 'dark' ? 'light.main' : 'primary.main'}
+                color={'light.main'}
                 variant="h3"
                 sx={{ fontWeight: 700 }}
               >
@@ -421,8 +433,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
               <FormControl fullWidth required>
                 <FormLabel sx={{ mb: 1 }}>
                   <Typography
-                    color={theme.palette.mode === 'dark' ? 'light.main' : 'primary.main'}
-                    variant="body"
+                    color={'light.main'}
+                    variant="body1"
                   >
                     Select at least one tasting note
                   </Typography>
@@ -450,17 +462,16 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                           onChange={handleTastingNotesChange}
                           size="small"
                           sx={{
-                            color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.main',
+                            color: 'light.main',
                           }}
                         />
                       }
                       label={
                         <Typography
-                          variant="body"
+                          variant="body1"
                           sx={{
-                            fontSize: '1rem',
-                            color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.main',
-                            fontWeight: 650,
+                            color: 'light.main',
+                            fontWeight: 600,
                             textTransform: 'capitalize',
                           }}
                         >
@@ -483,18 +494,17 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
           {/* Notes and Actions */}
           <Grid item xs={12}>
             <Box
-              backgroundColor={
-                theme.palette.mode === 'dark'
-                  ? alpha(theme.palette.secondary.main, 0.2)
-                  : 'light.main'
-              }
               sx={{
                 p: 2,
                 borderRadius: 1,
+                backgroundColor:
+                  theme.palette.mode === 'dark'
+                    ? alpha(theme.palette.secondary.main, 0.2)
+                    : theme.palette.light.main,
               }}
             >
               <Typography
-                color={theme.palette.mode === 'dark' ? 'light.main' : 'primary.main'}
+                color={'light.main'}
                 variant="h3"
               >
                 Additional Details
@@ -508,7 +518,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 rows={4}
                 fullWidth
                 margin="normal"
-                variant="outlined"
+                variant="filled"
                 aria-label="Additional Notes"
                 inputProps={{ maxLength: 500 }}
                 placeholder="Share your thoughts about this coffee experience..."
@@ -524,42 +534,12 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   pt: 2,
                 }}
               >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      title="Make this tasting public"
-                      name="isPublic"
-                      checked={form.isPublic}
-                      onChange={handleChange}
-                      size="small"
-                      sx={{
-                        '&.Mui-checked': {
-                          color:
-                            theme.palette.mode === 'dark'
-                              ? theme.palette.light.main
-                              : theme.palette.primary.main,
-                        },
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography
-                      sx={{
-                        color:
-                          theme.palette.mode === 'dark'
-                            ? theme.palette.light.main
-                            : theme.palette.primary.main,
-                      }}
-                    >
-                      want to make this tasting public?
-                    </Typography>
-                  }
-                />
+                <Box />
                 <Box sx={{ display: 'flex', gap: 2 }}>
                   {onClose && (
                     <Button
                       onClick={onClose}
-                      variant="outlined"
+                      variant="filled"
                       size="large"
                       sx={{
                         minWidth: '8rem',
@@ -617,9 +597,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                           fontSize: '1.1rem',
                           fontWeight: 600,
                         }}
-                        aria-label={initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                        aria-label="Add Tasting"
                       >
-                        {initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                        Add Tasting
                       </Button>
                     </span>
                   </Tooltip>

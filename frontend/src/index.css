@@ -1,0 +1,18 @@
+/* MapLibre popup — dark mode */
+.map-popup.dark .maplibregl-popup-content {
+  background-color: #0a1f33;
+  color: #ebf2fa;
+}
+
+.map-popup.dark.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: #0a1f33;
+}
+.map-popup.dark.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: #0a1f33;
+}
+.map-popup.dark.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: #0a1f33;
+}
+.map-popup.dark.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: #0a1f33;
+}

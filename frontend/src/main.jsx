@@ -2,6 +2,7 @@ import React from 'react';
 import MuiTheme from './components/layout/MuiTheme.jsx';
 import App from './App.jsx';
 import './styles/fontLoader.js';
+import './index.css';
 import ReactDOM from 'react-dom/client';
 
 if (process.env.NODE_ENV !== 'production') {

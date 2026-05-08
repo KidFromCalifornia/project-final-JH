@@ -47,7 +47,7 @@ const DesktopNavBar = ({
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
   const darkMode = themeMode === 'dark';
-  const navIconColor = theme.palette.light?.main || '#fff';
+  const navIconColor = theme.palette.light.main;
 
   // Store state
   const allCafes = useCafeStore((state) => state.cafes);
@@ -59,10 +59,12 @@ const DesktopNavBar = ({
   const clearFilters = useCafeStore((state) => state.clearFilters);
 
   // Computed values
-  const cafes = searchResults.length > 0 ? searchResults : allCafes;
-  const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
+  const cafes = searchResults && searchResults.length > 0 ? searchResults : allCafes || [];
+  const categories = Array.from(
+    new Set((cafes || []).map((cafe) => cafe.category).filter(Boolean))
+  );
   const neighborhoods = Array.from(
-    new Set(cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
+    new Set((cafes || []).map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
   );
 
   let isAdmin = false;
@@ -107,7 +109,7 @@ const DesktopNavBar = ({
             justifyContent: 'space-between',
             backgroundColor: theme.palette.primary.main,
             boxShadow: `0 0.125rem 0.5rem ${theme.palette.secondary.main}40`,
-            color: theme.palette.light?.main || '#fff',
+            color: theme.palette.light.main,
           }}
         >
           <NavigationHeader

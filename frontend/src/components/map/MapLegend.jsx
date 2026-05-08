@@ -93,9 +93,7 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
         }}
       >
         <Typography
-          variant="Subtitle1"
-          color={theme.palette.text.secondary}
-          fontSize={theme.typography.h3.fontSize}
+          variant="subtitle1"
           sx={{
             color:
               theme.palette.mode === 'dark' ? theme.palette.light.main : theme.palette.primary.main,
@@ -148,26 +146,27 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
               <ListItemText
                 primary={
                   <Typography
-                    variant="subtitle3"
-                    fontWeight="550"
-                    color={
-                      theme.palette.mode === 'dark'
-                        ? theme.palette.light.main
-                        : theme.palette.primary.main
-                    }
+                    variant="subtitle2"
+                    fontWeight={600}
+                    sx={{
+                      color:
+                        theme.palette.mode === 'dark'
+                          ? theme.palette.light.main
+                          : theme.palette.primary.main,
+                    }}
                   >
                     {item.label}
                   </Typography>
                 }
                 secondary={
                   <Typography
-                    variant="body2"
-                    fontSize="1rem"
-                    color={
-                      theme.palette.mode === 'dark'
-                        ? theme.palette.light.main
-                        : theme.palette.primary.main
-                    }
+                    variant="body1"
+                    sx={{
+                      color:
+                        theme.palette.mode === 'dark'
+                          ? theme.palette.light.main
+                          : theme.palette.primary.main,
+                    }}
                   >
                     {item.description}
                   </Typography>
@@ -188,10 +187,9 @@ const MapLegend = ({ open = false, onClose = () => {} }) => {
           }}
         >
           <Typography
-            variant="caption"
-            fontSize="1rem"
-            fontWeight={550}
-            color={theme.palette.mode === 'dark' ? 'light.main' : 'light.main'}
+            variant="body2"
+            fontWeight={600}
+            color="light.main"
           >
             <strong>Tip:</strong> Too many options? Use the filters in the menu to specify what
             you&apos;re looking for.

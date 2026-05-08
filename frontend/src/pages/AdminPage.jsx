@@ -42,11 +42,8 @@ const FEATURES = [
 ];
 
 const buttonStyles = {
-  minWidth: '200px',
-  py: 1.5,
-  fontSize: '1rem',
+  minWidth: '120px',
   fontWeight: 600,
-  borderRadius: 2,
 };
 
 const formatValue = (key, value) => {
@@ -163,12 +160,14 @@ const CafeEditForm = ({ editData, setEditData }) => (
   <Stack spacing={2}>
     <Typography variant="subtitle1" fontWeight={600}>Basic Info</Typography>
     <TextField
+      variant="filled"
       fullWidth
       label="Name"
       value={editData.name || ''}
       onChange={(e) => setEditData({ ...editData, name: e.target.value })}
     />
     <TextField
+      variant="filled"
       select
       fullWidth
       label="Category"
@@ -180,6 +179,7 @@ const CafeEditForm = ({ editData, setEditData }) => (
       <MenuItem value="thirdwave">Third Wave</MenuItem>
     </TextField>
     <TextField
+      variant="filled"
       fullWidth
       multiline
       rows={3}
@@ -188,6 +188,7 @@ const CafeEditForm = ({ editData, setEditData }) => (
       onChange={(e) => setEditData({ ...editData, description: e.target.value })}
     />
     <TextField
+      variant="filled"
       fullWidth
       label="Website or Instagram"
       value={editData.website || ''}
@@ -196,12 +197,14 @@ const CafeEditForm = ({ editData, setEditData }) => (
 
     <Typography variant="subtitle1" fontWeight={600}>Location</Typography>
     <TextField
+      variant="filled"
       fullWidth
       label="Address"
       value={editData.locations?.[0]?.address || ''}
       onChange={(e) => updateLocation(editData, setEditData, 'address', e.target.value)}
     />
     <TextField
+      variant="filled"
       select
       fullWidth
       label="Neighbourhood"
@@ -214,19 +217,85 @@ const CafeEditForm = ({ editData, setEditData }) => (
       ))}
     </TextField>
     <TextField
+      variant="filled"
       fullWidth
       label="Location Note"
       placeholder="e.g. Second floor, ring the bell"
       value={editData.locations?.[0]?.locationNote || ''}
       onChange={(e) => updateLocation(editData, setEditData, 'locationNote', e.target.value)}
     />
+    <Box sx={{ display: 'flex', gap: 2 }}>
+      <TextField
+      variant="filled"
+        fullWidth
+        label="Latitude"
+        type="number"
+        placeholder="59.3293"
+        value={editData.locations?.[0]?.coordinates?.coordinates?.[1] ?? ''}
+        onChange={(e) => {
+          const lat = parseFloat(e.target.value);
+          const lng = editData.locations?.[0]?.coordinates?.coordinates?.[0] ?? '';
+          const locations = editData.locations ? [...editData.locations] : [{}];
+          locations[0] = {
+            ...locations[0],
+            coordinates: {
+              type: 'Point',
+              coordinates: [lng === '' ? 0 : lng, isNaN(lat) ? 0 : lat],
+            },
+          };
+          setEditData({ ...editData, locations });
+        }}
+        helperText="e.g. 59.3293"
+      />
+      <TextField
+      variant="filled"
+        fullWidth
+        label="Longitude"
+        type="number"
+        placeholder="18.0686"
+        value={editData.locations?.[0]?.coordinates?.coordinates?.[0] ?? ''}
+        onChange={(e) => {
+          const lng = parseFloat(e.target.value);
+          const lat = editData.locations?.[0]?.coordinates?.coordinates?.[1] ?? '';
+          const locations = editData.locations ? [...editData.locations] : [{}];
+          locations[0] = {
+            ...locations[0],
+            coordinates: {
+              type: 'Point',
+              coordinates: [isNaN(lng) ? 0 : lng, lat === '' ? 0 : lat],
+            },
+          };
+          setEditData({ ...editData, locations });
+        }}
+        helperText="e.g. 18.0686"
+      />
+    </Box>
 
-    <Typography variant="subtitle1" fontWeight={600}>Images</Typography>
+    <Typography variant="subtitle1" fontWeight={600}>Media</Typography>
     <TextField
+      variant="filled"
+      fullWidth
+      label="Icon URL (SVG)"
+      placeholder="https://example.com/logo.svg"
+      value={editData.icon || ''}
+      onChange={(e) => setEditData({ ...editData, icon: e.target.value })}
+      helperText="SVG logo shown on the map marker or cafe card"
+    />
+    <TextField
+      variant="filled"
+      fullWidth
+      label="Background Image URL"
+      placeholder="https://example.com/cover.jpg"
+      value={editData.image || ''}
+      onChange={(e) => setEditData({ ...editData, image: e.target.value })}
+      helperText="Cover/background image for the cafe card"
+    />
+    <TextField
+      variant="filled"
       fullWidth
       multiline
-      rows={3}
-      label="Image URLs"
+      rows={2}
+      label="Additional Image URLs"
       placeholder="One URL per line"
       value={(editData.images || []).join('\n')}
       onChange={(e) =>
@@ -235,7 +304,7 @@ const CafeEditForm = ({ editData, setEditData }) => (
           images: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
         })
       }
-      helperText="Paste one image URL per line"
+      helperText="Extra images, one URL per line"
     />
 
     <FormControlLabel
@@ -523,12 +592,14 @@ const AdminPage = () => {
             {editType === 'tasting' && (
               <Stack spacing={2}>
                 <TextField
+      variant="filled"
                   fullWidth
                   label="Coffee Name"
                   value={editData.coffeeName || ''}
                   onChange={(e) => setEditData({ ...editData, coffeeName: e.target.value })}
                 />
                 <TextField
+      variant="filled"
                   fullWidth
                   label="Rating"
                   type="number"
@@ -537,6 +608,7 @@ const AdminPage = () => {
                   onChange={(e) => setEditData({ ...editData, rating: e.target.value })}
                 />
                 <TextField
+      variant="filled"
                   fullWidth
                   multiline
                   rows={3}

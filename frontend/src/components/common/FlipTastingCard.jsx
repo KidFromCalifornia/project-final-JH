@@ -25,6 +25,7 @@ import {
   TastingNotesContainer,
 } from '../../styles/FlipTastingCard.styles';
 
+
 const toTitleCase = (str) => {
   if (!str) return '';
   return str
@@ -33,7 +34,7 @@ const toTitleCase = (str) => {
     .join(' ');
 };
 
-const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLoggedIn }) => {
+const FlipTastingCard = ({ tasting }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isFlipped, setIsFlipped] = useState(false);
@@ -150,19 +151,17 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
             <Typography
               fontFamily="font.main"
               textTransform={'uppercase'}
-              fontSize={16}
               sx={{
                 mb: 0,
                 color: theme.palette.text.primary,
                 fontWeight: 500,
               }}
             >
-              {tasting.userId?.username || 'Anonymous'}
+              {tasting.username || 'Anonymous'}
             </Typography>
             <Typography
               sx={{
                 color: theme.palette.text.secondary,
-                fontSize: '1rem',
               }}
             >
               {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
@@ -194,7 +193,6 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
             variant="h4"
             component="h2"
             sx={{
-              color: theme.palette.card.color,
               fontWeight: theme.typography.fontWeightBold,
               textAlign: 'center',
             }}
@@ -213,15 +211,14 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
               <Box>
                 <Typography
                   textTransform={'uppercase'}
-                  variant="body"
+                  variant="body1"
                   sx={{
                     fontWeight: 'bold',
-                    color: theme.palette.card?.color || '#ffffff',
                   }}
                 >
                   Roaster:
                 </Typography>
-                <Typography variant="body2" color="card.color" sx={{ pl: 1 }}>
+                <Typography variant="body2" sx={{ pl: 1 }}>
                   {toTitleCase(tasting.coffeeRoaster)}
                 </Typography>
               </Box>
@@ -234,12 +231,11 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                   variant="body2"
                   sx={{
                     fontWeight: 'bold',
-                    color: theme.palette.card?.color || theme.palette.light?.main || '#ffffff',
                   }}
                 >
                   Brew Method:
                 </Typography>
-                <Typography variant="body2" color="card.color" sx={{ pl: 1 }}>
+                <Typography variant="body2" sx={{ pl: 1 }}>
                   {toTitleCase(tasting.brewMethod)}
                 </Typography>
               </Box>
@@ -260,13 +256,12 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                     variant="caption"
                     sx={{
                       fontWeight: 'bold',
-                      color: theme.palette.card?.color || '#ffffff',
                       display: 'block',
                     }}
                   >
                     Roast:
                   </Typography>
-                  <Typography variant="body2" color="card.color">
+                  <Typography variant="body2">
                     {toTitleCase(tasting.roastLevel)}
                   </Typography>
                 </Box>
@@ -279,13 +274,12 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                     variant="caption"
                     sx={{
                       fontWeight: 'bold',
-                      color: theme.palette.card?.color || theme.palette.light?.main || '#ffffff',
                       display: 'block',
                     }}
                   >
                     Acidity:
                   </Typography>
-                  <Typography variant="body2" color="card.color">
+                  <Typography variant="body2">
                     {toTitleCase(tasting.acidity)}
                   </Typography>
                 </Box>
@@ -298,13 +292,12 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                     variant="caption"
                     sx={{
                       fontWeight: 'bold',
-                      color: theme.palette.card?.color || theme.palette.light?.main || '#ffffff',
                       display: 'block',
                     }}
                   >
                     Body:
                   </Typography>
-                  <Typography variant="body2" color="card.color ">
+                  <Typography variant="body2">
                     {toTitleCase(tasting.mouthFeel)}
                   </Typography>
                 </Box>
@@ -320,16 +313,16 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
             sx={{
               mt: 'auto',
               pt: 2,
-              borderTop: `1px solid ${theme.palette.light.main}`,
+              borderTop: `1px solid ${theme.palette.divider}`,
               textAlign: 'center', // CENTERED footer
             }}
           >
             <Typography
               variant="caption"
-              color="color.secondary"
+              color="text.secondary"
               sx={{ display: 'block', mb: 0.5 }}
             >
-              <strong>{toTitleCase(cafe.name) || 'Unknown Cafe'}</strong>
+              <strong>{toTitleCase(cafe.name) || 'can not retrieve cafe name'}</strong>
               {cafe.locations?.[0]?.neighborhood &&
                 ` • ${toTitleCase(cafe.locations[0].neighborhood)}`}
             </Typography>
@@ -383,7 +376,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                 theme.palette.mode === 'dark'
                   ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
                   : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
-              color: theme.palette.card?.color || theme.palette.light?.main || '#ffffff',
+              color: theme.palette.card.main,
             }}
           >
             {backContent}

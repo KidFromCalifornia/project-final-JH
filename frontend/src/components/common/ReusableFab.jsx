@@ -24,7 +24,7 @@ const ReusableFab = ({
     <Tooltip title={tooltipTitle} arrow placement={placement}>
       <Fab
         onClick={onClick}
-        color={isDarkMode ? 'primary' : 'primary'}
+        color="primary"
         aria-label={ariaLabel}
         sx={{
           color: theme.palette.light.main,

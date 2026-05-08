@@ -30,11 +30,10 @@ const cafeSchema = new mongoose.Schema(
           type: {
             type: String,
             enum: ['Point'],
-            default: 'Point',
           },
           coordinates: {
             type: [Number],
-            required: false,
+            default: undefined,
           },
         },
         locationNote: {
@@ -79,6 +78,14 @@ const cafeSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    icon: {
+      type: String,
+      trim: true,
+    },
+    image: {
+      type: String,
+      trim: true,
+    },
     images: [String],
     isApproved: {
       type: Boolean,
@@ -100,7 +107,7 @@ const cafeSchema = new mongoose.Schema(
   }
 );
 
-cafeSchema.index({ 'locations.coordinates': '2dsphere' });
+cafeSchema.index({ 'locations.coordinates': '2dsphere' }, { sparse: true });
 
-export const Cafe = mongoose.model('Cafes', cafeSchema);
+export const Cafe = mongoose.model('Cafe', cafeSchema);
 export const CafeSubmission = mongoose.model('CafeSubmission', cafeSchema);

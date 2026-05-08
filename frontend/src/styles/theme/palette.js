@@ -1,12 +1,9 @@
-import { WorkHistoryTwoTone } from '@mui/icons-material';
-import { colors } from '@mui/material';
-
 // Theme configuration constants
 export const themeConfig = {
   button: {
     background: '#022d58ff',
     colors: '#ffffff',
-    borderRadius: 8, // 0.5rem converted to pixels
+    borderRadius: 20, // rounded pill-style buttons
     shadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
     spacing: '0.5rem',
     hover: '#1c5ea8',
@@ -67,6 +64,12 @@ export const createPalette = (themeMode, colors, colorsDarkmode) => {
       disabled: themeMode === 'dark' ? '#3b434f4c' : 'rgba(0,0,0,0.26)',
       focus: themeMode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.12)',
       active: themeMode === 'dark' ? 'rgba(255,255,255,0.54)' : 'rgba(0,0,0,0.54)',
+    },
+
+    text: {
+      primary: isDark ? colorsDarkmode.mainText : colors.mainText,
+      secondary: isDark ? colorsDarkmode.textMuted : colors.textMuted,
+      disabled: isDark ? 'rgba(235,242,250,0.38)' : 'rgba(10,31,51,0.38)',
     },
 
     tonalOffset: { light: 0.2, main: 0, dark: 0.15 },

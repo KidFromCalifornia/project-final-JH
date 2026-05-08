@@ -1,443 +1,439 @@
 
+const createComponents = (customTheme, themeMode) => {
+  const isDark = themeMode === 'dark';
+  const c = isDark ? customTheme.colorsDarkmode : customTheme.colors;
 
-const createComponents = (customTheme) => ({
-  MuiCssBaseline: {
-    styleOverrides: () => ({
-      // Apply border-box to all elements for consistent sizing
-      '*': {
-        boxSizing: 'border-box',
-      },
-      body: {
-        color: customTheme.colors.mainText,
-        WebkitFontSmoothing: 'antialiased',
-        MozOsxFontSmoothing: 'grayscale',
-        scrollBehavior: 'smooth',
-        // Prevent duplicate scrollbars
-        overflow: 'hidden',
-        height: '100vh',
-        margin: 0,
-        padding: 0,
-      },
-      html: {
-        // Prevent duplicate scrollbars
-        overflow: 'hidden',
-        height: '100vh',
-        margin: 0,
-        padding: 0,
-      },
-      // Main content wrapper should handle scrolling
-      '#root': {
-        height: '100vh',
-        overflow: 'auto',
-      },
-      a: {
-        color: customTheme.colors.accentStrong || customTheme.colors.light,
-        textDecorationColor: customTheme.colors.accentStrong || customTheme.colors.accent,
-        transition: 'color 0.2s ease-in-out',
-        '&:hover': {
-          color: customTheme.colors.primary,
+  return {
+    MuiCssBaseline: {
+      styleOverrides: () => ({
+        '*': {
+          boxSizing: 'border-box',
         },
-      },
-      // Stockholm Type font fallbacks
-      '.wf-stockholmtype-n7-inactive h1, .wf-stockholmtype-n4-inactive h1': {
-        fontFamily: 'Verdana, Arial, sans-serif !important',
-      },
-      '.wf-stockholmtype-n7-inactive h2, .wf-stockholmtype-n4-inactive h2': {
-        fontFamily: 'Verdana, Arial, sans-serif !important',
-      },
-      '.wf-stockholmtype-n7-inactive h3, .wf-stockholmtype-n4-inactive h3': {
-        fontFamily: 'Verdana, Arial, sans-serif !important',
-      },
-      '.wf-stockholmtype-loading h1, .wf-stockholmtype-loading h2, .wf-stockholmtype-loading h3': {
-        fontFamily: 'Verdana, Arial, sans-serif !important',
-      },
-      // Custom scrollbar styling - only for main content
-      '#root::-webkit-scrollbar': {
-        width: '0.75rem',
-      },
-      '#root::-webkit-scrollbar-track': {
-        backgroundColor: customTheme.colors.textMuted,
-        borderRadius: '0.375rem',
-      },
-      '#root::-webkit-scrollbar-thumb': {
-        backgroundColor: customTheme.colors.secondary,
-        borderRadius: '0.375rem',
-        '&:hover': {
-          backgroundColor: customTheme.colors.primary,
+        body: {
+          color: c.mainText,
+          WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
+          scrollBehavior: 'smooth',
+          overflow: 'hidden',
+          height: '100vh',
+          margin: 0,
+          padding: 0,
         },
-      },
-      // Hide scrollbars on fixed/absolute elements
-      '[style*="position: fixed"]::-webkit-scrollbar, [style*="position: absolute"]::-webkit-scrollbar':
-        {
-          display: 'none',
+        html: {
+          overflow: 'hidden',
+          height: '100vh',
+          margin: 0,
+          padding: 0,
         },
-      // Hide scrollbars on dialogs and modals
-      '.MuiDialog-root::-webkit-scrollbar, .MuiDrawer-root::-webkit-scrollbar, .MuiPopover-root::-webkit-scrollbar, .MuiMenu-root::-webkit-scrollbar':
-        {
-          display: 'none',
+        '#root': {
+          height: '100vh',
+          overflow: 'auto',
         },
-      // Prevent body scrolling when modals are open
-      '.MuiDialog-root body, .MuiDrawer-root body': {
-        color: customTheme.colors.light,
-        overflow: 'hidden !important',
-      },
-    }),
-  },
-  MuiTooltip: {
-    styleOverrides: {
-      tooltip: {
-        backgroundColor: 'hsla(222, 95%, 8%, 0.90)',
-        fontSize: '0.875rem',
-        borderRadius: customTheme.borderRadius / 2,
-      },
-    },
-  },
-
-  MuiChip: {
-    styleOverrides: {
-      root: {
-        backgroundColor: 'transparent',
-        borderRadius: customTheme.borderRadius / 2,
-        fontWeight: 500,
-      },
-    },
-  },
-
-  MuiDialog: {
-    styleOverrides: {
-      paper: {
-        borderRadius: customTheme.borderRadius,
-        color: customTheme.colors.light,
-        // Prevent dialog scrollbars
-        maxHeight: '90vh',
-        overflow: 'auto',
-      },
-    },
-  },
-  MuiButton: {
-    styleOverrides: {
-      root: ({ theme, ownerState }) => ({
-        borderRadius: customTheme.button.borderRadius,
-        fontWeight: 500,
-        textTransform: 'none',
-        boxShadow: 'none',
-        outline: 'none',
-        minHeight: { xs: 48, sm: 42 },
-        transition: 'all 0.2s ease-in-out',
-        padding: '8px 24px',
-
-        // Consistent hover effects
-        '&:hover': {
-          transform: 'translateY(-1px)',
-          boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-        },
-
-        // Active state
-        '&:active': {
-          transform: 'translateY(0)',
-          boxShadow: 'none',
-        },
-
-        // Focus state
-        '&:focus': {
-          outline: 'none',
-          boxShadow: `0 0 0 2px ${customTheme.colors.primary}33`,
-        },
-
-        // Disabled state
-        '&.Mui-disabled': {
-          backgroundColor: `${customTheme.colors.textMuted}40`,
-          color: customTheme.colors.textMuted,
-        },
-
-        // Contained variant (default)
-...(ownerState.variant === 'contained' && {
-  backgroundColor: customTheme.colors.primary,
-  color: customTheme.colors.light,
-  fontWeight: 600,
-  border: theme.palette.mode === "dark" 
-    ? `2px solid ${customTheme.colors.light}` 
-    : `2px solid ${customTheme.colors.secondary}`,
-  boxShadow: `0 0.125rem 0.5rem ${customTheme.colors.secondary}40`,
-  '&:hover': {
-    backgroundColor: customTheme.colors.secondary,
-    transform: 'scale(1.05)',
-  },
-  '&:focus': {
-    boxShadow: `inset 0 0 0 2px ${customTheme.colors.primary}33`,
-    transform: 'scale(1.07)',
-  }
-}),
-
-        // Outlined variant
-        ...(ownerState.variant === 'outlined' && {
-          backgroundColor: 'transparent',
-          color: customTheme.colors.primary,
-          border: `2px solid ${customTheme.colors.primary}`,
+        a: {
+          color: c.accentStrong || c.light,
+          textDecorationColor: c.accentStrong || c.accent,
+          transition: 'color 0.2s ease-in-out',
           '&:hover': {
-            backgroundColor: `${customTheme.colors.primary}10`,
-            borderColor: customTheme.colors.primary,
-            color: customTheme.colors.primary,
+            color: c.primary,
           },
-        }),
-
-        // Text variant
-        ...(ownerState.variant === 'text' && {
-          backgroundColor: 'transparent',
-          color: customTheme.colors.primary,
+        },
+        '.wf-stockholmtype-n7-inactive h1, .wf-stockholmtype-n4-inactive h1': {
+          fontFamily: 'Verdana, Arial, sans-serif !important',
+        },
+        '.wf-stockholmtype-n7-inactive h2, .wf-stockholmtype-n4-inactive h2': {
+          fontFamily: 'Verdana, Arial, sans-serif !important',
+        },
+        '.wf-stockholmtype-n7-inactive h3, .wf-stockholmtype-n4-inactive h3': {
+          fontFamily: 'Verdana, Arial, sans-serif !important',
+        },
+        '.wf-stockholmtype-loading h1, .wf-stockholmtype-loading h2, .wf-stockholmtype-loading h3': {
+          fontFamily: 'Verdana, Arial, sans-serif !important',
+        },
+        '#root::-webkit-scrollbar': {
+          width: '0.75rem',
+        },
+        '#root::-webkit-scrollbar-track': {
+          backgroundColor: c.textMuted,
+          borderRadius: '0.375rem',
+        },
+        '#root::-webkit-scrollbar-thumb': {
+          backgroundColor: c.secondary,
+          borderRadius: '0.375rem',
           '&:hover': {
-            backgroundColor: `${customTheme.colors.primary}10`,
-            transform: 'none',
+            backgroundColor: c.primary,
+          },
+        },
+        '[style*="position: fixed"]::-webkit-scrollbar, [style*="position: absolute"]::-webkit-scrollbar':
+          { display: 'none' },
+        '.MuiDialog-root::-webkit-scrollbar, .MuiDrawer-root::-webkit-scrollbar, .MuiPopover-root::-webkit-scrollbar, .MuiMenu-root::-webkit-scrollbar':
+          { display: 'none' },
+        '.MuiDialog-root body, .MuiDrawer-root body': {
+          color: c.light,
+          overflow: 'hidden !important',
+        },
+      }),
+    },
+
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: 'hsla(222, 95%, 8%, 0.90)',
+          fontSize: '0.875rem',
+          borderRadius: customTheme.borderRadius / 2,
+        },
+      },
+    },
+
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'transparent',
+          borderRadius: customTheme.borderRadius / 2,
+          fontWeight: 500,
+        },
+      },
+    },
+
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          borderRadius: customTheme.borderRadius,
+          color: c.light,
+          maxHeight: '90vh',
+          overflow: 'auto',
+        },
+      },
+    },
+
+    MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
+      styleOverrides: {
+        root: ({ theme, ownerState }) => ({
+          borderRadius: customTheme.button.borderRadius,
+          fontWeight: 600,
+          textTransform: 'none',
+          boxShadow: 'none',
+          outline: 'none',
+          minHeight: 40,
+          transition: 'all 0.2s ease-in-out',
+          padding: '8px 20px',
+
+          '&:hover': {
+            transform: 'translateY(-1px)',
+            boxShadow: '0 3px 6px rgba(0,0,0,0.18)',
+          },
+          '&:active': {
+            transform: 'translateY(0)',
             boxShadow: 'none',
           },
+          '&:focus-visible': {
+            outline: `2px solid ${c.accent}`,
+            outlineOffset: 2,
+          },
+          '&.Mui-disabled': {
+            backgroundColor: `${c.textMuted}40`,
+            color: c.textMuted,
+          },
+
+          // Contained: explicit colours — always readable regardless of container
+          ...(ownerState.variant === 'contained' && {
+            backgroundColor: c.primary,
+            color: c.light,
+            border: `1px solid ${c.secondary}`,
+            '&:hover': {
+              backgroundColor: c.secondary,
+              transform: 'translateY(-1px)',
+              boxShadow: '0 3px 6px rgba(0,0,0,0.18)',
+            },
+          }),
+
+          // Outlined / text: inherit colour from container so they work on
+          // both the light page background AND inside dark Paper/Dialog
+          ...(ownerState.variant === 'outlined' && {
+            color: 'inherit',
+            border: '1.5px solid currentColor',
+            '&:hover': {
+              backgroundColor: theme.palette.action.hover,
+              transform: 'translateY(-1px)',
+            },
+          }),
+
+          ...(ownerState.variant === 'text' && {
+            color: 'inherit',
+            '&:hover': {
+              backgroundColor: theme.palette.action.hover,
+              transform: 'none',
+              boxShadow: 'none',
+            },
+          }),
+
+          '&.tasting-toggle': {
+            minWidth: '8rem',
+            whiteSpace: 'nowrap',
+          },
         }),
-
-        // Custom class modifiers
-        '&.tasting-toggle': {
-          minWidth: '8.75rem',
-          whiteSpace: 'nowrap',
-        },
-        '&.load-more': {
-          minWidth: '200px',
-          fontWeight: 600,
-        },
-      }),
-    },
-  },
-
-  MuiCard: {
-    styleOverrides: {
-      root: ({ theme }) => ({
-        borderRadius: customTheme.borderRadius,
-        boxShadow: customTheme.shadow,
-        transition: 'all 0.3s ease-in-out',
-        border: 'none',
-        '&:hover': {
-          transform: 'translateY(-0.125rem)',
-          boxShadow: 'none',
-        },
-      }),
-    },
-  },
-
-  MuiAppBar: {
-    styleOverrides: {
-      root: ({ theme }) => ({
-        border: 'none',
-        outline: 'none',
-        borderRadius: 0,
-        boxShadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
-        backdropFilter: 'blur(0.625rem)',
-        backgroundColor: `${customTheme.colors.primary}cc`,
-        borderBottom: `0.0625rem solid ${customTheme.colors.secondary}`,
-        color: customTheme.colors.light || '#fff',
-      }),
-    },
-  },
-
-  MuiDrawer: {
-    styleOverrides: {
-      paper: ({ theme }) => ({
-        borderRight: `0.0625rem solid ${customTheme.colors.secondary}`,
-        borderRadius: 0,
-        backdropFilter: 'blur(0.625rem)',
-        backgroundColor: `${customTheme.colors.primary}f5`,
-        color: customTheme.colors.light || '#fff',
-        // Prevent drawer scrollbars
-        overflow: 'hidden',
-      }),
-    },
-  },
-  MuiMenuItem: {
-    styleOverrides: {
-      root: {
-        fontColor: customTheme.colors.light || customTheme.colors.versoText,
-        '&:hover': {
-          color: customTheme.colors.accent,
-        },
       },
     },
-  },
 
-  MuiTextField: {
-    styleOverrides: {
-      root: {
-        '& .MuiOutlinedInput-root': {
+    MuiCard: {
+      styleOverrides: {
+        root: {
           borderRadius: customTheme.borderRadius,
-          backgroundColor: customTheme.colors.background,
-          transition: 'all 0.4s ease-in-out',
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: customTheme.colors.secondary,
-            borderWidth: 2,
-          },
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: customTheme.colors.secondary,
-            fontWeight: 600,
-            borderWidth: 2,
-          },
-        },
-        '& .MuiInputLabel-root': {
-          color: customTheme.colors.secondary,
-          fontWeight: 600,
-          '&.Mui-focused': {
-            color: customTheme.colors.versoText || customTheme.colors.secondary,
-            fontWeight: 600,
-            backgroundColor: customTheme.colors.secondary,
-            borderRadius: customTheme.borderRadius / 2,
-            padding: '1px 12px',
-          },
-        },
-        '& .MuiOutlinedInput-input': {
-          color: customTheme.colors.mainText,
-          padding: '16px 14px',
-        },
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: customTheme.colors.secondary,
-        },
-      },
-    },
-  },
-
-  MuiPaper: {
-    styleOverrides: {
-      root: {
-        borderRadius: 12,
-
-        color: customTheme.colors.light,
-        boxShadow: customTheme.shadow,
-        transition: 'box-shadow 0.2s ease-in-out',
-        '&:hover': {
-          boxShadow: `0 4px 16px rgba(0,0,0,0.15)`,
-        },
-      },
-      elevation1: {
-        boxShadow: `0 2px 8px rgba(0,0,0,0.08)`,
-      },
-      elevation2: {
-        boxShadow: `0 4px 12px rgba(0,0,0,0.12)`,
-      },
-      elevation3: {
-        boxShadow: `0 6px 16px rgba(0,0,0,0.15)`,
-      },
-    },
-  },
-
-  MuiSelect: {
-    styleOverrides: {
-      root: {
-        borderRadius: customTheme.borderRadius,
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: customTheme.colors.textMuted,
-        },
-        '&:hover .MuiOutlinedInput-notchedOutline': {
-          borderColor: customTheme.colors.primary,
-        },
-        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-          borderColor: customTheme.colors.primary,
-        },
-      },
-    },
-  },
-
-  MuiFormControl: {
-    styleOverrides: {
-      root: {
-        '& .MuiFormLabel-root': {
-          color: customTheme.colors.primary,
-          fontWeight: 500,
-          '&.Mui-focused': {
-            color: customTheme.colors.secondary,
+          boxShadow: customTheme.shadow,
+          transition: 'all 0.3s ease-in-out',
+          border: 'none',
+          '&:hover': {
+            transform: 'translateY(-0.125rem)',
+            boxShadow: 'none',
           },
         },
       },
     },
-  },
 
-  MuiFormHelperText: {
-    styleOverrides: {
-      root: {
-        color: customTheme.colors.secondary,
-        marginLeft: 0,
-        marginTop: 4,
-      },
-    },
-  },
-
-  MuiInputAdornment: {
-    styleOverrides: {
-      root: {
-        color: customTheme.colors.secondary,
-      },
-    },
-  },
-
-  MuiCheckbox: {
-    styleOverrides: {
-      root: {
-        color: customTheme.colors.secondary,
-        borderRadius: 4,
-        '&.Mui-checked': {
-          color: customTheme.colors.primary,
-        },
-        '&:hover': {
-          backgroundColor: `${customTheme.colors.primary}0a`,
-        },
-        '&.Mui-focusVisible': {
-          outline: `2px solid ${customTheme.colors.primary}`,
-          outlineOffset: 2,
-        },
-        '& .MuiSvgIcon-root': {
-          fontSize: '1.25rem',
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          border: 'none',
+          outline: 'none',
+          borderRadius: 0,
+          boxShadow: '0 0.125rem 0.5rem rgba(0,0,0,0.08)',
+          backdropFilter: 'blur(0.625rem)',
+          backgroundColor: `${c.primary}cc`,
+          borderBottom: `0.0625rem solid ${c.secondary}`,
+          color: c.light,
         },
       },
     },
-  },
 
-  MuiRating: {
-    styleOverrides: {
-      root: {
-        color: customTheme.colors.accent || 'white',
-        '&.MuiRating-readOnly': {
-          opacity: 0.7,
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          borderRight: `0.0625rem solid ${c.secondary}`,
+          borderRadius: 0,
+          backdropFilter: 'blur(0.625rem)',
+          backgroundColor: `${c.primary}f5`,
+          color: c.light,
+          overflow: 'hidden',
         },
       },
     },
-  },
 
-  MuiFormControlLabel: {
-    styleOverrides: {
-      root: {
-        color: customTheme.colors.primary,
-        '& .MuiFormControlLabel-label': {
-          color: customTheme.colors.primary,
-          fontSize: '0.875rem',
-        },
-        '&:hover': {
-          backgroundColor: `${customTheme.colors.primary}0a`,
-        },
-      },
-      label: {
-        color: customTheme.colors.primary,
-      },
-    },
-  },
-
-  MuiTabScrollButton: {
-    styleOverrides: {
-      root: {
-        '&::-webkit-scrollbar': {
-          width: '8px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: customTheme.colors.secondary,
-          borderRadius: '4px',
-        },
-        '&::-webkit-scrollbar-thumb:hover': {
-          backgroundColor: customTheme.colors.primary,
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            color: c.accent,
+          },
         },
       },
     },
-  },
-});
+
+    MuiTextField: {
+      defaultProps: {
+        variant: 'filled',
+      },
+      styleOverrides: {
+        root: {
+          // ── Filled input container ──────────────────────────────────────
+          '& .MuiFilledInput-root': {
+            borderRadius: `${customTheme.borderRadius}px ${customTheme.borderRadius}px 0 0`,
+            backgroundColor: isDark ? `${c.light}22` : `${c.light}55`,
+            transition: 'background-color 0.2s ease, border-color 0.2s ease',
+            '&:hover': {
+              backgroundColor: isDark ? `${c.light}33` : `${c.light}77`,
+            },
+            '&.Mui-focused': {
+              backgroundColor: isDark ? `${c.light}33` : `${c.light}77`,
+            },
+            // Bottom bar (replaces the outlined border)
+            '&:before': {
+              borderBottomColor: isDark ? `${c.light}50` : `${c.secondary}80`,
+            },
+            '&:hover:not(.Mui-disabled):before': {
+              borderBottomColor: c.light,
+              borderBottomWidth: 2,
+            },
+            '&:after': {
+              borderBottomColor: c.light,
+              borderBottomWidth: 2,
+            },
+            // Input text always contrasts with the filled background
+            '& input, & textarea': {
+              color: c.mainText,
+              padding: '22px 14px 8px',
+            },
+            // ── Error state ─────────────────────────────────────────────
+            '&.Mui-error': {
+              backgroundColor: isDark ? `${c.error}18` : `${c.error}12`,
+              '&:before': { borderBottomColor: c.error },
+              '&:hover:not(.Mui-disabled):before': { borderBottomColor: c.error, borderBottomWidth: 2 },
+              '&:after': { borderBottomColor: c.error, borderBottomWidth: 2 },
+            },
+          },
+
+          // ── Label ──────────────────────────────────────────────────────
+          '& .MuiInputLabel-root': {
+            color: c.light,
+            fontWeight: 400,
+            '&.MuiInputLabel-shrunk': {
+              color: c.light,
+              fontWeight: 700,
+            },
+            '&.Mui-focused': {
+              color: c.light,
+              fontWeight: 700,
+            },
+            '&.Mui-error': {
+              color: c.error,
+              '&.MuiInputLabel-shrunk': { color: c.error },
+            },
+          },
+
+          // ── Helper / error text ────────────────────────────────────────
+          '& .MuiFormHelperText-root': {
+            marginLeft: 0,
+            marginTop: 4,
+            '&.Mui-error': {
+              color: c.error,
+              fontWeight: 500,
+            },
+          },
+        },
+      },
+    },
+
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          // light = Alice Blue — readable on the dark Paper/card backgrounds
+          // used in both modes (light mode paper bg is dark Azel Blue #194f84)
+          color: c.light,
+          boxShadow: customTheme.shadow,
+          transition: 'box-shadow 0.2s ease-in-out',
+          '&:hover': {
+            boxShadow: `0 4px 16px rgba(0,0,0,0.15)`,
+          },
+        },
+        elevation1: { boxShadow: `0 2px 8px rgba(0,0,0,0.08)` },
+        elevation2: { boxShadow: `0 4px 12px rgba(0,0,0,0.12)` },
+        elevation3: { boxShadow: `0 6px 16px rgba(0,0,0,0.15)` },
+      },
+    },
+
+    MuiSelect: {
+      defaultProps: {
+        variant: 'filled',
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: `${customTheme.borderRadius}px ${customTheme.borderRadius}px 0 0`,
+        },
+      },
+    },
+
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          '& .MuiFormLabel-root': {
+            color: 'inherit',
+            fontWeight: 500,
+            '&.Mui-focused': {
+              color: c.light,
+            },
+          },
+        },
+      },
+    },
+
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          color: 'inherit',
+          marginLeft: 0,
+          marginTop: 4,
+        },
+      },
+    },
+
+    MuiInputAdornment: {
+      styleOverrides: {
+        root: {
+          // Matches the input text colour, not the Paper colour
+          color: c.mainText,
+        },
+      },
+    },
+
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: 'inherit',
+          borderRadius: 4,
+          '&.Mui-checked': {
+            color: c.accent,
+          },
+          '&:hover': {
+            backgroundColor: `${c.accent}14`,
+          },
+          '&.Mui-focusVisible': {
+            outline: `2px solid ${c.accent}`,
+            outlineOffset: 2,
+          },
+          '& .MuiSvgIcon-root': {
+            fontSize: '1.25rem',
+          },
+        },
+      },
+    },
+
+    MuiRating: {
+      styleOverrides: {
+        root: {
+          color: c.accent,
+          '&.MuiRating-readOnly': {
+            opacity: 0.7,
+          },
+        },
+      },
+    },
+
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          // Inherit: dark text on page, light text inside Paper
+          color: 'inherit',
+          '& .MuiFormControlLabel-label': {
+            color: 'inherit',
+            fontSize: '0.875rem',
+          },
+          '&:hover': {
+            backgroundColor: `${c.accent}14`,
+          },
+        },
+        label: {
+          color: 'inherit',
+        },
+      },
+    },
+
+    MuiTabScrollButton: {
+      styleOverrides: {
+        root: {
+          '&::-webkit-scrollbar': { width: '8px' },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: c.secondary,
+            borderRadius: '4px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: c.primary,
+          },
+        },
+      },
+    },
+  };
+};
 
 export { createComponents };
