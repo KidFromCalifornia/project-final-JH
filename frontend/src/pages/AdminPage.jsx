@@ -143,25 +143,30 @@ const AdminSection = ({ title, count, items, emptyMessage, ItemCardProps }) => (
   </Paper>
 );
 
+const NEIGHBORHOODS = [
+  'Enskede-Årsta-Vantör',
+  'Hägersten',
+  'Kungsholmen',
+  'Norrmalm',
+  'Södermalm',
+  'Vasastan',
+  'Östermalm',
+];
+
+const updateLocation = (editData, setEditData, field, value) => {
+  const locations = editData.locations ? [...editData.locations] : [{}];
+  locations[0] = { ...locations[0], [field]: value };
+  setEditData({ ...editData, locations });
+};
+
 const CafeEditForm = ({ editData, setEditData }) => (
   <Stack spacing={2}>
+    <Typography variant="subtitle1" fontWeight={600}>Basic Info</Typography>
     <TextField
       fullWidth
       label="Name"
       value={editData.name || ''}
       onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-    />
-    <TextField
-      fullWidth
-      label="Website"
-      value={editData.website || ''}
-      onChange={(e) => setEditData({ ...editData, website: e.target.value })}
-    />
-    <TextField
-      fullWidth
-      label="Instagram"
-      value={editData.instagram || ''}
-      onChange={(e) => setEditData({ ...editData, instagram: e.target.value })}
     />
     <TextField
       select
@@ -182,6 +187,57 @@ const CafeEditForm = ({ editData, setEditData }) => (
       value={editData.description || ''}
       onChange={(e) => setEditData({ ...editData, description: e.target.value })}
     />
+    <TextField
+      fullWidth
+      label="Website or Instagram"
+      value={editData.website || ''}
+      onChange={(e) => setEditData({ ...editData, website: e.target.value })}
+    />
+
+    <Typography variant="subtitle1" fontWeight={600}>Location</Typography>
+    <TextField
+      fullWidth
+      label="Address"
+      value={editData.locations?.[0]?.address || ''}
+      onChange={(e) => updateLocation(editData, setEditData, 'address', e.target.value)}
+    />
+    <TextField
+      select
+      fullWidth
+      label="Neighbourhood"
+      value={editData.locations?.[0]?.neighborhood || ''}
+      onChange={(e) => updateLocation(editData, setEditData, 'neighborhood', e.target.value)}
+    >
+      <MenuItem value="">— None —</MenuItem>
+      {NEIGHBORHOODS.map((n) => (
+        <MenuItem key={n} value={n}>{n}</MenuItem>
+      ))}
+    </TextField>
+    <TextField
+      fullWidth
+      label="Location Note"
+      placeholder="e.g. Second floor, ring the bell"
+      value={editData.locations?.[0]?.locationNote || ''}
+      onChange={(e) => updateLocation(editData, setEditData, 'locationNote', e.target.value)}
+    />
+
+    <Typography variant="subtitle1" fontWeight={600}>Images</Typography>
+    <TextField
+      fullWidth
+      multiline
+      rows={3}
+      label="Image URLs"
+      placeholder="One URL per line"
+      value={(editData.images || []).join('\n')}
+      onChange={(e) =>
+        setEditData({
+          ...editData,
+          images: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
+        })
+      }
+      helperText="Paste one image URL per line"
+    />
+
     <FormControlLabel
       control={
         <Checkbox
@@ -191,7 +247,8 @@ const CafeEditForm = ({ editData, setEditData }) => (
       }
       label="Approved (visible on map)"
     />
-    <Typography variant="h6">Features</Typography>
+
+    <Typography variant="subtitle1" fontWeight={600}>Features</Typography>
     <FormGroup row>
       {FEATURES.map((feature) => (
         <FormControlLabel
@@ -401,7 +458,6 @@ const AdminPage = () => {
                   { key: 'description', label: 'Description' },
                   { key: 'locations', label: 'Address' },
                   { key: 'website', label: 'Website' },
-                  { key: 'instagram', label: 'Instagram' },
                   { key: 'features', label: 'Features' },
                   { key: 'createdAt', label: 'Submitted' },
                 ],

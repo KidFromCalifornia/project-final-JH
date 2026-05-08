@@ -60,7 +60,6 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: '',
     category: '',
-    instagram: '',
     website: '',
     description: '',
     address: '',
@@ -79,9 +78,9 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
     const newErrors = {};
     if (!isExistingCafe && !formData.name.trim()) newErrors.name = 'Cafe name is required';
     if (!isExistingCafe && !formData.category) newErrors.category = 'Category is required';
-    if (!isExistingCafe && !formData.description.trim()) newErrors.description = 'Description is required';
-    if (!formData.instagram.trim() && !formData.website.trim())
-      newErrors.instagram = 'At least one of Instagram or website is required';
+    if (!isExistingCafe && !formData.description.trim())
+      newErrors.description = 'Description is required';
+    if (!formData.website.trim()) newErrors.website = 'Website or Instagram is required';
     if (!formData.address.trim()) newErrors.address = 'Address is required';
     if (isExistingCafe && !parentCafe) newErrors.parentCafe = 'Please select the existing cafe';
     setErrors(newErrors);
@@ -94,14 +93,18 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
 
     const payload = isExistingCafe
       ? {
-          // Submitting a new location for an existing cafe — admin will merge
           name: parentCafe.name,
           category: parentCafe.category,
           description: parentCafe.description || '',
-          website: formData.website.trim() || formData.instagram.trim(),
-          instagram: formData.instagram.trim(),
+          website: formData.website.trim(),
           hasMultipleLocations: true,
-          locations: [{ address: formData.address.trim(), neighborhood: formData.neighborhood, isMainLocation: false }],
+          locations: [
+            {
+              address: formData.address.trim(),
+              neighborhood: formData.neighborhood,
+              isMainLocation: false,
+            },
+          ],
           isApproved: false,
           parentCafeId: parentCafe._id,
         }
@@ -109,10 +112,15 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
           name: formData.name.trim(),
           category: formData.category,
           description: formData.description.trim(),
-          website: formData.website.trim() || formData.instagram.trim(),
-          instagram: formData.instagram.trim(),
+          website: formData.website.trim(),
           hasMultipleLocations: false,
-          locations: [{ address: formData.address.trim(), neighborhood: formData.neighborhood, isMainLocation: true }],
+          locations: [
+            {
+              address: formData.address.trim(),
+              neighborhood: formData.neighborhood,
+              isMainLocation: true,
+            },
+          ],
           isApproved: false,
         };
 
@@ -174,31 +182,25 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
               />
 
               {isExistingCafe && (
-                <Tooltip
-                  title="Select the cafe this new location belongs to"
-                  placement="top"
-                  arrow
-                >
-                  <Autocomplete
-                    options={cafes}
-                    getOptionLabel={(c) => c.name}
-                    value={parentCafe}
-                    onChange={(_, value) => {
-                      setParentCafe(value);
-                      if (errors.parentCafe) setErrors((prev) => ({ ...prev, parentCafe: '' }));
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Select existing cafe *"
-                        margin="normal"
-                        error={!!errors.parentCafe}
-                        helperText={errors.parentCafe}
-                      />
-                    )}
-                    sx={{ mt: 1 }}
-                  />
-                </Tooltip>
+                <Autocomplete
+                  options={cafes}
+                  getOptionLabel={(c) => c.name}
+                  value={parentCafe}
+                  onChange={(_, value) => {
+                    setParentCafe(value);
+                    if (errors.parentCafe) setErrors((prev) => ({ ...prev, parentCafe: '' }));
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select existing cafe *"
+                      margin="normal"
+                      error={!!errors.parentCafe}
+                      helperText={errors.parentCafe}
+                    />
+                  )}
+                  sx={{ mt: 1 }}
+                />
               )}
             </Box>
           </Grid>
@@ -224,37 +226,23 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                   />
                 </Tooltip>
 
-                <Tooltip
-                  title={
-                    <Box>
-                      {CATEGORIES.map((c) => (
-                        <Box key={c.value} mb={0.5}>
-                          <strong>{c.label}:</strong> {c.tooltip}
-                        </Box>
-                      ))}
-                    </Box>
-                  }
-                  placement="top"
-                  arrow
+                <TextField
+                  select
+                  label="Category *"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.category}
+                  helperText={errors.category || 'Hover over an option for a description'}
                 >
-                  <TextField
-                    select
-                    label="Category *"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                    error={!!errors.category}
-                    helperText={errors.category || 'Hover for descriptions'}
-                  >
-                    {CATEGORIES.map((c) => (
-                      <Tooltip key={c.value} title={c.tooltip} placement="right" arrow>
-                        <MenuItem value={c.value}>{c.label}</MenuItem>
-                      </Tooltip>
-                    ))}
-                  </TextField>
-                </Tooltip>
+                  {CATEGORIES.map((c) => (
+                    <Tooltip key={c.value} title={c.tooltip} placement="right" arrow>
+                      <MenuItem value={c.value}>{c.label}</MenuItem>
+                    </Tooltip>
+                  ))}
+                </TextField>
               </Box>
             </Grid>
           )}
@@ -296,29 +284,21 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                 </TextField>
               </Tooltip>
 
-              <Tooltip title="Instagram handle (e.g. @cafename) or full URL" placement="top" arrow>
+              <Tooltip
+                title="Instagram handle (e.g. @cafename) or website URL"
+                placement="top"
+                arrow
+              >
                 <TextField
-                  label="Instagram"
-                  name="instagram"
-                  value={formData.instagram}
-                  onChange={handleChange}
-                  fullWidth
-                  margin="normal"
-                  placeholder="@cafename"
-                  error={!!errors.instagram}
-                  helperText={errors.instagram}
-                />
-              </Tooltip>
-
-              <Tooltip title="Website URL (optional if Instagram provided)" placement="top" arrow>
-                <TextField
-                  label="Website"
+                  label="Website or Instagram *"
                   name="website"
                   value={formData.website}
                   onChange={handleChange}
                   fullWidth
                   margin="normal"
-                  placeholder="https://example.com"
+                  placeholder="https://cafe.com or @cafename"
+                  error={!!errors.website}
+                  helperText={errors.website}
                 />
               </Tooltip>
             </Box>
@@ -365,28 +345,15 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                   Cancel
                 </Button>
               )}
-              <Tooltip
-                title={
-                  (!isExistingCafe && (!formData.name.trim() || !formData.category || !formData.description.trim())) ||
-                  !formData.address.trim()
-                    ? 'Please fill in all required fields'
-                    : 'Submit this cafe for review'
-                }
-                placement="top"
-                arrow
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                sx={{ minWidth: '10rem', py: 1.5, fontWeight: 600 }}
+                aria-label="Submit Cafe"
               >
-                <span>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    sx={{ minWidth: '10rem', py: 1.5, fontWeight: 600 }}
-                    aria-label="Submit Cafe"
-                  >
-                    Submit Cafe
-                  </Button>
-                </span>
-              </Tooltip>
+                Submit Cafe
+              </Button>
             </Box>
           </Grid>
 

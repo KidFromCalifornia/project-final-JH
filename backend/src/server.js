@@ -15,7 +15,6 @@ import './models/User.js';
 // Import routes
 import cafeRoutes from './routes/cafes.js';
 import authRoutes from './routes/auth.js';
-import submissionRoutes from './routes/cafeSubmissions.js';
 import tastingRoutes from './routes/UserTastings.js';
 import metadataRoutes from './routes/metadata.js';
 
@@ -110,12 +109,6 @@ app.get('/api', (_, res) => {
         'PUT /api/tastings/:id': 'Update tasting (auth required)',
         'DELETE /api/tastings/:id': 'Delete tasting (auth required)',
       },
-      submissions: {
-        'GET /api/cafeSubmissions': 'Get cafe submissions (admin only)',
-        'POST /api/cafeSubmissions': 'Submit new cafe',
-        'PUT /api/cafeSubmissions/:id/approve': 'Approve submission (admin only)',
-        'DELETE /api/cafeSubmissions/:id': 'Delete submission (admin only)',
-      },
       utils: {
         'GET /api/seed': 'Seed Stockholm cafes',
       },
@@ -129,7 +122,6 @@ connectDB()
     // Register routes only after DB connection
     app.use('/api/cafes', cafeRoutes);
     app.use('/api/auth', authRoutes);
-    app.use('/api/cafeSubmissions', submissionRoutes);
     app.use('/api/tastings', tastingRoutes);
     app.use('/api/metadata', metadataRoutes);
 
