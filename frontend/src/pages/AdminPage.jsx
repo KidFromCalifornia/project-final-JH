@@ -6,6 +6,7 @@ import {
   Paper,
   Divider,
   Stack,
+  Chip,
   CssBaseline,
   Dialog,
   DialogTitle,
@@ -15,13 +16,30 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  MenuItem,
   useTheme,
 } from '@mui/material';
-import { alpha } from '@mui/material/styles';
 import LoginForm from '../components/forms/LoginForm.jsx';
 import MuiTheme from '../components/layout/MuiTheme.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+const FEATURES = [
+  'outdoor_seating',
+  'wheelchair_accessible',
+  'lunch',
+  'pour_over',
+  'takeaway',
+  'vegan_options',
+  'breakfast',
+  'iced_drinks',
+  'pastries',
+  'multi_roaster',
+  'decaf',
+  'no_coffee_bar',
+  'limited_sitting',
+  'roaster_only',
+];
 
 const buttonStyles = {
   minWidth: '200px',
@@ -32,12 +50,12 @@ const buttonStyles = {
 };
 
 const formatValue = (key, value) => {
-  if (!value) return null;
+  if (value === null || value === undefined || value === '') return null;
 
   if (Array.isArray(value)) {
     if (key === 'locations') return value.map((l) => l.address).join(', ');
     if (key === 'images') return `${value.length} image(s)`;
-    return value.join(', ');
+    return value.map((v) => v.replaceAll('_', ' ')).join(', ');
   }
 
   if (typeof value === 'boolean') {
@@ -55,6 +73,10 @@ const ItemCard = ({ item, theme, onEdit, onDelete, onApprove, fields, showApprov
     <Typography variant="subtitle1" fontWeight="bold">
       {item.name || item.coffeeName}
     </Typography>
+
+    {item.parentCafeId && (
+      <Chip label="New location for existing cafe" size="small" color="info" sx={{ mb: 1 }} />
+    )}
 
     {fields.map((field) => {
       const value = item[field.key];
@@ -104,11 +126,12 @@ const ItemCard = ({ item, theme, onEdit, onDelete, onApprove, fields, showApprov
   </Box>
 );
 
-const AdminSection = ({ title, items, emptyMessage, ItemCardProps }) => (
+const AdminSection = ({ title, count, items, emptyMessage, ItemCardProps }) => (
   <Paper elevation={2} sx={{ p: 3, mb: 4, width: '100%' }}>
-    <Typography variant="h5" gutterBottom>
-      {title}
-    </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+      <Typography variant="h5">{title}</Typography>
+      {count > 0 && <Chip label={count} color="primary" size="small" />}
+    </Box>
     <Divider sx={{ mb: 2 }} />
     {items.length === 0 ? (
       <Typography variant="body2">{emptyMessage}</Typography>
@@ -120,11 +143,141 @@ const AdminSection = ({ title, items, emptyMessage, ItemCardProps }) => (
   </Paper>
 );
 
+const NEIGHBORHOODS = [
+  'Enskede-Årsta-Vantör',
+  'Hägersten',
+  'Kungsholmen',
+  'Norrmalm',
+  'Södermalm',
+  'Vasastan',
+  'Östermalm',
+];
+
+const updateLocation = (editData, setEditData, field, value) => {
+  const locations = editData.locations ? [...editData.locations] : [{}];
+  locations[0] = { ...locations[0], [field]: value };
+  setEditData({ ...editData, locations });
+};
+
+const CafeEditForm = ({ editData, setEditData }) => (
+  <Stack spacing={2}>
+    <Typography variant="subtitle1" fontWeight={600}>Basic Info</Typography>
+    <TextField
+      fullWidth
+      label="Name"
+      value={editData.name || ''}
+      onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+    />
+    <TextField
+      select
+      fullWidth
+      label="Category"
+      value={editData.category || ''}
+      onChange={(e) => setEditData({ ...editData, category: e.target.value })}
+    >
+      <MenuItem value="specialty">Specialty</MenuItem>
+      <MenuItem value="roaster">Roaster</MenuItem>
+      <MenuItem value="thirdwave">Third Wave</MenuItem>
+    </TextField>
+    <TextField
+      fullWidth
+      multiline
+      rows={3}
+      label="Description"
+      value={editData.description || ''}
+      onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+    />
+    <TextField
+      fullWidth
+      label="Website or Instagram"
+      value={editData.website || ''}
+      onChange={(e) => setEditData({ ...editData, website: e.target.value })}
+    />
+
+    <Typography variant="subtitle1" fontWeight={600}>Location</Typography>
+    <TextField
+      fullWidth
+      label="Address"
+      value={editData.locations?.[0]?.address || ''}
+      onChange={(e) => updateLocation(editData, setEditData, 'address', e.target.value)}
+    />
+    <TextField
+      select
+      fullWidth
+      label="Neighbourhood"
+      value={editData.locations?.[0]?.neighborhood || ''}
+      onChange={(e) => updateLocation(editData, setEditData, 'neighborhood', e.target.value)}
+    >
+      <MenuItem value="">— None —</MenuItem>
+      {NEIGHBORHOODS.map((n) => (
+        <MenuItem key={n} value={n}>{n}</MenuItem>
+      ))}
+    </TextField>
+    <TextField
+      fullWidth
+      label="Location Note"
+      placeholder="e.g. Second floor, ring the bell"
+      value={editData.locations?.[0]?.locationNote || ''}
+      onChange={(e) => updateLocation(editData, setEditData, 'locationNote', e.target.value)}
+    />
+
+    <Typography variant="subtitle1" fontWeight={600}>Images</Typography>
+    <TextField
+      fullWidth
+      multiline
+      rows={3}
+      label="Image URLs"
+      placeholder="One URL per line"
+      value={(editData.images || []).join('\n')}
+      onChange={(e) =>
+        setEditData({
+          ...editData,
+          images: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
+        })
+      }
+      helperText="Paste one image URL per line"
+    />
+
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={!!editData.isApproved}
+          onChange={(e) => setEditData({ ...editData, isApproved: e.target.checked })}
+        />
+      }
+      label="Approved (visible on map)"
+    />
+
+    <Typography variant="subtitle1" fontWeight={600}>Features</Typography>
+    <FormGroup row>
+      {FEATURES.map((feature) => (
+        <FormControlLabel
+          key={feature}
+          control={
+            <Checkbox
+              checked={(editData.features || []).includes(feature)}
+              onChange={(e) => {
+                const features = editData.features || [];
+                setEditData({
+                  ...editData,
+                  features: e.target.checked
+                    ? [...features, feature]
+                    : features.filter((f) => f !== feature),
+                });
+              }}
+            />
+          }
+          label={feature.replaceAll('_', ' ')}
+        />
+      ))}
+    </FormGroup>
+  </Stack>
+);
+
 const AdminPage = () => {
   const [cafes, setCafes] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [tastings, setTastings] = useState([]);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('admin') === 'true');
@@ -146,20 +299,20 @@ const AdminPage = () => {
 
     const fetchAdminData = async () => {
       try {
-        const [cafesRes, submissionsRes, tastingsRes] = await Promise.all([
+        const [cafesRes, pendingRes, tastingsRes] = await Promise.all([
           fetch(`${API_URL}/cafes`, { headers: getHeaders() }),
-          fetch(`${API_URL}/cafeSubmissions`, { headers: getHeaders() }),
+          fetch(`${API_URL}/cafes/pending`, { headers: getHeaders() }),
           fetch(`${API_URL}/tastings/admin/all`, { headers: getHeaders() }),
         ]);
 
-        const [cafesData, submissionsData, tastingsData] = await Promise.all([
+        const [cafesData, pendingData, tastingsData] = await Promise.all([
           cafesRes.json(),
-          submissionsRes.json(),
+          pendingRes.json(),
           tastingsRes.json(),
         ]);
 
         setCafes(cafesData?.data ?? []);
-        setSubmissions(submissionsData?.data ?? []);
+        setSubmissions(pendingData?.data ?? []);
         setTastings(tastingsData?.data ?? []);
       } catch (error) {
         setErrorMessage(`Failed to load admin data: ${error.message}`);
@@ -193,25 +346,22 @@ const AdminPage = () => {
   };
 
   const handleDeleteCafe = createDeleteHandler('/cafes', 'cafe', setCafes);
-  const handleDeleteSubmission = createDeleteHandler(
-    '/cafeSubmissions',
-    'submission',
-    setSubmissions
-  );
+  const handleDeleteSubmission = createDeleteHandler('/cafes', 'submission', setSubmissions);
   const handleDeleteTasting = createDeleteHandler('/tastings', 'tasting', setTastings);
-  const handleDeleteUser = createDeleteHandler('/users', 'user', setUsers);
 
   const handleApproveSubmission = async (submissionId) => {
     try {
-      const res = await fetch(`${API_URL}/cafeSubmissions/${submissionId}/approve`, {
+      const res = await fetch(`${API_URL}/cafes/${submissionId}/approve`, {
         method: 'PUT',
         headers: getHeaders(),
       });
 
       if (res.ok) {
+        const data = await res.json();
         setSubmissions((prev) => prev.filter((s) => s._id !== submissionId));
+        setCafes((prev) => [...prev, data.data]);
       } else {
-        setErrorMessage('Failed to approve submission');
+        setErrorMessage('Failed to approve cafe');
       }
     } catch (error) {
       setErrorMessage(error.message);
@@ -228,9 +378,8 @@ const AdminPage = () => {
     try {
       let endpoint = '';
       if (editType === 'cafe') endpoint = `/cafes/${editingId}`;
-      else if (editType === 'submission') endpoint = `/cafeSubmissions/${editingId}`;
+      else if (editType === 'submission') endpoint = `/cafes/${editingId}`;
       else if (editType === 'tasting') endpoint = `/tastings/${editingId}`;
-      else if (editType === 'user') endpoint = `/users/${editingId}`;
 
       const res = await fetch(`${API_URL}${endpoint}`, {
         method: 'PUT',
@@ -239,6 +388,14 @@ const AdminPage = () => {
       });
 
       if (res.ok) {
+        const saved = await res.json();
+        const updater = (prev) =>
+          prev.map((item) => (item._id === editingId ? saved.data : item));
+
+        if (editType === 'cafe') setCafes(updater);
+        else if (editType === 'submission') setSubmissions(updater);
+        else if (editType === 'tasting') setTastings(updater);
+
         setEditingId(null);
         setEditType(null);
         setEditData({});
@@ -285,25 +442,24 @@ const AdminPage = () => {
             <Button onClick={() => setErrorMessage('')}>Dismiss</Button>
           </Paper>
         )}
+
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
           <Box sx={{ gridColumn: '1 / -1' }}>
             <AdminSection
-              title="Approve/Edit Cafe Submissions"
+              title="Pending Submissions"
+              count={submissions.length}
               items={submissions}
               emptyMessage="No submissions pending"
               ItemCardProps={{
                 theme,
                 fields: [
-                  { key: '_id', label: 'ID' },
                   { key: 'name', label: 'Name' },
-                  { key: 'website', label: 'Website' },
                   { key: 'category', label: 'Category' },
                   { key: 'description', label: 'Description' },
-                  { key: 'submittedBy', label: 'Submitted By' },
-                  { key: 'createdAt', label: 'Created' },
+                  { key: 'locations', label: 'Address' },
+                  { key: 'website', label: 'Website' },
                   { key: 'features', label: 'Features' },
-                  { key: 'locations', label: 'Locations' },
-                  { key: 'images', label: 'Images' },
+                  { key: 'createdAt', label: 'Submitted' },
                 ],
                 showApprove: true,
                 onApprove: handleApproveSubmission,
@@ -314,22 +470,21 @@ const AdminPage = () => {
           </Box>
 
           <AdminSection
-            title="Edit Cafes"
+            title="Approved Cafes"
+            count={cafes.length}
             items={cafes}
             emptyMessage="No cafes found"
             ItemCardProps={{
               theme,
               fields: [
-                { key: '_id', label: 'ID' },
                 { key: 'name', label: 'Name' },
-                { key: 'website', label: 'Website' },
                 { key: 'category', label: 'Category' },
                 { key: 'description', label: 'Description' },
-                { key: 'submittedBy', label: 'Submitted By' },
-                { key: 'createdAt', label: 'Created' },
+                { key: 'locations', label: 'Address' },
+                { key: 'website', label: 'Website' },
+                { key: 'instagram', label: 'Instagram' },
                 { key: 'features', label: 'Features' },
-                { key: 'locations', label: 'Locations' },
-                { key: 'images', label: 'Images' },
+                { key: 'createdAt', label: 'Created' },
               ],
               onEdit: (item) => handleEditClick(item._id, 'cafe', item),
               onDelete: handleDeleteCafe,
@@ -338,18 +493,19 @@ const AdminPage = () => {
 
           <AdminSection
             title="Tasting Notes"
+            count={tastings.length}
             items={tastings}
             emptyMessage="No tasting notes found"
             ItemCardProps={{
               theme,
               fields: [
-                { key: '_id', label: 'ID' },
-                { key: 'cafeId', label: 'Cafe ID' },
-                { key: 'grindSize', label: 'Grind Size' },
+                { key: 'coffeeName', label: 'Coffee' },
+                { key: 'username', label: 'By' },
                 { key: 'brewMethod', label: 'Brew Method' },
+                { key: 'roastLevel', label: 'Roast' },
                 { key: 'rating', label: 'Rating' },
-                { key: 'flavorNotes', label: 'Flavor Notes' },
-                { key: 'userId', label: 'User ID' },
+                { key: 'tastingNotes', label: 'Tasting Notes' },
+                { key: 'notes', label: 'Notes' },
                 { key: 'createdAt', label: 'Created' },
               ],
               onEdit: (item) => handleEditClick(item._id, 'tasting', item),
@@ -357,19 +513,43 @@ const AdminPage = () => {
             }}
           />
         </Box>
-        <Dialog open={!!editingId} onClose={() => setEditingId(null)} maxWidth="sm" fullWidth>
-          <DialogTitle>Edit</DialogTitle>
+
+        <Dialog open={!!editingId} onClose={() => setEditingId(null)} maxWidth="md" fullWidth>
+          <DialogTitle>Edit {editType}</DialogTitle>
           <DialogContent>
-            <TextField
-              fullWidth
-              label="Name"
-              value={editData.name || ''}
-              onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-            />
+            {(editType === 'cafe' || editType === 'submission') && (
+              <CafeEditForm editData={editData} setEditData={setEditData} />
+            )}
+            {editType === 'tasting' && (
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label="Coffee Name"
+                  value={editData.coffeeName || ''}
+                  onChange={(e) => setEditData({ ...editData, coffeeName: e.target.value })}
+                />
+                <TextField
+                  fullWidth
+                  label="Rating"
+                  type="number"
+                  inputProps={{ min: 1, max: 5 }}
+                  value={editData.rating || ''}
+                  onChange={(e) => setEditData({ ...editData, rating: e.target.value })}
+                />
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Notes"
+                  value={editData.notes || ''}
+                  onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
+                />
+              </Stack>
+            )}
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setEditingId(null)}>Cancel</Button>
-            <Button onClick={handleSaveEdit}>Save</Button>
+            <Button onClick={handleSaveEdit} variant="contained">Save</Button>
           </DialogActions>
         </Dialog>
       </Box>

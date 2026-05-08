@@ -1,17 +1,14 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import { Cafe } from '../models/cafeModel.js';
 import { validateObjectId } from '../middleware/validateObjectId.js';
+import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// GET all cafes with filtering and search
-
+// POST — submit a new cafe (public, isApproved: false by default)
 router.post('/', async (req, res) => {
   try {
-    // Clean up locations array to avoid empty coordinates arrays
     const cleanedLocations = (req.body.locations || []).map((loc) => {
-      // Only include coordinates if both latitude and longitude are valid numbers
       if (
         loc.coordinates &&
         Array.isArray(loc.coordinates.coordinates) &&
@@ -20,38 +17,29 @@ router.post('/', async (req, res) => {
         typeof loc.coordinates.coordinates[1] === 'number'
       ) {
         return loc;
-      } else {
-        // Remove coordinates if invalid
-        const { coordinates, ...rest } = loc;
-        return rest;
       }
+      const { coordinates, ...rest } = loc;
+      return rest;
     });
 
-    // Ensure userId is not the string "user"
     let submittedBy = req.body.userId;
-    if (submittedBy === 'user' || !submittedBy) {
-      submittedBy = undefined;
-    }
+    if (submittedBy === 'user' || !submittedBy) submittedBy = undefined;
 
     const cafe = new Cafe({
       ...req.body,
       locations: cleanedLocations,
       submittedBy,
+      isApproved: false,
     });
     await cafe.save();
-    res.status(201).json({
-      success: true,
-      data: cafe,
-    });
+    res.status(201).json({ success: true, data: cafe });
   } catch (error) {
     console.error('Error creating cafe:', error);
-    res.status(400).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(400).json({ success: false, error: error.message });
   }
 });
 
+// GET — all approved cafes with filtering and search
 router.get('/', async (req, res) => {
   try {
     const {
@@ -65,10 +53,8 @@ router.get('/', async (req, res) => {
       order = 'asc',
     } = req.query;
 
-    // Build query object
     const query = { isApproved: true };
 
-    // Text search across multiple fields
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -78,38 +64,19 @@ router.get('/', async (req, res) => {
       ];
     }
 
-    // Filter by specific neighborhood
-    if (neighborhood) {
-      query['locations.neighborhood'] = { $regex: neighborhood, $options: 'i' };
-    }
+    if (neighborhood) query['locations.neighborhood'] = { $regex: neighborhood, $options: 'i' };
+    if (category) query.category = { $in: category.split(',') };
+    if (features) query.features = { $in: features.split(',') };
 
-    // Filter by category
-    if (category) {
-      query.category = { $in: category.split(',') };
-    }
-
-    // Filter by features
-    if (features) {
-      query.features = { $in: features.split(',') };
-    }
-
-    // Calculate pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
+    const sortOptions = { [sortBy]: order === 'desc' ? -1 : 1 };
 
-    // Sort options
-    const sortOptions = {};
-    sortOptions[sortBy] = order === 'desc' ? -1 : 1;
-
-    // Execute query with pagination
     const [cafes, total] = await Promise.all([
       Cafe.find(query).sort(sortOptions).skip(skip).limit(parseInt(limit)).lean(),
       Cafe.countDocuments(query),
     ]);
 
-    // Calculate pagination info
     const totalPages = Math.ceil(total / parseInt(limit));
-    const hasNextPage = parseInt(page) < totalPages;
-    const hasPrevPage = parseInt(page) > 1;
 
     res.json({
       success: true,
@@ -118,46 +85,28 @@ router.get('/', async (req, res) => {
         currentPage: parseInt(page),
         totalPages,
         totalCafes: total,
-        hasNextPage,
-        hasPrevPage,
+        hasNextPage: parseInt(page) < totalPages,
+        hasPrevPage: parseInt(page) > 1,
         limit: parseInt(limit),
       },
     });
   } catch (error) {
     console.error('Error fetching cafes:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// GET single cafe by ID
-router.get('/:id', validateObjectId(), async (req, res) => {
+// GET /pending — admin: all unapproved cafes (must be before /:id)
+router.get('/pending', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const cafe = await Cafe.findById(req.params.id);
-
-    if (!cafe) {
-      return res.status(404).json({
-        success: false,
-        error: 'Cafe not found',
-      });
-    }
-
-    res.json({
-      success: true,
-      data: cafe,
-    });
+    const pending = await Cafe.find({ isApproved: false }).sort({ createdAt: -1 });
+    res.json({ success: true, count: pending.length, data: pending });
   } catch (error) {
-    console.error('Error fetching cafe:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// GET filter options for frontend
+// GET /filters/options — must be before /:id
 router.get('/filters/options', async (req, res) => {
   try {
     const [neighborhoods, categories, features] = await Promise.all([
@@ -176,88 +125,102 @@ router.get('/filters/options', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching filter options:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// GET search suggestions
+// GET /search/suggestions — must be before /:id
 router.get('/search/suggestions', async (req, res) => {
   try {
     const { q } = req.query;
 
     if (!q || q.length < 2) {
-      return res.json({
-        success: true,
-        data: {
-          cafes: [],
-          neighborhoods: [],
-        },
-      });
+      return res.json({ success: true, data: { cafes: [], neighborhoods: [] } });
     }
 
     const [cafeSuggestions, neighborhoodSuggestions] = await Promise.all([
       Cafe.find(
-        {
-          isApproved: true,
-          name: { $regex: q, $options: 'i' },
-        },
+        { isApproved: true, name: { $regex: q, $options: 'i' } },
         { name: 1, 'locations.neighborhood': 1 }
       ).limit(5),
-
       Cafe.distinct('locations.neighborhood', {
         isApproved: true,
         'locations.neighborhood': { $regex: q, $options: 'i' },
       }),
     ]);
 
-    res.json({
-      success: true,
-      data: {
-        cafes: cafeSuggestions,
-        neighborhoods: neighborhoodSuggestions,
-      },
-    });
+    res.json({ success: true, data: { cafes: cafeSuggestions, neighborhoods: neighborhoodSuggestions } });
   } catch (error) {
     console.error('Error fetching search suggestions:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// GET nearby cafes (requires geolocation)
+// GET /nearby/:lat/:lng — must be before /:id
 router.get('/nearby/:lat/:lng', async (req, res) => {
   try {
     const { lat, lng } = req.params;
-    const { maxDistance = 5000 } = req.query; // Default 5km radius
+    const { maxDistance = 5000 } = req.query;
 
     const cafes = await Cafe.find({
       isApproved: true,
       'locations.coordinates': {
         $near: {
-          $geometry: {
-            type: 'Point',
-            coordinates: [parseFloat(lng), parseFloat(lat)],
-          },
+          $geometry: { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] },
           $maxDistance: parseInt(maxDistance),
         },
       },
     }).limit(20);
 
-    res.json({
-      success: true,
-      data: cafes,
-    });
+    res.json({ success: true, data: cafes });
   } catch (error) {
     console.error('Error fetching nearby cafes:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET /:id — single cafe
+router.get('/:id', validateObjectId(), async (req, res) => {
+  try {
+    const cafe = await Cafe.findById(req.params.id);
+    if (!cafe) return res.status(404).json({ success: false, error: 'Cafe not found' });
+    res.json({ success: true, data: cafe });
+  } catch (error) {
+    console.error('Error fetching cafe:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /:id/approve — admin: approve a cafe
+router.put('/:id/approve', validateObjectId(), authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const cafe = await Cafe.findByIdAndUpdate(req.params.id, { isApproved: true }, { new: true });
+    if (!cafe) return res.status(404).json({ success: false, error: 'Cafe not found' });
+    res.json({ success: true, data: cafe });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /:id — admin: update a cafe
+router.put('/:id', validateObjectId(), authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const cafe = await Cafe.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!cafe) return res.status(404).json({ success: false, error: 'Cafe not found' });
+    res.json({ success: true, data: cafe });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// DELETE /:id — admin: delete a cafe
+router.delete('/:id', validateObjectId(), authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const cafe = await Cafe.findByIdAndDelete(req.params.id);
+    if (!cafe) return res.status(404).json({ success: false, error: 'Cafe not found' });
+    res.json({ success: true, message: 'Cafe deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
