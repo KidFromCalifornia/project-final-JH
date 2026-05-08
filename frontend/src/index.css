@@ -1,3 +1,8 @@
+/* MapLibre popup — shared */
+.map-popup .maplibregl-popup-content {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
 /* MapLibre popup — dark mode */
 .map-popup.dark .maplibregl-popup-content {
   background-color: #0a1f33;

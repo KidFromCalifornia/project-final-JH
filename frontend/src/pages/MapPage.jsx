@@ -6,8 +6,10 @@ import {
   Clear as ClearIcon,
   Map as MapIcon,
   Signpost as SignpostIcon,
+  FormatListBulleted as ListIcon,
 } from '@mui/icons-material';
 import MapLegend from '../components/map/MapLegend';
+import CafeListDialog from '../components/map/CafeListDialog';
 import ReusableFab from '../components/common/ReusableFab';
 import LoadingLogo from '../components/common/LoadingLogo';
 import { useCafeStore } from '../stores/useCafeStore';
@@ -26,6 +28,7 @@ const MapPage = () => {
   const themeMode = useCafeStore((state) => state.themeMode);
   const [showUserPin, setShowUserPin] = useState(false);
   const [legendOpen, setLegendOpen] = useState(false);
+  const [cafeListOpen, setCafeListOpen] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
@@ -75,7 +78,7 @@ const MapPage = () => {
 
       fetchCafes();
     }
-  }, [setCafes]);
+  }, [cafes, setCafes]);
 
   // Check if any filters are active
   const cafeTypeFilter = useCafeStore((state) => state.cafeTypeFilter);
@@ -168,9 +171,25 @@ const MapPage = () => {
             onClick={() => setLegendOpen(true)}
             ariaLabel="map legend"
           />
+
+          <ReusableFab
+            icon={<ListIcon fontSize="large" />}
+            tooltipTitle="Browse All Cafes"
+            onClick={() => setCafeListOpen(true)}
+            ariaLabel="Browse cafe list"
+          />
         </Box>
 
         <MapLegend open={legendOpen} onClose={() => setLegendOpen(false)} />
+
+        <CafeListDialog
+          open={cafeListOpen}
+          onClose={() => setCafeListOpen(false)}
+          cafes={cafes}
+          onSelectCafe={(cafe) => {
+            setSelectedCafe({ ...cafe, selectedLocationIndex: 0 });
+          }}
+        />
 
         <Suspense fallback={<LoadingLogo />}>
           <MapLibreMap

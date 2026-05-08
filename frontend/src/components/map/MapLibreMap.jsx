@@ -1,9 +1,12 @@
+import { useState, useEffect } from 'react';
 import { Map, Marker, Popup } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import maplibregl from 'maplibre-gl';
 import { LIGHT_MAP_STYLE, DARK_MAP_STYLE } from '../../styles/mapStyles';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Collapse } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
+
+const formatFeature = (f) => f.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function MapLibreMap({
   cafesToShow,
@@ -15,6 +18,11 @@ export default function MapLibreMap({
   getCustomIcon,
 }) {
   const theme = useTheme();
+  const [featuresOpen, setFeaturesOpen] = useState(false);
+
+  useEffect(() => {
+    setFeaturesOpen(false);
+  }, [selectedCafe?._id]);
 
   return (
     <Map
@@ -24,33 +32,40 @@ export default function MapLibreMap({
       style={{ width: '100vw', height: '100vh' }}
       mapStyle={themeMode === 'dark' ? DARK_MAP_STYLE : LIGHT_MAP_STYLE}
     >
-      {cafesToShow.flatMap((cafe) =>
-        (cafe.locations
-          ?.map((location, locationIndex) => {
-            const coords = location.coordinates?.coordinates;
-            if (Array.isArray(coords) && coords.length === 2 && coords.every(Number.isFinite)) {
-              return (
-                <Marker
-                  key={`${cafe._id}-${locationIndex}`}
-                  longitude={coords[0]}
-                  latitude={coords[1]}
-                >
-                  <button
-                    className="marker_icon"
-                    aria-label={`${cafe.name} – Coffee shop at ${location.address || 'this location'}`}
-                    onClick={() =>
-                      setSelectedCafe({ ...cafe, selectedLocationIndex: locationIndex })
-                    }
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, outline: 'none' }}
+      {cafesToShow.flatMap(
+        (cafe) =>
+          cafe.locations
+            ?.map((location, locationIndex) => {
+              const coords = location.coordinates?.coordinates;
+              if (Array.isArray(coords) && coords.length === 2 && coords.every(Number.isFinite)) {
+                return (
+                  <Marker
+                    key={`${cafe._id}-${locationIndex}`}
+                    longitude={coords[0]}
+                    latitude={coords[1]}
                   >
-                    {getCustomIcon(cafe.category, theme, themeMode)}
-                  </button>
-                </Marker>
-              );
-            }
-            return null;
-          })
-          .filter(Boolean)) || []
+                    <button
+                      className="marker_icon"
+                      aria-label={`${cafe.name} – Coffee shop at ${location.address || 'this location'}`}
+                      onClick={() =>
+                        setSelectedCafe({ ...cafe, selectedLocationIndex: locationIndex })
+                      }
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: 0,
+                        outline: 'none',
+                      }}
+                    >
+                      {getCustomIcon(cafe.category, theme, themeMode)}
+                    </button>
+                  </Marker>
+                );
+              }
+              return null;
+            })
+            .filter(Boolean) || []
       )}
 
       {showUserPin &&
@@ -70,6 +85,8 @@ export default function MapLibreMap({
           const selectedLocation = selectedCafe.locations?.[locationIndex];
           const coords = selectedLocation?.coordinates?.coordinates;
 
+          const mutedColor = themeMode === 'dark' ? '#9ec4eb' : '#5d6e7e';
+
           if (Array.isArray(coords) && coords.length === 2) {
             return (
               <Popup
@@ -84,64 +101,198 @@ export default function MapLibreMap({
                   padding: theme.spacing(2),
                 }}
               >
-                <Typography
-                  variant="h6"
-                  component="h3"
-                  sx={{ mb: 1, fontWeight: 600 }}
-                >
-                  {selectedCafe.name}
-                </Typography>
-
+                {/* Eyebrow — category */}
                 {selectedCafe.category && (
                   <Typography
-                    variant="caption"
+                    variant="overline"
                     sx={{
-                      backgroundColor: alpha(theme.palette.secondary.main, 0.6),
-                      color: theme.palette.primary.contrastText,
-                      px: 1.5,
-                      py: 0.5,
-                      borderRadius: 0.5,
-                      textTransform: 'capitalize',
-                      display: 'inline-block',
-                      mb: 1,
-                      fontWeight: 600,
+                      display: 'block',
+                      fontWeight: 700,
+                      letterSpacing: '0.08em',
+                      color: mutedColor,
+                      lineHeight: 1.4,
                     }}
                   >
                     {selectedCafe.category}
                   </Typography>
                 )}
 
+                {/* Headline — cafe name */}
                 <Typography
-                  variant="body2"
-                  sx={{ mb: 0.5, fontWeight: 500 }}
+                  variant="h6"
+                  component="h3"
+                  sx={{ fontWeight: 700, lineHeight: 1.2, mb: 1 }}
                 >
-                  {selectedLocation.address}
+                  {selectedCafe.name}
                 </Typography>
 
+                {/* Address + neighbourhood */}
+                <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.25 }}>
+                  {selectedLocation.address}
+                </Typography>
                 {selectedLocation.neighborhood && (
                   <Typography
-                    variant="body2"
-                    sx={{ mb: 1.5, fontWeight: 500 }}
+                    variant="caption"
+                    sx={{ display: 'block', color: mutedColor, mb: 1.5 }}
                   >
                     {selectedLocation.neighborhood}
                   </Typography>
                 )}
 
-                {selectedCafe.website && (
-                  <Typography variant="body2" sx={{ mt: 1 }}>
-                    <a
-                      href={selectedCafe.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        color: 'inherit',
-                        fontWeight: 500,
-                        textDecoration: 'underline',
+                {/* Cafe Features — collapsible */}
+                {selectedCafe.features && selectedCafe.features.length > 0 && (
+                  <Box sx={{ mb: 1.5 }}>
+                    <Typography
+                      component="button"
+                      onClick={() => setFeaturesOpen((o) => !o)}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        p: 0,
+                        mb: 0.5,
+                        fontWeight: 600,
+                        fontSize: '0.7rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: mutedColor,
+                        '&:hover': { color: 'inherit' },
                       }}
                     >
-                      Visit Website
-                    </a>
-                  </Typography>
+                      Cafe Features {featuresOpen ? '▲' : '▼'}
+                    </Typography>
+                    <Collapse in={featuresOpen}>
+                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', pt: 0.5 }}>
+                        {selectedCafe.features.map((feature, idx) => (
+                          <Typography
+                            key={idx}
+                            variant="caption"
+                            sx={{
+                              backgroundColor: alpha(theme.palette.primary.main, 0.15),
+                              color: 'inherit',
+                              px: 0.75,
+                              py: 0.25,
+                              borderRadius: 0.5,
+                              fontSize: '0.68rem',
+                            }}
+                          >
+                            {formatFeature(feature)}
+                          </Typography>
+                        ))}
+                      </Box>
+                    </Collapse>
+                  </Box>
+                )}
+
+                {/* Divider */}
+                <Box sx={{ borderTop: '1px solid', borderColor: 'divider', my: 1 }} />
+
+                {/* Action — website */}
+                {selectedCafe.website && (
+                  <a
+                    href={selectedCafe.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'block',
+                      textAlign: 'center',
+                      padding: '6px 12px',
+                      marginBottom: selectedCafe.locations?.length > 1 ? 8 : 0,
+                      borderRadius: 6,
+                      border: `1px solid ${mutedColor}`,
+                      color: 'inherit',
+                      fontWeight: 600,
+                      fontSize: '0.8rem',
+                      textDecoration: 'none',
+                      letterSpacing: '0.03em',
+                      transition: 'background 0.15s, border-color 0.15s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        themeMode === 'dark' ? 'rgba(158,196,235,0.12)' : 'rgba(93,110,126,0.10)';
+                      e.currentTarget.style.borderColor = 'inherit';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.borderColor = mutedColor;
+                    }}
+                  >
+                    Visit Website
+                  </a>
+                )}
+
+                {/* Footer — location navigator */}
+                {selectedCafe.locations && selectedCafe.locations.length > 1 && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      mt: 0.5,
+                    }}
+                  >
+                    <Typography
+                      component="button"
+                      onClick={() =>
+                        setSelectedCafe((prev) => ({
+                          ...prev,
+                          selectedLocationIndex:
+                            (locationIndex - 1 + prev.locations.length) % prev.locations.length,
+                        }))
+                      }
+                      sx={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        p: 0,
+                        fontSize: '1.1rem',
+                        lineHeight: 1,
+                        color: mutedColor,
+                        '&:hover': { color: 'inherit' },
+                      }}
+                      aria-label="Previous location"
+                    >
+                      ‹
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: '0.7rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        textDecoration: 'underline',
+                        color: mutedColor,
+                      }}
+                    >
+                      Location {locationIndex + 1} of {selectedCafe.locations.length}
+                    </Typography>
+                    <Typography
+                      component="button"
+                      onClick={() =>
+                        setSelectedCafe((prev) => ({
+                          ...prev,
+                          selectedLocationIndex: (locationIndex + 1) % prev.locations.length,
+                        }))
+                      }
+                      sx={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        p: 0,
+                        fontSize: '1.1rem',
+                        lineHeight: 1,
+                        color: mutedColor,
+                        '&:hover': { color: 'inherit' },
+                      }}
+                      aria-label="Next location"
+                    >
+                      ›
+                    </Typography>
+                  </Box>
                 )}
               </Popup>
             );
