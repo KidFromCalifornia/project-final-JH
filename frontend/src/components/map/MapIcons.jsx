@@ -9,7 +9,8 @@ import GeotagPinIcon from '../../assets/icons/geotagPinIcon.svg?react';
 
 const getCustomIcon = (category, theme, themeMode, options = {}) => {
   // Use accentStrong in light mode, accent in dark mode
-  const iconColor = themeMode === 'dark' ? theme.palette.accent.main : theme.palette.secondary.main;
+  const iconColor =
+    themeMode === 'dark' ? theme.palette.accent.main : theme.palette.accentStrong.main;
 
   // Consistent icon styling
   const iconProps = {
@@ -19,8 +20,8 @@ const getCustomIcon = (category, theme, themeMode, options = {}) => {
       // Add subtle shadow for depth and visibility
       filter:
         themeMode === 'light'
-          ? 'drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.40))'
-          : 'drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5))',
+          ? 'drop-shadow(0 0 2px #0c3054) drop-shadow(0 0 2px #0c3054) drop-shadow(1px 1px 2px rgba(0,0,0,0.7))'
+          : 'drop-shadow(0 0 1.5px #0c3054) drop-shadow(0 0 1.5px #0c3054) drop-shadow(1px 1px 2px rgba(0,0,0,0.8))',
     },
   };
 
