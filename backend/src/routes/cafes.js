@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { Cafe } from '../models/cafeModel.js';
 import { validateObjectId } from '../middleware/validateObjectId.js';
+import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -37,6 +38,7 @@ router.post('/', async (req, res) => {
       ...req.body,
       locations: cleanedLocations,
       submittedBy,
+      isApproved: false,
     });
     await cafe.save();
     res.status(201).json({
@@ -129,6 +131,16 @@ router.get('/', async (req, res) => {
       success: false,
       error: error.message,
     });
+  }
+});
+
+// Admin: get all pending (unapproved) cafes — must be before /:id
+router.get('/pending', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const pending = await Cafe.find({ isApproved: false }).sort({ createdAt: -1 });
+    res.json({ success: true, count: pending.length, data: pending });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -258,6 +270,32 @@ router.get('/nearby/:lat/:lng', async (req, res) => {
       success: false,
       error: error.message,
     });
+  }
+});
+
+// Admin: approve a cafe
+router.put('/:id/approve', validateObjectId(), authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const cafe = await Cafe.findByIdAndUpdate(
+      req.params.id,
+      { isApproved: true },
+      { new: true }
+    );
+    if (!cafe) return res.status(404).json({ success: false, error: 'Cafe not found' });
+    res.json({ success: true, data: cafe });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: delete a cafe
+router.delete('/:id', validateObjectId(), authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const cafe = await Cafe.findByIdAndDelete(req.params.id);
+    if (!cafe) return res.status(404).json({ success: false, error: 'Cafe not found' });
+    res.json({ success: true, message: 'Cafe deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

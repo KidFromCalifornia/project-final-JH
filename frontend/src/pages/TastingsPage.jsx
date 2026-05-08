@@ -1,7 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { useCafeStore } from '../stores/useCafeStore';
 import Container from '@mui/material/Container';
-import { Box, Typography, Button, Alert, useTheme, Tooltip } from '@mui/material';
+import { Box, Typography, Button, Alert, useTheme } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
 import CafeSearchBar from '../components/common/CafeSearchBar';
 import FlipTastingCard from '../components/common/FlipTastingCard';
@@ -13,90 +13,37 @@ const TastingForm = React.lazy(() => import('../components/forms/TastingForm'));
 const TastingsPage = () => {
   const tastings = useCafeStore((state) => state.tastings);
   const setTastings = useCafeStore((state) => state.setTastings);
-  const editingTasting = useCafeStore((state) => state.editingTasting);
-  const setEditingTasting = useCafeStore((state) => state.setEditingTasting);
-  const deletingTasting = useCafeStore((state) => state.deletingTasting);
-  const setDeletingTasting = useCafeStore((state) => state.setDeletingTasting);
   const searchQuery = useCafeStore((state) => state.searchQuery);
-  const setSearchQuery = useCafeStore((state) => state.setSearchQuery);
   const tastingsPerPage = useCafeStore((state) => state.tastingsPerPage);
-  const isLoggedIn = useCafeStore((state) => state.isLoggedIn);
   const cafeTypeFilter = useCafeStore((state) => state.cafeTypeFilter);
   const neighborhoodFilter = useCafeStore((state) => state.neighborhoodFilter);
+  const fetchTastings = useCafeStore((state) => state.fetchTastings);
+  const clearFilters = useCafeStore((state) => state.clearFilters);
 
   const [showTastingForm, setShowTastingForm] = React.useState(false);
-  const [displayedCount, setDisplayedCount] = React.useState(12); // Start with 12 items
+  const [displayedCount, setDisplayedCount] = React.useState(12);
 
   const theme = useTheme();
-  const fetchTastings = useCafeStore((state) => state.fetchTastings);
 
   const handleTastingSubmit = async (formData) => {
     try {
-      let result;
-      if (editingTasting) {
-        // Update existing tasting
-        result = await tastingAPI.update(editingTasting._id, formData);
-        if (result.success) {
-          setTastings((prev) => prev.map((t) => (t._id === editingTasting._id ? result.data : t)));
-        }
-      } else {
-        // Create new tasting
-        result = await tastingAPI.create(formData);
-        if (result.success) {
-          setTastings((prev) => [result.data, ...prev]);
-        }
-      }
-
+      const result = await tastingAPI.create(formData);
       if (result.success) {
+        setTastings((prev) => [result.data, ...prev]);
         setShowTastingForm(false);
-        setEditingTasting(null);
       }
     } catch (error) {
       console.error('Error saving tasting:', error);
     }
   };
 
-  const handleToggleTastingForm = () => {
-    setShowTastingForm((prev) => !prev);
-    if (showTastingForm) {
-      setEditingTasting(null);
-    }
-  };
-
-  const clearFilters = useCafeStore((state) => state.clearFilters);
-
-  // Initial fetch and login state change handler
   useEffect(() => {
-    console.log('Login state changed:');
     fetchTastings();
-    setDisplayedCount(tastingsPerPage); // Reset pagination when login state changes
-
+    setDisplayedCount(tastingsPerPage);
     return () => {
-      clearFilters(); // Clean up filters when component unmounts
+      clearFilters();
     };
-  }, [, fetchTastings, clearFilters, tastingsPerPage]);
-
-  const handleDeleteTasting = async (tastingToDelete) => {
-    try {
-      const result = await tastingAPI.delete(tastingToDelete._id);
-      if (result.success) {
-        setTastings((prev) => prev.filter((t) => t._id !== tastingToDelete._id));
-      } else {
-        console.error('Delete failed:', result.error);
-      }
-    } catch (error) {
-      console.error('Delete error:', error.message);
-    } finally {
-      setDeletingTasting(null);
-    }
-  };
-
-  // Use effect only to trigger delete when deletingTasting changes
-  useEffect(() => {
-    if (deletingTasting) {
-      handleDeleteTasting(deletingTasting);
-    }
-  }, [deletingTasting]);
+  }, [fetchTastings, clearFilters, tastingsPerPage]);
 
   const normalize = (str) =>
     String(str || '')
@@ -104,27 +51,18 @@ const TastingsPage = () => {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-  // Filtering logic
   const filteredTastings = (Array.isArray(tastings) ? tastings : []).filter((tasting) => {
     if (!tasting || !tasting._id || tasting._id === 'error') return false;
 
-    // Apply cafe type filter if set
     if (cafeTypeFilter && cafeTypeFilter !== '') {
-      const cafeCategory = tasting.cafeId?.category;
-      if (!cafeCategory || cafeCategory !== cafeTypeFilter) {
-        return false;
-      }
+      if (!tasting.cafeId?.category || tasting.cafeId.category !== cafeTypeFilter) return false;
     }
 
-    // Apply neighborhood filter if set
     if (neighborhoodFilter && neighborhoodFilter !== '') {
-      const cafeNeighborhood = tasting.cafeId?.locations?.[0]?.neighborhood;
-      if (!cafeNeighborhood || cafeNeighborhood !== neighborhoodFilter) {
-        return false;
-      }
+      const neighborhood = tasting.cafeId?.locations?.[0]?.neighborhood;
+      if (!neighborhood || neighborhood !== neighborhoodFilter) return false;
     }
 
-    // Apply search query
     if (!searchQuery) return true;
     const query = normalize(searchQuery);
 
@@ -138,23 +76,19 @@ const TastingsPage = () => {
       tasting.acidity,
       tasting.mouthFeel,
       tasting.notes,
+      tasting.username,
       ...(Array.isArray(tasting.tastingNotes) ? tasting.tastingNotes : []),
       tasting.cafeId?.name,
     ].filter(Boolean);
 
-    const allFields = searchableFields.map(normalize).join(' ');
-    return allFields.includes(query);
+    return searchableFields.map(normalize).join(' ').includes(query);
   });
 
-  // Load More logic
   const currentTastings = filteredTastings.slice(0, displayedCount);
   const hasMoreItems = displayedCount < filteredTastings.length;
 
-  const handleLoadMore = () => {
-    setDisplayedCount((prev) => prev + tastingsPerPage);
-  };
+  const handleLoadMore = () => setDisplayedCount((prev) => prev + tastingsPerPage);
 
-  // Reset displayed count when search query changes
   useEffect(() => {
     setDisplayedCount(tastingsPerPage);
   }, [searchQuery, tastingsPerPage]);
@@ -174,7 +108,6 @@ const TastingsPage = () => {
         pt: { xs: 2, sm: 4 },
       }}
     >
-      {/* Screen reader accessible H1 */}
       <Typography
         variant="h1"
         component="h1"
@@ -209,7 +142,7 @@ const TastingsPage = () => {
           startIcon={
             showTastingForm ? <CloseIcon aria-hidden="true" /> : <AddIcon aria-hidden="true" />
           }
-          onClick={handleToggleTastingForm}
+          onClick={() => setShowTastingForm((prev) => !prev)}
           aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
           sx={{
             minWidth: '8rem',
@@ -226,20 +159,16 @@ const TastingsPage = () => {
             },
           }}
         >
-          {showTastingForm ? 'Close' : 'Add Tasting'} {/* ✅ Dynamic text */}
+          {showTastingForm ? 'Close' : 'Add Tasting'}
         </Button>
       </Box>
 
-      {/* ✅ TastingForm modal */}
       {showTastingForm && (
         <Suspense fallback={<LoadingLogo />}>
           <TastingForm
             onSubmit={handleTastingSubmit}
-            initialValues={editingTasting || {}}
-            onClose={() => {
-              setShowTastingForm(false);
-              setEditingTasting(null);
-            }}
+            initialValues={{}}
+            onClose={() => setShowTastingForm(false)}
           />
         </Suspense>
       )}
@@ -247,7 +176,6 @@ const TastingsPage = () => {
       {filteredTastings.length === 0 ? (
         <Alert severity="info" sx={{ mt: 2 }}>
           No tastings found. {searchQuery && 'Try adjusting your search terms.'}
-          {!isLoggedIn && ' Please log in to add tastings.'}
         </Alert>
       ) : (
         <Box
@@ -278,17 +206,13 @@ const TastingsPage = () => {
                 color="text.primary"
                 sx={{ textAlign: 'center', py: 4, gridColumn: '1 / -1' }}
               >
-                {filteredTastings.length === 0
-                  ? 'No tasting cards to display.'
-                  : 'No more items to display.'}
+                No tasting cards to display.
               </Typography>
             ) : (
               currentTastings.map((tasting, index) => (
                 <FlipTastingCard
                   key={tasting._id || `tasting-${index}`}
                   tasting={tasting}
-                  setEditingTasting={setEditingTasting}
-                  setDeletingTasting={setDeletingTasting}
                   sx={{ width: '100%' }}
                 />
               ))
@@ -317,9 +241,7 @@ const TastingsPage = () => {
                   fontWeight: 600,
                   borderRadius: 2,
                   backgroundColor: theme.palette.primary.main,
-                  '&:hover': {
-                    backgroundColor: theme.palette.primary.dark,
-                  },
+                  '&:hover': { backgroundColor: theme.palette.primary.dark },
                 }}
                 aria-label="Load more tastings"
               >

@@ -101,7 +101,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          mui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          'ui-vendor': ['@emotion/react', '@emotion/styled', '@mui/material', '@mui/icons-material'],
           maplibre: ['maplibre-gl', '@vis.gl/react-maplibre'],
         },
         assetFileNames: (assetInfo) => {

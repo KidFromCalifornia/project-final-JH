@@ -111,4 +111,25 @@ router.post('/login', validateLogin, async (req, res) => {
   }
 });
 
+// Username search for signature autocomplete — returns matching non-admin usernames
+router.get('/users/search', async (req, res) => {
+  const { q } = req.query;
+  if (!q || q.trim().length < 1) {
+    return res.json({ success: true, data: [] });
+  }
+  try {
+    const users = await User.find({
+      username: { $regex: q.trim(), $options: 'i' },
+      role: { $ne: 'admin' },
+      username: { $ne: 'Anonymous' },
+    })
+      .select('username')
+      .limit(8)
+      .lean();
+    res.json({ success: true, data: users.map((u) => u.username) });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 export default router;

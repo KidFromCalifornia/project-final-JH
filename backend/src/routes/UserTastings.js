@@ -1,6 +1,7 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth.js';
+import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 import { CoffeeTasting } from '../models/TastingsModel.js';
+import { User } from '../models/User.js';
 import { validateObjectId } from '../middleware/validateObjectId.js';
 
 const router = express.Router();
@@ -114,19 +115,41 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Create new tasting note
+// Create new tasting note — no login required
 router.post('/', async (req, res) => {
   try {
-    const tastingNoteData = {
-      ...req.body,
-      // userId is optional - only set if user is authenticated
-      userId: req.user?.userId || null,
-    };
+    const { signature, ...tastingData } = req.body;
+    const trimmedSignature = (signature || '').trim();
 
-    const newTastingNote = new CoffeeTasting(tastingNoteData);
+    let userId;
+    let username;
+
+    if (!trimmedSignature) {
+      // Find or create the shared Anonymous user
+      let anonUser = await User.findOne({ username: 'Anonymous' });
+      if (!anonUser) {
+        anonUser = await User.create({ username: 'Anonymous' });
+      }
+      userId = anonUser._id;
+      username = 'Anonymous';
+    } else {
+      // Find existing user by username (case-insensitive), or create new one
+      let user = await User.findOne({ username: { $regex: `^${trimmedSignature}$`, $options: 'i' } });
+      if (!user) {
+        user = await User.create({ username: trimmedSignature });
+      }
+      userId = user._id;
+      username = user.username;
+    }
+
+    const newTastingNote = new CoffeeTasting({
+      ...tastingData,
+      userId,
+      username,
+      isPublic: true,
+    });
     const savedTastingNote = await newTastingNote.save();
 
-    // Populate the response
     const populatedTastingNote = await CoffeeTasting.findById(savedTastingNote._id).populate(
       'cafeId',
       'name website hasMultipleLocations locations'
@@ -134,9 +157,7 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: `Tasting note created and set to ${
-        savedTastingNote.isPublic ? 'public' : 'private'
-      }`,
+      message: 'Tasting note created',
       data: populatedTastingNote,
     });
   } catch (error) {
@@ -183,80 +204,36 @@ router.get('/:id', validateObjectId(), authenticateToken, async (req, res) => {
   }
 });
 
-router.put('/:id', validateObjectId(), authenticateToken, async (req, res) => {
+// Admin-only edit
+router.put('/:id', validateObjectId(), authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const tastingNote = await CoffeeTasting.findById(req.params.id);
-
-    if (!tastingNote) {
-      return res.status(404).json({
-        success: false,
-        error: 'Tasting note not found',
-      });
-    }
-
-    // Users can only edit their own tasting notes, but admins can edit any
-    const isOwner = tastingNote.userId && tastingNote.userId.toString() === req.user.userId;
-    const isAdmin = req.user.role === 'admin';
-
-    if (!isOwner && !isAdmin) {
-      return res.status(403).json({
-        success: false,
-        error: 'You can only edit your own tasting notes',
-      });
-    }
-
     const updatedTastingNote = await CoffeeTasting.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     }).populate('cafeId', 'name website hasMultipleLocations locations');
 
-    res.json({
-      success: true,
-      message: `Tasting note updated and set to ${
-        updatedTastingNote.isPublic ? 'public' : 'private'
-      }`,
-      data: updatedTastingNote,
-    });
+    if (!updatedTastingNote) {
+      return res.status(404).json({ success: false, error: 'Tasting note not found' });
+    }
+
+    res.json({ success: true, data: updatedTastingNote });
   } catch (error) {
-    console.error('Error in route:', error);
     res.status(500).json({
       success: false,
-      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message, // Hide details in production
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });
 
-// Delete tasting note (user's own or admin can delete any)
-router.delete('/:id', validateObjectId(), authenticateToken, async (req, res) => {
+// Admin-only delete
+router.delete('/:id', validateObjectId(), authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const tastingNote = await CoffeeTasting.findById(req.params.id);
-
-    if (!tastingNote) {
-      return res.status(404).json({
-        success: false,
-        error: 'Tasting note not found',
-      });
+    const deleted = await CoffeeTasting.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, error: 'Tasting note not found' });
     }
-
-    // Users can only delete their own tasting notes, but admins can delete any
-    const isOwner = tastingNote.userId && tastingNote.userId.toString() === req.user.userId;
-    const isAdmin = req.user.role === 'admin';
-
-    if (!isOwner && !isAdmin) {
-      return res.status(403).json({
-        success: false,
-        error: 'You can only delete your own tasting notes',
-      });
-    }
-
-    await CoffeeTasting.findByIdAndDelete(req.params.id);
-
-    res.json({
-      success: true,
-      message: 'Tasting note deleted successfully',
-    });
+    res.json({ success: true, message: 'Tasting note deleted successfully' });
   } catch (error) {
-    console.error('Error in route:', error);
     res.status(500).json({
       success: false,
       error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,

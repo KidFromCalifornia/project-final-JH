@@ -7,7 +7,7 @@ import { AlertProvider } from './context/AlertContext.jsx';
 import { Box, useTheme, useMediaQuery } from '@mui/material';
 
 const MapPage = lazy(() => import('./pages/MapPage.jsx'));
-const TastingsPage = lazy(() => import('./pages/TastingsPage.jsx'));
+// const TastingsPage = lazy(() => import('./pages/TastingsPage.jsx')); // HIDDEN
 const CafePage = lazy(() => import('./pages/CafePage.jsx'));
 const AdminPage = lazy(() => import('./pages/AdminPage.jsx'));
 const AboutMePage = lazy(() => import('./pages/AboutMePage.jsx'));
@@ -100,6 +100,7 @@ const App = () => {
           <Suspense fallback={<LoadingLogo />}>
             <Routes>
               <Route path="/" element={<MapPage />} />
+              {/* HIDDEN — tastings page temporarily disabled
               <Route
                 path="/tastings"
                 element={
@@ -111,6 +112,7 @@ const App = () => {
                   />
                 }
               />
+              */}
               <Route path="/cafes/:cafeId" element={<CafePage />} />
               <Route
                 path="/admin"

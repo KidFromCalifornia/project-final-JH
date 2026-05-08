@@ -199,37 +199,7 @@ const MobileBottomNav = () => {
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Coffee Tastings" arrow>
-              <IconButton
-                color="inherit"
-                size="large"
-                aria-label="Navigate to coffee tastings"
-                sx={{
-                  p: 0.75,
-                  bgcolor:
-                    location.pathname === '/tastings' ? 'rgba(255,255,255,0.15)' : 'transparent',
-                  transition: 'background-color 200ms ease',
-                  '&:hover': {
-                    bgcolor:
-                      location.pathname === '/tastings'
-                        ? 'rgba(255,255,255,0.2)'
-                        : 'rgba(255,255,255,0.1)',
-                  },
-                }}
-                onClick={() => handleNav('/tastings')}
-              >
-                <RateReviewIcon
-                  fontSize="medium"
-                  sx={{
-                    color:
-                      location.pathname === '/tastings'
-                        ? theme.palette.accent?.main || navIconColor
-                        : navIconColor,
-                    transition: 'color 200ms ease',
-                  }}
-                />
-              </IconButton>
-            </Tooltip>
+            {/* HIDDEN — tastings nav link temporarily disabled */}
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -375,35 +345,7 @@ const MobileBottomNav = () => {
             </ListItemButton>
           </ListItem>
 
-          <ListItem disablePadding>
-            <ListItemButton
-              component={Link}
-              to="/tastings"
-              onClick={closeDrawers}
-              sx={{
-                bgcolor:
-                  location.pathname === '/tastings' ? 'rgba(255,255,255,0.1)' : 'transparent',
-                '&:hover': {
-                  bgcolor:
-                    location.pathname === '/tastings'
-                      ? 'rgba(255,255,255,0.15)'
-                      : 'rgba(255,255,255,0.05)',
-                },
-              }}
-            >
-              <ListItemIcon>
-                <RateReviewIcon
-                  sx={{
-                    color:
-                      location.pathname === '/tastings'
-                        ? theme.palette.accent?.main || navIconColor
-                        : navIconColor,
-                  }}
-                />
-              </ListItemIcon>
-              <ListItemText primary="Tastings" />
-            </ListItemButton>
-          </ListItem>
+          {/* HIDDEN — tastings drawer link temporarily disabled */}
 
           <ListItem disablePadding>
             <ListItemButton

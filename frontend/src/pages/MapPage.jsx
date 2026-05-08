@@ -75,7 +75,7 @@ const MapPage = () => {
 
       fetchCafes();
     }
-  }, [cafes, setCafes]);
+  }, [setCafes]);
 
   // Check if any filters are active
   const cafeTypeFilter = useCafeStore((state) => state.cafeTypeFilter);

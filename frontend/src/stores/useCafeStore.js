@@ -69,39 +69,12 @@ export const useCafeStore = create((set, get) => ({
   setTastings: (tastings) => set({ tastings }),
   loading: false,
   setLoading: (loading) => set({ loading }),
-  editingTasting: null,
-  setEditingTasting: (tasting) => set({ editingTasting: tasting }),
-  deletingTasting: null,
-  setDeletingTasting: (tasting) => set({ deletingTasting: tasting }),
 
-  fetchTastings: async (isLoggedIn) => {
+  fetchTastings: async () => {
     set({ loading: true });
     try {
-      let allTastings = [];
-
-      // Always fetch public tastings first
-      try {
-        const publicTastings = await tastingAPI.getPublic();
-        console.log('Public tastings fetched:', publicTastings);
-        allTastings = publicTastings.data || [];
-      } catch (publicError) {
-        console.error('Error fetching public tastings:', publicError);
-        // Don't return early, continue to try user tastings
-      }
-
-      // If logged in, also fetch user's private tastings and merge them
-      if (isLoggedIn) {
-        try {
-          const userTastings = await tastingAPI.getUserTastings();
-          console.log('User tastings fetched:', userTastings);
-          const userTastingsData = userTastings.data || [];
-          // Merge user tastings with public tastings (user tastings first)
-          allTastings = [...userTastingsData, ...allTastings];
-        } catch (userError) {
-          console.error('Error fetching user tastings (continuing with public only):', userError);
-          // Continue with just public tastings
-        }
-      }
+      const publicTastings = await tastingAPI.getPublic();
+      const allTastings = publicTastings.data || [];
 
       // Deduplicate tastings by _id to prevent duplicate keys in React
       const uniqueTastings = Array.isArray(allTastings)
@@ -126,8 +99,12 @@ export const useCafeStore = create((set, get) => ({
   // User state
   user: null,
   setUser: (user) => set({ user }),
-  username: localStorage.getItem('username') || null,
-  setUsername: (username) => set({ username }),
+  username: localStorage.getItem('username') || '',
+  setUsername: (username) => {
+    const value = String(username ?? '');
+    localStorage.setItem('username', value);
+    set({ username: value });
+  },
   userToken: localStorage.getItem('userToken') || null,
   setUserToken: (token) => set({ userToken: token }),
 

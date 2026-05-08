@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useCafeStore } from '../../stores/useCafeStore';
 import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
@@ -21,6 +21,7 @@ import {
   Tooltip,
   useTheme,
   Alert,
+  Autocomplete,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
@@ -36,6 +37,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
       typeof initialValues.cafeId === 'object' && initialValues.cafeId?._id
         ? initialValues.cafeId._id
         : initialValues.cafeId || '',
+    signature: '',
     coffeeName: initialValues.coffeeName || '',
     coffeeRoaster: initialValues.coffeeRoaster || '',
     coffeeOrigin: initialValues.coffeeOrigin || '',
@@ -47,8 +49,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     roastLevel: initialValues.roastLevel || '',
     rating: initialValues.rating || 3,
     notes: initialValues.notes || '',
-    isPublic: initialValues.isPublic !== undefined ? initialValues.isPublic : true,
   });
+
+  const [signatureSuggestions, setSignatureSuggestions] = useState([]);
 
   // Store hooks
   const cafes = useCafeStore((state) => state.cafes);
@@ -58,15 +61,11 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const fetchError = useCafeStore((state) => state.fetchError);
   const setFetchError = useCafeStore((state) => state.setFetchError);
 
-  console.log('TastingForm cafes:', cafes);
-
   // Fetch cafes and options
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Fetching form options from metadata');
       try {
         const data = await apiCall('/metadata/form-options');
-        console.log('Fetched data:', data);
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
@@ -77,7 +76,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     if (!cafes || cafes.length === 0) {
       fetchData();
     }
-  }, [setCafes, setOptions, setFetchError, cafes]);
+  }, [setCafes, setOptions, setFetchError]);
 
   // Input handlers
   const handleChange = (e) => {
@@ -134,7 +133,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
           color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
         }}
       >
-        {initialValues.cafeId ? 'Edit Coffee Tasting' : 'Add New Coffee Tasting'}
+        Add New Coffee Tasting
       </Typography>
 
       <form onSubmit={handleSubmit} aria-label="Coffee Tasting Form">
@@ -178,6 +177,24 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     </MenuItem>
                   ))}
                 </TextField>
+              </Tooltip>
+
+              <Tooltip
+                title="Optional — leave blank to post as Anonymous."
+                placement="top"
+                arrow
+              >
+                <TextField
+                  label="Your signature (optional)"
+                  name="signature"
+                  value={form.signature}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  placeholder="Leave blank to post as Anonymous"
+                  aria-label="Signature"
+                />
               </Tooltip>
 
               <Tooltip title="Enter the name of the coffee." placement="top" arrow>
@@ -522,37 +539,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   pt: 2,
                 }}
               >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      title="Make this tasting public"
-                      name="isPublic"
-                      checked={form.isPublic}
-                      onChange={handleChange}
-                      size="small"
-                      sx={{
-                        '&.Mui-checked': {
-                          color:
-                            theme.palette.mode === 'dark'
-                              ? theme.palette.light.main
-                              : theme.palette.primary.main,
-                        },
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography
-                      sx={{
-                        color:
-                          theme.palette.mode === 'dark'
-                            ? theme.palette.light.main
-                            : theme.palette.primary.main,
-                      }}
-                    >
-                      want to make this tasting public?
-                    </Typography>
-                  }
-                />
+                <Box />
                 <Box sx={{ display: 'flex', gap: 2 }}>
                   {onClose && (
                     <Button
@@ -615,9 +602,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                           fontSize: '1.1rem',
                           fontWeight: 600,
                         }}
-                        aria-label={initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                        aria-label="Add Tasting"
                       >
-                        {initialValues.cafeId ? 'Update Tasting' : 'Add Tasting'}
+                        Add Tasting
                       </Button>
                     </span>
                   </Tooltip>

@@ -95,6 +95,7 @@ const NavigationItems = ({
           </Tooltip>
         </ListItem>
 
+        {/* HIDDEN — tastings nav link temporarily disabled
         <ListItem disablePadding>
           <Tooltip title="Tastings" arrow placement="right" disableHoverListener={open}>
             <ListItemButton component={Link} to="/tastings">
@@ -105,6 +106,7 @@ const NavigationItems = ({
             </ListItemButton>
           </Tooltip>
         </ListItem>
+        */}
 
         <NavigationFilters
           categories={categories}

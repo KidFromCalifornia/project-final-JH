@@ -25,6 +25,7 @@ import {
   TastingNotesContainer,
 } from '../../styles/FlipTastingCard.styles';
 
+
 const toTitleCase = (str) => {
   if (!str) return '';
   return str
@@ -33,7 +34,7 @@ const toTitleCase = (str) => {
     .join(' ');
 };
 
-const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLoggedIn }) => {
+const FlipTastingCard = ({ tasting }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isFlipped, setIsFlipped] = useState(false);
@@ -157,7 +158,7 @@ const FlipTastingCard = ({ tasting, setEditingTasting, setDeletingTasting, isLog
                 fontWeight: 500,
               }}
             >
-              {tasting.userId?.username || 'Anonymous'}
+              {tasting.username || 'Anonymous'}
             </Typography>
             <Typography
               sx={{
