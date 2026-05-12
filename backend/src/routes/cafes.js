@@ -194,9 +194,27 @@ router.get('/:id', validateObjectId(), async (req, res) => {
 // PUT /:id/approve — admin: approve a cafe
 router.put('/:id/approve', validateObjectId(), authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const cafe = await Cafe.findByIdAndUpdate(req.params.id, { isApproved: true }, { new: true });
-    if (!cafe) return res.status(404).json({ success: false, error: 'Cafe not found' });
-    res.json({ success: true, data: cafe });
+    const submission = await Cafe.findById(req.params.id);
+    if (!submission) return res.status(404).json({ success: false, error: 'Cafe not found' });
+
+    // If this is a new location for an existing cafe, merge it in
+    if (submission.parentCafeId) {
+      const parent = await Cafe.findById(submission.parentCafeId);
+      if (!parent) return res.status(404).json({ success: false, error: 'Parent cafe not found' });
+
+      parent.locations.push(...submission.locations);
+      parent.hasMultipleLocations = true;
+      await parent.save();
+
+      await Cafe.findByIdAndDelete(req.params.id);
+
+      return res.json({ success: true, message: 'Location added to existing cafe', data: parent });
+    }
+
+    // Otherwise just approve as a new cafe
+    submission.isApproved = true;
+    await submission.save();
+    res.json({ success: true, data: submission });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCafeStore } from '../../stores/useCafeStore';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -20,6 +20,7 @@ import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
+import Badge from '@mui/material/Badge';
 
 import LoadingLogo from '../common/LoadingLogo';
 
@@ -58,18 +59,18 @@ const MobileBottomNav = () => {
   const darkMode = themeMode === 'dark';
   const navIconColor = theme.palette.light?.main || '#fff';
 
-  // Use store filters instead of local state
   const cafeTypeQuery = useCafeStore((state) => state.cafeTypeFilter);
   const neighborhoodQuery = useCafeStore((state) => state.neighborhoodFilter);
   const setCafeTypeQuery = useCafeStore((state) => state.setCafeTypeFilter);
   const setNeighborhoodQuery = useCafeStore((state) => state.setNeighborhoodFilter);
+  const setSearchQuery = useCafeStore((state) => state.setSearchQuery);
+  const setSearchResults = useCafeStore((state) => state.setSearchResults);
+  const hasActiveFilters = (cafeTypeQuery && cafeTypeQuery !== 'all') || (neighborhoodQuery && neighborhoodQuery !== 'all');
+  const isMapPage = location.pathname === '/';
 
-  const categories = Array.from(
-    new Set((cafes || []).map((cafe) => cafe.category).filter(Boolean))
-  );
-
+  const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
   const neighborhoods = Array.from(
-    new Set((cafes || []).map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
+    new Set(cafes.map((cafe) => cafe.locations?.[0]?.neighborhood).filter(Boolean))
   );
 
   let isAdmin = false;
@@ -80,13 +81,10 @@ const MobileBottomNav = () => {
   // Local UI state (remove filter state as it's now in store)
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setLocalSearchQuery] = useState('');
 
   const [showAddCafe, setShowAddCafe] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-  console.log('Cafes count:', cafes.length);
-  console.log('Categories:', categories);
-  console.log('Neighborhoods:', neighborhoods);
 
   // Ensure only one drawer can be open at a time
   const openDrawer = (drawerType) => {
@@ -199,34 +197,61 @@ const MobileBottomNav = () => {
               </IconButton>
             </Tooltip>
 
-            {/* HIDDEN — tastings nav link temporarily disabled */}
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title="Search Cafes" arrow>
+            <Tooltip title="Coffee Tastings" arrow>
               <IconButton
                 color="inherit"
                 size="large"
-                aria-label="Toggle cafe search"
+                aria-label="Navigate to coffee tastings"
                 sx={{
                   p: 0.75,
-                  bgcolor: searchOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
+                  bgcolor:
+                    location.pathname === '/tastings' ? 'rgba(255,255,255,0.15)' : 'transparent',
                   transition: 'background-color 200ms ease',
                   '&:hover': {
-                    bgcolor: searchOpen ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
+                    bgcolor:
+                      location.pathname === '/tastings'
+                        ? 'rgba(255,255,255,0.2)'
+                        : 'rgba(255,255,255,0.1)',
                   },
                 }}
-                onClick={() => setSearchOpen(!searchOpen)}
+                onClick={() => handleNav('/tastings')}
               >
-                <SearchIcon
+                <RateReviewIcon
                   fontSize="medium"
                   sx={{
-                    color: searchOpen ? theme.palette.accent?.main || navIconColor : navIconColor,
+                    color:
+                      location.pathname === '/tastings'
+                        ? theme.palette.accent?.main || navIconColor
+                        : navIconColor,
                     transition: 'color 200ms ease',
                   }}
                 />
               </IconButton>
             </Tooltip>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {isMapPage && (
+              <Tooltip title="Search Cafes" arrow>
+                <IconButton
+                  color="inherit"
+                  size="large"
+                  aria-label="Toggle cafe search"
+                  sx={{
+                    p: 0.75,
+                    bgcolor: searchOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
+                    transition: 'background-color 200ms ease',
+                    '&:hover': { bgcolor: searchOpen ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)' },
+                  }}
+                  onClick={() => setSearchOpen(!searchOpen)}
+                >
+                  <SearchIcon
+                    fontSize="medium"
+                    sx={{ color: searchOpen ? theme.palette.accent?.main || navIconColor : navIconColor, transition: 'color 200ms ease' }}
+                  />
+                </IconButton>
+              </Tooltip>
+            )}
 
             <Tooltip title="Filter Options" arrow>
               <IconButton
@@ -237,21 +262,20 @@ const MobileBottomNav = () => {
                   p: 0.75,
                   bgcolor: filterDrawerOpen ? 'rgba(255,255,255,0.15)' : 'transparent',
                   transition: 'background-color 200ms ease',
-                  '&:hover': {
-                    bgcolor: filterDrawerOpen ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
-                  },
+                  '&:hover': { bgcolor: filterDrawerOpen ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)' },
                 }}
                 onClick={() => (filterDrawerOpen ? closeDrawers() : openDrawer('filter'))}
               >
-                <FilterListIcon
-                  fontSize="medium"
-                  sx={{
-                    color: filterDrawerOpen
-                      ? theme.palette.accent?.main || navIconColor
-                      : navIconColor,
-                    transition: 'color 200ms ease',
-                  }}
-                />
+                <Badge
+                  variant="dot"
+                  invisible={!hasActiveFilters}
+                  sx={{ '& .MuiBadge-dot': { backgroundColor: theme.palette.accent?.main } }}
+                >
+                  <FilterListIcon
+                    fontSize="medium"
+                    sx={{ color: filterDrawerOpen ? theme.palette.accent?.main || navIconColor : navIconColor, transition: 'color 200ms ease' }}
+                  />
+                </Badge>
               </IconButton>
             </Tooltip>
           </Box>
@@ -345,7 +369,35 @@ const MobileBottomNav = () => {
             </ListItemButton>
           </ListItem>
 
-          {/* HIDDEN — tastings drawer link temporarily disabled */}
+          <ListItem disablePadding>
+            <ListItemButton
+              component={Link}
+              to="/tastings"
+              onClick={closeDrawers}
+              sx={{
+                bgcolor:
+                  location.pathname === '/tastings' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                '&:hover': {
+                  bgcolor:
+                    location.pathname === '/tastings'
+                      ? 'rgba(255,255,255,0.15)'
+                      : 'rgba(255,255,255,0.05)',
+                },
+              }}
+            >
+              <ListItemIcon>
+                <RateReviewIcon
+                  sx={{
+                    color:
+                      location.pathname === '/tastings'
+                        ? theme.palette.accent?.main || navIconColor
+                        : navIconColor,
+                  }}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Tastings" />
+            </ListItemButton>
+          </ListItem>
 
           <ListItem disablePadding>
             <ListItemButton
@@ -610,19 +662,8 @@ const MobileBottomNav = () => {
         fullWidth
         disableRestoreFocus
         keepMounted={false}
-        sx={{
-          '& .MuiDialog-container': {
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
-          },
-        }}
         PaperProps={{
-          sx: {
-            position: 'absolute',
-            top: 88,
-            left: 24,
-            width: { xs: 'calc(100% - 48px)', sm: 600 },
-          },
+          sx: { width: { xs: 'calc(100% - 32px)', sm: 600 }, mx: 'auto', mt: { xs: 2, sm: 4 } },
         }}
       >
         <DialogContent sx={{ p: 0 }}>
@@ -632,83 +673,72 @@ const MobileBottomNav = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Search dialog */}
+      {/* Search dialog — map page only */}
       <Dialog
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
+        open={searchOpen && isMapPage}
+        onClose={() => { setSearchOpen(false); setLocalSearchQuery(''); setSearchResults([]); }}
         maxWidth="sm"
         fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 2,
-            pt: 1,
-            width: { xs: 'calc(100% - 32px)', sm: '400px' },
-          },
-        }}
+        PaperProps={{ sx: { borderRadius: 2, pt: 1, width: { xs: 'calc(100% - 32px)', sm: '400px' } } }}
       >
         <DialogTitle sx={{ pb: 1 }}>Search Cafes</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             fullWidth
-            placeholder="Search by name, neighborhood or coffee roaster..."
+            placeholder="Search by name or neighbourhood…"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+            onChange={(e) => {
+              const q = e.target.value;
+              setLocalSearchQuery(q);
+              if (!q.trim()) {
+                setSearchResults([]);
+              } else {
+                const results = cafes.filter(
+                  (cafe) =>
+                    cafe.name.toLowerCase().includes(q.toLowerCase()) ||
+                    cafe.locations?.some((l) =>
+                      (l.neighborhood || '').toLowerCase().includes(q.toLowerCase())
+                    )
+                );
+                setSearchResults(results);
+              }
             }}
-            variant="outlined"
+            InputProps={{ startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} /> }}
             size="medium"
           />
           {searchQuery && (
             <Box sx={{ mt: 2 }}>
-              <List>
-                {cafes
-                  .filter(
-                    (cafe) =>
-                      cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      (cafe.locations?.[0]?.neighborhood || '')
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()) ||
-                      (cafe.roaster || '').toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-                  .slice(0, 5) // Limit results
-                  .map((cafe, index) => (
-                    <ListItem
-                      key={cafe._id || `cafe-${index}`}
-                      button
-                      onClick={() => {
-                        navigate(`/cafe/${cafe._id}`);
-                        setSearchOpen(false);
-                        setSearchQuery('');
-                      }}
-                      sx={{
-                        borderRadius: 1,
-                        mb: 1,
-                        '&:hover': {
-                          bgcolor: theme.palette.action.hover,
-                        },
-                      }}
-                    >
-                      <StorefrontIcon sx={{ mr: 2, color: 'text.secondary' }} />
-                      <ListItemText
-                        primary={cafe.name}
-                        secondary={cafe.locations?.[0]?.neighborhood || 'Unknown location'}
-                      />
-                    </ListItem>
-                  ))}
-              </List>
-              {cafes.filter(
-                (cafe) =>
-                  cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  (cafe.locations?.[0]?.neighborhood || '')
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()) ||
-                  (cafe.roaster || '').toLowerCase().includes(searchQuery.toLowerCase())
-              ).length === 0 && (
-                <Box sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>
-                  No cafes found matching your search
-                </Box>
+              {cafes.filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
+                <Box sx={{ p: 2, textAlign: 'center', opacity: 0.6 }}>No cafes found</Box>
+              ) : (
+                <List disablePadding>
+                  {cafes
+                    .filter(
+                      (cafe) =>
+                        cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        cafe.locations?.some((l) =>
+                          (l.neighborhood || '').toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                    )
+                    .slice(0, 6)
+                    .map((cafe) => (
+                      <ListItemButton
+                        key={cafe._id}
+                        onClick={() => {
+                          setSearchResults([cafe]);
+                          setSearchOpen(false);
+                        }}
+                        sx={{ borderRadius: 1, mb: 0.5 }}
+                      >
+                        <StorefrontIcon sx={{ mr: 2, opacity: 0.6, fontSize: '1.1rem' }} />
+                        <ListItemText
+                          primary={cafe.name}
+                          secondary={cafe.locations?.[0]?.neighborhood || ''}
+                        />
+                      </ListItemButton>
+                    ))}
+                </List>
               )}
             </Box>
           )}

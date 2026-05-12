@@ -26,6 +26,7 @@ const LoginForm = ({ setIsAdmin, onClose }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,6 +41,7 @@ const LoginForm = ({ setIsAdmin, onClose }) => {
     e.preventDefault();
     setLoading(true);
 
+    setError('');
     try {
       const { identifier, password } = formData;
       const trimmedIdentifier = identifier.trim();
@@ -54,14 +56,11 @@ const LoginForm = ({ setIsAdmin, onClose }) => {
       const data = await authAPI.login(payload);
 
       if (data.token || data.accessToken) {
-        // Success case - user exists and credentials are correct
         const token = data.token || data.accessToken;
-        // Update localStorage
         localStorage.setItem('userToken', token);
         localStorage.setItem('userId', data.user.id);
         localStorage.setItem('username', data.user?.username || trimmedIdentifier);
 
-        // Get user role from token
         try {
           const { jwtDecode } = await import('jwt-decode');
           const decoded = jwtDecode(token);
@@ -69,30 +68,22 @@ const LoginForm = ({ setIsAdmin, onClose }) => {
           localStorage.setItem('userRole', role);
           const isAdminUser = role === 'admin' ? 'true' : 'false';
           localStorage.setItem('admin', isAdminUser);
-          setIsAdmin(isAdminUser === 'true'); // Only set to true if role is admin
+          setIsAdmin(isAdminUser === 'true');
         } catch {
           localStorage.setItem('userRole', 'user');
           localStorage.setItem('admin', 'false');
           setIsAdmin(false);
         }
 
-        // Update login states
-        useCafeStore.setState({ isLoggedIn: true }); // Update store state
+        useCafeStore.setState({ isLoggedIn: true });
         onClose();
       } else {
-        // Server returned success but no token - likely authentication error
-        const errorMessage =
-          data.error ||
-          data.message ||
-          'Invalid credentials. Please check your username/email and password.';
-        showSnackbar(errorMessage, 'error');
+        setError(data.error || data.message || 'Invalid credentials.');
       }
     } catch (err) {
-      handleApiError(
-        err,
-        showSnackbar,
-        'Invalid credentials. Please check your username/email and password.'
-      );
+      setError(err.message || 'Could not connect to server. Is the backend running?');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -191,6 +182,12 @@ const LoginForm = ({ setIsAdmin, onClose }) => {
             {showPassword ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </Box>
+
+        {error && (
+          <Typography variant="body2" color="error" sx={{ mt: -1 }}>
+            {error}
+          </Typography>
+        )}
 
         <Button
           type="submit"

@@ -21,25 +21,9 @@ import {
 } from '@mui/material';
 import LoginForm from '../components/forms/LoginForm.jsx';
 import MuiTheme from '../components/layout/MuiTheme.jsx';
+import CafeEditForm, { NEIGHBORHOODS, FEATURES } from '../components/admin/CafeEditForm.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-
-const FEATURES = [
-  'outdoor_seating',
-  'wheelchair_accessible',
-  'lunch',
-  'pour_over',
-  'takeaway',
-  'vegan_options',
-  'breakfast',
-  'iced_drinks',
-  'pastries',
-  'multi_roaster',
-  'decaf',
-  'no_coffee_bar',
-  'limited_sitting',
-  'roaster_only',
-];
 
 const buttonStyles = {
   minWidth: '120px',
@@ -140,208 +124,6 @@ const AdminSection = ({ title, count, items, emptyMessage, ItemCardProps }) => (
   </Paper>
 );
 
-const NEIGHBORHOODS = [
-  'Enskede-Årsta-Vantör',
-  'Hägersten',
-  'Kungsholmen',
-  'Norrmalm',
-  'Södermalm',
-  'Vasastan',
-  'Östermalm',
-];
-
-const updateLocation = (editData, setEditData, field, value) => {
-  const locations = editData.locations ? [...editData.locations] : [{}];
-  locations[0] = { ...locations[0], [field]: value };
-  setEditData({ ...editData, locations });
-};
-
-const CafeEditForm = ({ editData, setEditData }) => (
-  <Stack spacing={2}>
-    <Typography variant="subtitle1" fontWeight={600}>Basic Info</Typography>
-    <TextField
-      variant="filled"
-      fullWidth
-      label="Name"
-      value={editData.name || ''}
-      onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-    />
-    <TextField
-      variant="filled"
-      select
-      fullWidth
-      label="Category"
-      value={editData.category || ''}
-      onChange={(e) => setEditData({ ...editData, category: e.target.value })}
-    >
-      <MenuItem value="specialty">Specialty</MenuItem>
-      <MenuItem value="roaster">Roaster</MenuItem>
-      <MenuItem value="thirdwave">Third Wave</MenuItem>
-    </TextField>
-    <TextField
-      variant="filled"
-      fullWidth
-      multiline
-      rows={3}
-      label="Description"
-      value={editData.description || ''}
-      onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-    />
-    <TextField
-      variant="filled"
-      fullWidth
-      label="Website or Instagram"
-      value={editData.website || ''}
-      onChange={(e) => setEditData({ ...editData, website: e.target.value })}
-    />
-
-    <Typography variant="subtitle1" fontWeight={600}>Location</Typography>
-    <TextField
-      variant="filled"
-      fullWidth
-      label="Address"
-      value={editData.locations?.[0]?.address || ''}
-      onChange={(e) => updateLocation(editData, setEditData, 'address', e.target.value)}
-    />
-    <TextField
-      variant="filled"
-      select
-      fullWidth
-      label="Neighbourhood"
-      value={editData.locations?.[0]?.neighborhood || ''}
-      onChange={(e) => updateLocation(editData, setEditData, 'neighborhood', e.target.value)}
-    >
-      <MenuItem value="">— None —</MenuItem>
-      {NEIGHBORHOODS.map((n) => (
-        <MenuItem key={n} value={n}>{n}</MenuItem>
-      ))}
-    </TextField>
-    <TextField
-      variant="filled"
-      fullWidth
-      label="Location Note"
-      placeholder="e.g. Second floor, ring the bell"
-      value={editData.locations?.[0]?.locationNote || ''}
-      onChange={(e) => updateLocation(editData, setEditData, 'locationNote', e.target.value)}
-    />
-    <Box sx={{ display: 'flex', gap: 2 }}>
-      <TextField
-      variant="filled"
-        fullWidth
-        label="Latitude"
-        type="number"
-        placeholder="59.3293"
-        value={editData.locations?.[0]?.coordinates?.coordinates?.[1] ?? ''}
-        onChange={(e) => {
-          const lat = parseFloat(e.target.value);
-          const lng = editData.locations?.[0]?.coordinates?.coordinates?.[0] ?? '';
-          const locations = editData.locations ? [...editData.locations] : [{}];
-          locations[0] = {
-            ...locations[0],
-            coordinates: {
-              type: 'Point',
-              coordinates: [lng === '' ? 0 : lng, isNaN(lat) ? 0 : lat],
-            },
-          };
-          setEditData({ ...editData, locations });
-        }}
-        helperText="e.g. 59.3293"
-      />
-      <TextField
-      variant="filled"
-        fullWidth
-        label="Longitude"
-        type="number"
-        placeholder="18.0686"
-        value={editData.locations?.[0]?.coordinates?.coordinates?.[0] ?? ''}
-        onChange={(e) => {
-          const lng = parseFloat(e.target.value);
-          const lat = editData.locations?.[0]?.coordinates?.coordinates?.[1] ?? '';
-          const locations = editData.locations ? [...editData.locations] : [{}];
-          locations[0] = {
-            ...locations[0],
-            coordinates: {
-              type: 'Point',
-              coordinates: [isNaN(lng) ? 0 : lng, lat === '' ? 0 : lat],
-            },
-          };
-          setEditData({ ...editData, locations });
-        }}
-        helperText="e.g. 18.0686"
-      />
-    </Box>
-
-    <Typography variant="subtitle1" fontWeight={600}>Media</Typography>
-    <TextField
-      variant="filled"
-      fullWidth
-      label="Icon URL (SVG)"
-      placeholder="https://example.com/logo.svg"
-      value={editData.icon || ''}
-      onChange={(e) => setEditData({ ...editData, icon: e.target.value })}
-      helperText="SVG logo shown on the map marker or cafe card"
-    />
-    <TextField
-      variant="filled"
-      fullWidth
-      label="Background Image URL"
-      placeholder="https://example.com/cover.jpg"
-      value={editData.image || ''}
-      onChange={(e) => setEditData({ ...editData, image: e.target.value })}
-      helperText="Cover/background image for the cafe card"
-    />
-    <TextField
-      variant="filled"
-      fullWidth
-      multiline
-      rows={2}
-      label="Additional Image URLs"
-      placeholder="One URL per line"
-      value={(editData.images || []).join('\n')}
-      onChange={(e) =>
-        setEditData({
-          ...editData,
-          images: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
-        })
-      }
-      helperText="Extra images, one URL per line"
-    />
-
-    <FormControlLabel
-      control={
-        <Checkbox
-          checked={!!editData.isApproved}
-          onChange={(e) => setEditData({ ...editData, isApproved: e.target.checked })}
-        />
-      }
-      label="Approved (visible on map)"
-    />
-
-    <Typography variant="subtitle1" fontWeight={600}>Features</Typography>
-    <FormGroup row>
-      {FEATURES.map((feature) => (
-        <FormControlLabel
-          key={feature}
-          control={
-            <Checkbox
-              checked={(editData.features || []).includes(feature)}
-              onChange={(e) => {
-                const features = editData.features || [];
-                setEditData({
-                  ...editData,
-                  features: e.target.checked
-                    ? [...features, feature]
-                    : features.filter((f) => f !== feature),
-                });
-              }}
-            />
-          }
-          label={feature.replaceAll('_', ' ')}
-        />
-      ))}
-    </FormGroup>
-  </Stack>
-);
 
 const AdminPage = () => {
   const [cafes, setCafes] = useState([]);
@@ -363,10 +145,8 @@ const AdminPage = () => {
     'Content-Type': 'application/json',
   });
 
-  useEffect(() => {
-    if (!isAdmin) return;
-
-    const fetchAdminData = async () => {
+  const fetchAdminData = async () => {
+      setLoading(true);
       try {
         const [cafesRes, pendingRes, tastingsRes] = await Promise.all([
           fetch(`${API_URL}/cafes`, { headers: getHeaders() }),
@@ -383,6 +163,8 @@ const AdminPage = () => {
         setCafes(cafesData?.data ?? []);
         setSubmissions(pendingData?.data ?? []);
         setTastings(tastingsData?.data ?? []);
+
+        if (!pendingRes.ok) setErrorMessage(`Pending fetch failed: ${pendingData?.error ?? pendingRes.status}`);
       } catch (error) {
         setErrorMessage(`Failed to load admin data: ${error.message}`);
       } finally {
@@ -390,6 +172,8 @@ const AdminPage = () => {
       }
     };
 
+  useEffect(() => {
+    if (!isAdmin) return;
     fetchAdminData();
   }, [isAdmin]);
 
@@ -420,6 +204,7 @@ const AdminPage = () => {
 
   const handleApproveSubmission = async (submissionId) => {
     try {
+      const submission = submissions.find((s) => s._id === submissionId);
       const res = await fetch(`${API_URL}/cafes/${submissionId}/approve`, {
         method: 'PUT',
         headers: getHeaders(),
@@ -428,7 +213,16 @@ const AdminPage = () => {
       if (res.ok) {
         const data = await res.json();
         setSubmissions((prev) => prev.filter((s) => s._id !== submissionId));
-        setCafes((prev) => [...prev, data.data]);
+
+        if (submission?.parentCafeId) {
+          // Update the existing parent cafe in the list
+          setCafes((prev) =>
+            prev.map((c) => (c._id === submission.parentCafeId ? data.data : c))
+          );
+        } else {
+          // Add as a new approved cafe
+          setCafes((prev) => [...prev, data.data]);
+        }
       } else {
         setErrorMessage('Failed to approve cafe');
       }
@@ -498,11 +292,16 @@ const AdminPage = () => {
     <MuiTheme>
       <CssBaseline />
       <Box sx={{ mx: 3, pb: 5 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h4">Admin Dashboard</Typography>
-          <Button onClick={handleLogout} variant="contained" sx={buttonStyles}>
-            Logout
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button onClick={fetchAdminData} variant="outlined" sx={buttonStyles} disabled={loading}>
+              {loading ? 'Refreshing…' : 'Refresh'}
+            </Button>
+            <Button onClick={handleLogout} variant="contained" sx={buttonStyles}>
+              Logout
+            </Button>
+          </Box>
         </Box>
 
         {errorMessage && (

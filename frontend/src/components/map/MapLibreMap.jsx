@@ -16,6 +16,8 @@ export default function MapLibreMap({
   selectedCafe,
   setSelectedCafe,
   getCustomIcon,
+  isAdmin,
+  onEditCafe,
 }) {
   const theme = useTheme();
   const [featuresOpen, setFeaturesOpen] = useState(false);
@@ -222,6 +224,22 @@ export default function MapLibreMap({
                   >
                     Visit Website
                   </a>
+                )}
+
+                {/* Admin edit button */}
+                {isAdmin && (
+                  <button
+                    onClick={() => onEditCafe(selectedCafe)}
+                    style={{
+                      display: 'block', width: '100%', textAlign: 'center',
+                      padding: '6px 12px', marginBottom: 8, borderRadius: 6,
+                      border: `1px solid ${mutedColor}`, background: 'none',
+                      color: mutedColor, fontWeight: 600, fontSize: '0.8rem',
+                      cursor: 'pointer', letterSpacing: '0.03em',
+                    }}
+                  >
+                    Edit Cafe
+                  </button>
                 )}
 
                 {/* Footer — location navigator */}

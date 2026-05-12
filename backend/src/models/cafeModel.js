@@ -101,6 +101,11 @@ const cafeSchema = new mongoose.Schema(
       ref: 'User',
       required: false,
     },
+    parentCafeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Cafe',
+      required: false,
+    },
   },
   {
     timestamps: true,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, Suspense } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import CafeEditForm from '../components/admin/CafeEditForm';
 import {
   MyLocation as MyLocationIcon,
   Clear as ClearIcon,
@@ -25,12 +26,17 @@ const MapPage = () => {
   const searchResults = useCafeStore((state) => state.searchResults);
   const filteredCafes = useCafeStore((state) => state.filteredCafes);
   const userLocation = useCafeStore((state) => state.user?.location);
+  const setUser = useCafeStore((state) => state.setUser);
   const themeMode = useCafeStore((state) => state.themeMode);
   const [showUserPin, setShowUserPin] = useState(false);
   const [legendOpen, setLegendOpen] = useState(false);
   const [cafeListOpen, setCafeListOpen] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [editingCafe, setEditingCafe] = useState(null);
+  const [editData, setEditData] = useState({});
+  const isAdmin = localStorage.getItem('admin') === 'true';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
   // Listen for mobile drawer state changes
   useEffect(() => {
@@ -96,8 +102,33 @@ const MapPage = () => {
   const cafesToShow =
     searchResults.length > 0 ? searchResults : hasActiveFilters ? filteredCafes : cafes;
 
-  // Store filters for clear FAB condition
   const clearFilters = useCafeStore((state) => state.clearFilters);
+
+  const handleEditCafe = (cafe) => {
+    setEditingCafe(cafe);
+    setEditData({ ...cafe });
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const res = await fetch(`${API_URL}/cafes/${editingCafe._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+        },
+        body: JSON.stringify(editData),
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setCafes(cafes.map((c) => (c._id === editingCafe._id ? saved.data : c)));
+        setSelectedCafe(null);
+        setEditingCafe(null);
+      }
+    } catch (err) {
+      console.error('Failed to save cafe:', err);
+    }
+  };
 
   return (
     <>
@@ -201,9 +232,22 @@ const MapPage = () => {
             selectedCafe={selectedCafe}
             setSelectedCafe={setSelectedCafe}
             getCustomIcon={getCustomIcon}
+            isAdmin={isAdmin}
+            onEditCafe={handleEditCafe}
           />
         </Suspense>
       </Box>
+
+      <Dialog open={!!editingCafe} onClose={() => setEditingCafe(null)} maxWidth="md" fullWidth>
+        <DialogTitle>Edit {editingCafe?.name}</DialogTitle>
+        <DialogContent>
+          <CafeEditForm editData={editData} setEditData={setEditData} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditingCafe(null)}>Cancel</Button>
+          <Button onClick={handleSaveEdit} variant="contained">Save</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

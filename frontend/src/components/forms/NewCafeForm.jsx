@@ -90,7 +90,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
     if (!isExistingCafe && !formData.category) newErrors.category = 'Category is required';
     if (!isExistingCafe && !formData.description.trim())
       newErrors.description = 'Description is required';
-    if (!formData.website.trim()) newErrors.website = 'Website or Instagram is required';
+    if (!isExistingCafe && !formData.website.trim()) newErrors.website = 'Website or Instagram is required';
     if (!formData.address.trim()) newErrors.address = 'Address is required';
     if (isExistingCafe && !parentCafe) newErrors.parentCafe = 'Please select the existing cafe';
     setErrors(newErrors);
@@ -192,7 +192,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
 
               {isExistingCafe && (
                 <Autocomplete
-                  options={cafes}
+                  options={cafes.filter((c, i, arr) => arr.findIndex((x) => x._id === c._id) === i)}
                   getOptionLabel={(c) => c.name}
                   value={parentCafe}
                   onChange={(_, value) => {
@@ -244,12 +244,14 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                   fullWidth
                   margin="normal"
                   error={!!errors.category}
-                  helperText={errors.category || 'Hover over an option for a description'}
+                  helperText={
+                    errors.category ||
+                    CATEGORIES.find((c) => c.value === formData.category)?.tooltip ||
+                    'Select a category'
+                  }
                 >
                   {CATEGORIES.map((c) => (
-                    <Tooltip key={c.value} title={c.tooltip} placement="right" arrow>
-                      <MenuItem value={c.value}>{c.label}</MenuItem>
-                    </Tooltip>
+                    <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>
                   ))}
                 </TextField>
               </Box>
@@ -301,7 +303,7 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
                 arrow
               >
                 <TextField
-                  label="Website or Instagram *"
+                  label={isExistingCafe ? 'Website or Instagram' : 'Website or Instagram *'}
                   name="website"
                   value={formData.website}
                   onChange={handleChange}

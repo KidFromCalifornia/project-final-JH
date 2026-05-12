@@ -34,12 +34,12 @@ export const validateRegister = (req, res, next) => {
 
 // Validate login data
 export const validateLogin = (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, username, password } = req.body;
 
-  if (!email || !isValidEmail(email)) {
+  if (!email && !username) {
     return res.status(400).json({
       success: false,
-      error: 'Invalid email format',
+      error: 'Email or username is required',
     });
   }
 
