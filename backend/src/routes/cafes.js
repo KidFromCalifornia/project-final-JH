@@ -5,22 +5,39 @@ import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
+const geocodeAddress = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
+  const res = await fetch(url, { headers: { 'User-Agent': 'StockholmCoffeeClub/1.0' } });
+  const data = await res.json();
+  if (data.length > 0) {
+    return { type: 'Point', coordinates: [parseFloat(data[0].lon), parseFloat(data[0].lat)] };
+  }
+  return null;
+};
+
 // POST — submit a new cafe (public, isApproved: false by default)
 router.post('/', async (req, res) => {
   try {
-    const cleanedLocations = (req.body.locations || []).map((loc) => {
-      if (
-        loc.coordinates &&
-        Array.isArray(loc.coordinates.coordinates) &&
-        loc.coordinates.coordinates.length === 2 &&
-        typeof loc.coordinates.coordinates[0] === 'number' &&
-        typeof loc.coordinates.coordinates[1] === 'number'
-      ) {
-        return loc;
-      }
-      const { coordinates, ...rest } = loc;
-      return rest;
-    });
+    const locationsWithCoords = await Promise.all(
+      (req.body.locations || []).map(async (loc) => {
+        if (
+          loc.coordinates &&
+          Array.isArray(loc.coordinates.coordinates) &&
+          loc.coordinates.coordinates.length === 2 &&
+          typeof loc.coordinates.coordinates[0] === 'number' &&
+          typeof loc.coordinates.coordinates[1] === 'number'
+        ) {
+          return loc;
+        }
+        if (loc.address) {
+          const coords = await geocodeAddress(`${loc.address}, Stockholm, Sweden`);
+          if (coords) return { ...loc, coordinates: coords };
+        }
+        const { coordinates, ...rest } = loc;
+        return rest;
+      })
+    );
+    const cleanedLocations = locationsWithCoords;
 
     let submittedBy = req.body.userId;
     if (submittedBy === 'user' || !submittedBy) submittedBy = undefined;
