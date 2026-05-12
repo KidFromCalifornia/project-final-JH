@@ -33,19 +33,17 @@ const CATEGORIES = [
   {
     value: 'specialty',
     label: 'Specialty',
-    tooltip:
-      'Coffee-forward shop focusing on high-quality single-origin beans and precise brewing methods',
+    tooltip: 'Scored 80+ by industry graders, commonly arabica, carefully sourced',
   },
   {
     value: 'roaster',
     label: 'Roaster',
-    tooltip: 'Roasts their own beans in-house; often sells retail bags and brewing equipment',
+    tooltip: 'Roasts their own beans, working with specialty grade coffee and/or third wave practices',
   },
   {
     value: 'thirdwave',
     label: 'Third Wave',
-    tooltip:
-      'Part of the third wave movement — treats coffee as an artisanal product, emphasising origin, processing, and flavour transparency',
+    tooltip: 'First coined by Trish Rothgeb in 2002, the practice of treating coffee as a craft. Locations that go beyond just serving it',
   },
 ];
 
