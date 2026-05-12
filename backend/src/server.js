@@ -61,8 +61,10 @@ app.use(
     origin: [
       'http://localhost:5173', // Vite dev server
       'http://localhost:3000', // React default dev server
-      'https://stockholmscoffeeclub.netlify.app', // Production frontend
-      'https://stockholmscoffeeclub.netlify.app/', // With trailing slash
+      'https://stockholmscoffeeclub.netlify.app',
+      'https://stockholmscoffeeclub.netlify.app/',
+      'https://stockholmscoffeeclub.com',
+      'https://www.stockholmscoffeeclub.com',
       process.env.FRONTEND_URL,
     ].filter(Boolean),
     credentials: true,
