@@ -98,12 +98,12 @@ const NavigationItems = ({
         </ListItem>
 
         <ListItem disablePadding>
-          <Tooltip title="Suggest a Cafe" arrow placement="right" disableHoverListener={open}>
+          <Tooltip title="Make a Suggestion" arrow placement="right" disableHoverListener={open}>
             <ListItemButton onClick={() => setShowSuggestion(true)}>
               <ListItemIcon>
                 <LightbulbIcon sx={{ color: navIconColor }} />
               </ListItemIcon>
-              <ListItemText primary="Suggest a Cafe" />
+              <ListItemText primary="Make a Suggestion" />
             </ListItemButton>
           </Tooltip>
         </ListItem>

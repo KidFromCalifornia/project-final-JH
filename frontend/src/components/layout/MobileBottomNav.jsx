@@ -439,7 +439,7 @@ const MobileBottomNav = () => {
               <ListItemIcon>
                 <LightbulbIcon sx={{ color: navIconColor }} />
               </ListItemIcon>
-              <ListItemText primary="Suggest a Cafe" />
+              <ListItemText primary="Make a Suggestion" />
             </ListItemButton>
           </ListItem>
 
@@ -674,7 +674,7 @@ const MobileBottomNav = () => {
         </Box>
       </Drawer>
 
-      {/* Suggest a Cafe dialog */}
+      {/* Make a Suggestion dialog */}
       <Dialog
         open={showSuggestion}
         onClose={() => setShowSuggestion(false)}

@@ -38,10 +38,10 @@ const SuggestionForm = ({ onClose }) => {
   return (
     <Paper elevation={6} sx={{ width: '100%', maxWidth: 560, mx: 'auto', p: { xs: 2, sm: 3 }, borderRadius: 2 }}>
       <Typography variant="h5" component="h2" align="center" gutterBottom sx={{ mb: 2 }}>
-        Suggest a Cafe
+        Make a Suggestion
       </Typography>
       <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
-        Know a great spot we're missing? Tell us about it.
+        Did we miss something, is something wrong? Let us know.
       </Typography>
 
       <form onSubmit={handleSubmit}>
