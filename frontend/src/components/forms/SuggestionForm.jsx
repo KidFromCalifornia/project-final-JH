@@ -68,7 +68,7 @@ const SuggestionForm = ({ onClose }) => {
             </Button>
           )}
           <Button type="submit" variant="contained" size="large" sx={{ minWidth: '10rem', fontWeight: 600 }}>
-            Send Suggestion
+            Send
           </Button>
         </Box>
       </form>
