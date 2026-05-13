@@ -27,6 +27,7 @@ import LoadingLogo from '../common/LoadingLogo';
 // Lazy load forms for better performance
 
 const NewCafeForm = React.lazy(() => import('../forms/NewCafeForm'));
+const SuggestionForm = React.lazy(() => import('../forms/SuggestionForm'));
 
 import {
   DoorFront as DoorFrontIcon,
@@ -35,6 +36,7 @@ import {
   RateReview as RateReviewIcon,
   Map as MapIcon,
   AddLocation as AddLocationIcon,
+  Lightbulb as LightbulbIcon,
   Storefront as StorefrontIcon,
   TravelExplore as TravelExploreIcon,
   AccountCircle as AccountCircleIcon,
@@ -84,6 +86,7 @@ const MobileBottomNav = () => {
   const [searchQuery, setLocalSearchQuery] = useState('');
 
   const [showAddCafe, setShowAddCafe] = useState(false);
+  const [showSuggestion, setShowSuggestion] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
   // Ensure only one drawer can be open at a time
@@ -423,6 +426,23 @@ const MobileBottomNav = () => {
             </ListItemButton>
           </ListItem>
 
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={() => {
+                setShowSuggestion(true);
+                closeDrawers();
+              }}
+              sx={{
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' },
+              }}
+            >
+              <ListItemIcon>
+                <LightbulbIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
+              <ListItemText primary="Suggest a Cafe" />
+            </ListItemButton>
+          </ListItem>
+
           {isAdmin && (
             <ListItem disablePadding>
               <ListItemButton
@@ -653,6 +673,25 @@ const MobileBottomNav = () => {
           </TextField>
         </Box>
       </Drawer>
+
+      {/* Suggest a Cafe dialog */}
+      <Dialog
+        open={showSuggestion}
+        onClose={() => setShowSuggestion(false)}
+        maxWidth="sm"
+        fullWidth
+        disableRestoreFocus
+        keepMounted={false}
+        PaperProps={{
+          sx: { width: { xs: 'calc(100% - 32px)', sm: 600 }, mx: 'auto', mt: { xs: 2, sm: 4 } },
+        }}
+      >
+        <DialogContent sx={{ p: 0 }}>
+          <Suspense fallback={<LoadingLogo />}>
+            <SuggestionForm onClose={() => setShowSuggestion(false)} />
+          </Suspense>
+        </DialogContent>
+      </Dialog>
 
       {/* New cafe dialog */}
       <Dialog

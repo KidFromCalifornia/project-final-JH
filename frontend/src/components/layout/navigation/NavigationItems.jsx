@@ -17,6 +17,7 @@ import {
   Login as LoginIcon,
   Logout as LogoutIcon,
   Info as InfoIcon,
+  Lightbulb as LightbulbIcon,
 } from '@mui/icons-material';
 import NavigationFilters from './NavigationFilters.jsx';
 
@@ -26,6 +27,7 @@ const NavigationItems = ({
   open,
   setShowLogin,
   setShowAddCafe,
+  setShowSuggestion,
   setIsLoggedIn,
   categories,
   neighborhoods,
@@ -91,6 +93,17 @@ const NavigationItems = ({
                 <AddLocationIcon sx={{ color: navIconColor }} />
               </ListItemIcon>
               <ListItemText primary="Add Cafe" />
+            </ListItemButton>
+          </Tooltip>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <Tooltip title="Suggest a Cafe" arrow placement="right" disableHoverListener={open}>
+            <ListItemButton onClick={() => setShowSuggestion(true)}>
+              <ListItemIcon>
+                <LightbulbIcon sx={{ color: navIconColor }} />
+              </ListItemIcon>
+              <ListItemText primary="Suggest a Cafe" />
             </ListItemButton>
           </Tooltip>
         </ListItem>

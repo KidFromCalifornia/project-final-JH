@@ -32,6 +32,7 @@ import { useCafeStore } from '../../stores/useCafeStore';
 
 import LoginForm from '../forms/LoginForm';
 import NewCafeForm from '../forms/NewCafeForm';
+import SuggestionForm from '../forms/SuggestionForm';
 
 const DesktopNavBar = ({
   searchResults = [],
@@ -44,6 +45,7 @@ const DesktopNavBar = ({
 }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [showSuggestion, setShowSuggestion] = React.useState(false);
   const themeMode = useCafeStore((state) => state.themeMode);
   const setThemeMode = useCafeStore((state) => state.setThemeMode);
   const darkMode = themeMode === 'dark';
@@ -180,6 +182,7 @@ const DesktopNavBar = ({
           navIconColor={navIconColor}
           open={open}
           setShowAddCafe={setShowAddCafe}
+          setShowSuggestion={setShowSuggestion}
           setIsLoggedIn={setIsLoggedIn}
           categories={categories}
           neighborhoods={neighborhoods}
@@ -242,6 +245,31 @@ const DesktopNavBar = ({
       >
         <DialogContent sx={{ p: 0 }}>
           <NewCafeForm onClose={() => setShowAddCafe(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Suggest a Cafe Dialog */}
+      <Dialog
+        open={showSuggestion}
+        onClose={() => setShowSuggestion(false)}
+        maxWidth="sm"
+        fullWidth
+        sx={{
+          '& .MuiDialog-container': {
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+          },
+        }}
+        PaperProps={{
+          sx: {
+            position: 'absolute',
+            top: '5.5rem',
+            left: open ? `calc(${drawerWidth} + 1.5rem)` : '5.5rem',
+          },
+        }}
+      >
+        <DialogContent sx={{ p: 0 }}>
+          <SuggestionForm onClose={() => setShowSuggestion(false)} />
         </DialogContent>
       </Dialog>
     </Box>
