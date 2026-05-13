@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -12,6 +12,21 @@ import { Instagram as InstagramIcon } from '@mui/icons-material';
 
 const AboutMePage = () => {
   const theme = useTheme();
+
+  useEffect(() => {
+    document.title = 'About — Stockholm Coffee Club';
+    const setMeta = (name, content, prop = false) => {
+      const attr = prop ? 'property' : 'name';
+      let el = document.querySelector(`meta[${attr}="${name}"]`);
+      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
+      el.setAttribute('content', content);
+    };
+    setMeta('description', 'Stockholm Coffee Club is a community map of the city\'s specialty coffee scene — discover cafes, roasters, and third wave spots across Stockholm.');
+    setMeta('og:title', 'About — Stockholm Coffee Club', true);
+    setMeta('og:description', 'A community map of Stockholm\'s specialty coffee scene. Discover cafes, roasters, and third wave spots across the city.', true);
+    setMeta('og:url', 'https://stockholmscoffeeclub.com/about', true);
+    return () => { document.title = 'Stockholm Coffee Club'; };
+  }, []);
 
   return (
     <Container component="section" maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}>
