@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense } from 'react';
-import { Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CafeEditForm from '../components/admin/CafeEditForm';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@mui/icons-material';
 import MapLegend from '../components/map/MapLegend';
 import CafeListDialog from '../components/map/CafeListDialog';
+import CafeBottomSheet from '../components/map/CafeBottomSheet';
 import ReusableFab from '../components/common/ReusableFab';
 import LoadingLogo from '../components/common/LoadingLogo';
 import { useCafeStore } from '../stores/useCafeStore';
@@ -21,6 +22,7 @@ const MapLibreMap = React.lazy(() => import('../components/map/MapLibreMap'));
 
 const MapPage = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const cafes = useCafeStore((state) => state.cafes);
   const setCafes = useCafeStore((state) => state.setCafes);
   const searchResults = useCafeStore((state) => state.searchResults);
@@ -234,8 +236,19 @@ const MapPage = () => {
             getCustomIcon={getCustomIcon}
             isAdmin={isAdmin}
             onEditCafe={handleEditCafe}
+            suppressPopup={isMobile}
           />
         </Suspense>
+
+        {isMobile && (
+          <CafeBottomSheet
+            selectedCafe={selectedCafe}
+            setSelectedCafe={setSelectedCafe}
+            themeMode={themeMode}
+            isAdmin={isAdmin}
+            onEditCafe={handleEditCafe}
+          />
+        )}
       </Box>
 
       <Dialog open={!!editingCafe} onClose={() => setEditingCafe(null)} maxWidth="md" fullWidth>

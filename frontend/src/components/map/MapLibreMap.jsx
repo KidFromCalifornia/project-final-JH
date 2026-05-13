@@ -18,6 +18,7 @@ export default function MapLibreMap({
   getCustomIcon,
   isAdmin,
   onEditCafe,
+  suppressPopup = false,
 }) {
   const theme = useTheme();
   const [featuresOpen, setFeaturesOpen] = useState(false);
@@ -81,7 +82,7 @@ export default function MapLibreMap({
           </Marker>
         )}
 
-      {selectedCafe &&
+      {!suppressPopup && selectedCafe &&
         (() => {
           const locationIndex = selectedCafe.selectedLocationIndex || 0;
           const selectedLocation = selectedCafe.locations?.[locationIndex];
