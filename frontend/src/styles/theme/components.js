@@ -75,6 +75,9 @@ const createComponents = (customTheme, themeMode) => {
     },
 
     MuiTooltip: {
+      defaultProps: {
+        disableTouchListener: true,
+      },
       styleOverrides: {
         tooltip: {
           backgroundColor: 'hsla(222, 95%, 8%, 0.90)',
