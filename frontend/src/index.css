@@ -10,13 +10,26 @@
   width: 260px !important;
 }
 
-/* Larger close button on mobile */
+/* Close button — always large and tappable */
+.map-popup .maplibregl-popup-close-button {
+  font-size: 1.25rem;
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  top: 6px;
+  right: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 600px) {
   .map-popup .maplibregl-popup-close-button {
     font-size: 1.5rem;
-    width: 2rem;
-    height: 2rem;
-    line-height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
     top: 4px;
     right: 4px;
   }
