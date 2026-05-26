@@ -89,38 +89,41 @@ export default function CafeBottomSheet({
           )}
 
           {/* Features — collapsible */}
-          {selectedCafe.features && selectedCafe.features.length > 0 && (
-            <Box sx={{ mb: 1.5 }}>
-              <Typography
-                component="button"
-                onClick={() => setFeaturesOpen((o) => !o)}
-                sx={{
-                  display: 'flex', alignItems: 'center', gap: 0.5,
-                  background: 'none', border: 'none', cursor: 'pointer', p: 0, mb: 0.5,
-                  fontWeight: 600, fontSize: '0.7rem', textTransform: 'uppercase',
-                  letterSpacing: '0.06em', color: mutedColor, '&:hover': { color: 'inherit' },
-                }}
-              >
-                Cafe Features {featuresOpen ? '▲' : '▼'}
-              </Typography>
-              <Collapse in={featuresOpen}>
-                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', pt: 0.5 }}>
-                  {selectedCafe.features.map((feature, idx) => (
-                    <Typography
-                      key={idx}
-                      variant="caption"
-                      sx={{
-                        backgroundColor: alpha(theme.palette.primary.main, 0.15),
-                        color: 'inherit', px: 0.75, py: 0.25, borderRadius: 0.5, fontSize: '0.68rem',
-                      }}
-                    >
-                      {formatFeature(feature)}
-                    </Typography>
-                  ))}
-                </Box>
-              </Collapse>
-            </Box>
-          )}
+          {(() => {
+            const features = selectedLocation.features?.length ? selectedLocation.features : selectedCafe.features;
+            return features && features.length > 0 && (
+              <Box sx={{ mb: 1.5 }}>
+                <Typography
+                  component="button"
+                  onClick={() => setFeaturesOpen((o) => !o)}
+                  sx={{
+                    display: 'flex', alignItems: 'center', gap: 0.5,
+                    background: 'none', border: 'none', cursor: 'pointer', p: 0, mb: 0.5,
+                    fontWeight: 600, fontSize: '0.7rem', textTransform: 'uppercase',
+                    letterSpacing: '0.06em', color: mutedColor, '&:hover': { color: 'inherit' },
+                  }}
+                >
+                  Cafe Features {featuresOpen ? '▲' : '▼'}
+                </Typography>
+                <Collapse in={featuresOpen}>
+                  <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', pt: 0.5 }}>
+                    {features.map((feature, idx) => (
+                      <Typography
+                        key={idx}
+                        variant="caption"
+                        sx={{
+                          backgroundColor: alpha(theme.palette.primary.main, 0.15),
+                          color: 'inherit', px: 0.75, py: 0.25, borderRadius: 0.5, fontSize: '0.68rem',
+                        }}
+                      >
+                        {formatFeature(feature)}
+                      </Typography>
+                    ))}
+                  </Box>
+                </Collapse>
+              </Box>
+            );
+          })()}
 
           <Box sx={{ borderTop: '1px solid', borderColor: 'divider', my: 1.5 }} />
 

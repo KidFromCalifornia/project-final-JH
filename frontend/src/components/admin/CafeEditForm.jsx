@@ -36,7 +36,7 @@ const updateLocation = (editData, setEditData, index, field, value) => {
 };
 
 const addLocation = (editData, setEditData) => {
-  const locations = [...(editData.locations || []), { address: '', neighborhood: '', locationNote: '', isMainLocation: false }];
+  const locations = [...(editData.locations || []), { address: '', neighborhood: '', locationNote: '', isMainLocation: false, features: [] }];
   setEditData({ ...editData, locations, hasMultipleLocations: true });
 };
 
@@ -47,6 +47,15 @@ const removeLocation = (editData, setEditData, index) => {
 
 const LocationFields = ({ editData, setEditData, index }) => {
   const loc = editData.locations?.[index] || {};
+  const locFeatures = loc.features || [];
+
+  const toggleFeature = (feature, checked) => {
+    const updated = checked
+      ? [...locFeatures, feature]
+      : locFeatures.filter((f) => f !== feature);
+    updateLocation(editData, setEditData, index, 'features', updated);
+  };
+
   return (
     <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -94,12 +103,28 @@ const LocationFields = ({ editData, setEditData, index }) => {
             }}
             helperText="e.g. 18.0686" />
         </Box>
+
+        <Typography variant="subtitle2" fontWeight={600}>Features</Typography>
+        <FormGroup row>
+          {FEATURES.map((feature) => (
+            <FormControlLabel
+              key={feature}
+              control={
+                <Checkbox
+                  checked={locFeatures.includes(feature)}
+                  onChange={(e) => toggleFeature(feature, e.target.checked)}
+                />
+              }
+              label={feature.replaceAll('_', ' ')}
+            />
+          ))}
+        </FormGroup>
       </Stack>
     </Box>
   );
 };
 
-const CafeEditForm = ({ editData, setEditData, showFeatures = true }) => (
+const CafeEditForm = ({ editData, setEditData }) => (
   <Stack spacing={2}>
     <Typography variant="subtitle1" fontWeight={600}>Basic Info</Typography>
     <TextField variant="filled" fullWidth label="Name" value={editData.name || ''}
@@ -143,34 +168,6 @@ const CafeEditForm = ({ editData, setEditData, showFeatures = true }) => (
       }
       label="Approved (visible on map)"
     />
-
-    {showFeatures && (
-      <>
-        <Typography variant="subtitle1" fontWeight={600}>Features</Typography>
-        <FormGroup row>
-          {FEATURES.map((feature) => (
-            <FormControlLabel
-              key={feature}
-              control={
-                <Checkbox
-                  checked={(editData.features || []).includes(feature)}
-                  onChange={(e) => {
-                    const features = editData.features || [];
-                    setEditData({
-                      ...editData,
-                      features: e.target.checked
-                        ? [...features, feature]
-                        : features.filter((f) => f !== feature),
-                    });
-                  }}
-                />
-              }
-              label={feature.replaceAll('_', ' ')}
-            />
-          ))}
-        </FormGroup>
-      </>
-    )}
   </Stack>
 );
 

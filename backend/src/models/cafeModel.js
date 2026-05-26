@@ -44,6 +44,27 @@ const cafeSchema = new mongoose.Schema(
           type: Boolean,
           default: false,
         },
+        features: [
+          {
+            type: String,
+            enum: [
+              'outdoor_seating',
+              'wheelchair_accessible',
+              'lunch',
+              'pour_over',
+              'takeaway',
+              'vegan_options',
+              'breakfast',
+              'iced_drinks',
+              'pastries',
+              'multi_roaster',
+              'decaf',
+              'no_coffee_bar',
+              'limited_sitting',
+              'roaster_only',
+            ],
+          },
+        ],
       },
     ],
     description: {
