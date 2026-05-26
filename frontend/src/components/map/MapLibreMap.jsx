@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Map, Marker, Popup } from '@vis.gl/react-maplibre';
+import { Map, Marker, Popup, useMap } from '@vis.gl/react-maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import maplibregl from 'maplibre-gl';
 import { LIGHT_MAP_STYLE, DARK_MAP_STYLE } from '../../styles/mapStyles';
@@ -7,6 +7,26 @@ import { Box, Typography, Collapse } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 
 const formatFeature = (f) => f.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+const MapFlyController = ({ selectedCafe, suppressPopup }) => {
+  const { current: map } = useMap();
+
+  useEffect(() => {
+    if (!map || !suppressPopup || !selectedCafe) return;
+    const locationIndex = selectedCafe.selectedLocationIndex || 0;
+    const coords = selectedCafe.locations?.[locationIndex]?.coordinates?.coordinates;
+    if (!Array.isArray(coords) || coords.length !== 2 || !coords.every(Number.isFinite)) return;
+
+    map.flyTo({
+      center: [coords[0], coords[1]],
+      zoom: Math.max(map.getZoom(), 15),
+      padding: { bottom: window.innerHeight * 0.55 },
+      duration: 600,
+    });
+  }, [selectedCafe?._id, selectedCafe?.selectedLocationIndex]);
+
+  return null;
+};
 
 export default function MapLibreMap({
   cafesToShow,
@@ -36,6 +56,7 @@ export default function MapLibreMap({
       style={{ width: '100vw', height: '100vh' }}
       mapStyle={themeMode === 'dark' ? DARK_MAP_STYLE : LIGHT_MAP_STYLE}
     >
+      <MapFlyController selectedCafe={selectedCafe} suppressPopup={suppressPopup} />
       {(suppressPopup && selectedCafe ? cafesToShow.filter((c) => c._id === selectedCafe._id) : cafesToShow).flatMap(
         (cafe) =>
           cafe.locations
