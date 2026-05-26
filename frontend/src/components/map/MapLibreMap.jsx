@@ -36,7 +36,7 @@ export default function MapLibreMap({
       style={{ width: '100vw', height: '100vh' }}
       mapStyle={themeMode === 'dark' ? DARK_MAP_STYLE : LIGHT_MAP_STYLE}
     >
-      {cafesToShow.flatMap(
+      {(suppressPopup && selectedCafe ? cafesToShow.filter((c) => c._id === selectedCafe._id) : cafesToShow).flatMap(
         (cafe) =>
           cafe.locations
             ?.map((location, locationIndex) => {
