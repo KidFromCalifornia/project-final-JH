@@ -1,6 +1,13 @@
 /* MapLibre popup — shared */
 .map-popup .maplibregl-popup-content {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  width: 260px;
+  box-sizing: border-box;
+}
+
+.map-popup {
+  max-width: 260px !important;
+  width: 260px !important;
 }
 
 /* Larger close button on mobile */
