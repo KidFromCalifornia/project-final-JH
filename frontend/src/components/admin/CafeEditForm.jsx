@@ -11,9 +11,11 @@ import {
 } from '@mui/material';
 
 export const NEIGHBORHOODS = [
+  'Bromma',
   'Enskede-Årsta-Vantör',
   'Hägersten',
   'Kungsholmen',
+  'Nacka',
   'Norrmalm',
   'Södermalm',
   'Vasastan',

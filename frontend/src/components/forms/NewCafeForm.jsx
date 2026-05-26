@@ -20,9 +20,11 @@ import { alpha } from '@mui/material/styles';
 import { useCafeStore } from '../../stores/useCafeStore';
 
 const NEIGHBORHOODS = [
+  'Bromma',
   'Enskede-Årsta-Vantör',
   'Hägersten',
   'Kungsholmen',
+  'Nacka',
   'Norrmalm',
   'Södermalm',
   'Vasastan',
