@@ -15,6 +15,7 @@ export const NEIGHBORHOODS = [
   'Enskede-Årsta-Vantör',
   'Hägersten',
   'Kungsholmen',
+  'Lidingö',
   'Nacka',
   'Norrmalm',
   'Södermalm',
