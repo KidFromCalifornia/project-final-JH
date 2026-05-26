@@ -12,6 +12,7 @@ import {
 import MapLegend from '../components/map/MapLegend';
 import CafeListDialog from '../components/map/CafeListDialog';
 import CafeBottomSheet from '../components/map/CafeBottomSheet';
+import SuggestionForm from '../components/forms/SuggestionForm';
 import ReusableFab from '../components/common/ReusableFab';
 import LoadingLogo from '../components/common/LoadingLogo';
 import { useCafeStore } from '../stores/useCafeStore';
@@ -37,6 +38,8 @@ const MapPage = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [editingCafe, setEditingCafe] = useState(null);
   const [editData, setEditData] = useState({});
+  const [suggestionPrefill, setSuggestionPrefill] = useState('');
+  const [showSuggestion, setShowSuggestion] = useState(false);
   const isAdmin = localStorage.getItem('admin') === 'true';
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -109,6 +112,11 @@ const MapPage = () => {
   const handleEditCafe = (cafe) => {
     setEditingCafe(cafe);
     setEditData({ ...cafe });
+  };
+
+  const handleSuggestCafe = (cafe) => {
+    setSuggestionPrefill(`Regarding ${cafe.name}: `);
+    setShowSuggestion(true);
   };
 
   const handleSaveEdit = async () => {
@@ -236,6 +244,7 @@ const MapPage = () => {
             getCustomIcon={getCustomIcon}
             isAdmin={isAdmin}
             onEditCafe={handleEditCafe}
+            onSuggestCafe={handleSuggestCafe}
             suppressPopup={isMobile}
           />
         </Suspense>
@@ -247,9 +256,19 @@ const MapPage = () => {
             themeMode={themeMode}
             isAdmin={isAdmin}
             onEditCafe={handleEditCafe}
+            onSuggestCafe={handleSuggestCafe}
           />
         )}
       </Box>
+
+      <Dialog open={showSuggestion} onClose={() => setShowSuggestion(false)} maxWidth="sm" fullWidth>
+        <DialogContent sx={{ p: 0 }}>
+          <SuggestionForm
+            prefill={suggestionPrefill}
+            onClose={() => setShowSuggestion(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!editingCafe} onClose={() => setEditingCafe(null)} maxWidth="md" fullWidth>
         <DialogTitle>Edit {editingCafe?.name}</DialogTitle>

@@ -4,9 +4,9 @@ import { useAlert } from '../../context/AlertContext';
 import { handleApiError } from '../../utils/errorHandler';
 import { TextField, Button, Typography, Box, Paper } from '@mui/material';
 
-const SuggestionForm = ({ onClose }) => {
+const SuggestionForm = ({ onClose, prefill = '' }) => {
   const { showSnackbar } = useAlert();
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(prefill);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {

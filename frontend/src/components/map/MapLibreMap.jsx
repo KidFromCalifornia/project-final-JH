@@ -18,6 +18,7 @@ export default function MapLibreMap({
   getCustomIcon,
   isAdmin,
   onEditCafe,
+  onSuggestCafe,
   suppressPopup = false,
 }) {
   const theme = useTheme();
@@ -215,6 +216,20 @@ export default function MapLibreMap({
                     Visit Website
                   </a>
                 )}
+
+                {/* Suggest button */}
+                <button
+                  onClick={() => onSuggestCafe?.(selectedCafe)}
+                  style={{
+                    display: 'block', width: '100%', textAlign: 'center',
+                    padding: '4px 0', marginBottom: 4, background: 'none',
+                    border: 'none', color: mutedColor, fontWeight: 500,
+                    fontSize: '0.75rem', cursor: 'pointer', letterSpacing: '0.03em',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Make a suggestion
+                </button>
 
                 {/* Admin edit button */}
                 {isAdmin && (

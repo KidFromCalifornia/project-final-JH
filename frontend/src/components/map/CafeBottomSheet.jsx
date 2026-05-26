@@ -13,6 +13,7 @@ export default function CafeBottomSheet({
   themeMode,
   isAdmin,
   onEditCafe,
+  onSuggestCafe,
 }) {
   const theme = useTheme();
   const [featuresOpen, setFeaturesOpen] = useState(false);
@@ -143,6 +144,19 @@ export default function CafeBottomSheet({
               Visit Website
             </a>
           )}
+
+          {/* Suggest button */}
+          <button
+            onClick={() => onSuggestCafe?.(selectedCafe)}
+            style={{
+              display: 'block', width: '100%', textAlign: 'center',
+              padding: '4px 0', marginBottom: 4, background: 'none',
+              border: 'none', color: mutedColor, fontWeight: 500,
+              fontSize: '0.85rem', cursor: 'pointer', textDecoration: 'underline',
+            }}
+          >
+            Make a suggestion
+          </button>
 
           {/* Admin edit */}
           {isAdmin && (
