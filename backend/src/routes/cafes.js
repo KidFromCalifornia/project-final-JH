@@ -1,7 +1,16 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import { Cafe } from '../models/cafeModel.js';
 import { validateObjectId } from '../middleware/validateObjectId.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
+
+const submitLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: { success: false, error: 'Too many submissions. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const router = express.Router();
 
@@ -16,7 +25,7 @@ const geocodeAddress = async (address) => {
 };
 
 // POST — submit a new cafe (public, isApproved: false by default)
-router.post('/', async (req, res) => {
+router.post('/', submitLimiter, async (req, res) => {
   try {
     const locationsWithCoords = await Promise.all(
       (req.body.locations || []).map(async (loc) => {

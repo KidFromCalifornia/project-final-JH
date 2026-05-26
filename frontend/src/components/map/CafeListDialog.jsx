@@ -23,16 +23,24 @@ const categoryLabel = (cat) => {
 const CafeListDialog = ({ open, onClose, cafes, onSelectCafe }) => {
   const theme = useTheme();
   const [activeCategory, setActiveCategory] = useState(null);
+  const [activeNeighborhood, setActiveNeighborhood] = useState(null);
 
   const categories = useMemo(
     () => [...new Set(cafes.map((c) => c.category).filter(Boolean))].sort(),
     [cafes]
   );
 
-  const filtered = useMemo(
-    () => (activeCategory ? cafes.filter((c) => c.category === activeCategory) : cafes),
-    [cafes, activeCategory]
+  const neighborhoods = useMemo(
+    () => [...new Set(cafes.flatMap((c) => c.locations?.map((l) => l.neighborhood)).filter(Boolean))].sort(),
+    [cafes]
   );
+
+  const filtered = useMemo(() => {
+    let result = cafes;
+    if (activeCategory) result = result.filter((c) => c.category === activeCategory);
+    if (activeNeighborhood) result = result.filter((c) => c.locations?.some((l) => l.neighborhood === activeNeighborhood));
+    return result;
+  }, [cafes, activeCategory, activeNeighborhood]);
 
   const handleSelect = (cafe) => {
     onSelectCafe(cafe);
@@ -72,7 +80,7 @@ const CafeListDialog = ({ open, onClose, cafes, onSelectCafe }) => {
 
       {/* Category chips */}
       {categories.length > 0 && (
-        <Box sx={{ px: 3, pb: 1.5, display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
+        <Box sx={{ px: 3, pb: 1, display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
           {categories.map((cat) => (
             <Chip
               key={cat}
@@ -81,6 +89,22 @@ const CafeListDialog = ({ open, onClose, cafes, onSelectCafe }) => {
               size="small"
               onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
               sx={chipSx(activeCategory === cat)}
+            />
+          ))}
+        </Box>
+      )}
+
+      {/* Neighbourhood chips */}
+      {neighborhoods.length > 0 && (
+        <Box sx={{ px: 3, pb: 1.5, display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
+          {neighborhoods.map((n) => (
+            <Chip
+              key={n}
+              label={n}
+              variant="outlined"
+              size="small"
+              onClick={() => setActiveNeighborhood(activeNeighborhood === n ? null : n)}
+              sx={chipSx(activeNeighborhood === n)}
             />
           ))}
         </Box>

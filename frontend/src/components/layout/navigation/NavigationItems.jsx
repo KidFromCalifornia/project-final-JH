@@ -33,8 +33,10 @@ const NavigationItems = ({
   neighborhoods,
   cafeTypeQuery,
   neighborhoodQuery,
+  featureQuery,
   setCafeTypeQuery,
   setNeighborhoodQuery,
+  setFeatureQuery,
   clearFilters,
 }) => {
   const handleLogout = () => {
@@ -128,6 +130,8 @@ const NavigationItems = ({
           neighborhoodQuery={neighborhoodQuery}
           setCafeTypeQuery={setCafeTypeQuery}
           setNeighborhoodQuery={setNeighborhoodQuery}
+          setFeatureQuery={setFeatureQuery}
+          featureQuery={featureQuery}
           clearFilters={clearFilters}
           navIconColor={navIconColor}
           open={open}

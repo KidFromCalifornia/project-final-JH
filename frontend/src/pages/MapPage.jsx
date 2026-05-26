@@ -32,6 +32,7 @@ const MapPage = () => {
   const setUser = useCafeStore((state) => state.setUser);
   const themeMode = useCafeStore((state) => state.themeMode);
   const [showUserPin, setShowUserPin] = useState(false);
+  const [loadingSlow, setLoadingSlow] = useState(false);
   const [legendOpen, setLegendOpen] = useState(false);
   const [cafeListOpen, setCafeListOpen] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
@@ -74,19 +75,19 @@ const MapPage = () => {
   };
 
   useEffect(() => {
-    console.log('MapPage cafes:', cafes);
     if (cafes.length === 0) {
       const fetchCafes = async () => {
-        console.log('Fetching cafes from /cafes');
+        const slowTimer = setTimeout(() => setLoadingSlow(true), 5000);
         try {
           const data = await cafeAPI.getAll();
-          console.log('Fetched cafes data:', data);
           setCafes(data.data || []);
         } catch (error) {
           console.error('Error fetching cafes:', error);
+        } finally {
+          clearTimeout(slowTimer);
+          setLoadingSlow(false);
         }
       };
-
       fetchCafes();
     }
   }, [cafes, setCafes]);
@@ -94,9 +95,10 @@ const MapPage = () => {
   // Check if any filters are active
   const cafeTypeFilter = useCafeStore((state) => state.cafeTypeFilter);
   const neighborhoodFilter = useCafeStore((state) => state.neighborhoodFilter);
+  const featureFilter = useCafeStore((state) => state.featureFilter);
   const setCafeTypeFilter = useCafeStore((state) => state.setCafeTypeFilter);
   const setNeighborhoodFilter = useCafeStore((state) => state.setNeighborhoodFilter);
-  const hasActiveFilters = cafeTypeFilter || neighborhoodFilter;
+  const hasActiveFilters = cafeTypeFilter || neighborhoodFilter || featureFilter;
 
   // Compute filter options from cafes data
   const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
@@ -160,6 +162,17 @@ const MapPage = () => {
       >
         Stockholm&apos;s Coffee Club Map
       </Typography>
+
+      {/* Cold start banner */}
+      {loadingSlow && (
+        <Box sx={{
+          position: 'fixed', top: 72, left: '50%', transform: 'translateX(-50%)',
+          zIndex: 1500, backgroundColor: 'rgba(0,0,0,0.75)', color: '#fff',
+          px: 2.5, py: 1, borderRadius: 2, fontSize: '0.85rem', textAlign: 'center',
+        }}>
+          Waking up the server, hang tight…
+        </Box>
+      )}
 
       {/* Map container */}
       <Box

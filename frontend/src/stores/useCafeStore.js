@@ -2,19 +2,21 @@ import { create } from 'zustand';
 import { tastingAPI } from '../services/api.js';
 
 // Helper function to apply filters
-const applyFilters = (cafe, cafeTypeFilter, neighborhoodFilter) => {
-  if (!cafe) return [];
-
-  let filtered = cafe;
-
+const applyFilters = (cafes, cafeTypeFilter, neighborhoodFilter, featureFilter) => {
+  if (!cafes) return [];
+  let filtered = cafes;
   if (cafeTypeFilter && cafeTypeFilter !== 'all') {
-    filtered = filtered.filter((cafe) => cafe.category === cafeTypeFilter);
+    filtered = filtered.filter((c) => c.category === cafeTypeFilter);
   }
-
   if (neighborhoodFilter && neighborhoodFilter !== 'all') {
-    filtered = filtered.filter((cafe) => cafe.locations?.[0]?.neighborhood === neighborhoodFilter);
+    filtered = filtered.filter((c) => c.locations?.some((l) => l.neighborhood === neighborhoodFilter));
   }
-
+  if (featureFilter && featureFilter !== 'all') {
+    filtered = filtered.filter((c) =>
+      c.locations?.some((l) => (l.features || []).includes(featureFilter)) ||
+      (c.features || []).includes(featureFilter)
+    );
+  }
   return filtered;
 };
 
@@ -35,8 +37,8 @@ export const useCafeStore = create((set, get) => ({
         : [];
 
       const filteredCafes =
-        state.cafeTypeFilter || state.neighborhoodFilter
-          ? applyFilters(uniqueCafes, state.cafeTypeFilter, state.neighborhoodFilter)
+        state.cafeTypeFilter || state.neighborhoodFilter || state.featureFilter
+          ? applyFilters(uniqueCafes, state.cafeTypeFilter, state.neighborhoodFilter, state.featureFilter)
           : state.filteredCafes;
       return { cafes: uniqueCafes, filteredCafes };
     }),
@@ -47,21 +49,28 @@ export const useCafeStore = create((set, get) => ({
 
   cafeTypeFilter: '',
   neighborhoodFilter: '',
+  featureFilter: '',
   filteredCafes: [],
 
   setCafeTypeFilter: (filter) =>
     set((state) => {
-      const filteredCafes = applyFilters(state.cafes, filter, state.neighborhoodFilter);
+      const filteredCafes = applyFilters(state.cafes, filter, state.neighborhoodFilter, state.featureFilter);
       return { cafeTypeFilter: filter, filteredCafes };
     }),
 
   setNeighborhoodFilter: (filter) =>
     set((state) => {
-      const filteredCafes = applyFilters(state.cafes, state.cafeTypeFilter, filter);
+      const filteredCafes = applyFilters(state.cafes, state.cafeTypeFilter, filter, state.featureFilter);
       return { neighborhoodFilter: filter, filteredCafes };
     }),
 
-  clearFilters: () => set({ cafeTypeFilter: '', neighborhoodFilter: '', filteredCafes: [] }),
+  setFeatureFilter: (filter) =>
+    set((state) => {
+      const filteredCafes = applyFilters(state.cafes, state.cafeTypeFilter, state.neighborhoodFilter, filter);
+      return { featureFilter: filter, filteredCafes };
+    }),
+
+  clearFilters: () => set({ cafeTypeFilter: '', neighborhoodFilter: '', featureFilter: '', filteredCafes: [] }),
 
   // Tastings state
 

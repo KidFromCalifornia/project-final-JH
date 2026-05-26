@@ -55,6 +55,9 @@ const ItemCard = ({ item, theme, onEdit, onDelete, onApprove, fields, showApprov
       {item.name || item.coffeeName}
     </Typography>
 
+    {item.name === 'suggestion' && (
+      <Chip label="Suggestion" size="small" color="warning" sx={{ mb: 1, mr: 1 }} />
+    )}
     {item.parentCafeId && (
       <Chip label="New location for existing cafe" size="small" color="info" sx={{ mb: 1 }} />
     )}

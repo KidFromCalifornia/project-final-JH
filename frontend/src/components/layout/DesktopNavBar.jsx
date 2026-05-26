@@ -55,8 +55,10 @@ const DesktopNavBar = ({
   const allCafes = useCafeStore((state) => state.cafes);
   const cafeTypeQuery = useCafeStore((state) => state.cafeTypeFilter);
   const neighborhoodQuery = useCafeStore((state) => state.neighborhoodFilter);
+  const featureQuery = useCafeStore((state) => state.featureFilter);
   const setCafeTypeQuery = useCafeStore((state) => state.setCafeTypeFilter);
   const setNeighborhoodQuery = useCafeStore((state) => state.setNeighborhoodFilter);
+  const setFeatureQuery = useCafeStore((state) => state.setFeatureFilter);
   const filteredCafes = useCafeStore((state) => state.filteredCafes);
   const clearFilters = useCafeStore((state) => state.clearFilters);
 
@@ -190,6 +192,8 @@ const DesktopNavBar = ({
           neighborhoodQuery={neighborhoodQuery}
           setCafeTypeQuery={setCafeTypeQuery}
           setNeighborhoodQuery={setNeighborhoodQuery}
+          setFeatureQuery={setFeatureQuery}
+          featureQuery={featureQuery}
           clearFilters={clearFilters}
         />
 
