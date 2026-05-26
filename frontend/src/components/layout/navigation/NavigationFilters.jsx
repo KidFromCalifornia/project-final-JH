@@ -3,7 +3,7 @@ import { Divider, List, ListItem } from '@mui/material';
 import {
   Storefront as StorefrontIcon,
   TravelExplore as TravelExploreIcon,
-  LocalCafe as LocalCafeIcon,
+  Tune as TuneIcon,
 } from '@mui/icons-material';
 import FilterDropdown from '../../common/FilterDropdown';
 
@@ -57,7 +57,7 @@ const NavigationFilters = ({
             options={FEATURES.map(formatFeature)}
             value={featureQuery ? formatFeature(featureQuery) : ''}
             onChange={(val) => setFeatureQuery(val ? FEATURES.find(f => formatFeature(f) === val) || '' : '')}
-            iconComponent={<LocalCafeIcon sx={{ color: navIconColor }} />}
+            iconComponent={<TuneIcon sx={{ color: navIconColor }} />}
           />
         </ListItem>
       </List>
