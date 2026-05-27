@@ -11,6 +11,8 @@ const FEATURES = [
   'outdoor_seating', 'wheelchair_accessible', 'lunch', 'pour_over', 'takeaway',
   'vegan_options', 'breakfast', 'iced_drinks', 'pastries', 'multi_roaster',
   'decaf', 'no_coffee_bar', 'limited_sitting', 'roaster_only',
+  'public_transit_nearby', 'bar_seating', 'serves_food', 'no_food',
+  'bathroom_available', 'quiet_environment',
 ];
 
 const formatFeature = (f) => f.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());

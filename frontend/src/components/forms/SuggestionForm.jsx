@@ -2,12 +2,27 @@ import { useState } from 'react';
 import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
 import { handleApiError } from '../../utils/errorHandler';
-import { TextField, Button, Typography, Box, Paper } from '@mui/material';
+import {
+  TextField, Button, Typography, Box, Paper,
+  Accordion, AccordionSummary, AccordionDetails,
+  FormGroup, FormControlLabel, Checkbox,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { FEATURES } from '../admin/CafeEditForm';
+
+const formatFeature = (f) => f.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 const SuggestionForm = ({ onClose, prefill = '' }) => {
   const { showSnackbar } = useAlert();
   const [description, setDescription] = useState(prefill);
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [error, setError] = useState('');
+
+  const toggleFeature = (feature, checked) => {
+    setSelectedFeatures((prev) =>
+      checked ? [...prev, feature] : prev.filter((f) => f !== feature)
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +37,7 @@ const SuggestionForm = ({ onClose, prefill = '' }) => {
       description: description.trim(),
       website: 'suggestion',
       hasMultipleLocations: false,
-      locations: [{ address: 'suggestion', neighborhood: '', isMainLocation: true }],
+      locations: [{ address: 'suggestion', neighborhood: '', isMainLocation: true, features: selectedFeatures }],
       isApproved: false,
     };
 
@@ -36,7 +51,10 @@ const SuggestionForm = ({ onClose, prefill = '' }) => {
   };
 
   return (
-    <Paper elevation={6} sx={{ width: '100%', maxWidth: 560, mx: 'auto', p: { xs: 2, sm: 3 }, borderRadius: 2 }}>
+    <Paper
+      elevation={6}
+      sx={{ width: '100%', maxWidth: 560, mx: 'auto', p: { xs: 2, sm: 3 }, borderRadius: 2 }}
+    >
       <Typography variant="h5" component="h2" align="center" gutterBottom sx={{ mb: 2 }}>
         Make a Suggestion
       </Typography>
@@ -50,7 +68,7 @@ const SuggestionForm = ({ onClose, prefill = '' }) => {
           rows={5}
           fullWidth
           label="Your suggestion *"
-          placeholder="Tell us the cafe name, where it is, and why you love it…"
+          placeholder="Let us know if anything is out of date or what features are missing"
           value={description}
           onChange={(e) => {
             setDescription(e.target.value);
@@ -58,8 +76,33 @@ const SuggestionForm = ({ onClose, prefill = '' }) => {
           }}
           error={!!error}
           helperText={error}
-          sx={{ mb: 3 }}
+          sx={{ mb: 2 }}
         />
+
+        <Accordion disableGutters elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, mb: 3, '&:before': { display: 'none' } }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="body2" fontWeight={600}>
+              Features {selectedFeatures.length > 0 ? `(${selectedFeatures.length} selected)` : '(optional)'}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup row>
+              {FEATURES.map((feature) => (
+                <FormControlLabel
+                  key={feature}
+                  control={
+                    <Checkbox
+                      size="small"
+                      checked={selectedFeatures.includes(feature)}
+                      onChange={(e) => toggleFeature(feature, e.target.checked)}
+                    />
+                  }
+                  label={<Typography variant="body2">{formatFeature(feature)}</Typography>}
+                />
+              ))}
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
           {onClose && (
@@ -67,7 +110,12 @@ const SuggestionForm = ({ onClose, prefill = '' }) => {
               Cancel
             </Button>
           )}
-          <Button type="submit" variant="contained" size="large" sx={{ minWidth: '10rem', fontWeight: 600 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            sx={{ minWidth: '10rem', fontWeight: 600 }}
+          >
             Send
           </Button>
         </Box>
