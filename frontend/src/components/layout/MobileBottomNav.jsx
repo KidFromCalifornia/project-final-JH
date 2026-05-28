@@ -137,7 +137,7 @@ const MobileBottomNav = () => {
       overflowY: 'auto',
       borderTopLeftRadius: '1rem',
       borderTopRightRadius: '1rem',
-      bottom: appBarHeight,
+      bottom: `calc(${appBarHeight} + env(safe-area-inset-bottom))`,
       position: 'fixed',
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.light?.main || '#fff',
@@ -153,15 +153,17 @@ const MobileBottomNav = () => {
           top: 'auto',
           bottom: 0,
           width: '100vw',
-          height: appBarHeight,
+          height: 'auto',
           display: { xs: 'flex', sm: 'none' },
           zIndex: 1200,
           borderRadius: 0,
+          paddingBottom: 'env(safe-area-inset-bottom)',
         }}
       >
         <Toolbar
           sx={{
             minHeight: appBarHeight,
+            height: appBarHeight,
             px: 1,
             justifyContent: 'space-between',
             alignItems: 'center',

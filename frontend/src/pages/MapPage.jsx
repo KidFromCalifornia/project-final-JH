@@ -187,7 +187,7 @@ const MapPage = () => {
             position: 'fixed',
             zIndex: mobileDrawerOpen ? 1300 : 1301,
             bottom: {
-              xs: mobileDrawerOpen ? 'auto' : '2.75rem',
+              xs: mobileDrawerOpen ? 'auto' : 'calc(3.5rem + env(safe-area-inset-bottom) + 0.75rem)',
               sm: 'auto',
             },
             top: {
