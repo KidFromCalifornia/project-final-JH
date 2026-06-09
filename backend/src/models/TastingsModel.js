@@ -41,7 +41,7 @@ const coffeeTastingSchema = new mongoose.Schema(
     roastLevel: {
       type: String,
       enum: ['light', 'medium', 'dark'],
-      required: true,
+      required: false,
     },
     brewMethod: {
       type: String,

@@ -8,12 +8,17 @@ const router = express.Router();
 
 router.get('/public', async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const skip = (page - 1) * limit;
+
     const publicTastingNotes = await CoffeeTasting.find({ isPublic: true })
       .populate('cafeId', 'name website hasMultipleLocations locations')
       .populate('userId', 'username')
       .sort({ createdAt: -1 })
-      .limit(20)
-      .lean(); // Use lean for better performance
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
     // Filter out any tastings with missing refs (cafeId is required, userId is optional)
     const validTastings = publicTastingNotes.filter((tasting) => tasting.cafeId);
@@ -32,64 +37,10 @@ router.get('/public', async (req, res) => {
     });
   }
 });
-router.get('/public/search', async (req, res) => {
-  const { query, brewMethod, minRating, maxRating, origin } = req.query;
-
-  if (!query && !brewMethod && !minRating && !origin) {
-    return res.status(400).json({
-      success: false,
-      error: 'At least one search parameter is required',
-    });
-  }
-
-  try {
-    const searchCriteria = { isPublic: true };
-    const orConditions = [];
-
-    // Text search
-    if (query) {
-      orConditions.push(
-        { coffeeName: { $regex: query, $options: 'i' } },
-        { tastingNotes: { $regex: query, $options: 'i' } },
-        { coffeeOrigin: { $regex: query, $options: 'i' } },
-        { notes: { $regex: query, $options: 'i' } }
-      );
-    }
-
-    // Filters
-    if (brewMethod) searchCriteria.brewMethod = brewMethod;
-    if (origin) searchCriteria.coffeeOrigin = { $regex: origin, $options: 'i' };
-
-    if (minRating || maxRating) {
-      searchCriteria.rating = {};
-      if (minRating) searchCriteria.rating.$gte = parseInt(minRating);
-      if (maxRating) searchCriteria.rating.$lte = parseInt(maxRating);
-    }
-
-    if (orConditions.length > 0) {
-      searchCriteria.$or = orConditions;
-    }
-
-    const results = await CoffeeTasting.find(searchCriteria)
-      .populate('cafeId', 'name website hasMultipleLocations locations')
-      .populate('userId', 'username')
-      .sort({ createdAt: -1 })
-      .limit(50);
-
-    res.json({
-      success: true,
-      count: results.length,
-      message: `Found ${results.length} public tastings`,
-      filters: req.query,
-      data: results,
-    });
-  } catch (error) {
-    console.error('Public search error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Search failed',
-    });
-  }
+// Alias kept for backwards compatibility
+router.get('/public/search', (req, res) => {
+  req.url = `/search?${new URLSearchParams(req.query).toString()}`;
+  router.handle(req, res);
 });
 
 router.get('/', authenticateToken, async (req, res) => {
@@ -169,36 +120,54 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/search', async (req, res) => {
-  const { query } = req.query;
-  if (!query) {
+  const { query, brewMethod, minRating, maxRating, origin } = req.query;
+
+  if (!query && !brewMethod && !minRating && !origin) {
     return res.status(400).json({
       success: false,
-      error: 'Search query is required',
+      error: 'At least one search parameter is required',
     });
   }
 
   try {
-    const results = await CoffeeTasting.find({
-      $text: { $search: query },
-      isPublic: true,
-    })
+    const searchCriteria = { isPublic: true };
+    const orConditions = [];
+
+    if (query) {
+      orConditions.push(
+        { coffeeName: { $regex: query, $options: 'i' } },
+        { tastingNotes: { $regex: query, $options: 'i' } },
+        { coffeeOrigin: { $regex: query, $options: 'i' } },
+        { notes: { $regex: query, $options: 'i' } },
+        { coffeeRoaster: { $regex: query, $options: 'i' } },
+        { username: { $regex: query, $options: 'i' } }
+      );
+    }
+
+    if (brewMethod) searchCriteria.brewMethod = brewMethod;
+    if (origin) searchCriteria.coffeeOrigin = { $regex: origin, $options: 'i' };
+    if (minRating || maxRating) {
+      searchCriteria.rating = {};
+      if (minRating) searchCriteria.rating.$gte = parseInt(minRating);
+      if (maxRating) searchCriteria.rating.$lte = parseInt(maxRating);
+    }
+    if (orConditions.length > 0) searchCriteria.$or = orConditions;
+
+    const results = await CoffeeTasting.find(searchCriteria)
       .populate('cafeId', 'name website hasMultipleLocations locations')
       .populate('userId', 'username')
-      .sort({ score: { $meta: 'textScore' } })
+      .sort({ createdAt: -1 })
       .limit(50);
 
     res.json({
       success: true,
       count: results.length,
-      message: `Found ${results.length} tastings for "${query}"`,
+      message: `Found ${results.length} tastings`,
       data: results,
     });
   } catch (error) {
     console.error('Search error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Search failed',
-    });
+    res.status(500).json({ success: false, error: 'Search failed' });
   }
 });
 

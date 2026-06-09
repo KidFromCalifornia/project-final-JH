@@ -69,7 +69,7 @@ export const tastingAPI = {
     apiCall(`/tastings/${id}`, {
       method: 'DELETE',
     }),
-  search: (query) => apiCall(`/tastings/public/search?query=${encodeURIComponent(query)}`),
+  search: (query) => apiCall(`/tastings/search?query=${encodeURIComponent(query)}`),
 };
 
 export const authAPI = {
