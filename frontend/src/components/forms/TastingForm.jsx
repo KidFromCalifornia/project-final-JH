@@ -288,23 +288,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     select
-                    label="Acidity"
-                    name="acidity"
-                    value={form.acidity}
-                    onChange={handleChange}
-                    fullWidth
-                    variant="filled"
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {(options.acidity || []).map((a) => (
-                      <MenuItem key={a} value={a}>{a}</MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    select
                     label="Mouth Feel"
                     name="mouthFeel"
                     value={form.mouthFeel}
@@ -315,6 +298,23 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     <MenuItem value="">Select</MenuItem>
                     {(options.mouthFeel || []).map((m) => (
                       <MenuItem key={m} value={m}>{m}</MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    select
+                    label="Acidity"
+                    name="acidity"
+                    value={form.acidity}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="filled"
+                  >
+                    <MenuItem value="">Select</MenuItem>
+                    {(options.acidity || []).map((a) => (
+                      <MenuItem key={a} value={a}>{a}</MenuItem>
                     ))}
                   </TextField>
                 </Grid>
