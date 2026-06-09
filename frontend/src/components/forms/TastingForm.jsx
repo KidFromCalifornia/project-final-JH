@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useCafeStore } from '../../stores/useCafeStore';
 import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
@@ -13,25 +13,41 @@ import {
   FormControl,
   FormLabel,
   FormHelperText,
-  Rating,
   Box,
   Typography,
   Paper,
-  Divider,
   Tooltip,
   useTheme,
   Alert,
   Autocomplete,
+  Rating,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import WhatshotIcon from '@mui/icons-material/Whatshot';
+import WhatshotOutlinedIcon from '@mui/icons-material/WhatshotOutlined';
+
+const ROAST_LEVELS = ['light', 'medium', 'dark'];
+const SUBMISSION_LIMIT = 5;
+const SUBMISSION_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
+const checkSubmissionLimit = () => {
+  const stored = JSON.parse(localStorage.getItem('tastingSubmissions') || '[]');
+  const recent = stored.filter((ts) => Date.now() - ts < SUBMISSION_WINDOW_MS);
+  return { allowed: recent.length < SUBMISSION_LIMIT, remaining: SUBMISSION_LIMIT - recent.length };
+};
+
+const recordSubmission = () => {
+  const stored = JSON.parse(localStorage.getItem('tastingSubmissions') || '[]');
+  const recent = stored.filter((ts) => Date.now() - ts < SUBMISSION_WINDOW_MS);
+  localStorage.setItem('tastingSubmissions', JSON.stringify([...recent, Date.now()]));
+};
+
 const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const theme = useTheme();
   const { showSnackbar } = useAlert();
+  const isDark = theme.palette.mode === 'dark';
 
-  // State initialization
   const [form, setForm] = useState({
     cafeId:
       typeof initialValues.cafeId === 'object' && initialValues.cafeId?._id
@@ -47,21 +63,18 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     acidity: initialValues.acidity || '',
     mouthFeel: initialValues.mouthFeel || '',
     roastLevel: initialValues.roastLevel || '',
-    rating: initialValues.rating || 3,
     notes: initialValues.notes || '',
   });
 
-  const [signatureSuggestions, setSignatureSuggestions] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
+  const [selectedCafe, setSelectedCafe] = useState(null);
 
-  // Store hooks
   const cafes = useCafeStore((state) => state.cafes);
   const setCafes = useCafeStore((state) => state.setCafes);
   const options = useCafeStore((state) => state.options);
   const setOptions = useCafeStore((state) => state.setOptions);
-  const fetchError = useCafeStore((state) => state.fetchError);
-  const setFetchError = useCafeStore((state) => state.setFetchError);
 
-  // Fetch cafes and options
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,20 +82,34 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         setCafes(data.cafes || []);
         setOptions(data.enums || {});
       } catch (error) {
-        console.error('Error fetching form options:', error);
-        handleApiError(error, showSnackbar, "We couldn't load form options. Please try again.");
+        handleApiError(error, showSnackbar, "Couldn't load form options. Please try again.");
       }
     };
-    if (!cafes || cafes.length === 0) {
-      fetchData();
-    }
-  }, [setCafes, setOptions, setFetchError]);
+    if (!cafes || cafes.length === 0) fetchData();
+  }, [setCafes, setOptions]);
 
-  // Input handlers
+  // Seed selectedCafe from initialValues
+  useEffect(() => {
+    if (form.cafeId && cafes.length > 0 && !selectedCafe) {
+      const match = cafes.find((c) => c._id === form.cafeId);
+      if (match) setSelectedCafe(match);
+    }
+  }, [cafes, form.cafeId]);
+
+  const validate = () => {
+    const e = {};
+    if (!form.cafeId) e.cafeId = 'Please select a cafe';
+    if (!form.coffeeName.trim()) e.coffeeName = 'Coffee name is required';
+    if (!form.coffeeRoaster.trim()) e.coffeeRoaster = 'Roaster is required';
+    if (!form.brewMethod) e.brewMethod = 'Brew method is required';
+    if (form.tastingNotes.length === 0) e.tastingNotes = 'Select at least one tasting note';
+    return e;
+  };
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-    if (fetchError) setFetchError('');
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleTastingNotesChange = (e) => {
@@ -91,491 +118,358 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
       ...prev,
       tastingNotes: checked
         ? [...prev.tastingNotes, value]
-        : prev.tastingNotes.filter((note) => note !== value),
+        : prev.tastingNotes.filter((n) => n !== value),
     }));
-    if (fetchError) setFetchError('');
-  };
-
-  const handleCafeChange = (e) => {
-    setForm((prev) => ({ ...prev, cafeId: e.target.value }));
-    if (fetchError) setFetchError('');
+    if (errors.tastingNotes) setErrors((prev) => ({ ...prev, tastingNotes: '' }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (form.tastingNotes.length === 0) {
-      setFetchError('Please select at least one tasting note.');
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
+    const { allowed, remaining } = checkSubmissionLimit();
+    if (!allowed) {
+      setSubmitError('You have reached the limit of 5 submissions per hour. Please try again later.');
+      return;
+    }
+    recordSubmission();
     onSubmit(form);
   };
+
+  const sectionBg = alpha(theme.palette.secondary.main, 0.2);
+  const labelColor = isDark ? 'light.main' : 'text.primary';
 
   return (
     <Paper
       elevation={6}
       sx={{
         width: '100%',
-        maxWidth: { xs: '100%', md: '1200px' },
+        maxWidth: { xs: '100%', md: '900px' },
         mx: 'auto',
         p: { xs: 2, sm: 3 },
         borderRadius: 2,
       }}
     >
       <Typography
-        variant="h4"
+        variant="h5"
         component="h2"
         align="center"
         gutterBottom
-        color="primary"
         sx={{
-          mb: 3,
-          fontSize: { xs: '1.5rem', sm: '2.125rem' },
-          color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
+          mb: 2,
+          fontWeight: 700,
+          color: isDark ? 'light.main' : 'primary.main',
         }}
       >
         Add New Coffee Tasting
       </Typography>
 
       <form onSubmit={handleSubmit} aria-label="Coffee Tasting Form">
-        {fetchError && (
+        {submitError && (
           <Alert severity="error" sx={{ mb: 2 }}>
-            {fetchError}
+            {submitError}
           </Alert>
         )}
 
-        <Grid container spacing={{ xs: 2, md: 3 }}>
-          {/* Basic Coffee Info Section */}
-          <Grid item xs={12} lg={6}>
-            <Box
-              sx={{
-                borderRadius: 1,
-                backgroundColor: alpha(theme.palette.secondary.main, 0.2),
-                p: 2,
-              }}
-            >
-              <Typography color="light.main" variant="h3">
+        <Grid container spacing={2}>
+
+          {/* Section 1 — Coffee Details */}
+          <Grid item xs={12}>
+            <Box sx={{ borderRadius: 1, backgroundColor: sectionBg, p: 2 }}>
+              <Typography variant="h6" sx={{ mb: 1.5, color: 'light.main', fontWeight: 700 }}>
                 Coffee Details
               </Typography>
 
-              <Tooltip title="Select the cafe where you tasted this coffee." placement="top" arrow>
-                <TextField
-                  select
-                  label="Where did you taste this coffee?"
-                  name="cafeId"
-                  value={form.cafeId}
-                  onChange={handleCafeChange}
-                  required
-                  fullWidth
-                  margin="normal"
-                  variant="filled"
-                  aria-label="Cafe Location"
-                >
-                  <MenuItem value="">Select a cafe</MenuItem>
-                  {cafes.map((cafe, index) => (
-                    <MenuItem key={cafe._id || `cafe-${index}`} value={cafe._id}>
-                      {cafe.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Tooltip>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Autocomplete
+                    options={cafes}
+                    getOptionLabel={(option) => option.name || ''}
+                    value={selectedCafe}
+                    onChange={(_, newValue) => {
+                      setSelectedCafe(newValue);
+                      setForm((prev) => ({ ...prev, cafeId: newValue?._id || '' }));
+                      if (errors.cafeId) setErrors((prev) => ({ ...prev, cafeId: '' }));
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Cafe *"
+                        variant="filled"
+                        error={!!errors.cafeId}
+                        helperText={errors.cafeId}
+                        placeholder="Type to search cafes…"
+                      />
+                    )}
+                  />
+                </Grid>
 
-              <Tooltip
-                title="Optional — leave blank to post as Anonymous."
-                placement="top"
-                arrow
-              >
-                <TextField
-                  label="Your signature (optional)"
-                  name="signature"
-                  value={form.signature}
-                  onChange={handleChange}
-                  fullWidth
-                  margin="normal"
-                  variant="filled"
-                  placeholder="Leave blank to post as Anonymous"
-                  aria-label="Signature"
-                />
-              </Tooltip>
-
-              <Tooltip title="Enter the name of the coffee." placement="top" arrow>
-                <TextField
-                  label="Coffee Name"
-                  name="coffeeName"
-                  value={form.coffeeName}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  margin="normal"
-                  variant="filled"
-                  aria-label="Coffee Name"
-                />
-              </Tooltip>
-
-              <Tooltip title="Enter the name of the coffee roaster." placement="top" arrow>
-                <TextField
-                  label="Coffee Roaster"
-                  name="coffeeRoaster"
-                  value={form.coffeeRoaster}
-                  onChange={handleChange}
-                  fullWidth
-                  margin="normal"
-                  variant="filled"
-                  aria-label="Coffee Roaster"
-                />
-              </Tooltip>
-
-              {/* Origin fields side by side */}
-              <Box
-                sx={{
-                  borderRadius: 1,
-                  backgroundColor: 'transparent',
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  gap: 1,
-                  mt: 2,
-                }}
-              >
-                <Tooltip title="Enter the origin of the coffee." placement="top" arrow>
+                <Grid item xs={12} sm={6}>
                   <TextField
-                    label="Coffee Origin"
+                    label="Coffee Name *"
+                    name="coffeeName"
+                    value={form.coffeeName}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="filled"
+                    error={!!errors.coffeeName}
+                    helperText={errors.coffeeName}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Roaster *"
+                    name="coffeeRoaster"
+                    value={form.coffeeRoaster}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="filled"
+                    error={!!errors.coffeeRoaster}
+                    helperText={errors.coffeeRoaster}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Country"
                     name="coffeeOrigin"
                     value={form.coffeeOrigin}
                     onChange={handleChange}
-                    sx={{
-                      flex: { xs: 'none', sm: 1 },
-                      minWidth: { xs: '100%', sm: '0' },
-                    }}
+                    fullWidth
+                    variant="filled"
                   />
-                </Tooltip>
-                <Tooltip title="Enter the region of the coffee." placement="top" arrow>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
                   <TextField
                     label="Region"
                     name="coffeeOriginRegion"
                     value={form.coffeeOriginRegion}
                     onChange={handleChange}
-                    sx={{
-                      flex: { xs: 'none', sm: 1 },
-                      minWidth: { xs: '100%', sm: '0' },
-                    }}
+                    fullWidth
+                    variant="filled"
                   />
-                </Tooltip>
-              </Box>
+                </Grid>
+              </Grid>
             </Box>
           </Grid>
 
-          {/* Taste Profile Section */}
-          <Grid item xs={12} lg={6}>
-            <Box
-              sx={{
-                borderRadius: 1,
-                backgroundColor: alpha(theme.palette.secondary.main, 0.2),
-                p: 2,
-              }}
-            >
-              <Typography p={2} color="light.main" variant="h3">
+          {/* Section 2 — Taste Profile */}
+          <Grid item xs={12}>
+            <Box sx={{ borderRadius: 1, backgroundColor: sectionBg, p: 2 }}>
+              <Typography variant="h6" sx={{ mb: 1.5, color: 'light.main', fontWeight: 700 }}>
                 Taste Profile
               </Typography>
 
-              {/* Brew method and roast level side by side */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  justifyContent: 'space-between',
-                  gap: 1,
-                  mb: 2,
-                  borderRadius: 1,
-                  backgroundColor: alpha(theme.palette.secondary.main, 0.2),
-                }}
-              >
-                <Tooltip title="Select the brew method for the coffee." placement="top" arrow>
+              <Grid container spacing={2} alignItems="flex-start">
+                <Grid item xs={12} sm={6}>
                   <TextField
                     select
-                    label="Brew Method"
+                    label="Brew Method *"
                     name="brewMethod"
                     value={form.brewMethod}
                     onChange={handleChange}
-                    required
-                    sx={{
-                      flex: { xs: 'none', sm: 1 },
-                      minWidth: { xs: '100%', sm: '0' },
-                    }}
+                    fullWidth
+                    variant="filled"
+                    error={!!errors.brewMethod}
+                    helperText={errors.brewMethod}
                   >
                     <MenuItem value="">Select</MenuItem>
-                    {(options.brewMethod || []).map((method) => (
-                      <MenuItem key={method} value={method}>
-                        {method}
-                      </MenuItem>
+                    {(options.brewMethod || []).map((m) => (
+                      <MenuItem key={m} value={m}>{m}</MenuItem>
                     ))}
                   </TextField>
-                </Tooltip>
+                </Grid>
 
-                <Tooltip title="Select the roast level of the coffee." placement="top" arrow>
-                  <TextField
-                    select
-                    label="Roast Level"
-                    name="roastLevel"
-                    value={form.roastLevel}
-                    onChange={handleChange}
-                    sx={{
-                      flex: { xs: 'none', sm: 1 },
-                      minWidth: { xs: '100%', sm: '0' },
-                    }}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {(options.roastLevel || []).map((level) => (
-                      <MenuItem key={level} value={level}>
-                        {level}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Tooltip>
-              </Box>
-
-              {/* Acidity and Mouth Feel side by side */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  gap: 1,
-                  mb: 2,
-                }}
-              >
-                <Tooltip title="Select the acidity level of the coffee." placement="top" arrow>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     select
                     label="Acidity"
                     name="acidity"
                     value={form.acidity}
                     onChange={handleChange}
-                    sx={{
-                      flex: { xs: 'none', sm: 1 },
-                      minWidth: { xs: '100%', sm: '0' },
-                    }}
+                    fullWidth
+                    variant="filled"
                   >
                     <MenuItem value="">Select</MenuItem>
-                    {(options.acidity || []).map((level) => (
-                      <MenuItem key={level} value={level}>
-                        {level}
-                      </MenuItem>
+                    {(options.acidity || []).map((a) => (
+                      <MenuItem key={a} value={a}>{a}</MenuItem>
                     ))}
                   </TextField>
-                </Tooltip>
+                </Grid>
 
-                <Tooltip title="How does the coffee feel in your mouth?" placement="top" arrow>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     select
                     label="Mouth Feel"
                     name="mouthFeel"
                     value={form.mouthFeel}
                     onChange={handleChange}
-                    sx={{
-                      flex: { xs: 'none', sm: 1 },
-                      minWidth: { xs: '100%', sm: '0' },
-                    }}
+                    fullWidth
+                    variant="filled"
                   >
                     <MenuItem value="">Select</MenuItem>
-                    {(options.mouthFeel || []).map((feel) => (
-                      <MenuItem key={feel} value={feel}>
-                        {feel}
-                      </MenuItem>
+                    {(options.mouthFeel || []).map((m) => (
+                      <MenuItem key={m} value={m}>{m}</MenuItem>
                     ))}
                   </TextField>
-                </Tooltip>
-              </Box>
+                </Grid>
 
-              <FormControl fullWidth margin="normal" sx={{ gap: 0.5 }}>
-                <FormLabel>
-                  <Typography variant="h6">Overall Rating</Typography>
-                </FormLabel>
-                <Tooltip
-                  title="Rate your overall coffee experience from 1-5 hearts"
-                  arrow
-                  placement="top"
-                >
-                  <Rating
-                    name="rating"
-                    value={form.rating}
-                    precision={0.5}
-                    max={5}
-                    icon={<FavoriteIcon fontSize="inherit" />}
-                    emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-                    onChange={(_, value) => setForm((prev) => ({ ...prev, rating: value || 1 }))}
-                  />
-                </Tooltip>
-                <FormHelperText>
-                  {form.rating ? `${form.rating} out of 5 hearts` : 'Select your rating'}
-                </FormHelperText>
-              </FormControl>
-            </Box>
-          </Grid>
-
-          {/* Tasting Notes - Full Width */}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 1,
-                backgroundColor:
-                  theme.palette.mode === 'dark'
-                    ? alpha(theme.palette.secondary.main, 0.2)
-                    : theme.palette.background.default,
-              }}
-            >
-              <Typography
-                color={'light.main'}
-                variant="h3"
-                sx={{ fontWeight: 700 }}
-              >
-                Tasting Notes
-              </Typography>
-
-              <FormControl fullWidth required>
-                <FormLabel sx={{ mb: 1 }}>
-                  <Typography
-                    color={'light.main'}
-                    variant="body1"
-                  >
-                    Select at least one tasting note
-                  </Typography>
-                </FormLabel>
-                <FormGroup
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: {
-                      xs: 'repeat(2, 1fr)',
-                      sm: 'repeat(3, 1fr)',
-                      md: 'repeat(4, 1fr)',
-                    },
-                    gap: 1,
-                    mt: 1,
-                  }}
-                >
-                  {(options.tastingNotes || []).map((note) => (
-                    <FormControlLabel
-                      key={note}
-                      control={
-                        <Checkbox
-                          name="tastingNotes"
-                          value={note}
-                          checked={form.tastingNotes.includes(note)}
-                          onChange={handleTastingNotesChange}
-                          size="small"
-                          sx={{
-                            color: 'light.main',
-                          }}
-                        />
-                      }
-                      label={
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            color: 'light.main',
-                            fontWeight: 600,
-                            textTransform: 'capitalize',
-                          }}
-                        >
-                          {note}
+                {/* Roast Level — fire icon rating */}
+                <Grid item xs={12} sm={6}>
+                  <FormControl>
+                    <FormLabel sx={{ color: 'light.main', mb: 0.5 }}>
+                      Roast Level
+                      {form.roastLevel && (
+                        <Typography component="span" variant="caption" sx={{ ml: 1, color: 'light.main', textTransform: 'capitalize' }}>
+                          ({form.roastLevel})
                         </Typography>
+                      )}
+                    </FormLabel>
+                    <Rating
+                      value={ROAST_LEVELS.indexOf(form.roastLevel) + 1 || 0}
+                      max={3}
+                      onChange={(_, val) =>
+                        setForm((prev) => ({ ...prev, roastLevel: val ? ROAST_LEVELS[val - 1] : '' }))
                       }
-                      sx={{
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                        m: 0,
-                      }}
+                      icon={<WhatshotIcon fontSize="large" sx={{ color: theme.palette.accent?.main || '#ff6b35' }} />}
+                      emptyIcon={<WhatshotOutlinedIcon fontSize="large" sx={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)' }} />}
                     />
-                  ))}
-                </FormGroup>
-              </FormControl>
+                    <FormHelperText sx={{ color: 'light.main' }}>
+                      1 = light · 2 = medium · 3 = dark
+                    </FormHelperText>
+                  </FormControl>
+                </Grid>
+              </Grid>
             </Box>
           </Grid>
 
-          {/* Notes and Actions */}
+          {/* Section 3 — Tasting Notes */}
           <Grid item xs={12}>
             <Box
               sx={{
                 p: 2,
                 borderRadius: 1,
-                backgroundColor:
-                  theme.palette.mode === 'dark'
-                    ? alpha(theme.palette.secondary.main, 0.2)
-                    : theme.palette.light.main,
+                backgroundColor: isDark ? alpha(theme.palette.secondary.main, 0.2) : theme.palette.background.paper,
               }}
             >
-              <Typography
-                color={'light.main'}
-                variant="h3"
-              >
-                Additional Details
+              <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 1 }}>
+                Tasting Notes *
               </Typography>
 
+              {errors.tastingNotes && (
+                <Alert severity="error" sx={{ mb: 1 }}>
+                  {errors.tastingNotes}
+                </Alert>
+              )}
+
+              <FormGroup
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: {
+                    xs: 'repeat(2, 1fr)',
+                    sm: 'repeat(3, 1fr)',
+                    md: 'repeat(4, 1fr)',
+                  },
+                  gap: 0.5,
+                }}
+              >
+                {(options.tastingNotes || []).map((note) => (
+                  <FormControlLabel
+                    key={note}
+                    control={
+                      <Checkbox
+                        name="tastingNotes"
+                        value={note}
+                        checked={form.tastingNotes.includes(note)}
+                        onChange={handleTastingNotesChange}
+                        size="small"
+                        sx={{ color: isDark ? 'light.main' : 'primary.main' }}
+                      />
+                    }
+                    label={
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: labelColor,
+                          fontWeight: 500,
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {note}
+                      </Typography>
+                    }
+                    sx={{ m: 0, px: 1, py: 0.25, borderRadius: 1 }}
+                  />
+                ))}
+              </FormGroup>
+            </Box>
+          </Grid>
+
+          {/* Section 4 — Additional Details + Actions */}
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: 1,
+                backgroundColor: isDark ? alpha(theme.palette.secondary.main, 0.2) : theme.palette.background.paper,
+              }}
+            >
               <TextField
                 name="notes"
                 value={form.notes}
                 onChange={handleChange}
                 multiline
-                rows={4}
+                rows={3}
                 fullWidth
-                margin="normal"
                 variant="filled"
-                aria-label="Additional Notes"
+                label="Additional tasting notes and/or brew recipes"
+                placeholder="e.g. 18g in / 36g out / 28s · bright finish with lingering sweetness…"
                 inputProps={{ maxLength: 500 }}
-                placeholder="Share your thoughts about this coffee experience..."
               />
 
-              {/* Actions Section */}
+              {/* Actions row — signature left, buttons right */}
               <Box
                 sx={{
                   display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
                   justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mt: 3,
-                  pt: 2,
+                  alignItems: { xs: 'stretch', sm: 'center' },
+                  gap: 2,
+                  mt: 2,
                 }}
               >
-                <Box />
-                <Box sx={{ display: 'flex', gap: 2 }}>
+                <TextField
+                  label="Your signature (optional)"
+                  name="signature"
+                  value={form.signature}
+                  onChange={handleChange}
+                  variant="filled"
+                  size="small"
+                  placeholder="Leave blank to post as Anonymous"
+                  sx={{ flex: 1, maxWidth: { sm: '280px' } }}
+                />
+
+                <Box sx={{ display: 'flex', gap: 1.5, justifyContent: { xs: 'flex-end' } }}>
                   {onClose && (
                     <Button
                       onClick={onClose}
-                      variant="filled"
+                      variant="outlined"
                       size="large"
-                      sx={{
-                        minWidth: '8rem',
-                        py: 1.5,
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        backgroundColor:
-                          theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.main',
-                        color:
-                          theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
-                        outlineColor:
-                          theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
-                        '&:hover': {
-                          backgroundColor:
-                            theme.palette.mode === 'dark' ? 'muted.main' : 'secondary.main',
-                          color:
-                            theme.palette.mode === 'dark'
-                              ? 'secondary.main'
-                              : 'primary.contrastText',
-                          outlineColor:
-                            theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
-                        },
-                      }}
-                      aria-label="Cancel"
+                      sx={{ minWidth: '6rem' }}
                     >
                       Cancel
                     </Button>
                   )}
                   <Tooltip
                     title={
-                      !form.cafeId ||
-                      !form.coffeeName ||
-                      !form.brewMethod ||
-                      form.tastingNotes.length === 0
+                      !form.cafeId || !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
                         ? 'Please fill in all required fields'
-                        : 'Submit your experience.'
+                        : ''
                     }
                     placement="top"
                     arrow
@@ -586,18 +480,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         variant="contained"
                         size="large"
                         disabled={
-                          !form.cafeId ||
-                          !form.coffeeName ||
-                          !form.brewMethod ||
-                          form.tastingNotes.length === 0
+                          !form.cafeId || !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
                         }
-                        sx={{
-                          minWidth: '10rem',
-                          py: 1.5,
-                          fontSize: '1.1rem',
-                          fontWeight: 600,
-                        }}
-                        aria-label="Add Tasting"
+                        sx={{ minWidth: '8rem', fontWeight: 600 }}
                       >
                         Add Tasting
                       </Button>
@@ -605,8 +490,13 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   </Tooltip>
                 </Box>
               </Box>
+
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                {checkSubmissionLimit().remaining} of {SUBMISSION_LIMIT} submissions remaining this hour
+              </Typography>
             </Box>
           </Grid>
+
         </Grid>
       </form>
     </Paper>

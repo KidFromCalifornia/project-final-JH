@@ -23,7 +23,7 @@ const coffeeTastingSchema = new mongoose.Schema(
     },
     coffeeRoaster: {
       type: String,
-      required: false,
+      required: true,
     },
     coffeeOrigin: {
       type: String,
