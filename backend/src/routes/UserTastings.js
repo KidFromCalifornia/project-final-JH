@@ -168,6 +168,40 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/search', async (req, res) => {
+  const { query } = req.query;
+  if (!query) {
+    return res.status(400).json({
+      success: false,
+      error: 'Search query is required',
+    });
+  }
+
+  try {
+    const results = await CoffeeTasting.find({
+      $text: { $search: query },
+      isPublic: true,
+    })
+      .populate('cafeId', 'name website hasMultipleLocations locations')
+      .populate('userId', 'username')
+      .sort({ score: { $meta: 'textScore' } })
+      .limit(50);
+
+    res.json({
+      success: true,
+      count: results.length,
+      message: `Found ${results.length} tastings for "${query}"`,
+      data: results,
+    });
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Search failed',
+    });
+  }
+});
+
 // Get specific tasting note (user's own only)
 router.get('/:id', validateObjectId(), authenticateToken, async (req, res) => {
   try {
@@ -268,40 +302,6 @@ router.get('/admin/all', authenticateToken, async (req, res) => {
     res.status(500).json({
       success: false,
       error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message, // Hide details in production
-    });
-  }
-});
-
-router.get('/search', async (req, res) => {
-  const { query } = req.query;
-  if (!query) {
-    return res.status(400).json({
-      success: false,
-      error: 'Search query is required',
-    });
-  }
-
-  try {
-    const results = await CoffeeTasting.find({
-      $text: { $search: query },
-      isPublic: true,
-    })
-      .populate('cafeId', 'name website hasMultipleLocations locations')
-      .populate('userId', 'username')
-      .sort({ score: { $meta: 'textScore' } }) // Sort by relevance
-      .limit(50);
-
-    res.json({
-      success: true,
-      count: results.length,
-      message: `Found ${results.length} tastings for "${query}"`,
-      data: results,
-    });
-  } catch (error) {
-    console.error('Search error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Search failed',
     });
   }
 });
