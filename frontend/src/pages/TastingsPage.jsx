@@ -135,6 +135,8 @@ const TastingsPage = () => {
           gap: 2,
           mb: 3,
           px: { xs: 1, sm: 3 },
+          width: '100%',
+          maxWidth: '1200px',
         }}
       >
         <Button
@@ -161,6 +163,8 @@ const TastingsPage = () => {
         >
           {showTastingForm ? 'Close' : 'Add Tasting'}
         </Button>
+
+        <CafeSearchBar type="tastings" />
       </Box>
 
       {showTastingForm && (
