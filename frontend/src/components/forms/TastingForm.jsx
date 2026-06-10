@@ -53,6 +53,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
       typeof initialValues.cafeId === 'object' && initialValues.cafeId?._id
         ? initialValues.cafeId._id
         : initialValues.cafeId || '',
+    location: initialValues.location || '',
     signature: '',
     coffeeName: initialValues.coffeeName || '',
     coffeeRoaster: initialValues.coffeeRoaster || '',
@@ -192,32 +193,43 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 <Grid item xs={12}>
                   <Autocomplete
                     options={cafes}
-                    getOptionLabel={(option) => option.name || ''}
+                    getOptionLabel={(option) => typeof option === 'string' ? option : option.name || ''}
                     value={selectedCafe}
+                    freeSolo
                     popupIcon={null}
                     forcePopupIcon={false}
                     openOnFocus={false}
                     noOptionsText="No cafes found"
                     filterOptions={(options, { inputValue }) =>
-                      options.filter((opt) =>
+                      inputValue.length < 1 ? [] : options.filter((opt) =>
                         opt.name.toLowerCase().includes(inputValue.toLowerCase())
                       )
                     }
                     onChange={(_, newValue) => {
-                      setSelectedCafe(newValue);
-                      setForm((prev) => ({ ...prev, cafeId: newValue?._id || '' }));
-                      if (errors.cafeId) setErrors((prev) => ({ ...prev, cafeId: '' }));
+                      if (typeof newValue === 'string') {
+                        // Free text entry
+                        setSelectedCafe(null);
+                        setForm((prev) => ({ ...prev, cafeId: '', location: newValue }));
+                      } else {
+                        // Selected a cafe from the list
+                        setSelectedCafe(newValue);
+                        setForm((prev) => ({ ...prev, cafeId: newValue?._id || '', location: newValue?.name || '' }));
+                      }
                     }}
-                    isOptionEqualToValue={(option, value) => option._id === value._id}
+                    onInputChange={(_, newInputValue, reason) => {
+                      if (reason === 'input') {
+                        setForm((prev) => ({ ...prev, location: newInputValue, cafeId: '' }));
+                        setSelectedCafe(null);
+                      }
+                    }}
+                    isOptionEqualToValue={(option, value) => option._id === value?._id}
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Cafe (optional)"
+                        label="Where did you drink it?"
                         variant="filled"
                         sx={inputSx}
-                        error={!!errors.cafeId}
-                        helperText={errors.cafeId}
-                        placeholder="Type to search cafes…"
+                        placeholder="e.g. Home, Drop Coffee, Work…"
                         InputProps={{
                           ...params.InputProps,
                           startAdornment: (

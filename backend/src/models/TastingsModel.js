@@ -17,6 +17,10 @@ const coffeeTastingSchema = new mongoose.Schema(
       ref: 'Cafe',
       required: false,
     },
+    location: {
+      type: String,
+      required: false,
+    },
     cafeNeighborhood: {
       type: String,
       required: false,
