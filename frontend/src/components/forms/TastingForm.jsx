@@ -248,15 +248,23 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
             </Box>
           </Grid>
 
-          {/* Section 2 — Taste Profile */}
+          {/* Sections 2 & 3 — Taste Profile + Tasting Wheel */}
           <Grid item xs={12}>
             <Box sx={{ borderRadius: 1, backgroundColor: sectionBg, p: 2 }}>
               <Typography variant="h6" sx={{ mb: 1.5, color: 'light.main', fontWeight: 700 }}>
                 Taste Profile
               </Typography>
 
-              <Grid container spacing={2} alignItems="flex-start">
-                <Grid item xs={12} sm={6}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', md: 'row' },
+                  gap: 3,
+                  alignItems: 'flex-start',
+                }}
+              >
+                {/* Left column — controls */}
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
                   <TextField
                     select
                     label="Brew Method *"
@@ -273,9 +281,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                       <MenuItem key={m} value={m}>{m}</MenuItem>
                     ))}
                   </TextField>
-                </Grid>
 
-                <Grid item xs={12} sm={6}>
                   <TextField
                     select
                     label="Mouth Feel"
@@ -290,9 +296,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                       <MenuItem key={m} value={m}>{m}</MenuItem>
                     ))}
                   </TextField>
-                </Grid>
 
-                <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
                     <FormLabel sx={{ color: 'light.main', mb: 1 }}>
                       Acidity
@@ -327,10 +331,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                       />
                     </Box>
                   </FormControl>
-                </Grid>
 
-                {/* Roast Level — fire icon rating */}
-                <Grid item xs={12} sm={6}>
                   <FormControl>
                     <FormLabel sx={{ color: 'light.main', mb: 0.5 }}>
                       Roast Level
@@ -353,43 +354,40 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                       1 = light · 2 = medium · 3 = dark
                     </FormHelperText>
                   </FormControl>
-                </Grid>
-              </Grid>
-            </Box>
-          </Grid>
+                </Box>
 
-          {/* Section 3 — Tasting Notes Wheel */}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 1,
-                backgroundColor: isDark ? alpha(theme.palette.secondary.main, 0.2) : theme.palette.background.paper,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 0.5 }}>
-                Tasting Notes *
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1.5 }}>
-                Tap segments to select
-              </Typography>
+                {/* Right column — tasting wheel */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    flexShrink: 0,
+                    width: { xs: '100%', md: 'auto' },
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: labelColor, mb: 0.5 }}>
+                    Tasting Notes *
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1 }}>
+                    Tap segments to select
+                  </Typography>
 
-              {errors.tastingNotes && (
-                <Alert severity="error" sx={{ mb: 1, width: '100%' }}>
-                  {errors.tastingNotes}
-                </Alert>
-              )}
+                  {errors.tastingNotes && (
+                    <Alert severity="error" sx={{ mb: 1, width: '100%' }}>
+                      {errors.tastingNotes}
+                    </Alert>
+                  )}
 
-              <TastingWheel
-                selected={form.tastingNotes}
-                onChange={(notes) => {
-                  setForm((prev) => ({ ...prev, tastingNotes: notes }));
-                  if (errors.tastingNotes) setErrors((prev) => ({ ...prev, tastingNotes: '' }));
-                }}
-              />
+                  <TastingWheel
+                    selected={form.tastingNotes}
+                    onChange={(notes) => {
+                      setForm((prev) => ({ ...prev, tastingNotes: notes }));
+                      if (errors.tastingNotes) setErrors((prev) => ({ ...prev, tastingNotes: '' }));
+                    }}
+                  />
+                </Box>
+              </Box>
             </Box>
           </Grid>
 
