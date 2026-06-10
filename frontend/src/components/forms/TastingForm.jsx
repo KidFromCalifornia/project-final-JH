@@ -4,11 +4,9 @@ import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
 import { handleApiError } from '../../utils/errorHandler';
 import Slider from '@mui/material/Slider';
+import TastingWheel from '../common/TastingWheel';
 import {
   TextField,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
   Button,
   MenuItem,
   FormControl,
@@ -113,16 +111,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
-  const handleTastingNotesChange = (e) => {
-    const { value, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      tastingNotes: checked
-        ? [...prev.tastingNotes, value]
-        : prev.tastingNotes.filter((n) => n !== value),
-    }));
-    if (errors.tastingNotes) setErrors((prev) => ({ ...prev, tastingNotes: '' }));
-  };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -369,65 +358,38 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
             </Box>
           </Grid>
 
-          {/* Section 3 — Tasting Notes */}
+          {/* Section 3 — Tasting Notes Wheel */}
           <Grid item xs={12}>
             <Box
               sx={{
                 p: 2,
                 borderRadius: 1,
                 backgroundColor: isDark ? alpha(theme.palette.secondary.main, 0.2) : theme.palette.background.paper,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
               }}
             >
-              <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 0.5 }}>
                 Tasting Notes *
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1.5 }}>
+                Tap segments to select
               </Typography>
 
               {errors.tastingNotes && (
-                <Alert severity="error" sx={{ mb: 1 }}>
+                <Alert severity="error" sx={{ mb: 1, width: '100%' }}>
                   {errors.tastingNotes}
                 </Alert>
               )}
 
-              <FormGroup
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: {
-                    xs: 'repeat(2, 1fr)',
-                    sm: 'repeat(3, 1fr)',
-                    md: 'repeat(4, 1fr)',
-                  },
-                  gap: 0.5,
+              <TastingWheel
+                selected={form.tastingNotes}
+                onChange={(notes) => {
+                  setForm((prev) => ({ ...prev, tastingNotes: notes }));
+                  if (errors.tastingNotes) setErrors((prev) => ({ ...prev, tastingNotes: '' }));
                 }}
-              >
-                {(options.tastingNotes || []).map((note) => (
-                  <FormControlLabel
-                    key={note}
-                    control={
-                      <Checkbox
-                        name="tastingNotes"
-                        value={note}
-                        checked={form.tastingNotes.includes(note)}
-                        onChange={handleTastingNotesChange}
-                        size="small"
-                        sx={{ color: isDark ? 'light.main' : 'primary.main' }}
-                      />
-                    }
-                    label={
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: labelColor,
-                          fontWeight: 500,
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {note}
-                      </Typography>
-                    }
-                    sx={{ m: 0, px: 1, py: 0.25, borderRadius: 1 }}
-                  />
-                ))}
-              </FormGroup>
+              />
             </Box>
           </Grid>
 
