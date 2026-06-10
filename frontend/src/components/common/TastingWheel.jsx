@@ -73,7 +73,16 @@ const TastingWheel = ({ selected = [], onChange }) => {
     : 'tap to select';
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : '#fff',
+        borderRadius: 2,
+        p: 1.5,
+      }}
+    >
       <svg width="300" height="300" viewBox="0 0 300 300" style={{ overflow: 'visible', display: 'block' }}>
         {/* Outer note segments */}
         {noteSegments.map(({ note, cat, start, end, mid }) => {
