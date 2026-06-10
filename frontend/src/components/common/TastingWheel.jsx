@@ -74,7 +74,7 @@ const TastingWheel = ({ selected = [], onChange }) => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
-      <svg width="300" height="300" viewBox="0 0 300 300" style={{ overflow: 'visible' }}>
+      <svg width="100%" height="100%" viewBox="0 0 300 300" style={{ overflow: 'visible', maxWidth: 320, minWidth: 240 }}>
         {/* Outer note segments */}
         {noteSegments.map(({ note, cat, start, end, mid }) => {
           const isSelected = selected.includes(note);
