@@ -131,27 +131,23 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   };
 
   const sectionBg = alpha(theme.palette.secondary.main, 0.2);
-  const labelColor = isDark ? '#fff' : theme.palette.text.primary;
-  const sectionHeadingColor = isDark ? '#fff' : theme.palette.text.primary;
+  const labelColor = '#fff';
+  const sectionHeadingColor = '#fff';
 
-  // Shared styles for all filled inputs — adapts to light/dark mode
-  const inputSx = isDark
-    ? {
-        '& .MuiFilledInput-root': {
-          backgroundColor: 'rgba(255,255,255,0.12)',
-          '&:hover': { backgroundColor: 'rgba(255,255,255,0.18)' },
-          '&.Mui-focused': { backgroundColor: 'rgba(255,255,255,0.2)' },
-        },
-        '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
-        '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
-        '& .MuiInputBase-input': { color: '#fff' },
-        '& .MuiSelect-icon': { color: 'rgba(255,255,255,0.7)' },
-        '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.6)' },
-        '& .MuiFormHelperText-root.Mui-error': { color: '#ff6b6b' },
-      }
-    : {
-        '& .MuiFormHelperText-root.Mui-error': { color: theme.palette.error.main },
-      };
+  // Form always renders on a dark background — keep white text regardless of mode
+  const inputSx = {
+    '& .MuiFilledInput-root': {
+      backgroundColor: 'rgba(255,255,255,0.12)',
+      '&:hover': { backgroundColor: 'rgba(255,255,255,0.18)' },
+      '&.Mui-focused': { backgroundColor: 'rgba(255,255,255,0.2)' },
+    },
+    '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
+    '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+    '& .MuiInputBase-input': { color: '#fff' },
+    '& .MuiSelect-icon': { color: 'rgba(255,255,255,0.7)' },
+    '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.6)' },
+    '& .MuiFormHelperText-root.Mui-error': { color: '#ff6b6b' },
+  };
 
   return (
     <Paper
