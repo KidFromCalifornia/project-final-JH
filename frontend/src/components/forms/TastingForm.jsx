@@ -131,22 +131,27 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   };
 
   const sectionBg = alpha(theme.palette.secondary.main, 0.2);
-  const labelColor = isDark ? 'light.main' : 'text.primary';
+  const labelColor = isDark ? '#fff' : theme.palette.text.primary;
+  const sectionHeadingColor = isDark ? '#fff' : theme.palette.text.primary;
 
-  // Shared styles for all filled inputs on dark background
-  const inputSx = {
-    '& .MuiFilledInput-root': {
-      backgroundColor: 'rgba(255,255,255,0.12)',
-      '&:hover': { backgroundColor: 'rgba(255,255,255,0.18)' },
-      '&.Mui-focused': { backgroundColor: 'rgba(255,255,255,0.2)' },
-    },
-    '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
-    '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
-    '& .MuiInputBase-input': { color: '#fff' },
-    '& .MuiSelect-icon': { color: 'rgba(255,255,255,0.7)' },
-    '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.6)' },
-    '& .MuiFormHelperText-root.Mui-error': { color: '#ff6b6b' },
-  };
+  // Shared styles for all filled inputs — adapts to light/dark mode
+  const inputSx = isDark
+    ? {
+        '& .MuiFilledInput-root': {
+          backgroundColor: 'rgba(255,255,255,0.12)',
+          '&:hover': { backgroundColor: 'rgba(255,255,255,0.18)' },
+          '&.Mui-focused': { backgroundColor: 'rgba(255,255,255,0.2)' },
+        },
+        '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
+        '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+        '& .MuiInputBase-input': { color: '#fff' },
+        '& .MuiSelect-icon': { color: 'rgba(255,255,255,0.7)' },
+        '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.6)' },
+        '& .MuiFormHelperText-root.Mui-error': { color: '#ff6b6b' },
+      }
+    : {
+        '& .MuiFormHelperText-root.Mui-error': { color: theme.palette.error.main },
+      };
 
   return (
     <Paper
@@ -185,7 +190,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
           {/* Section 1 — Coffee Details */}
           <Grid item xs={12}>
             <Box sx={{ borderRadius: 1, backgroundColor: sectionBg, p: 2 }}>
-              <Typography variant="h6" sx={{ mb: 1.5, color: 'light.main', fontWeight: 700 }}>
+              <Typography variant="h6" sx={{ mb: 1.5, color: sectionHeadingColor, fontWeight: 700 }}>
                 Coffee Details
               </Typography>
 
@@ -299,7 +304,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
           {/* Sections 2 & 3 — Taste Profile + Tasting Wheel */}
           <Grid item xs={12}>
             <Box sx={{ borderRadius: 1, backgroundColor: sectionBg, p: 2 }}>
-              <Typography variant="h6" sx={{ mb: 1.5, color: 'light.main', fontWeight: 700 }}>
+              <Typography variant="h6" sx={{ mb: 1.5, color: sectionHeadingColor, fontWeight: 700 }}>
                 Taste Profile
               </Typography>
 
@@ -348,10 +353,10 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   </TextField>
 
                   <FormControl fullWidth>
-                    <FormLabel sx={{ color: 'light.main', mb: 1 }}>
+                    <FormLabel sx={{ color: labelColor, mb: 1 }}>
                       Acidity
                       {form.acidity && (
-                        <Typography component="span" variant="caption" sx={{ ml: 1, color: 'light.main', textTransform: 'capitalize' }}>
+                        <Typography component="span" variant="caption" sx={{ ml: 1, color: labelColor, textTransform: 'capitalize' }}>
                           ({form.acidity})
                         </Typography>
                       )}
@@ -376,17 +381,17 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         }
                         sx={{
                           color: theme.palette.accent?.main || theme.palette.primary.main,
-                          '& .MuiSlider-markLabel': { color: 'light.main' },
+                          '& .MuiSlider-markLabel': { color: labelColor },
                         }}
                       />
                     </Box>
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel sx={{ color: 'light.main', mb: 0.5 }}>
+                    <FormLabel sx={{ color: labelColor, mb: 0.5 }}>
                       Roast Level
                       {form.roastLevel && (
-                        <Typography component="span" variant="caption" sx={{ ml: 1, color: 'light.main', textTransform: 'capitalize' }}>
+                        <Typography component="span" variant="caption" sx={{ ml: 1, color: labelColor, textTransform: 'capitalize' }}>
                           ({form.roastLevel})
                         </Typography>
                       )}
@@ -398,9 +403,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         setForm((prev) => ({ ...prev, roastLevel: val ? ROAST_LEVELS[val - 1] : '' }))
                       }
                       icon={<WhatshotIcon fontSize="large" sx={{ color: theme.palette.accent?.main || '#ff6b35' }} />}
-                      emptyIcon={<WhatshotOutlinedIcon fontSize="large" sx={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)' }} />}
+                      emptyIcon={<WhatshotOutlinedIcon fontSize="large" sx={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }} />}
                     />
-                    <FormHelperText sx={{ color: 'light.main' }}>
+                    <FormHelperText sx={{ color: labelColor }}>
                       1 = light · 2 = medium · 3 = dark
                     </FormHelperText>
                   </FormControl>
@@ -414,8 +419,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    width: { xs: '100%', md: '340px' },
-                    minWidth: { md: '340px' },
+                    width: { xs: '100%', md: '400px' },
+                    minWidth: { md: '400px' },
                   }}
                 >
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, color: labelColor, mb: 1 }}>
@@ -457,7 +462,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 rows={3}
                 fullWidth
                 variant="filled"
-                    sx={inputSx}
+                sx={inputSx}
                 label="Additional tasting notes and/or brew recipes"
                 placeholder="e.g. 18g in / 36g out / 28s · bright finish with lingering sweetness…"
                 inputProps={{ maxLength: 500 }}
@@ -480,10 +485,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   value={form.signature}
                   onChange={handleChange}
                   variant="filled"
-                    sx={inputSx}
                   size="small"
                   placeholder="Leave blank to post as Anonymous"
-                  sx={{ flex: 1, maxWidth: { sm: '280px' } }}
+                  sx={{ ...inputSx, flex: 1, maxWidth: { sm: '280px' } }}
                 />
 
                 <Box sx={{ display: 'flex', gap: 1.5, justifyContent: { xs: 'flex-end' } }}>

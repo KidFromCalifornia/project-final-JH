@@ -37,7 +37,7 @@ const arcPath = (innerR, outerR, start, end) => {
   return `M${s1.x},${s1.y} A${outerR},${outerR} 0 ${large} 1 ${e1.x},${e1.y} L${s2.x},${s2.y} A${innerR},${innerR} 0 ${large} 0 ${e2.x},${e2.y} Z`;
 };
 
-const TastingWheel = ({ selected = [], onChange }) => {
+const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const [hovered, setHovered] = React.useState(null);
@@ -83,7 +83,7 @@ const TastingWheel = ({ selected = [], onChange }) => {
         p: 1.5,
       }}
     >
-      <svg width="300" height="300" viewBox="0 0 300 300" style={{ overflow: 'visible', display: 'block' }}>
+      <svg width="100%" height="100%" viewBox="0 0 300 300" style={{ overflow: 'visible', display: 'block', maxWidth: size, maxHeight: size }}>
         {/* Outer note segments */}
         {noteSegments.map(({ note, cat, start, end, mid }) => {
           const isSelected = selected.includes(note);
