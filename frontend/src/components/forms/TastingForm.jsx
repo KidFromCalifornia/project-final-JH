@@ -179,11 +179,17 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     options={cafes}
                     getOptionLabel={(option) => option.name || ''}
                     value={selectedCafe}
+                    filterOptions={(options, { inputValue }) =>
+                      options.filter((opt) =>
+                        opt.name.toLowerCase().includes(inputValue.toLowerCase())
+                      )
+                    }
                     onChange={(_, newValue) => {
                       setSelectedCafe(newValue);
                       setForm((prev) => ({ ...prev, cafeId: newValue?._id || '' }));
                       if (errors.cafeId) setErrors((prev) => ({ ...prev, cafeId: '' }));
                     }}
+                    isOptionEqualToValue={(option, value) => option._id === value._id}
                     renderInput={(params) => (
                       <TextField
                         {...params}
