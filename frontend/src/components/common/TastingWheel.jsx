@@ -121,34 +121,15 @@ const TastingWheel = ({ selected = [], onChange }) => {
           );
         })}
 
-        {/* Inner category segments */}
-        {catSegments.map(({ cat, start, end, mid }) => {
-          const labelPos = polarToCart((INNER_R + CAT_R) / 2, mid);
-          let rot = mid - 90;
-          if (mid > 180) rot += 180;
-          return (
-            <g key={cat.label}>
-              <path
-                d={arcPath(INNER_R, CAT_R, start, end)}
-                fill={`${cat.color}cc`}
-                style={{ pointerEvents: 'none' }}
-              />
-              <text
-                x={labelPos.x}
-                y={labelPos.y}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fontSize="7"
-                fontWeight={700}
-                fill="#fff"
-                transform={`rotate(${rot},${labelPos.x},${labelPos.y})`}
-                style={{ pointerEvents: 'none' }}
-              >
-                {cat.label}
-              </text>
-            </g>
-          );
-        })}
+        {/* Inner category segments — colour only, no text */}
+        {catSegments.map(({ cat, start, end }) => (
+          <path
+            key={cat.label}
+            d={arcPath(INNER_R, CAT_R, start, end)}
+            fill={`${cat.color}cc`}
+            style={{ pointerEvents: 'none' }}
+          />
+        ))}
 
         {/* Centre */}
         <circle
