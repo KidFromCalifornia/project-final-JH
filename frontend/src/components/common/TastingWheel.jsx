@@ -78,7 +78,7 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : '#fff',
+        backgroundColor: 'rgba(255,255,255,0.07)',
         borderRadius: 2,
         p: 1.5,
       }}
