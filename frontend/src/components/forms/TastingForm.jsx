@@ -196,6 +196,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     value={selectedCafe}
                     popupIcon={null}
                     forcePopupIcon={false}
+                    openOnFocus={false}
+                    noOptionsText="No cafes found"
                     filterOptions={(options, { inputValue }) =>
                       options.filter((opt) =>
                         opt.name.toLowerCase().includes(inputValue.toLowerCase())
