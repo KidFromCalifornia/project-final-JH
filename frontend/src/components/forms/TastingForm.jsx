@@ -3,6 +3,7 @@ import { useCafeStore } from '../../stores/useCafeStore';
 import { apiCall } from '../../services/api';
 import { useAlert } from '../../context/AlertContext';
 import { handleApiError } from '../../utils/errorHandler';
+import Slider from '@mui/material/Slider';
 import {
   TextField,
   Checkbox,
@@ -303,20 +304,40 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    select
-                    label="Acidity"
-                    name="acidity"
-                    value={form.acidity}
-                    onChange={handleChange}
-                    fullWidth
-                    variant="filled"
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {(options.acidity || []).map((a) => (
-                      <MenuItem key={a} value={a}>{a}</MenuItem>
-                    ))}
-                  </TextField>
+                  <FormControl fullWidth>
+                    <FormLabel sx={{ color: 'light.main', mb: 1 }}>
+                      Acidity
+                      {form.acidity && (
+                        <Typography component="span" variant="caption" sx={{ ml: 1, color: 'light.main', textTransform: 'capitalize' }}>
+                          ({form.acidity})
+                        </Typography>
+                      )}
+                    </FormLabel>
+                    <Box sx={{ px: 1 }}>
+                      <Slider
+                        value={['light', 'medium', 'high'].indexOf(form.acidity) + 1 || 0}
+                        min={0}
+                        max={3}
+                        step={1}
+                        marks={[
+                          { value: 0, label: '' },
+                          { value: 1, label: 'Light' },
+                          { value: 2, label: 'Medium' },
+                          { value: 3, label: 'High' },
+                        ]}
+                        onChange={(_, val) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            acidity: val === 0 ? '' : ['light', 'medium', 'high'][val - 1],
+                          }))
+                        }
+                        sx={{
+                          color: theme.palette.accent?.main || theme.palette.primary.main,
+                          '& .MuiSlider-markLabel': { color: 'light.main' },
+                        }}
+                      />
+                    </Box>
+                  </FormControl>
                 </Grid>
 
                 {/* Roast Level — fire icon rating */}
