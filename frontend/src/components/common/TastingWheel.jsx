@@ -2,13 +2,16 @@ import React from 'react';
 import { Box, Chip, Typography, useTheme } from '@mui/material';
 
 const CATEGORIES = [
-  { label: 'Fruity',   color: '#e91e8c', notes: ['fruity', 'floral'] },
-  { label: 'Green',    color: '#4caf50', notes: ['green'] },
-  { label: 'Sour',     color: '#fdd835', notes: ['sour', 'alcohol'] },
-  { label: 'Roasted',  color: '#6d4c41', notes: ['roasted', 'cereal', 'cocoa', 'nutty'] },
-  { label: 'Spicy',    color: '#ff7043', notes: ['spices'] },
-  { label: 'Sweet',    color: '#ab47bc', notes: ['sweet'] },
-  { label: 'Other',    color: '#78909c', notes: ['earthy', 'chemical', 'stale', 'other'] },
+  { label: 'Floral',        color: '#f06292', notes: ['floral'] },
+  { label: 'Fruity',        color: '#e53935', notes: ['fruity'] },
+  { label: 'Sour/Ferm.',    color: '#c6d400', notes: ['sour', 'alcohol'] },
+  { label: 'Green/Veg.',    color: '#43a047', notes: ['green'] },
+  { label: 'Other',         color: '#607d8b', notes: ['stale', 'earthy', 'other'] },
+  { label: 'Chemical',      color: '#78909c', notes: ['chemical'] },
+  { label: 'Roasted',       color: '#4e342e', notes: ['roasted', 'cereal'] },
+  { label: 'Spices',        color: '#8d4e2a', notes: ['spices'] },
+  { label: 'Nutty/Cocoa',   color: '#a1887f', notes: ['nutty', 'cocoa'] },
+  { label: 'Sweet',         color: '#d4856a', notes: ['sweet'] },
 ];
 
 const CX = 150;
