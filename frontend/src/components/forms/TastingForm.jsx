@@ -98,7 +98,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
   const validate = () => {
     const e = {};
-    if (!form.cafeId) e.cafeId = 'Please select a cafe';
     if (!form.coffeeName.trim()) e.coffeeName = 'Coffee name is required';
     if (!form.coffeeRoaster.trim()) e.coffeeRoaster = 'Roaster is required';
     if (!form.brewMethod) e.brewMethod = 'Brew method is required';
@@ -211,7 +210,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Cafe *"
+                        label="Cafe (optional)"
                         variant="filled"
                         sx={inputSx}
                         error={!!errors.cafeId}
@@ -486,7 +485,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   )}
                   <Tooltip
                     title={
-                      !form.cafeId || !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
+                      !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
                         ? 'Please fill in all required fields'
                         : ''
                     }
@@ -499,7 +498,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         variant="contained"
                         size="large"
                         disabled={
-                          !form.cafeId || !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
+                          !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
                         }
                         sx={{ minWidth: '8rem', fontWeight: 600 }}
                       >

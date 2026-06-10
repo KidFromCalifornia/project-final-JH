@@ -20,8 +20,8 @@ router.get('/public', async (req, res) => {
       .limit(limit)
       .lean();
 
-    // Filter out any tastings with missing refs (cafeId is required, userId is optional)
-    const validTastings = publicTastingNotes.filter((tasting) => tasting.cafeId);
+    // cafeId is optional — include all valid tastings
+    const validTastings = publicTastingNotes.filter((tasting) => tasting._id);
 
     res.json({
       success: true,

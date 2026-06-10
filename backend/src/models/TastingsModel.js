@@ -15,7 +15,7 @@ const coffeeTastingSchema = new mongoose.Schema(
     cafeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Cafe',
-      required: true,
+      required: false,
     },
     cafeNeighborhood: {
       type: String,
