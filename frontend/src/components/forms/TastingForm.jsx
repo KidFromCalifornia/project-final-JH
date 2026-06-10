@@ -260,7 +260,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   display: 'flex',
                   flexDirection: { xs: 'column', md: 'row' },
                   gap: 3,
-                  alignItems: 'flex-start',
+                  alignItems: { xs: 'stretch', md: 'center' },
                 }}
               >
                 {/* Left column — controls */}
@@ -362,8 +362,10 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     flexShrink: 0,
                     width: { xs: '100%', md: 'auto' },
+                    alignSelf: 'center',
                   }}
                 >
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, color: labelColor, mb: 0.5 }}>
