@@ -370,14 +370,12 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    width: { xs: '100%', md: '320px' },
+                    width: { xs: '100%', md: '340px' },
+                    minWidth: { md: '340px' },
                   }}
                 >
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: labelColor, mb: 0.5 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: labelColor, mb: 1 }}>
                     Tasting Notes *
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1 }}>
-                    Tap segments to select
                   </Typography>
 
                   {errors.tastingNotes && (

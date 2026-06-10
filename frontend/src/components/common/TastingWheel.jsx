@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Chip, Typography, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 
 const CATEGORIES = [
   { label: 'Floral',        color: '#f06292', notes: ['floral'] },
@@ -73,8 +73,8 @@ const TastingWheel = ({ selected = [], onChange }) => {
     : 'tap to select';
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
-      <svg width="100%" height="100%" viewBox="0 0 300 300" style={{ overflow: 'visible', maxWidth: 320, minWidth: 240 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <svg width="300" height="300" viewBox="0 0 300 300" style={{ overflow: 'visible', display: 'block' }}>
         {/* Outer note segments */}
         {noteSegments.map(({ note, cat, start, end, mid }) => {
           const isSelected = selected.includes(note);
@@ -163,29 +163,6 @@ const TastingWheel = ({ selected = [], onChange }) => {
         </text>
       </svg>
 
-      {/* Selected chips */}
-      {selected.length > 0 && (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, justifyContent: 'center', maxWidth: 320 }}>
-          {selected.map((note) => {
-            const cat = CATEGORIES.find((c) => c.notes.includes(note));
-            return (
-              <Chip
-                key={note}
-                label={note}
-                size="small"
-                onDelete={() => toggle(note)}
-                sx={{
-                  backgroundColor: cat?.color,
-                  color: '#fff',
-                  fontWeight: 600,
-                  textTransform: 'capitalize',
-                  '& .MuiChip-deleteIcon': { color: 'rgba(255,255,255,0.75)' },
-                }}
-              />
-            );
-          })}
-        </Box>
-      )}
     </Box>
   );
 };
