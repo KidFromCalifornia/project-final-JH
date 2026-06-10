@@ -399,7 +399,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         setForm((prev) => ({ ...prev, roastLevel: val ? ROAST_LEVELS[val - 1] : '' }))
                       }
                       icon={<WhatshotIcon fontSize="large" sx={{ color: theme.palette.accent?.main || '#ff6b35' }} />}
-                      emptyIcon={<WhatshotOutlinedIcon fontSize="large" sx={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.5)' }} />}
+                      emptyIcon={<WhatshotOutlinedIcon fontSize="large" sx={{ color: 'rgba(255,255,255,0.25)' }} />}
                     />
                     <FormHelperText sx={{ color: labelColor }}>
                       1 = light · 2 = medium · 3 = dark
