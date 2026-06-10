@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
+import SearchIcon from '@mui/icons-material/Search';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import WhatshotOutlinedIcon from '@mui/icons-material/WhatshotOutlined';
 
@@ -194,6 +195,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     options={cafes}
                     getOptionLabel={(option) => option.name || ''}
                     value={selectedCafe}
+                    popupIcon={null}
+                    forcePopupIcon={false}
                     filterOptions={(options, { inputValue }) =>
                       options.filter((opt) =>
                         opt.name.toLowerCase().includes(inputValue.toLowerCase())
@@ -214,6 +217,12 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         error={!!errors.cafeId}
                         helperText={errors.cafeId}
                         placeholder="Type to search cafes…"
+                        InputProps={{
+                          ...params.InputProps,
+                          startAdornment: (
+                            <SearchIcon sx={{ color: 'rgba(255,255,255,0.5)', mr: 0.5, fontSize: '1.2rem' }} />
+                          ),
+                        }}
                       />
                     )}
                   />
