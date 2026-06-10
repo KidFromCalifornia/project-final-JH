@@ -132,6 +132,21 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const sectionBg = alpha(theme.palette.secondary.main, 0.2);
   const labelColor = isDark ? 'light.main' : 'text.primary';
 
+  // Shared styles for all filled inputs on dark background
+  const inputSx = {
+    '& .MuiFilledInput-root': {
+      backgroundColor: 'rgba(255,255,255,0.12)',
+      '&:hover': { backgroundColor: 'rgba(255,255,255,0.18)' },
+      '&.Mui-focused': { backgroundColor: 'rgba(255,255,255,0.2)' },
+    },
+    '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
+    '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+    '& .MuiInputBase-input': { color: '#fff' },
+    '& .MuiSelect-icon': { color: 'rgba(255,255,255,0.7)' },
+    '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.6)' },
+    '& .MuiFormHelperText-root.Mui-error': { color: '#ff6b6b' },
+  };
+
   return (
     <Paper
       elevation={6}
@@ -195,6 +210,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         {...params}
                         label="Cafe *"
                         variant="filled"
+                        sx={inputSx}
                         error={!!errors.cafeId}
                         helperText={errors.cafeId}
                         placeholder="Type to search cafes…"
@@ -211,6 +227,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     onChange={handleChange}
                     fullWidth
                     variant="filled"
+                    sx={inputSx}
                     error={!!errors.coffeeName}
                     helperText={errors.coffeeName}
                   />
@@ -224,6 +241,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     onChange={handleChange}
                     fullWidth
                     variant="filled"
+                    sx={inputSx}
                     error={!!errors.coffeeRoaster}
                     helperText={errors.coffeeRoaster}
                   />
@@ -237,6 +255,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     onChange={handleChange}
                     fullWidth
                     variant="filled"
+                    sx={inputSx}
                   />
                 </Grid>
 
@@ -248,6 +267,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     onChange={handleChange}
                     fullWidth
                     variant="filled"
+                    sx={inputSx}
                   />
                 </Grid>
               </Grid>
@@ -279,6 +299,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     onChange={handleChange}
                     fullWidth
                     variant="filled"
+                    sx={inputSx}
                     error={!!errors.brewMethod}
                     helperText={errors.brewMethod}
                   >
@@ -296,6 +317,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     onChange={handleChange}
                     fullWidth
                     variant="filled"
+                    sx={inputSx}
                   >
                     <MenuItem value="">Select</MenuItem>
                     {(options.mouthFeel || []).map((m) => (
@@ -413,6 +435,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 rows={3}
                 fullWidth
                 variant="filled"
+                    sx={inputSx}
                 label="Additional tasting notes and/or brew recipes"
                 placeholder="e.g. 18g in / 36g out / 28s · bright finish with lingering sweetness…"
                 inputProps={{ maxLength: 500 }}
@@ -435,6 +458,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   value={form.signature}
                   onChange={handleChange}
                   variant="filled"
+                    sx={inputSx}
                   size="small"
                   placeholder="Leave blank to post as Anonymous"
                   sx={{ flex: 1, maxWidth: { sm: '280px' } }}
