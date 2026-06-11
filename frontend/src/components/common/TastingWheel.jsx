@@ -81,10 +81,11 @@ const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
         alignItems: 'center',
         backgroundColor: 'rgba(255,255,255,0.07)',
         borderRadius: 2,
-        p: 1.5,
+        p: 3,
+        overflow: 'visible',
       }}
     >
-      <svg width="100%" height="100%" viewBox="0 0 350 350" style={{ overflow: 'visible', display: 'block', maxWidth: size, maxHeight: size }}>
+      <svg width="100%" height="100%" viewBox="-10 -10 370 370" style={{ overflow: 'visible', display: 'block', maxWidth: size, maxHeight: size }}>
         {/* Outer note segments */}
         {noteSegments.map(({ note, cat, start, end, mid }) => {
           const isSelected = selected.includes(note);
