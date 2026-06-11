@@ -111,6 +111,7 @@ const createComponents = (customTheme, themeMode) => {
     MuiButton: {
       defaultProps: {
         disableElevation: true,
+        disableRipple: false,
       },
       styleOverrides: {
         root: ({ theme, ownerState }) => ({
@@ -119,47 +120,92 @@ const createComponents = (customTheme, themeMode) => {
           textTransform: 'none',
           boxShadow: 'none',
           outline: 'none',
+          border: 'none',
           minHeight: 40,
-          transition: 'all 0.2s ease-in-out',
+          transition: 'background-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease',
           padding: '8px 20px',
 
-          '&:hover': {
-            transform: 'translateY(-1px)',
-            boxShadow: '0 3px 6px rgba(0,0,0,0.18)',
-          },
-          '&:active': {
-            transform: 'translateY(0)',
-            boxShadow: 'none',
-          },
+          // Keyboard-only focus ring
+          '&:focus': { outline: 'none' },
           '&:focus-visible': {
             outline: `2px solid ${c.accent}`,
-            outlineOffset: 2,
-          },
-          '&.Mui-disabled': {
-            backgroundColor: `${c.textMuted}40`,
-            color: c.textMuted,
+            outlineOffset: 3,
           },
 
-          // Contained: explicit colours — always readable regardless of container
-          ...(ownerState.variant === 'contained' && {
+          // Light mode — contained
+          ...(ownerState.variant === 'contained' && !isDark && {
             backgroundColor: c.primary,
             color: c.light,
-            border: `1px solid ${c.secondary}`,
             '&:hover': {
-              backgroundColor: c.secondary,
-              transform: 'translateY(-1px)',
-              boxShadow: '0 3px 6px rgba(0,0,0,0.18)',
+              backgroundColor: c.textMuted,
+              color: c.secondary,
+              transform: 'scale(1.02)',
+              boxShadow: 'none',
+            },
+            '&:active': {
+              backgroundColor: c.textMuted,
+              color: c.light,
+              transform: 'scale(1)',
+              boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.35)',
             },
           }),
 
-          // Outlined / text: inherit colour from container so they work on
-          // both the light page background AND inside dark Paper/Dialog
-          ...(ownerState.variant === 'outlined' && {
-            color: 'inherit',
-            border: '1.5px solid currentColor',
+          // Dark mode — contained
+          ...(ownerState.variant === 'contained' && isDark && {
+            backgroundColor: c.textMuted,
+            color: c.secondary,
             '&:hover': {
-              backgroundColor: theme.palette.action.hover,
-              transform: 'translateY(-1px)',
+              backgroundColor: c.secondary,
+              color: c.light,
+              transform: 'scale(1.02)',
+              boxShadow: 'none',
+            },
+            '&:active': {
+              backgroundColor: c.textMuted,
+              color: c.light,
+              transform: 'scale(1)',
+              boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)',
+            },
+          }),
+
+          // Outlined — same logic, transparent bg
+          ...(ownerState.variant === 'outlined' && !isDark && {
+            backgroundColor: 'transparent',
+            color: c.primary,
+            border: `1.5px solid ${c.primary}`,
+            '&:hover': {
+              backgroundColor: c.textMuted,
+              color: c.secondary,
+              borderColor: 'transparent',
+              transform: 'scale(1.02)',
+              boxShadow: 'none',
+            },
+            '&:active': {
+              backgroundColor: c.textMuted,
+              color: c.light,
+              borderColor: 'transparent',
+              transform: 'scale(1)',
+              boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.35)',
+            },
+          }),
+
+          ...(ownerState.variant === 'outlined' && isDark && {
+            backgroundColor: 'transparent',
+            color: c.light,
+            border: `1.5px solid ${c.light}`,
+            '&:hover': {
+              backgroundColor: c.secondary,
+              color: c.light,
+              borderColor: 'transparent',
+              transform: 'scale(1.02)',
+              boxShadow: 'none',
+            },
+            '&:active': {
+              backgroundColor: c.textMuted,
+              color: c.light,
+              borderColor: 'transparent',
+              transform: 'scale(1)',
+              boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)',
             },
           }),
 
@@ -172,9 +218,10 @@ const createComponents = (customTheme, themeMode) => {
             },
           }),
 
-          '&.tasting-toggle': {
-            minWidth: '8rem',
-            whiteSpace: 'nowrap',
+          '&.Mui-disabled': {
+            backgroundColor: `${c.textMuted}40`,
+            color: c.textMuted,
+            border: 'none',
           },
         }),
       },
