@@ -357,9 +357,15 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
               {onClose && (
                 <Button
                   onClick={onClose}
-                  variant="filled"
-                  size="large"
-                  sx={{ minWidth: '8rem', py: 1.5, fontWeight: 600 }}
+                  variant="contained"
+                  size="medium"
+                  sx={{
+                    minWidth: '6rem',
+                    backgroundColor: 'rgba(255,255,255,0.15)',
+                    color: '#ebf2fa',
+                    '&:hover': { backgroundColor: '#7a8ca3', color: '#0a1f33' },
+                    '&:active': { boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.35)', backgroundColor: '#7a8ca3', color: '#ebf2fa' },
+                  }}
                 >
                   Cancel
                 </Button>
@@ -367,8 +373,14 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
               <Button
                 type="submit"
                 variant="contained"
-                size="large"
-                sx={{ minWidth: '10rem', py: 1.5, fontWeight: 600 }}
+                size="medium"
+                sx={{
+                  minWidth: '8rem',
+                  backgroundColor: '#7a8ca3',
+                  color: '#0a1f33',
+                  '&:hover': { backgroundColor: '#0a1f33', color: '#ebf2fa' },
+                  '&:active': { boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)', backgroundColor: '#7a8ca3', color: '#ebf2fa' },
+                }}
                 aria-label="Submit Cafe"
               >
                 Submit Cafe
