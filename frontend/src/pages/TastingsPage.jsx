@@ -140,7 +140,7 @@ const TastingsPage = () => {
         }}
       >
         <Button
-          variant={showTastingForm ? 'outlined' : 'contained'}
+          variant="contained"
           startIcon={
             showTastingForm ? <CloseIcon aria-hidden="true" /> : <AddIcon aria-hidden="true" />
           }

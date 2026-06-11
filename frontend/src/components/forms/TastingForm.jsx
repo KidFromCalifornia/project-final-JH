@@ -486,9 +486,15 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   {onClose && (
                     <Button
                       onClick={onClose}
-                      variant="outlined"
+                      variant="contained"
                       size="medium"
-                      sx={{ minWidth: '6rem' }}
+                      sx={{
+                        minWidth: '6rem',
+                        backgroundColor: 'rgba(255,255,255,0.15)',
+                        color: '#ebf2fa',
+                        '&:hover': { backgroundColor: '#7a8ca3', color: '#0a1f33' },
+                        '&:active': { boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.35)', backgroundColor: '#7a8ca3', color: '#ebf2fa' },
+                      }}
                     >
                       Cancel
                     </Button>
@@ -510,7 +516,14 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         disabled={
                           !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
                         }
-                        sx={{ minWidth: '8rem', fontWeight: 600 }}
+                        sx={{
+                          minWidth: '8rem',
+                          fontWeight: 600,
+                          backgroundColor: '#7a8ca3',
+                          color: '#0a1f33',
+                          '&:hover': { backgroundColor: '#0a1f33', color: '#ebf2fa' },
+                          '&:active': { boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)', backgroundColor: '#7a8ca3', color: '#ebf2fa' },
+                        }}
                       >
                         Add Tasting
                       </Button>

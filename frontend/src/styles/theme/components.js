@@ -150,26 +150,6 @@ const createComponents = (customTheme, themeMode) => {
             },
           }),
 
-          // Outlined — works on both light and dark backgrounds
-          ...(ownerState.variant === 'outlined' && {
-            backgroundColor: 'transparent',
-            color: c.light,
-            border: `1.5px solid ${c.light}`,
-            '&:hover': {
-              backgroundColor: c.textMuted,
-              color: c.secondary,
-              borderColor: 'transparent',
-              transform: 'scale(1.02)',
-              boxShadow: 'none',
-            },
-            '&:active': {
-              backgroundColor: c.textMuted,
-              color: c.light,
-              borderColor: 'transparent',
-              transform: 'scale(1)',
-              boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.35)',
-            },
-          }),
 
           ...(ownerState.variant === 'text' && {
             color: 'inherit',
