@@ -119,7 +119,7 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
                 y={labelPos.y}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fontSize="9"
+                fontSize="12"
                 fontWeight={isSelected ? 700 : 400}
                 fill={isSelected ? '#fff' : isDark ? 'rgba(255,255,255,0.85)' : '#333'}
                 transform={`rotate(${rot},${labelPos.x},${labelPos.y})`}
@@ -155,7 +155,7 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
           y={CY - 6}
           textAnchor="middle"
           dominantBaseline="middle"
-          fontSize="16"
+          fontSize="18"
           fontWeight={700}
           fill={theme.palette.text.primary}
         >
@@ -166,7 +166,7 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
           y={CY + 10}
           textAnchor="middle"
           dominantBaseline="middle"
-          fontSize="7.5"
+          fontSize="9"
           fill={theme.palette.text.secondary}
         >
           {centerLabel}

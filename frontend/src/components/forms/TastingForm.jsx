@@ -487,7 +487,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     <Button
                       onClick={onClose}
                       variant="outlined"
-                      size="large"
+                      size="medium"
                       sx={{ minWidth: '6rem' }}
                     >
                       Cancel
@@ -506,7 +506,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                       <Button
                         type="submit"
                         variant="contained"
-                        size="large"
+                        size="medium"
                         disabled={
                           !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
                         }
