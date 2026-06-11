@@ -14,11 +14,11 @@ const CATEGORIES = [
   { label: 'Sweet',         color: '#d4856a', notes: ['sweet'] },
 ];
 
-const CX = 150;
-const CY = 150;
-const INNER_R = 45;
-const CAT_R = 82;
-const OUTER_R = 148;
+const CX = 175;
+const CY = 175;
+const INNER_R = 50;
+const CAT_R = 95;
+const OUTER_R = 168;
 const GAP = 1.5;
 
 const toRad = (deg) => ((deg - 90) * Math.PI) / 180;
@@ -37,7 +37,7 @@ const arcPath = (innerR, outerR, start, end) => {
   return `M${s1.x},${s1.y} A${outerR},${outerR} 0 ${large} 1 ${e1.x},${e1.y} L${s2.x},${s2.y} A${innerR},${innerR} 0 ${large} 0 ${e2.x},${e2.y} Z`;
 };
 
-const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
+const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const [hovered, setHovered] = React.useState(null);
@@ -84,7 +84,7 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
         p: 1.5,
       }}
     >
-      <svg width="100%" height="100%" viewBox="0 0 300 300" style={{ overflow: 'visible', display: 'block', maxWidth: size, maxHeight: size }}>
+      <svg width="100%" height="100%" viewBox="0 0 350 350" style={{ overflow: 'visible', display: 'block', maxWidth: size, maxHeight: size }}>
         {/* Outer note segments */}
         {noteSegments.map(({ note, cat, start, end, mid }) => {
           const isSelected = selected.includes(note);
@@ -94,7 +94,7 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
             : isDark
             ? `${cat.color}50`
             : `${cat.color}30`;
-          const labelPos = polarToCart(OUTER_R - 20, mid);
+          const labelPos = polarToCart(OUTER_R - 18, mid);
           let rot = mid - 90;
           if (mid > 180) rot += 180;
 
