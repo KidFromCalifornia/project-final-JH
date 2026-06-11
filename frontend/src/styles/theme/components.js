@@ -132,8 +132,8 @@ const createComponents = (customTheme, themeMode) => {
             outlineOffset: 3,
           },
 
-          // Light mode — contained
-          ...(ownerState.variant === 'contained' && !isDark && {
+          // Contained — works on both light and dark backgrounds
+          ...(ownerState.variant === 'contained' && {
             backgroundColor: c.primary,
             color: c.light,
             '&:hover': {
@@ -150,29 +150,11 @@ const createComponents = (customTheme, themeMode) => {
             },
           }),
 
-          // Dark mode — contained
-          ...(ownerState.variant === 'contained' && isDark && {
-            backgroundColor: c.textMuted,
-            color: c.secondary,
-            '&:hover': {
-              backgroundColor: c.secondary,
-              color: c.light,
-              transform: 'scale(1.02)',
-              boxShadow: 'none',
-            },
-            '&:active': {
-              backgroundColor: c.textMuted,
-              color: c.light,
-              transform: 'scale(1)',
-              boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)',
-            },
-          }),
-
-          // Outlined — same logic, transparent bg
-          ...(ownerState.variant === 'outlined' && !isDark && {
+          // Outlined — works on both light and dark backgrounds
+          ...(ownerState.variant === 'outlined' && {
             backgroundColor: 'transparent',
-            color: c.primary,
-            border: `1.5px solid ${c.primary}`,
+            color: c.light,
+            border: `1.5px solid ${c.light}`,
             '&:hover': {
               backgroundColor: c.textMuted,
               color: c.secondary,
@@ -186,26 +168,6 @@ const createComponents = (customTheme, themeMode) => {
               borderColor: 'transparent',
               transform: 'scale(1)',
               boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.35)',
-            },
-          }),
-
-          ...(ownerState.variant === 'outlined' && isDark && {
-            backgroundColor: 'transparent',
-            color: c.light,
-            border: `1.5px solid ${c.light}`,
-            '&:hover': {
-              backgroundColor: c.secondary,
-              color: c.light,
-              borderColor: 'transparent',
-              transform: 'scale(1.02)',
-              boxShadow: 'none',
-            },
-            '&:active': {
-              backgroundColor: c.textMuted,
-              color: c.light,
-              borderColor: 'transparent',
-              transform: 'scale(1)',
-              boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)',
             },
           }),
 
