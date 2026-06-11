@@ -159,7 +159,6 @@ const NewCafeForm = ({ onClose, onSuccess }) => {
       elevation={6}
       sx={{
         width: '100%',
-        maxWidth: { xs: '100%', md: '860px' },
         mx: 'auto',
         p: { xs: 2, sm: 3 },
         borderRadius: 2,

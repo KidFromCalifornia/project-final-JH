@@ -256,6 +256,7 @@ const DesktopNavBar = ({
         onClose={() => setShowAddCafe(false)}
         maxWidth="sm"
         fullWidth
+        scroll="paper"
         sx={{
           '& .MuiDialog-container': {
             alignItems: 'flex-start',
@@ -267,6 +268,8 @@ const DesktopNavBar = ({
             position: 'absolute',
             top: '5.5rem',
             left: open ? `calc(${drawerWidth} + 1.5rem)` : '5.5rem',
+            maxHeight: 'calc(100vh - 7rem)',
+            overflowY: 'auto',
           },
         }}
       >
@@ -281,6 +284,7 @@ const DesktopNavBar = ({
         onClose={() => setShowSuggestion(false)}
         maxWidth="sm"
         fullWidth
+        scroll="paper"
         sx={{
           '& .MuiDialog-container': {
             alignItems: 'flex-start',
@@ -292,6 +296,8 @@ const DesktopNavBar = ({
             position: 'absolute',
             top: '5.5rem',
             left: open ? `calc(${drawerWidth} + 1.5rem)` : '5.5rem',
+            maxHeight: 'calc(100vh - 7rem)',
+            overflowY: 'auto',
           },
         }}
       >
