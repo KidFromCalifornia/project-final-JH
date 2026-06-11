@@ -66,11 +66,12 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
   const toggle = (note) =>
     onChange(selected.includes(note) ? selected.filter((n) => n !== note) : [...selected, note]);
 
+  const toTitleCase = (str) => str.replace(/\b\w/g, (c) => c.toUpperCase());
   const centerLabel = hovered
-    ? hovered
+    ? toTitleCase(hovered)
     : selected.length > 0
-    ? `${selected.length} selected`
-    : 'tap to select';
+    ? `${selected.length} Selected`
+    : 'Tap To Select';
 
   return (
     <Box
@@ -118,7 +119,7 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
                 y={labelPos.y}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fontSize="7.5"
+                fontSize="9"
                 fontWeight={isSelected ? 700 : 400}
                 fill={isSelected ? '#fff' : isDark ? 'rgba(255,255,255,0.85)' : '#333'}
                 transform={`rotate(${rot},${labelPos.x},${labelPos.y})`}

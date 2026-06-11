@@ -23,7 +23,6 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import SearchIcon from '@mui/icons-material/Search';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import WhatshotOutlinedIcon from '@mui/icons-material/WhatshotOutlined';
 
@@ -134,6 +133,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
   const labelColor = '#fff';
   const sectionHeadingColor = '#fff';
 
+  const labelWrap = { '& .MuiInputLabel-root': { whiteSpace: 'normal', lineHeight: 1.3 } };
+
   // Form always renders on a dark background — keep white text regardless of mode
   const inputSx = {
     '& .MuiFilledInput-root': {
@@ -229,14 +230,9 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                         {...params}
                         label="Where did you drink it?"
                         variant="filled"
-                        sx={inputSx}
-                        placeholder="e.g. Home, Drop Coffee, Work…"
-                        InputProps={{
-                          ...params.InputProps,
-                          startAdornment: (
-                            <SearchIcon sx={{ color: 'rgba(255,255,255,0.5)', mr: 0.5, fontSize: '1.2rem' }} />
-                          ),
-                        }}
+                        sx={{ ...inputSx, ...labelWrap }}
+                        placeholder="e.g. Cafes, Home, or Work…"
+                        InputProps={{ ...params.InputProps }}
                       />
                     )}
                   />
@@ -458,8 +454,8 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 rows={3}
                 fullWidth
                 variant="filled"
-                sx={inputSx}
-                label="Additional tasting notes and/or brew recipes"
+                sx={{ ...inputSx, ...labelWrap }}
+                label="Additional notes and/or brew recipe"
                 placeholder="e.g. 18g in / 36g out / 28s · bright finish with lingering sweetness…"
                 inputProps={{ maxLength: 500 }}
               />
@@ -476,13 +472,13 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                 }}
               >
                 <TextField
-                  label="Your signature (optional)"
+                  label="Your name (optional)"
                   name="signature"
                   value={form.signature}
                   onChange={handleChange}
                   variant="filled"
                   size="small"
-                  placeholder="Leave blank to post as Anonymous"
+                  placeholder="Or Instagram handle"
                   sx={{ ...inputSx, flex: 1, maxWidth: { sm: '280px' } }}
                 />
 

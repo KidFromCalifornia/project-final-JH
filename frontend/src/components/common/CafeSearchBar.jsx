@@ -1,6 +1,7 @@
 import { useCafeStore } from '../../stores/useCafeStore';
 import { cafeAPI, tastingAPI } from '../../services/api';
-import { TextField } from '@mui/material';
+import { TextField, InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 const SearchBar = ({ type = 'cafes' }) => {
   const searchQuery = useCafeStore((state) => state.searchQuery);
@@ -30,19 +31,26 @@ const SearchBar = ({ type = 'cafes' }) => {
   };
 
   return (
-    <>
-      <TextField
-        id="search-field"
-        label={`Search ${type}...`}
-        variant="filled"
-        type="text"
-        value={searchQuery}
-        onChange={handleChange}
-        autoComplete="on"
-        role="searchbox"
-        aria-label={`Search ${type}`}
-      />
-    </>
+    <TextField
+      id="search-field"
+      label={`Search ${type}…`}
+      variant="outlined"
+      type="text"
+      value={searchQuery}
+      onChange={handleChange}
+      autoComplete="on"
+      role="searchbox"
+      aria-label={`Search ${type}`}
+      size="small"
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <SearchIcon fontSize="small" />
+          </InputAdornment>
+        ),
+      }}
+      sx={{ minWidth: 220 }}
+    />
   );
 };
 
