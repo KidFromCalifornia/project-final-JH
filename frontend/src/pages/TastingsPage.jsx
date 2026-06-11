@@ -146,18 +146,7 @@ const TastingsPage = () => {
           }
           onClick={() => setShowTastingForm((prev) => !prev)}
           aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
-          sx={{
-            minWidth: '8rem',
-            fontWeight: 600,
-            backgroundColor: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.main',
-            color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
-            outlineColor: theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
-            '&:hover': {
-              backgroundColor: theme.palette.mode === 'dark' ? 'muted.main' : 'secondary.main',
-              color: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.contrastText',
-              outlineColor: theme.palette.mode === 'dark' ? 'light.main' : 'secondary.main',
-            },
-          }}
+          sx={{ minWidth: '8rem' }}
         >
           {showTastingForm ? 'Close' : 'Add Tasting'}
         </Button>
