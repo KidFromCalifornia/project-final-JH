@@ -17,8 +17,8 @@ const CATEGORIES = [
 const CX = 175;
 const CY = 175;
 const INNER_R = 50;
-const CAT_R = 95;
-const OUTER_R = 168;
+const CAT_R = 85;
+const OUTER_R = 162;
 const GAP = 1.5;
 
 const toRad = (deg) => ((deg - 90) * Math.PI) / 180;
@@ -84,7 +84,7 @@ const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
         p: 2,
       }}
     >
-      <svg width="100%" height="100%" viewBox="-20 -20 390 390" style={{ display: 'block', maxWidth: size, maxHeight: size }}>
+      <svg width="100%" height="100%" viewBox="0 0 350 350" style={{ display: 'block', maxWidth: size, maxHeight: size }}>
         {/* Outer note segments */}
         {noteSegments.map(({ note, cat, start, end, mid }) => {
           const isSelected = selected.includes(note);
@@ -94,7 +94,7 @@ const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
             : isDark
             ? `${cat.color}50`
             : `${cat.color}30`;
-          const labelPos = polarToCart(OUTER_R - 18, mid);
+          const labelPos = polarToCart(OUTER_R - 22, mid);
           let rot = mid - 90;
           if (mid > 180) rot += 180;
 
