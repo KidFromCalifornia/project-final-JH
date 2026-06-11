@@ -18,7 +18,7 @@ const CX = 150;
 const CY = 150;
 const INNER_R = 45;
 const CAT_R = 82;
-const OUTER_R = 142;
+const OUTER_R = 148;
 const GAP = 1.5;
 
 const toRad = (deg) => ((deg - 90) * Math.PI) / 180;
@@ -121,7 +121,7 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
                 dominantBaseline="middle"
                 fontSize="12"
                 fontWeight={isSelected ? 700 : 400}
-                fill={isSelected ? '#fff' : isDark ? 'rgba(255,255,255,0.85)' : '#333'}
+                fill="rgba(255,255,255,0.85)"
                 transform={`rotate(${rot},${labelPos.x},${labelPos.y})`}
                 style={{ pointerEvents: 'none', textTransform: 'capitalize' }}
               >
@@ -152,24 +152,14 @@ const TastingWheel = ({ selected = [], onChange, size = 360 }) => {
         />
         <text
           x={CX}
-          y={CY - 6}
+          y={CY}
           textAnchor="middle"
           dominantBaseline="middle"
-          fontSize="18"
+          fontSize="20"
           fontWeight={700}
-          fill={theme.palette.text.primary}
+          fill="rgba(255,255,255,0.6)"
         >
           {selected.length > 0 ? selected.length : ''}
-        </text>
-        <text
-          x={CX}
-          y={CY + 10}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fontSize="9"
-          fill={theme.palette.text.secondary}
-        >
-          {centerLabel}
         </text>
       </svg>
 

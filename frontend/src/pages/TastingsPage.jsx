@@ -148,8 +148,6 @@ const TastingsPage = () => {
           aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
           sx={{
             minWidth: '8rem',
-            py: 1.5,
-            fontSize: '1.1rem',
             fontWeight: 600,
             backgroundColor: theme.palette.mode === 'dark' ? 'secondary.main' : 'primary.main',
             color: theme.palette.mode === 'dark' ? 'light.main' : 'primary.contrastText',
