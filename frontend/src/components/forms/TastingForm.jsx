@@ -295,7 +295,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
           {/* Sections 2 & 3 — Taste Profile + Tasting Wheel */}
           <Grid item xs={12}>
-            <Box sx={{ borderRadius: 1, backgroundColor: sectionBg, p: 2 }}>
+            <Box sx={{ borderRadius: 1, backgroundColor: sectionBg, p: 2, overflow: 'visible' }}>
               <Typography variant="h6" sx={{ mb: 1.5, color: sectionHeadingColor, fontWeight: 700 }}>
                 Taste Profile
               </Typography>
@@ -306,6 +306,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   flexDirection: { xs: 'column', md: 'row' },
                   gap: 3,
                   alignItems: 'stretch',
+                  overflow: 'visible',
                 }}
               >
                 {/* Left column — controls */}
@@ -413,6 +414,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     flexShrink: 0,
                     width: { xs: '100%', md: '400px' },
                     minWidth: { md: '400px' },
+                    overflow: 'visible',
                   }}
                 >
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, color: labelColor, mb: 1 }}>
