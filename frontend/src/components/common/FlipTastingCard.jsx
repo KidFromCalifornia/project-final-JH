@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import {
+  Card,
   CardContent,
   Typography,
   Box,
   Chip,
   useTheme,
+  IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { useCafeStore } from '../../stores/useCafeStore';
 import {
   StyledCard,
@@ -100,11 +103,10 @@ const FlipTastingCard = ({ tasting }) => {
 
   // Back side
   return (
-    <StyledCard
-      onClick={handleFlip}
+    <Card
       sx={{
         width: '100%',
-        cursor: 'pointer',
+        position: 'relative',
         background:
           theme.palette.mode === 'dark'
             ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
@@ -112,7 +114,17 @@ const FlipTastingCard = ({ tasting }) => {
         color: theme.palette.card.main,
       }}
     >
-      <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }} onClick={(e) => e.stopPropagation()}>
+      {/* Close / flip back button */}
+      <IconButton
+        size="small"
+        onClick={handleFlip}
+        sx={{ position: 'absolute', top: 8, right: 8, color: 'inherit', opacity: 0.7, '&:hover': { opacity: 1 } }}
+        aria-label="Flip card back"
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+
+      <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
 
         {/* Origin + Region */}
         <Box sx={{ textAlign: 'center' }}>
@@ -190,12 +202,8 @@ const FlipTastingCard = ({ tasting }) => {
           </Box>
         )}
 
-        <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
-          Tap to flip back
-        </Typography>
-
       </CardContent>
-    </StyledCard>
+    </Card>
   );
 };
 
