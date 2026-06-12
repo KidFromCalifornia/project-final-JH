@@ -68,6 +68,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
 
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
+  const [validationAlert, setValidationAlert] = useState('');
   const [selectedCafe, setSelectedCafe] = useState(null);
 
   const cafes = useCafeStore((state) => state.cafes);
@@ -118,8 +119,15 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      const missing = [];
+      if (validationErrors.coffeeName) missing.push('Coffee Name');
+      if (validationErrors.coffeeRoaster) missing.push('Roaster');
+      if (validationErrors.brewMethod) missing.push('Brew Method');
+      if (validationErrors.tastingNotes) missing.push('Tasting Notes');
+      setValidationAlert(`Please fill in: ${missing.join(', ')}`);
       return;
     }
+    setValidationAlert('');
     const { allowed, remaining } = checkSubmissionLimit();
     if (!allowed) {
       setSubmitError('You have reached the limit of 5 submissions per hour. Please try again later.');
@@ -176,6 +184,11 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
       </Typography>
 
       <form onSubmit={handleSubmit} aria-label="Coffee Tasting Form">
+        {validationAlert && (
+          <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setValidationAlert('')}>
+            {validationAlert}
+          </Alert>
+        )}
         {submitError && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {submitError}
@@ -499,36 +512,21 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                       Cancel
                     </Button>
                   )}
-                  <Tooltip
-                    title={
-                      !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
-                        ? 'Please fill in all required fields'
-                        : ''
-                    }
-                    placement="top"
-                    arrow
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="medium"
+                    sx={{
+                      minWidth: '8rem',
+                      fontWeight: 600,
+                      backgroundColor: '#7a8ca3',
+                      color: '#0a1f33',
+                      '&:hover': { backgroundColor: '#0a1f33', color: '#ebf2fa' },
+                      '&:active': { boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)', backgroundColor: '#7a8ca3', color: '#ebf2fa' },
+                    }}
                   >
-                    <span>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        size="medium"
-                        disabled={
-                          !form.coffeeName || !form.coffeeRoaster || !form.brewMethod || form.tastingNotes.length === 0
-                        }
-                        sx={{
-                          minWidth: '8rem',
-                          fontWeight: 600,
-                          backgroundColor: '#7a8ca3',
-                          color: '#0a1f33',
-                          '&:hover': { backgroundColor: '#0a1f33', color: '#ebf2fa' },
-                          '&:active': { boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)', backgroundColor: '#7a8ca3', color: '#ebf2fa' },
-                        }}
-                      >
-                        Add Tasting
-                      </Button>
-                    </span>
-                  </Tooltip>
+                    Add Tasting
+                  </Button>
                 </Box>
               </Box>
 
