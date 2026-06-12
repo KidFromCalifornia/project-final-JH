@@ -84,7 +84,7 @@ const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
         p: 2,
       }}
     >
-      <svg width="100%" height="100%" viewBox="0 0 350 350" style={{ display: 'block', maxWidth: size, maxHeight: size }}>
+      <svg width="100%" height="100%" viewBox="-15 -15 380 380" style={{ display: 'block', maxWidth: size, maxHeight: size }}>
         {/* Outer note segments */}
         {noteSegments.map(({ note, cat, start, end, mid }) => {
           const isSelected = selected.includes(note);
@@ -94,7 +94,7 @@ const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
             : isDark
             ? `${cat.color}50`
             : `${cat.color}30`;
-          const labelPos = polarToCart(OUTER_R - 4, mid);
+          const labelPos = polarToCart((CAT_R + OUTER_R) / 2, mid);
           let rot = mid - 90;
           if (mid > 180) rot += 180;
 
@@ -117,7 +117,7 @@ const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
               <text
                 x={labelPos.x}
                 y={labelPos.y}
-                textAnchor="end"
+                textAnchor="middle"
                 dominantBaseline="middle"
                 fontSize="12"
                 fontWeight={isSelected ? 700 : 400}
