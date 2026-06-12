@@ -153,6 +153,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
     '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
     '& .MuiInputBase-input': { color: '#fff' },
+    '& .MuiInputBase-input:-webkit-autofill': { WebkitTextFillColor: '#fff' },
     '& .MuiSelect-icon': { color: 'rgba(255,255,255,0.7)' },
     '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.6)' },
     '& .MuiFormHelperText-root.Mui-error': { color: '#ff6b6b' },
