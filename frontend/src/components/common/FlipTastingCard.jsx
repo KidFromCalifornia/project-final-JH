@@ -205,7 +205,7 @@ const FlipTastingCard = ({ tasting }) => {
       <Tooltip title={isFlipped ? '' : 'Click to flip'} arrow>
         <Box
           id={`tasting-card-${tasting._id}`}
-          onClick={handleClick}
+          onClick={isFlipped ? (e) => e.stopPropagation() : handleClick}
           role="button"
           tabIndex={0}
           aria-label={`Coffee tasting: ${toTitleCase(tasting?.coffeeName || 'Unknown')}. Click to flip.`}
@@ -296,7 +296,7 @@ const FlipTastingCard = ({ tasting }) => {
 
                 {/* Notes toggle */}
                 {tasting.notes && (
-                  <Box onClick={(e) => e.stopPropagation()}>
+                  <Box>
                     <Typography
                       variant="caption"
                       onClick={handleNotesToggle}
