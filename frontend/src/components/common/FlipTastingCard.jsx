@@ -107,6 +107,8 @@ const FlipTastingCard = ({ tasting }) => {
       sx={{
         width: '100%',
         position: 'relative',
+        zIndex: 10,
+        borderRadius: `${theme.shape.borderRadius * 3}px`,
         background:
           theme.palette.mode === 'dark'
             ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
