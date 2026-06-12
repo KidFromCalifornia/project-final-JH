@@ -8,6 +8,7 @@ import {
   useTheme,
   useMediaQuery,
   IconButton,
+  Dialog,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useCafeStore } from '../../stores/useCafeStore';
@@ -120,41 +121,33 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
   const cardW = isMobile ? '92vw' : '50vw';
   const cardH = isMobile ? 'calc(92vw * 1.078)' : 'calc(50vw * 1.078)';
 
-  // Back side — fixed centred overlay
+  // Back side — Dialog for reliable centering
   return (
     <>
-      {/* Backdrop */}
-      <Box
-        onClick={handleFlip}
-        sx={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 1200,
-          backgroundColor: 'rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(2px)',
-        }}
-      />
-
       {/* Placeholder keeps grid cell height */}
-      <Box sx={{ width: '100%', height: 345 }} />
+      <Box sx={{ width: '100%', height: 345, opacity: 0 }} />
 
-      <Card
-        sx={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: cardW,
-          height: cardH,
-          overflowY: 'auto',
-          zIndex: 1300,
-          borderRadius: `${theme.shape.borderRadius * 3}px`,
-          boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-          background:
-            theme.palette.mode === 'dark'
-              ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
-              : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
-          color: theme.palette.card.main,
+      <Dialog
+        open={isFlipped}
+        onClose={handleFlip}
+        maxWidth={false}
+        PaperProps={{
+          sx: {
+            width: cardW,
+            height: cardH,
+            maxWidth: 'none',
+            maxHeight: 'none',
+            overflowY: 'auto',
+            borderRadius: `${theme.shape.borderRadius * 3}px`,
+            background:
+              theme.palette.mode === 'dark'
+                ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
+                : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
+            color: theme.palette.card.main,
+          },
+        }}
+        slotProps={{
+          backdrop: { sx: { backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)' } },
         }}
       >
       {/* Close / flip back button */}
@@ -246,7 +239,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         )}
 
       </CardContent>
-    </Card>
+      </Dialog>
     </>
   );
 };
