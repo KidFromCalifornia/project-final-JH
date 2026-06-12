@@ -330,6 +330,7 @@ const AdminPage = () => {
           <AdminSection
             title="Approved Cafes"
             count={cafes.length}
+            defaultOpen={true}
             items={cafes}
             emptyMessage="No cafes found"
             ItemCardProps={{
