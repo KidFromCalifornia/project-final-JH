@@ -26,26 +26,26 @@ import {
 } from '../../styles/FlipTastingCard.styles';
 
 
-const NotesToggle = ({ notes, theme }) => {
+const NotesToggle = ({ notes }) => {
   const [open, setOpen] = React.useState(false);
   return (
     <Box>
-      <Button
-        size="small"
-        variant="contained"
+      <Typography
+        variant="caption"
         onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
         sx={{
-          mb: open ? 1 : 0,
-          backgroundColor: 'rgba(255,255,255,0.15)',
-          color: '#ebf2fa',
-          '&:hover': { backgroundColor: '#7a8ca3', color: '#0a1f33' },
-          '&:active': { boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.35)' },
+          cursor: 'pointer',
+          color: 'text.secondary',
+          textDecoration: 'underline',
+          textUnderlineOffset: '3px',
+          userSelect: 'none',
+          '&:hover': { color: 'text.primary' },
         }}
       >
-        {open ? 'Hide Notes' : 'Tasting Notes & Recipe'}
-      </Button>
+        {open ? 'Hide notes' : 'Show tasting notes & recipe'}
+      </Typography>
       {open && (
-        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', color: 'text.secondary' }}>
+        <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-wrap', color: 'text.secondary' }}>
           {notes}
         </Typography>
       )}
@@ -292,7 +292,7 @@ const FlipTastingCard = ({ tasting }) => {
 
           {/* Additional notes toggle */}
           {tasting.notes && (
-            <NotesToggle notes={tasting.notes} theme={theme} />
+            <NotesToggle notes={tasting.notes} />
           )}
 
           {/* Footer */}
@@ -334,8 +334,13 @@ const FlipTastingCard = ({ tasting }) => {
         id={`tasting-card-${tasting._id}`}
         sx={{
           width: '100%',
-          height: 345,
+          height: isFlipped ? 'auto' : 345,
+          minHeight: 345,
           cursor: 'pointer',
+          position: 'relative',
+          zIndex: isFlipped ? 10 : 1,
+          transition: 'z-index 0s, box-shadow 0.2s ease',
+          boxShadow: isFlipped ? '0 8px 32px rgba(0,0,0,0.35)' : 'none',
         }}
         onClick={handleClick}
         role="button"
