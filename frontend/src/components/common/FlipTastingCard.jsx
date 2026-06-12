@@ -117,8 +117,8 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
     );
   }
 
-  const cardW = isMobile ? '92vw' : '640px';
-  const cardH = isMobile ? 'calc(92vw * 1.078)' : '690px';
+  const cardW = isMobile ? '92vw' : '50vw';
+  const cardH = isMobile ? 'calc(92vw * 1.078)' : 'calc(50vw * 1.078)';
 
   // Back side — fixed centred overlay
   return (
