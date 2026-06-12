@@ -392,32 +392,58 @@ const AdminPage = () => {
               <CafeEditForm editData={editData} setEditData={setEditData} />
             )}
             {editType === 'tasting' && (
-              <Stack spacing={2}>
-                <TextField
-      variant="filled"
-                  fullWidth
-                  label="Coffee Name"
+              <Stack spacing={2} sx={{ pt: 1 }}>
+                <TextField variant="filled" fullWidth label="Coffee Name"
                   value={editData.coffeeName || ''}
-                  onChange={(e) => setEditData({ ...editData, coffeeName: e.target.value })}
-                />
-                <TextField
-      variant="filled"
-                  fullWidth
-                  label="Rating"
-                  type="number"
-                  inputProps={{ min: 1, max: 5 }}
-                  value={editData.rating || ''}
-                  onChange={(e) => setEditData({ ...editData, rating: e.target.value })}
-                />
-                <TextField
-      variant="filled"
-                  fullWidth
-                  multiline
-                  rows={3}
-                  label="Notes"
+                  onChange={(e) => setEditData({ ...editData, coffeeName: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Roaster"
+                  value={editData.coffeeRoaster || ''}
+                  onChange={(e) => setEditData({ ...editData, coffeeRoaster: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Country of Origin"
+                  value={editData.coffeeOrigin || ''}
+                  onChange={(e) => setEditData({ ...editData, coffeeOrigin: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Region"
+                  value={editData.coffeeOriginRegion || ''}
+                  onChange={(e) => setEditData({ ...editData, coffeeOriginRegion: e.target.value })} />
+                <TextField variant="filled" fullWidth select label="Brew Method"
+                  value={editData.brewMethod || ''}
+                  onChange={(e) => setEditData({ ...editData, brewMethod: e.target.value })}>
+                  {['espresso', 'filtered coffee', 'pour over', 'other'].map((m) => (
+                    <MenuItem key={m} value={m}>{m}</MenuItem>
+                  ))}
+                </TextField>
+                <TextField variant="filled" fullWidth select label="Roast Level"
+                  value={editData.roastLevel || ''}
+                  onChange={(e) => setEditData({ ...editData, roastLevel: e.target.value })}>
+                  <MenuItem value="">—</MenuItem>
+                  {['light', 'medium', 'dark'].map((m) => <MenuItem key={m} value={m}>{m}</MenuItem>)}
+                </TextField>
+                <TextField variant="filled" fullWidth select label="Acidity"
+                  value={editData.acidity || ''}
+                  onChange={(e) => setEditData({ ...editData, acidity: e.target.value })}>
+                  <MenuItem value="">—</MenuItem>
+                  {['light', 'medium', 'high'].map((m) => <MenuItem key={m} value={m}>{m}</MenuItem>)}
+                </TextField>
+                <TextField variant="filled" fullWidth select label="Mouth Feel"
+                  value={editData.mouthFeel || ''}
+                  onChange={(e) => setEditData({ ...editData, mouthFeel: e.target.value })}>
+                  <MenuItem value="">—</MenuItem>
+                  {['mouth drying', 'metallic', 'oily', 'light', 'medium', 'full', 'other'].map((m) => (
+                    <MenuItem key={m} value={m}>{m}</MenuItem>
+                  ))}
+                </TextField>
+                <TextField variant="filled" fullWidth label="Tasting Notes (comma separated)"
+                  value={(editData.tastingNotes || []).join(', ')}
+                  onChange={(e) => setEditData({ ...editData, tastingNotes: e.target.value.split(',').map((n) => n.trim()).filter(Boolean) })} />
+                <TextField variant="filled" fullWidth label="Username"
+                  value={editData.username || ''}
+                  onChange={(e) => setEditData({ ...editData, username: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Location"
+                  value={editData.location || ''}
+                  onChange={(e) => setEditData({ ...editData, location: e.target.value })} />
+                <TextField variant="filled" fullWidth multiline rows={3} label="Notes / Recipe"
                   value={editData.notes || ''}
-                  onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
-                />
+                  onChange={(e) => setEditData({ ...editData, notes: e.target.value })} />
               </Stack>
             )}
           </DialogContent>
