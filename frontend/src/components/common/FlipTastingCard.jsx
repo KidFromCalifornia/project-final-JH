@@ -43,7 +43,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
   if (!tasting?._id) return null;
 
   const hasCafeInDb = tasting.cafeId && typeof tasting.cafeId === 'object' && tasting.cafeId.name;
-  const locationDisplay = hasCafeInDb ? toTitleCase(cafe.name) : tasting.location || null;
+  const locationDisplay = hasCafeInDb ? toTitleCase(cafe.name) : tasting.location || 'Other';
   const neighbourhood = hasCafeInDb ? cafe.locations?.[0]?.neighborhood : null;
 
   const handleFlip = () => {
