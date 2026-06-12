@@ -26,6 +26,33 @@ import {
 } from '../../styles/FlipTastingCard.styles';
 
 
+const NotesToggle = ({ notes, theme }) => {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <Box>
+      <Button
+        size="small"
+        variant="contained"
+        onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+        sx={{
+          mb: open ? 1 : 0,
+          backgroundColor: 'rgba(255,255,255,0.15)',
+          color: '#ebf2fa',
+          '&:hover': { backgroundColor: '#7a8ca3', color: '#0a1f33' },
+          '&:active': { boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.35)' },
+        }}
+      >
+        {open ? 'Hide Notes' : 'Tasting Notes & Recipe'}
+      </Button>
+      {open && (
+        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', color: 'text.secondary' }}>
+          {notes}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
 const toTitleCase = (str) => {
   if (!str) return '';
   return str
@@ -177,62 +204,44 @@ const FlipTastingCard = ({ tasting }) => {
   const backContent = useMemo(() => {
     if (!tasting || (!isFlipped && !hasBeenFlipped)) return null;
 
+    const hasCafeInDb = tasting.cafeId && typeof tasting.cafeId === 'object' && tasting.cafeId.name;
+    const locationDisplay = hasCafeInDb
+      ? toTitleCase(cafe.name)
+      : tasting.location || null;
+    const neighbourhood = hasCafeInDb ? cafe.locations?.[0]?.neighborhood : null;
+
     return (
       <>
         <CardContent
           sx={{
             flexGrow: 1,
-            p: 3, // INCREASED padding for better spacing
+            p: 3,
             display: 'flex',
             flexDirection: 'column',
-            gap: 2, // ADDED consistent gap between sections
+            gap: 2,
           }}
         >
-          {/* Header - Coffee Origin */}
-          <Typography
-            variant="h4"
-            component="h2"
-            sx={{
-              fontWeight: theme.typography.fontWeightBold,
-              textAlign: 'center',
-            }}
-          >
-            {toTitleCase(tasting.coffeeOrigin)}
-          </Typography>
-          {/* Coffee Details Grid */}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: '1fr', // SINGLE column for better readability
-              gap: 1.5,
-            }}
-          >
-            {tasting.coffeeRoaster && (
-              <Box>
-                <Typography
-                  textTransform={'uppercase'}
-                  variant="body1"
-                  sx={{
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Roaster:
-                </Typography>
-                <Typography variant="body2" sx={{ pl: 1 }}>
-                  {toTitleCase(tasting.coffeeRoaster)}
-                </Typography>
-              </Box>
+          {/* Header - Coffee Origin + Region */}
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography
+              variant="h4"
+              component="h2"
+              sx={{ fontWeight: theme.typography.fontWeightBold }}
+            >
+              {toTitleCase(tasting.coffeeOrigin) || '—'}
+            </Typography>
+            {tasting.coffeeOriginRegion && (
+              <Typography variant="body2" color="text.secondary">
+                {toTitleCase(tasting.coffeeOriginRegion)}
+              </Typography>
             )}
+          </Box>
 
+          {/* Coffee Details */}
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 1.5 }}>
             {tasting.brewMethod && (
               <Box>
-                <Typography
-                  textTransform={'uppercase'}
-                  variant="body2"
-                  sx={{
-                    fontWeight: 'bold',
-                  }}
-                >
+                <Typography textTransform="uppercase" variant="body2" sx={{ fontWeight: 'bold' }}>
                   Brew Method:
                 </Typography>
                 <Typography variant="body2" sx={{ pl: 1 }}>
@@ -241,96 +250,70 @@ const FlipTastingCard = ({ tasting }) => {
               </Box>
             )}
 
-            {/* Three column grid for short fields */}
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)', // THREE columns for compact info
-                gap: 1,
-              }}
-            >
+            {tasting.coffeeRoaster && (
+              <Box>
+                <Typography textTransform="uppercase" variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Roaster:
+                </Typography>
+                <Typography variant="body2" sx={{ pl: 1 }}>
+                  {toTitleCase(tasting.coffeeRoaster)}
+                </Typography>
+              </Box>
+            )}
+
+            {/* Tasting profile — 3 columns */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1 }}>
               {tasting.roastLevel && (
                 <Box>
-                  <Typography
-                    textTransform={'uppercase'}
-                    variant="caption"
-                    sx={{
-                      fontWeight: 'bold',
-                      display: 'block',
-                    }}
-                  >
+                  <Typography textTransform="uppercase" variant="caption" sx={{ fontWeight: 'bold', display: 'block' }}>
                     Roast:
                   </Typography>
-                  <Typography variant="body2">
-                    {toTitleCase(tasting.roastLevel)}
-                  </Typography>
+                  <Typography variant="body2">{toTitleCase(tasting.roastLevel)}</Typography>
                 </Box>
               )}
-
               {tasting.acidity && (
                 <Box>
-                  <Typography
-                    textTransform={'uppercase'}
-                    variant="caption"
-                    sx={{
-                      fontWeight: 'bold',
-                      display: 'block',
-                    }}
-                  >
+                  <Typography textTransform="uppercase" variant="caption" sx={{ fontWeight: 'bold', display: 'block' }}>
                     Acidity:
                   </Typography>
-                  <Typography variant="body2">
-                    {toTitleCase(tasting.acidity)}
-                  </Typography>
+                  <Typography variant="body2">{toTitleCase(tasting.acidity)}</Typography>
                 </Box>
               )}
-
               {tasting.mouthFeel && (
                 <Box>
-                  <Typography
-                    textTransform={'uppercase'}
-                    variant="caption"
-                    sx={{
-                      fontWeight: 'bold',
-                      display: 'block',
-                    }}
-                  >
+                  <Typography textTransform="uppercase" variant="caption" sx={{ fontWeight: 'bold', display: 'block' }}>
                     Body:
                   </Typography>
-                  <Typography variant="body2">
-                    {toTitleCase(tasting.mouthFeel)}
-                  </Typography>
+                  <Typography variant="body2">{toTitleCase(tasting.mouthFeel)}</Typography>
                 </Box>
               )}
             </Box>
           </Box>
 
-          {/* Location & Date - Footer */}
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="flex-end"
-            sx={{
-              mt: 'auto',
-              pt: 2,
-              borderTop: `1px solid ${theme.palette.divider}`,
-              textAlign: 'center', // CENTERED footer
-            }}
-          >
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: 'block', mb: 0.5 }}
+          {/* Additional notes toggle */}
+          {tasting.notes && (
+            <NotesToggle notes={tasting.notes} theme={theme} />
+          )}
+
+          {/* Footer */}
+          {locationDisplay && (
+            <Box
+              sx={{
+                mt: 'auto',
+                pt: 2,
+                borderTop: `1px solid ${theme.palette.divider}`,
+              }}
             >
-              <strong>{toTitleCase(cafe.name) || 'can not retrieve cafe name'}</strong>
-              {cafe.locations?.[0]?.neighborhood &&
-                ` • ${toTitleCase(cafe.locations[0].neighborhood)}`}
-            </Typography>
-          </Box>
+              <Typography variant="caption" color="text.secondary">
+                <strong>{locationDisplay}</strong>
+                {neighbourhood && ` • ${toTitleCase(neighbourhood)}`}
+              </Typography>
+            </Box>
+          )}
         </CardContent>
       </>
     );
-  }, [tasting, cafe.name, cafe.locations, isFlipped, hasBeenFlipped, theme]);
+  }, [tasting, cafe, isFlipped, hasBeenFlipped, theme]);
 
   const handleClick = () => {
     setIsFlipped(!isFlipped);
