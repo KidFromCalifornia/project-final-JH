@@ -214,13 +214,28 @@ const AdminPage = () => {
 
         {/* Tabs */}
         <Paper elevation={2} sx={{ mb: 3 }}>
-          <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="fullWidth">
+          <Tabs
+            value={tab}
+            onChange={(_, v) => setTab(v)}
+            variant="fullWidth"
+            sx={{
+              '& .MuiTab-root': {
+                minWidth: 0,
+                flex: 1,
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                py: 2,
+              },
+            }}
+          >
             {TABS.map((t, i) => (
               <Tab
                 key={t.label}
                 label={
                   t.badge ? (
-                    <Badge badgeContent={t.badge} color={i === 0 ? 'error' : 'primary'} sx={{ pr: 1 }}>
+                    <Badge badgeContent={t.badge} color={i === 0 ? 'error' : 'primary'} sx={{ pr: 1.5 }}>
                       {t.label}
                     </Badge>
                   ) : t.label
