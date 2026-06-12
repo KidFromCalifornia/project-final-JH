@@ -6,6 +6,7 @@ import {
   Box,
   Chip,
   useTheme,
+  useMediaQuery,
   IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -25,8 +26,9 @@ const toTitleCase = (str) => {
   return str.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 };
 
-const FlipTastingCard = ({ tasting, isFlipped = false, onFlip }) => {
+const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = false }) => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showNotes, setShowNotes] = useState(false);
   const cafes = useCafeStore((state) => state.cafes);
 
@@ -55,7 +57,17 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip }) => {
 
   if (!isFlipped) {
     return (
-      <Box sx={{ width: '100%', height: 345, cursor: 'pointer' }} onClick={handleFlip}>
+      <Box
+        sx={{
+          width: '100%',
+          height: 345,
+          cursor: 'pointer',
+          opacity: anyFlipped ? 0.25 : 1,
+          transition: 'opacity 0.3s ease',
+          pointerEvents: anyFlipped ? 'none' : 'auto',
+        }}
+        onClick={handleFlip}
+      >
         <StyledCard>
           <BoxMain minHeight={280} position="relative">
             <StyledDivContent className="tasting-cd">
@@ -105,25 +117,46 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip }) => {
     );
   }
 
-  // Back side — absolute so it floats above other cards
+  const cardW = isMobile ? '92vw' : '640px';
+  const cardH = isMobile ? 'calc(92vw * 1.078)' : '690px';
+
+  // Back side — fixed centred overlay
   return (
-    <Box sx={{ position: 'relative', height: 345 }}>
-    <Card
-      sx={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        zIndex: 20,
-        borderRadius: `${theme.shape.borderRadius * 3}px`,
-        boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
-        background:
-          theme.palette.mode === 'dark'
-            ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
-            : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
-        color: theme.palette.card.main,
-      }}
-    >
+    <>
+      {/* Backdrop */}
+      <Box
+        onClick={handleFlip}
+        sx={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 1200,
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(2px)',
+        }}
+      />
+
+      {/* Placeholder keeps grid cell height */}
+      <Box sx={{ width: '100%', height: 345 }} />
+
+      <Card
+        sx={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: cardW,
+          height: cardH,
+          overflowY: 'auto',
+          zIndex: 1300,
+          borderRadius: `${theme.shape.borderRadius * 3}px`,
+          boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+          background:
+            theme.palette.mode === 'dark'
+              ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
+              : `linear-gradient(135deg, ${theme.palette.secondary.main} 20%, ${theme.palette.primary.main} 100%)`,
+          color: theme.palette.card.main,
+        }}
+      >
       {/* Close / flip back button */}
       <IconButton
         size="small"
@@ -195,7 +228,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip }) => {
               {showNotes ? 'Hide notes' : 'Show tasting notes & recipe'}
             </Typography>
             {showNotes && (
-              <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-wrap', color: 'text.secondary' }}>
+              <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-wrap', color: 'text.secondary', fontWeight: 700 }}>
                 {tasting.notes}
               </Typography>
             )}
@@ -214,7 +247,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip }) => {
 
       </CardContent>
     </Card>
-    </Box>
+    </>
   );
 };
 

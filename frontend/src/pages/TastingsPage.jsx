@@ -206,6 +206,7 @@ const TastingsPage = () => {
                   key={tasting._id || `tasting-${index}`}
                   tasting={tasting}
                   isFlipped={flippedCardId === tasting._id}
+                  anyFlipped={!!flippedCardId && flippedCardId !== tasting._id}
                   onFlip={(id) => setFlippedCardId((prev) => prev === id ? null : id)}
                 />
               ))
