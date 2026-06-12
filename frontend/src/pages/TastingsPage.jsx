@@ -34,7 +34,8 @@ const TastingsPage = () => {
         setShowTastingForm(false);
       }
     } catch (error) {
-      console.error('Error saving tasting:', error);
+      console.error('Error saving tasting:', error.message || error);
+      alert(`Could not save tasting: ${error.message || 'Unknown error'}`);
     }
   };
 

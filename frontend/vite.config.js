@@ -69,8 +69,12 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         navigateFallback: 'index.html',
-        navigateFallbackDenylist: [/^\/api\//],
+        navigateFallbackDenylist: [/^\/api\//, /^https:\/\/stockholmscoffeeclub\.onrender\.com/],
         runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/stockholmscoffeeclub\.onrender\.com\/api\//,
+            handler: 'NetworkOnly',
+          },
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
             handler: 'CacheFirst',
