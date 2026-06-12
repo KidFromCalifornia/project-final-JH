@@ -94,7 +94,8 @@ const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
             : isDark
             ? `${cat.color}50`
             : `${cat.color}30`;
-          const labelPos = polarToCart(CAT_R + 4, mid);
+          const isRightHalf = mid <= 180;
+          const labelPos = polarToCart(isRightHalf ? CAT_R + 4 : OUTER_R - 4, mid);
           let rot = mid - 90;
           if (mid > 180) rot += 180;
 
@@ -117,7 +118,7 @@ const TastingWheel = ({ selected = [], onChange, size = 400 }) => {
               <text
                 x={labelPos.x}
                 y={labelPos.y}
-                textAnchor="start"
+                textAnchor={isRightHalf ? 'start' : 'end'}
                 dominantBaseline="middle"
                 fontSize="12"
                 fontWeight={isSelected ? 700 : 400}
