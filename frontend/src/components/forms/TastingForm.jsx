@@ -167,8 +167,6 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         mx: 'auto',
         p: { xs: 2, sm: 3 },
         borderRadius: 2,
-        backgroundColor: theme.palette.primary.main,
-        color: '#fff',
       }}
     >
       <Typography
@@ -179,7 +177,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         sx={{
           mb: 2,
           fontWeight: 700,
-          color: '#fff',
+          color: isDark ? 'light.main' : 'primary.main',
         }}
       >
         Add New Coffee Tasting
@@ -458,7 +456,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
               sx={{
                 p: 2,
                 borderRadius: 1,
-                backgroundColor: sectionBg,
+                backgroundColor: isDark ? alpha(theme.palette.secondary.main, 0.2) : theme.palette.background.paper,
               }}
             >
               <TextField
