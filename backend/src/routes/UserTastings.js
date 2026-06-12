@@ -70,6 +70,7 @@ router.get('/', authenticateToken, async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { signature, ...tastingData } = req.body;
+    if (!tastingData.cafeId) delete tastingData.cafeId;
     const trimmedSignature = (signature || '').trim();
 
     let userId;
