@@ -4,7 +4,6 @@ import {
   Typography,
   Button,
   Paper,
-  Divider,
   Stack,
   Chip,
   CssBaseline,
@@ -15,20 +14,18 @@ import {
   TextField,
   MenuItem,
   Collapse,
-  IconButton,
-  useTheme,
+  Tabs,
+  Tab,
+  Badge,
   Switch,
   FormControlLabel,
+  useTheme,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import LoginForm from '../components/forms/LoginForm.jsx';
 import MuiTheme from '../components/layout/MuiTheme.jsx';
 import CafeEditForm from '../components/admin/CafeEditForm.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-
-const buttonStyles = { minWidth: '120px', fontWeight: 600 };
 
 const formatValue = (key, value) => {
   if (value === null || value === undefined || value === '') return null;
@@ -43,7 +40,7 @@ const formatValue = (key, value) => {
 };
 
 const ItemCard = ({ item, theme, onEdit, onDelete, onApprove, fields, showApprove }) => (
-  <Box mb={2} p={2} border={1} borderColor="grey.200" borderRadius={2}>
+  <Box mb={2} p={2} border={1} borderColor="divider" borderRadius={2}>
     <Typography variant="subtitle1" fontWeight="bold">{item.name || item.coffeeName || item.message}</Typography>
     {item.parentCafeId && <Chip label="New location for existing cafe" size="small" color="info" sx={{ mb: 1 }} />}
     {fields.map((field) => {
@@ -58,52 +55,17 @@ const ItemCard = ({ item, theme, onEdit, onDelete, onApprove, fields, showApprov
     })}
     <Box mt={1} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
       {showApprove && (
-        <Button variant="contained" color="success" sx={buttonStyles} onClick={() => onApprove(item._id)}>Approve</Button>
+        <Button variant="contained" color="success" size="small" onClick={() => onApprove(item._id)}>Approve</Button>
       )}
       {onEdit && (
-        <Button variant="contained" sx={{ ...buttonStyles, backgroundColor: theme.palette.primary.main }} onClick={() => onEdit(item)}>Edit</Button>
+        <Button variant="contained" size="small" onClick={() => onEdit(item)}>Edit</Button>
       )}
       {onDelete && (
-        <Button variant="contained" color="error" sx={buttonStyles} onClick={() => onDelete(item._id)}>Delete</Button>
+        <Button variant="contained" color="error" size="small" onClick={() => onDelete(item._id)}>Delete</Button>
       )}
     </Box>
   </Box>
 );
-
-const AdminSection = ({ title, count, items, emptyMessage, ItemCardProps, defaultOpen = false, action }) => {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <Paper elevation={2} sx={{ mb: 3, width: '100%' }}>
-      <Box
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, cursor: 'pointer', userSelect: 'none' }}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="h6">{title}</Typography>
-          {count > 0 && <Chip label={count} color="primary" size="small" />}
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }} onClick={(e) => e.stopPropagation()}>
-          {action}
-          <IconButton size="small" onClick={() => setOpen((v) => !v)}>
-            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
-        </Box>
-      </Box>
-      <Collapse in={open}>
-        <Divider />
-        <Box sx={{ p: 2 }}>
-          {items.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">{emptyMessage}</Typography>
-          ) : (
-            items.map((item, index) => (
-              <ItemCard key={item._id || `${title}-${index}`} item={item} {...ItemCardProps} />
-            ))
-          )}
-        </Box>
-      </Collapse>
-    </Paper>
-  );
-};
 
 const AdminPage = () => {
   const [cafes, setCafes] = useState([]);
@@ -111,6 +73,7 @@ const AdminPage = () => {
   const [tastings, setTastings] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState(0);
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('admin') === 'true');
   const [editingId, setEditingId] = useState(null);
   const [editType, setEditType] = useState(null);
@@ -158,9 +121,7 @@ const AdminPage = () => {
       const res = await fetch(`${API_URL}${endpoint}/${itemId}`, { method: 'DELETE', headers: getHeaders() });
       if (res.ok) setItems((prev) => prev.filter((item) => item._id !== itemId));
       else setErrorMessage(`Failed to delete ${itemType}`);
-    } catch (error) {
-      setErrorMessage(error.message);
-    }
+    } catch (error) { setErrorMessage(error.message); }
   };
 
   const handleDeleteCafe = createDeleteHandler('/cafes', 'cafe', setCafes);
@@ -214,162 +175,175 @@ const AdminPage = () => {
     } catch (error) { setErrorMessage(error.message); }
   };
 
-  const handleToggleAlert = async (alert) => {
-    try {
-      const res = await fetch(`${API_URL}/alerts/${alert._id}`, {
-        method: 'PUT', headers: getHeaders(), body: JSON.stringify({ isActive: !alert.isActive }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAlerts((prev) => prev.map((a) => (a._id === alert._id ? data.data : a)));
-      }
-    } catch (error) { setErrorMessage(error.message); }
-  };
-
   const handleLogout = () => {
     if (window.confirm('Logout?')) { localStorage.removeItem('admin'); localStorage.removeItem('userToken'); setIsAdmin(false); }
   };
 
   if (!isAdmin) return <LoginForm setIsAdmin={setIsAdmin} onClose={() => {}} />;
-  if (loading) return <Box textAlign="center" mt={4}><Typography variant="h6">Loading admin data…</Typography></Box>;
+  if (loading) return <Box textAlign="center" mt={4}><Typography variant="h6">Loading…</Typography></Box>;
+
+  const TABS = [
+    { label: 'Submissions', badge: submissions.length },
+    { label: 'Cafes', badge: null },
+    { label: 'Tastings', badge: null },
+    { label: 'Alerts', badge: alerts.filter((a) => a.isActive).length },
+  ];
 
   return (
     <MuiTheme>
       <CssBaseline />
-      <Box sx={{ mx: 3, pb: 5 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, pt: 2 }}>
-          <Typography variant="h4">Admin Dashboard</Typography>
+      <Box sx={{ maxWidth: 1100, mx: 'auto', px: 3, pb: 6 }}>
+
+        {/* Header */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 3 }}>
+          <Typography variant="h4" fontWeight={700}>Admin</Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button onClick={fetchAdminData} variant="outlined" sx={buttonStyles} disabled={loading}>
+            <Button onClick={fetchAdminData} variant="outlined" disabled={loading} size="small">
               {loading ? 'Refreshing…' : 'Refresh'}
             </Button>
-            <Button onClick={handleLogout} variant="contained" sx={buttonStyles}>Logout</Button>
+            <Button onClick={handleLogout} variant="contained" size="small">Logout</Button>
           </Box>
         </Box>
 
         {errorMessage && (
-          <Paper sx={{ p: 2, mb: 2 }}>
-            <Typography color="error">{errorMessage}</Typography>
-            <Button onClick={() => setErrorMessage('')}>Dismiss</Button>
+          <Paper sx={{ p: 2, mb: 2, bgcolor: 'error.light' }}>
+            <Typography color="error.contrastText">{errorMessage}</Typography>
+            <Button size="small" onClick={() => setErrorMessage('')}>Dismiss</Button>
           </Paper>
         )}
 
-        {/* Alerts section */}
-        <AdminSection
-          title="Site Alerts"
-          count={alerts.filter((a) => a.isActive).length}
-          defaultOpen={true}
-          items={alerts}
-          emptyMessage="No alerts"
-          action={
-            <Button size="small" variant="contained" onClick={() => setShowAlertForm((v) => !v)}>
-              {showAlertForm ? 'Cancel' : '+ New Alert'}
-            </Button>
-          }
-          ItemCardProps={{
-            theme,
-            fields: [
-              { key: 'severity', label: 'Type' },
-              { key: 'isActive', label: 'Active' },
-              { key: 'expiresAt', label: 'Expires' },
-              { key: 'createdAt', label: 'Created' },
-            ],
-            onEdit: (item) => handleEditClick(item._id, 'alert', item),
-            onDelete: handleDeleteAlert,
-          }}
-        />
+        {/* Tabs */}
+        <Paper elevation={2} sx={{ mb: 3 }}>
+          <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="fullWidth">
+            {TABS.map((t, i) => (
+              <Tab
+                key={t.label}
+                label={
+                  t.badge ? (
+                    <Badge badgeContent={t.badge} color={i === 0 ? 'error' : 'primary'} sx={{ pr: 1 }}>
+                      {t.label}
+                    </Badge>
+                  ) : t.label
+                }
+              />
+            ))}
+          </Tabs>
+        </Paper>
 
-        {/* New alert form */}
-        <Collapse in={showAlertForm}>
-          <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
-            <Typography variant="subtitle1" fontWeight={700} mb={2}>New Alert</Typography>
-            <Stack spacing={2}>
-              <TextField fullWidth variant="filled" label="Message" multiline rows={2}
-                value={newAlert.message} onChange={(e) => setNewAlert({ ...newAlert, message: e.target.value })} />
-              <TextField fullWidth variant="filled" select label="Severity"
-                value={newAlert.severity} onChange={(e) => setNewAlert({ ...newAlert, severity: e.target.value })}>
-                {['info', 'success', 'warning', 'error'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-              </TextField>
-              <TextField fullWidth variant="filled" label="Expires At (optional)" type="datetime-local"
-                InputLabelProps={{ shrink: true }}
-                value={newAlert.expiresAt} onChange={(e) => setNewAlert({ ...newAlert, expiresAt: e.target.value })} />
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button variant="contained" onClick={handleCreateAlert} disabled={!newAlert.message.trim()}>Create Alert</Button>
-                <Button onClick={() => setShowAlertForm(false)}>Cancel</Button>
-              </Box>
-            </Stack>
-          </Paper>
-        </Collapse>
+        {/* Tab: Submissions */}
+        {tab === 0 && (
+          <Box>
+            {submissions.length === 0 ? (
+              <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No pending submissions</Typography>
+            ) : (
+              submissions.map((item, i) => (
+                <ItemCard key={item._id || i} item={item} theme={theme}
+                  fields={[
+                    { key: 'name', label: 'Name' }, { key: 'category', label: 'Category' },
+                    { key: 'description', label: 'Description' }, { key: 'locations', label: 'Address' },
+                    { key: 'website', label: 'Website' }, { key: 'features', label: 'Features' },
+                    { key: 'createdAt', label: 'Submitted' },
+                  ]}
+                  showApprove onApprove={handleApproveSubmission}
+                  onEdit={(item) => handleEditClick(item._id, 'submission', item)}
+                  onDelete={handleDeleteSubmission}
+                />
+              ))
+            )}
+          </Box>
+        )}
 
-        {/* Pending submissions — full width */}
-        <AdminSection
-          title="Pending Submissions"
-          count={submissions.length}
-          defaultOpen={submissions.length > 0}
-          items={submissions}
-          emptyMessage="No submissions pending"
-          ItemCardProps={{
-            theme,
-            fields: [
-              { key: 'name', label: 'Name' },
-              { key: 'category', label: 'Category' },
-              { key: 'description', label: 'Description' },
-              { key: 'locations', label: 'Address' },
-              { key: 'website', label: 'Website' },
-              { key: 'features', label: 'Features' },
-              { key: 'createdAt', label: 'Submitted' },
-            ],
-            showApprove: true,
-            onApprove: handleApproveSubmission,
-            onEdit: (item) => handleEditClick(item._id, 'submission', item),
-            onDelete: handleDeleteSubmission,
-          }}
-        />
+        {/* Tab: Cafes */}
+        {tab === 1 && (
+          <Box>
+            {cafes.length === 0 ? (
+              <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No cafes</Typography>
+            ) : (
+              cafes.map((item, i) => (
+                <ItemCard key={item._id || i} item={item} theme={theme}
+                  fields={[
+                    { key: 'category', label: 'Category' }, { key: 'locations', label: 'Address' },
+                    { key: 'website', label: 'Website' }, { key: 'instagram', label: 'Instagram' },
+                    { key: 'features', label: 'Features' }, { key: 'createdAt', label: 'Created' },
+                  ]}
+                  onEdit={(item) => handleEditClick(item._id, 'cafe', item)}
+                  onDelete={handleDeleteCafe}
+                />
+              ))
+            )}
+          </Box>
+        )}
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
-          <AdminSection
-            title="Approved Cafes"
-            count={cafes.length}
-            defaultOpen={true}
-            items={cafes}
-            emptyMessage="No cafes found"
-            ItemCardProps={{
-              theme,
-              fields: [
-                { key: 'name', label: 'Name' },
-                { key: 'category', label: 'Category' },
-                { key: 'locations', label: 'Address' },
-                { key: 'website', label: 'Website' },
-                { key: 'instagram', label: 'Instagram' },
-                { key: 'features', label: 'Features' },
-                { key: 'createdAt', label: 'Created' },
-              ],
-              onEdit: (item) => handleEditClick(item._id, 'cafe', item),
-              onDelete: handleDeleteCafe,
-            }}
-          />
+        {/* Tab: Tastings */}
+        {tab === 2 && (
+          <Box>
+            {tastings.length === 0 ? (
+              <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No tastings</Typography>
+            ) : (
+              tastings.map((item, i) => (
+                <ItemCard key={item._id || i} item={item} theme={theme}
+                  fields={[
+                    { key: 'username', label: 'By' }, { key: 'coffeeRoaster', label: 'Roaster' },
+                    { key: 'coffeeOrigin', label: 'Origin' }, { key: 'brewMethod', label: 'Brew' },
+                    { key: 'roastLevel', label: 'Roast' }, { key: 'tastingNotes', label: 'Notes' },
+                    { key: 'createdAt', label: 'Created' },
+                  ]}
+                  onEdit={(item) => handleEditClick(item._id, 'tasting', item)}
+                  onDelete={handleDeleteTasting}
+                />
+              ))
+            )}
+          </Box>
+        )}
 
-          <AdminSection
-            title="Tasting Notes"
-            count={tastings.length}
-            items={tastings}
-            emptyMessage="No tasting notes found"
-            ItemCardProps={{
-              theme,
-              fields: [
-                { key: 'coffeeName', label: 'Coffee' },
-                { key: 'username', label: 'By' },
-                { key: 'brewMethod', label: 'Brew Method' },
-                { key: 'roastLevel', label: 'Roast' },
-                { key: 'tastingNotes', label: 'Tasting Notes' },
-                { key: 'notes', label: 'Notes' },
-                { key: 'createdAt', label: 'Created' },
-              ],
-              onEdit: (item) => handleEditClick(item._id, 'tasting', item),
-              onDelete: handleDeleteTasting,
-            }}
-          />
-        </Box>
+        {/* Tab: Alerts */}
+        {tab === 3 && (
+          <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              <Button variant="contained" size="small" onClick={() => setShowAlertForm((v) => !v)}>
+                {showAlertForm ? 'Cancel' : '+ New Alert'}
+              </Button>
+            </Box>
+
+            <Collapse in={showAlertForm}>
+              <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
+                <Typography variant="subtitle1" fontWeight={700} mb={2}>New Alert</Typography>
+                <Stack spacing={2}>
+                  <TextField fullWidth variant="filled" label="Message" multiline rows={2}
+                    value={newAlert.message} onChange={(e) => setNewAlert({ ...newAlert, message: e.target.value })} />
+                  <TextField fullWidth variant="filled" select label="Severity"
+                    value={newAlert.severity} onChange={(e) => setNewAlert({ ...newAlert, severity: e.target.value })}>
+                    {['info', 'success', 'warning', 'error'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+                  </TextField>
+                  <TextField fullWidth variant="filled" label="Expires At (optional)" type="datetime-local"
+                    InputLabelProps={{ shrink: true }}
+                    value={newAlert.expiresAt} onChange={(e) => setNewAlert({ ...newAlert, expiresAt: e.target.value })} />
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Button variant="contained" onClick={handleCreateAlert} disabled={!newAlert.message.trim()}>Create</Button>
+                    <Button onClick={() => setShowAlertForm(false)}>Cancel</Button>
+                  </Box>
+                </Stack>
+              </Paper>
+            </Collapse>
+
+            {alerts.length === 0 ? (
+              <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No alerts</Typography>
+            ) : (
+              alerts.map((item, i) => (
+                <ItemCard key={item._id || i} item={item} theme={theme}
+                  fields={[
+                    { key: 'severity', label: 'Type' },
+                    { key: 'isActive', label: 'Active' },
+                    { key: 'expiresAt', label: 'Expires' },
+                    { key: 'createdAt', label: 'Created' },
+                  ]}
+                  onEdit={(item) => handleEditClick(item._id, 'alert', item)}
+                  onDelete={handleDeleteAlert}
+                />
+              ))
+            )}
+          </Box>
+        )}
 
         {/* Edit dialog */}
         <Dialog open={!!editingId} onClose={() => setEditingId(null)} maxWidth="md" fullWidth>
@@ -442,6 +416,7 @@ const AdminPage = () => {
             <Button onClick={handleSaveEdit} variant="contained">Save</Button>
           </DialogActions>
         </Dialog>
+
       </Box>
     </MuiTheme>
   );
