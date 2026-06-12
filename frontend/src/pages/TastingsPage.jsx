@@ -22,6 +22,7 @@ const TastingsPage = () => {
 
   const [showTastingForm, setShowTastingForm] = React.useState(false);
   const [displayedCount, setDisplayedCount] = React.useState(12);
+  const [flippedCardId, setFlippedCardId] = React.useState(null);
 
   const theme = useTheme();
 
@@ -204,7 +205,8 @@ const TastingsPage = () => {
                 <FlipTastingCard
                   key={tasting._id || `tasting-${index}`}
                   tasting={tasting}
-                  sx={{ width: '100%' }}
+                  isFlipped={flippedCardId === tasting._id}
+                  onFlip={(id) => setFlippedCardId((prev) => prev === id ? null : id)}
                 />
               ))
             )}

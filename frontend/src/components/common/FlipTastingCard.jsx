@@ -25,9 +25,8 @@ const toTitleCase = (str) => {
   return str.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 };
 
-const FlipTastingCard = ({ tasting }) => {
+const FlipTastingCard = ({ tasting, isFlipped = false, onFlip }) => {
   const theme = useTheme();
-  const [isFlipped, setIsFlipped] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const cafes = useCafeStore((state) => state.cafes);
 
@@ -45,9 +44,14 @@ const FlipTastingCard = ({ tasting }) => {
   const neighbourhood = hasCafeInDb ? cafe.locations?.[0]?.neighborhood : null;
 
   const handleFlip = () => {
-    setIsFlipped((v) => !v);
     setShowNotes(false);
+    onFlip?.(tasting._id);
   };
+
+  // Reset notes when card is unflipped
+  React.useEffect(() => {
+    if (!isFlipped) setShowNotes(false);
+  }, [isFlipped]);
 
   if (!isFlipped) {
     return (
@@ -101,14 +105,18 @@ const FlipTastingCard = ({ tasting }) => {
     );
   }
 
-  // Back side
+  // Back side — absolute so it floats above other cards
   return (
+    <Box sx={{ position: 'relative', height: 345 }}>
     <Card
       sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
         width: '100%',
-        position: 'relative',
-        zIndex: 10,
+        zIndex: 20,
         borderRadius: `${theme.shape.borderRadius * 3}px`,
+        boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
         background:
           theme.palette.mode === 'dark'
             ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
@@ -134,7 +142,7 @@ const FlipTastingCard = ({ tasting }) => {
             {toTitleCase(tasting.coffeeOrigin) || '—'}
           </Typography>
           {tasting.coffeeOriginRegion && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: theme.palette.accent.main }}>
               {toTitleCase(tasting.coffeeOriginRegion)}
             </Typography>
           )}
@@ -182,7 +190,7 @@ const FlipTastingCard = ({ tasting }) => {
             <Typography
               variant="caption"
               onClick={() => setShowNotes((v) => !v)}
-              sx={{ cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '3px', userSelect: 'none' }}
+              sx={{ cursor: 'pointer', color: theme.palette.accent.main, textDecoration: 'underline', textUnderlineOffset: '3px', userSelect: 'none', '&:hover': { opacity: 0.8 } }}
             >
               {showNotes ? 'Hide notes' : 'Show tasting notes & recipe'}
             </Typography>
@@ -196,8 +204,8 @@ const FlipTastingCard = ({ tasting }) => {
 
         {/* Footer */}
         {locationDisplay && (
-          <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-            <Typography variant="caption" color="text.secondary">
+          <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}`, display: 'flex', justifyContent: 'flex-end' }}>
+            <Typography variant="caption" sx={{ color: '#fff' }}>
               <strong>{locationDisplay}</strong>
               {neighbourhood && ` • ${toTitleCase(neighbourhood)}`}
             </Typography>
@@ -206,6 +214,7 @@ const FlipTastingCard = ({ tasting }) => {
 
       </CardContent>
     </Card>
+    </Box>
   );
 };
 
