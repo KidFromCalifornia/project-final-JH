@@ -7,7 +7,7 @@ export const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: 320,
   maxHeight: 370,
   position: 'relative',
-  boxShadow: '4px 8px 0px 2px rgba(10, 31, 51, 0.45), 0 2px 12px rgba(10, 31, 51, 0.25)',
+  boxShadow: '0 0 0 2px rgba(10,31,51,0.15), 6px 10px 0px 0px rgba(10,31,51,0.4)',
   overflow: 'visible',
   borderRadius: theme.shape.borderRadius * 3,
 
