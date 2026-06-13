@@ -53,7 +53,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
                   {tasting.tastingNotes.slice(0, 4).map((note, i) => (
                     <Chip key={i} label={tt(note)} size="small" sx={{
                       fontWeight: theme.typography.fontWeightMedium,
-                      fontSize: theme.typography.caption.fontSize,
+                      fontSize: '16px',
                       bgcolor: 'transparent', color: theme.palette.card.main,
                       border: 'none', borderRadius: 0,
                       padding: '0 !important', margin: '0 !important',
