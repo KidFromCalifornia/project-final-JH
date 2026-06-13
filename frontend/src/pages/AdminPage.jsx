@@ -1,25 +1,14 @@
 import { useEffect, useState } from 'react';
 import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  Stack,
-  Chip,
-  CssBaseline,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  Collapse,
-  Badge,
-  Switch,
-  Divider,
-  FormControlLabel,
-  useTheme,
+  Box, Typography, Button, Paper, Stack, Chip, CssBaseline,
+  Dialog, DialogTitle, DialogContent, DialogActions, TextField,
+  MenuItem, Collapse, Badge, Switch, FormControlLabel, Divider,
+  Table, TableBody, TableCell, TableHead, TableRow, TableContainer,
+  IconButton, Tooltip,
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LoginForm from '../components/forms/LoginForm.jsx';
 import MuiTheme from '../components/layout/MuiTheme.jsx';
 import CafeEditForm from '../components/admin/CafeEditForm.jsx';
@@ -27,44 +16,91 @@ import AdminDashboard from '../components/admin/AdminDashboard.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-const formatValue = (key, value) => {
-  if (value === null || value === undefined || value === '') return null;
-  if (Array.isArray(value)) {
-    if (key === 'locations') return value.map((l) => l.address).join(', ');
-    if (key === 'images') return `${value.length} image(s)`;
-    return value.map((v) => v.replaceAll('_', ' ')).join(', ');
-  }
-  if (typeof value === 'boolean') return key === 'isApproved' ? (value ? 'Approved' : 'Not Approved') : String(value);
-  if (key === 'createdAt') return new Date(value).toLocaleDateString();
-  return String(value);
-};
+const SIDEBAR_W = 200;
 
-const ItemCard = ({ item, theme, onEdit, onDelete, onApprove, fields, showApprove }) => (
-  <Box mb={2} p={2} border={1} borderColor="divider" borderRadius={2}>
-    <Typography variant="subtitle1" fontWeight="bold">{item.name || item.coffeeName || item.message}</Typography>
-    {item.parentCafeId && <Chip label="New location for existing cafe" size="small" color="info" sx={{ mb: 1 }} />}
-    {fields.map((field) => {
-      const value = item[field.key];
-      const displayValue = formatValue(field.key, value);
-      if (!displayValue) return null;
-      return (
-        <Typography key={field.key} variant="body2">
-          <strong>{field.label}:</strong> {displayValue}
-        </Typography>
-      );
-    })}
-    <Box mt={1} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-      {showApprove && (
-        <Button variant="contained" color="success" size="small" onClick={() => onApprove(item._id)}>Approve</Button>
-      )}
-      {onEdit && (
-        <Button variant="contained" size="small" onClick={() => onEdit(item)}>Edit</Button>
-      )}
-      {onDelete && (
-        <Button variant="contained" color="error" size="small" onClick={() => onDelete(item._id)}>Delete</Button>
-      )}
+const SidebarNav = ({ tabs, tab, setTab, onRefresh, onLogout, loading }) => (
+  <Box sx={{
+    width: SIDEBAR_W, minWidth: SIDEBAR_W, bgcolor: '#0f2e4e', color: '#fff',
+    display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'sticky', top: 0,
+  }}>
+    <Box sx={{ px: 2.5, py: 3 }}>
+      <Typography variant="subtitle2" fontWeight={800} letterSpacing="0.15em" sx={{ color: 'rgba(255,255,255,0.5)', mb: 2 }}>
+        ADMIN
+      </Typography>
+      <Stack spacing={0.5}>
+        {tabs.map((t, i) => (
+          <Box key={t.label} onClick={() => setTab(i)} sx={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            px: 1.5, py: 1, borderRadius: 1.5, cursor: 'pointer',
+            bgcolor: tab === i ? 'rgba(255,255,255,0.15)' : 'transparent',
+            color: tab === i ? '#fff' : 'rgba(255,255,255,0.6)',
+            fontWeight: tab === i ? 700 : 400,
+            fontSize: '0.8rem', letterSpacing: '0.08em', textTransform: 'uppercase',
+            '&:hover': { bgcolor: 'rgba(255,255,255,0.08)', color: '#fff' },
+            transition: 'all 0.15s',
+          }}>
+            <span>{t.label}</span>
+            {t.badge > 0 && (
+              <Chip label={t.badge} size="small" color={i === 1 ? 'error' : 'default'}
+                sx={{ height: 18, fontSize: '0.65rem', fontWeight: 700, minWidth: 22 }} />
+            )}
+          </Box>
+        ))}
+      </Stack>
+    </Box>
+    <Box sx={{ flex: 1 }} />
+    <Box sx={{ px: 2, py: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+      <Button fullWidth size="small" onClick={onRefresh} disabled={loading}
+        sx={{ mb: 1, color: 'rgba(255,255,255,0.7)', borderColor: 'rgba(255,255,255,0.2)', border: '1px solid', borderRadius: 1.5,
+          '&:hover': { borderColor: '#fff', color: '#fff' }, textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em' }}>
+        {loading ? 'Loading…' : 'Refresh'}
+      </Button>
+      <Button fullWidth size="small" onClick={onLogout}
+        sx={{ color: 'rgba(255,255,255,0.7)', bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 1.5,
+          '&:hover': { bgcolor: 'rgba(255,255,255,0.12)', color: '#fff' }, textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em' }}>
+        Logout
+      </Button>
     </Box>
   </Box>
+);
+
+const AdminTable = ({ columns, rows, renderActions }) => (
+  <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2 }}>
+    <Table size="small">
+      <TableHead>
+        <TableRow sx={{ bgcolor: 'grey.50' }}>
+          {columns.map((c) => (
+            <TableCell key={c.key} sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary' }}>
+              {c.label}
+            </TableCell>
+          ))}
+          <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary' }}>
+            Actions
+          </TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={columns.length + 1} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+              Nothing here yet
+            </TableCell>
+          </TableRow>
+        ) : rows.map((row) => (
+          <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 } }}>
+            {columns.map((c) => (
+              <TableCell key={c.key} sx={{ fontSize: '0.85rem', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {c.render ? c.render(row) : (row[c.key] ?? '—')}
+              </TableCell>
+            ))}
+            <TableCell sx={{ whiteSpace: 'nowrap' }}>
+              {renderActions(row)}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
 );
 
 const AdminPage = () => {
@@ -79,10 +115,9 @@ const AdminPage = () => {
   const [editType, setEditType] = useState(null);
   const [editData, setEditData] = useState({});
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [newAlert, setNewAlert] = useState({ message: '', severity: 'info', expiresAt: '' });
   const [showAlertForm, setShowAlertForm] = useState(false);
-
-  const theme = useTheme();
 
   const getHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem('userToken')}`,
@@ -105,9 +140,8 @@ const AdminPage = () => {
       setSubmissions(pendingData?.data ?? []);
       setTastings(tastingsData?.data ?? []);
       setAlerts(alertsData?.data ?? []);
-      if (!pendingRes.ok) setErrorMessage(`Pending fetch failed: ${pendingData?.error ?? pendingRes.status}`);
     } catch (error) {
-      setErrorMessage(`Failed to load admin data: ${error.message}`);
+      setErrorMessage(`Failed to load: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -115,64 +149,52 @@ const AdminPage = () => {
 
   useEffect(() => { if (isAdmin) fetchAdminData(); }, [isAdmin]);
 
-  const createDeleteHandler = (endpoint, itemType, setItems) => async (itemId) => {
-    if (!window.confirm(`Delete this ${itemType}?`)) return;
-    try {
-      const res = await fetch(`${API_URL}${endpoint}/${itemId}`, { method: 'DELETE', headers: getHeaders() });
-      if (res.ok) setItems((prev) => prev.filter((item) => item._id !== itemId));
-      else setErrorMessage(`Failed to delete ${itemType}`);
-    } catch (error) { setErrorMessage(error.message); }
+  const del = (endpoint, setItems) => async (id) => {
+    if (!window.confirm('Delete?')) return;
+    const res = await fetch(`${API_URL}${endpoint}/${id}`, { method: 'DELETE', headers: getHeaders() });
+    if (res.ok) setItems((prev) => prev.filter((i) => i._id !== id));
+    else setErrorMessage('Delete failed');
   };
 
-  const handleDeleteCafe = createDeleteHandler('/cafes', 'cafe', setCafes);
-  const handleDeleteSubmission = createDeleteHandler('/cafes', 'submission', setSubmissions);
-  const handleDeleteTasting = createDeleteHandler('/tastings', 'tasting', setTastings);
-  const handleDeleteAlert = createDeleteHandler('/alerts', 'alert', setAlerts);
-
-  const handleApproveSubmission = async (submissionId) => {
-    try {
-      const submission = submissions.find((s) => s._id === submissionId);
-      const res = await fetch(`${API_URL}/cafes/${submissionId}/approve`, { method: 'PUT', headers: getHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setSubmissions((prev) => prev.filter((s) => s._id !== submissionId));
-        if (submission?.parentCafeId) setCafes((prev) => prev.map((c) => (c._id === submission.parentCafeId ? data.data : c)));
-        else setCafes((prev) => [...prev, data.data]);
-      } else setErrorMessage('Failed to approve cafe');
-    } catch (error) { setErrorMessage(error.message); }
+  const handleApprove = async (id) => {
+    const submission = submissions.find((s) => s._id === id);
+    const res = await fetch(`${API_URL}/cafes/${id}/approve`, { method: 'PUT', headers: getHeaders() });
+    if (res.ok) {
+      const data = await res.json();
+      setSubmissions((prev) => prev.filter((s) => s._id !== id));
+      if (submission?.parentCafeId) setCafes((prev) => prev.map((c) => c._id === submission.parentCafeId ? data.data : c));
+      else setCafes((prev) => [...prev, data.data]);
+      setSuccessMessage('Approved!');
+    } else setErrorMessage('Approve failed');
   };
 
-  const handleEditClick = (id, type, data) => { setEditingId(id); setEditType(type); setEditData({ ...data }); };
+  const openEdit = (type, item) => { setEditType(type); setEditingId(item._id); setEditData({ ...item }); };
 
-  const handleSaveEdit = async () => {
-    try {
-      const endpoint = editType === 'tasting' ? `/tastings/${editingId}`
-        : editType === 'alert' ? `/alerts/${editingId}`
-        : `/cafes/${editingId}`;
-      const res = await fetch(`${API_URL}${endpoint}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(editData) });
-      if (res.ok) {
-        const saved = await res.json();
-        const updater = (prev) => prev.map((item) => (item._id === editingId ? saved.data : item));
-        if (editType === 'cafe') setCafes(updater);
-        else if (editType === 'submission') setSubmissions(updater);
-        else if (editType === 'tasting') setTastings(updater);
-        else if (editType === 'alert') setAlerts(updater);
-        setEditingId(null); setEditType(null); setEditData({});
-      } else setErrorMessage('Failed to save changes');
-    } catch { setErrorMessage('Failed to save changes. Please try again.'); }
+  const handleSave = async () => {
+    const endpoint = editType === 'tasting' ? `/tastings/${editingId}`
+      : editType === 'alert' ? `/alerts/${editingId}`
+      : `/cafes/${editingId}`;
+    const res = await fetch(`${API_URL}${endpoint}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(editData) });
+    if (res.ok) {
+      const saved = await res.json();
+      const up = (prev) => prev.map((i) => i._id === editingId ? saved.data : i);
+      if (editType === 'cafe') setCafes(up);
+      else if (editType === 'submission') setSubmissions(up);
+      else if (editType === 'tasting') setTastings(up);
+      else if (editType === 'alert') setAlerts(up);
+      setEditingId(null); setSuccessMessage('Saved!');
+    } else setErrorMessage('Save failed');
   };
 
   const handleCreateAlert = async () => {
-    try {
-      const body = { ...newAlert, expiresAt: newAlert.expiresAt || null };
-      const res = await fetch(`${API_URL}/alerts`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(body) });
-      if (res.ok) {
-        const data = await res.json();
-        setAlerts((prev) => [data.data, ...prev]);
-        setNewAlert({ message: '', severity: 'info', expiresAt: '' });
-        setShowAlertForm(false);
-      } else setErrorMessage('Failed to create alert');
-    } catch (error) { setErrorMessage(error.message); }
+    const res = await fetch(`${API_URL}/alerts`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({ ...newAlert, expiresAt: newAlert.expiresAt || null }) });
+    if (res.ok) {
+      const data = await res.json();
+      setAlerts((prev) => [data.data, ...prev]);
+      setNewAlert({ message: '', severity: 'info', expiresAt: '' });
+      setShowAlertForm(false);
+      setSuccessMessage('Alert created!');
+    } else setErrorMessage('Failed to create alert');
   };
 
   const handleLogout = () => {
@@ -180,7 +202,7 @@ const AdminPage = () => {
   };
 
   if (!isAdmin) return <LoginForm setIsAdmin={setIsAdmin} onClose={() => {}} />;
-  if (loading) return <Box textAlign="center" mt={4}><Typography variant="h6">Loading…</Typography></Box>;
+  if (loading) return <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh"><Typography>Loading…</Typography></Box>;
 
   const TABS = [
     { label: 'Dashboard', badge: null },
@@ -190,257 +212,169 @@ const AdminPage = () => {
     { label: 'Alerts', badge: alerts.filter((a) => a.isActive).length },
   ];
 
+  const actions = (type, setItems, endpoint, showApprove) => (row) => (
+    <Box sx={{ display: 'flex', gap: 0.5 }}>
+      {showApprove && (
+        <Tooltip title="Approve"><IconButton size="small" color="success" onClick={() => handleApprove(row._id)}><CheckCircleIcon fontSize="small" /></IconButton></Tooltip>
+      )}
+      <Tooltip title="Edit"><IconButton size="small" color="primary" onClick={() => openEdit(type, row)}><EditIcon fontSize="small" /></IconButton></Tooltip>
+      <Tooltip title="Delete"><IconButton size="small" color="error" onClick={del(endpoint, setItems)(row._id)}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
+    </Box>
+  );
+
   return (
     <MuiTheme>
       <CssBaseline />
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
+        <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />
 
-        {/* Sidebar */}
-        <Box sx={{
-          width: 220,
-          flexShrink: 0,
-          bgcolor: 'primary.main',
-          color: '#fff',
-          display: 'flex',
-          flexDirection: 'column',
-          p: 2,
-          gap: 1,
-        }}>
-          <Typography variant="h6" fontWeight={700} sx={{ mb: 2, px: 1 }}>Admin</Typography>
+        <Box sx={{ flex: 1, p: 3, overflowY: 'auto', minWidth: 0 }}>
 
-          {TABS.map((t, i) => (
-            <Box
-              key={t.label}
-              onClick={() => setTab(i)}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                px: 2,
-                py: 1.2,
-                borderRadius: 2,
-                cursor: 'pointer',
-                fontWeight: tab === i ? 700 : 400,
-                bgcolor: tab === i ? 'rgba(255,255,255,0.2)' : 'transparent',
-                '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' },
-                transition: 'background 0.15s',
-              }}
-            >
-              <Typography variant="body2" fontWeight="inherit" sx={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {t.label}
-              </Typography>
-              {t.badge > 0 && (
-                <Chip label={t.badge} size="small" color={i === 0 ? 'error' : 'default'}
-                  sx={{ height: 20, fontSize: '0.7rem', fontWeight: 700 }} />
-              )}
-            </Box>
-          ))}
+          {/* Feedback banners */}
+          {errorMessage && (
+            <Paper sx={{ p: 1.5, mb: 2, bgcolor: 'error.light', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="body2" color="error.contrastText">{errorMessage}</Typography>
+              <Button size="small" onClick={() => setErrorMessage('')}>Dismiss</Button>
+            </Paper>
+          )}
+          {successMessage && (
+            <Paper sx={{ p: 1.5, mb: 2, bgcolor: 'success.light', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="body2" color="success.contrastText">{successMessage}</Typography>
+              <Button size="small" onClick={() => setSuccessMessage('')}>Dismiss</Button>
+            </Paper>
+          )}
 
-          <Box sx={{ flexGrow: 1 }} />
-          <Divider sx={{ borderColor: 'rgba(255,255,255,0.2)', my: 1 }} />
-          <Button onClick={fetchAdminData} variant="outlined" disabled={loading} size="small"
-            sx={{ color: '#fff', borderColor: 'rgba(255,255,255,0.4)', '&:hover': { borderColor: '#fff' } }}>
-            {loading ? 'Refreshing…' : 'Refresh'}
-          </Button>
-          <Button onClick={handleLogout} variant="contained" size="small"
-            sx={{ bgcolor: 'rgba(255,255,255,0.15)', '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' } }}>
-            Logout
-          </Button>
+          <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>{TABS[tab].label}</Typography>
+
+          {tab === 0 && <AdminDashboard cafes={cafes} tastings={tastings} submissions={submissions} alerts={alerts} />}
+
+          {tab === 1 && (
+            <AdminTable
+              columns={[
+                { key: 'name', label: 'Name', maxWidth: 180 },
+                { key: 'category', label: 'Category', maxWidth: 120 },
+                { key: 'description', label: 'Description', maxWidth: 260 },
+                { key: 'createdAt', label: 'Submitted', render: (r) => new Date(r.createdAt).toLocaleDateString(), maxWidth: 100 },
+              ]}
+              rows={submissions}
+              renderActions={actions('submission', setSubmissions, '/cafes', true)}
+            />
+          )}
+
+          {tab === 2 && (
+            <AdminTable
+              columns={[
+                { key: 'name', label: 'Name', maxWidth: 180 },
+                { key: 'category', label: 'Category', maxWidth: 120 },
+                { key: 'locations', label: 'Address', maxWidth: 240, render: (r) => r.locations?.[0]?.address || '—' },
+                { key: 'features', label: 'Features', maxWidth: 220, render: (r) => (r.features || []).join(', ') || '—' },
+                { key: 'createdAt', label: 'Created', render: (r) => new Date(r.createdAt).toLocaleDateString(), maxWidth: 100 },
+              ]}
+              rows={cafes}
+              renderActions={actions('cafe', setCafes, '/cafes', false)}
+            />
+          )}
+
+          {tab === 3 && (
+            <AdminTable
+              columns={[
+                { key: 'coffeeName', label: 'Coffee', maxWidth: 160 },
+                { key: 'coffeeRoaster', label: 'Roaster', maxWidth: 140 },
+                { key: 'username', label: 'By', maxWidth: 120 },
+                { key: 'brewMethod', label: 'Brew', maxWidth: 110 },
+                { key: 'roastLevel', label: 'Roast', maxWidth: 80 },
+                { key: 'tastingNotes', label: 'Notes', maxWidth: 180, render: (r) => (r.tastingNotes || []).join(', ') || '—' },
+                { key: 'createdAt', label: 'Date', render: (r) => new Date(r.createdAt).toLocaleDateString(), maxWidth: 90 },
+              ]}
+              rows={tastings}
+              renderActions={actions('tasting', setTastings, '/tastings', false)}
+            />
+          )}
+
+          {tab === 4 && (
+            <>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                <Button variant="contained" size="small" onClick={() => setShowAlertForm((v) => !v)}>
+                  {showAlertForm ? 'Cancel' : '+ New Alert'}
+                </Button>
+              </Box>
+              <Collapse in={showAlertForm}>
+                <Paper elevation={1} sx={{ p: 2.5, mb: 3, borderRadius: 2 }}>
+                  <Typography variant="subtitle2" fontWeight={700} mb={2}>New Alert</Typography>
+                  <Stack spacing={2}>
+                    <TextField fullWidth variant="filled" label="Message" multiline rows={2}
+                      value={newAlert.message} onChange={(e) => setNewAlert({ ...newAlert, message: e.target.value })} />
+                    <TextField fullWidth variant="filled" select label="Severity"
+                      value={newAlert.severity} onChange={(e) => setNewAlert({ ...newAlert, severity: e.target.value })}>
+                      {['info', 'success', 'warning', 'error'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+                    </TextField>
+                    <TextField fullWidth variant="filled" label="Expires At (optional)" type="datetime-local"
+                      InputLabelProps={{ shrink: true }}
+                      value={newAlert.expiresAt} onChange={(e) => setNewAlert({ ...newAlert, expiresAt: e.target.value })} />
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Button variant="contained" size="small" onClick={handleCreateAlert} disabled={!newAlert.message.trim()}>Create</Button>
+                      <Button size="small" onClick={() => setShowAlertForm(false)}>Cancel</Button>
+                    </Box>
+                  </Stack>
+                </Paper>
+              </Collapse>
+              <AdminTable
+                columns={[
+                  { key: 'message', label: 'Message', maxWidth: 400 },
+                  { key: 'severity', label: 'Type', maxWidth: 90 },
+                  { key: 'isActive', label: 'Active', maxWidth: 70, render: (r) => r.isActive ? <Chip label="Active" size="small" color="success" /> : <Chip label="Off" size="small" /> },
+                  { key: 'expiresAt', label: 'Expires', maxWidth: 100, render: (r) => r.expiresAt ? new Date(r.expiresAt).toLocaleDateString() : '—' },
+                  { key: 'createdAt', label: 'Created', render: (r) => new Date(r.createdAt).toLocaleDateString(), maxWidth: 90 },
+                ]}
+                rows={alerts}
+                renderActions={actions('alert', setAlerts, '/alerts', false)}
+              />
+            </>
+          )}
         </Box>
-
-        {/* Main content */}
-        <Box sx={{ flex: 1, p: 3, overflowY: 'auto' }}>
-
-        {errorMessage && (
-          <Paper sx={{ p: 2, mb: 2, bgcolor: 'error.light' }}>
-            <Typography color="error.contrastText">{errorMessage}</Typography>
-            <Button size="small" onClick={() => setErrorMessage('')}>Dismiss</Button>
-          </Paper>
-        )}
-
-        <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>{TABS[tab].label}</Typography>
-
-        {/* Tab: Dashboard */}
-        {tab === 0 && (
-          <AdminDashboard cafes={cafes} tastings={tastings} submissions={submissions} alerts={alerts} />
-        )}
-
-        {/* Tab: Submissions */}
-        {tab === 1 && (
-          <Box>
-            {submissions.length === 0 ? (
-              <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No pending submissions</Typography>
-            ) : (
-              submissions.map((item, i) => (
-                <ItemCard key={item._id || i} item={item} theme={theme}
-                  fields={[
-                    { key: 'name', label: 'Name' }, { key: 'category', label: 'Category' },
-                    { key: 'description', label: 'Description' }, { key: 'locations', label: 'Address' },
-                    { key: 'website', label: 'Website' }, { key: 'features', label: 'Features' },
-                    { key: 'createdAt', label: 'Submitted' },
-                  ]}
-                  showApprove onApprove={handleApproveSubmission}
-                  onEdit={(item) => handleEditClick(item._id, 'submission', item)}
-                  onDelete={handleDeleteSubmission}
-                />
-              ))
-            )}
-          </Box>
-        )}
-
-        {/* Tab: Cafes */}
-        {tab === 2 && (
-          <Box>
-            {cafes.length === 0 ? (
-              <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No cafes</Typography>
-            ) : (
-              cafes.map((item, i) => (
-                <ItemCard key={item._id || i} item={item} theme={theme}
-                  fields={[
-                    { key: 'category', label: 'Category' }, { key: 'locations', label: 'Address' },
-                    { key: 'website', label: 'Website' }, { key: 'instagram', label: 'Instagram' },
-                    { key: 'features', label: 'Features' }, { key: 'createdAt', label: 'Created' },
-                  ]}
-                  onEdit={(item) => handleEditClick(item._id, 'cafe', item)}
-                  onDelete={handleDeleteCafe}
-                />
-              ))
-            )}
-          </Box>
-        )}
-
-        {/* Tab: Tastings */}
-        {tab === 3 && (
-          <Box>
-            {tastings.length === 0 ? (
-              <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No tastings</Typography>
-            ) : (
-              tastings.map((item, i) => (
-                <ItemCard key={item._id || i} item={item} theme={theme}
-                  fields={[
-                    { key: 'username', label: 'By' }, { key: 'coffeeRoaster', label: 'Roaster' },
-                    { key: 'coffeeOrigin', label: 'Origin' }, { key: 'brewMethod', label: 'Brew' },
-                    { key: 'roastLevel', label: 'Roast' }, { key: 'tastingNotes', label: 'Notes' },
-                    { key: 'createdAt', label: 'Created' },
-                  ]}
-                  onEdit={(item) => handleEditClick(item._id, 'tasting', item)}
-                  onDelete={handleDeleteTasting}
-                />
-              ))
-            )}
-          </Box>
-        )}
-
-        {/* Tab: Alerts */}
-        {tab === 4 && (
-          <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-              <Button variant="contained" size="small" onClick={() => setShowAlertForm((v) => !v)}>
-                {showAlertForm ? 'Cancel' : '+ New Alert'}
-              </Button>
-            </Box>
-
-            <Collapse in={showAlertForm}>
-              <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
-                <Typography variant="subtitle1" fontWeight={700} mb={2}>New Alert</Typography>
-                <Stack spacing={2}>
-                  <TextField fullWidth variant="filled" label="Message" multiline rows={2}
-                    value={newAlert.message} onChange={(e) => setNewAlert({ ...newAlert, message: e.target.value })} />
-                  <TextField fullWidth variant="filled" select label="Severity"
-                    value={newAlert.severity} onChange={(e) => setNewAlert({ ...newAlert, severity: e.target.value })}>
-                    {['info', 'success', 'warning', 'error'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-                  </TextField>
-                  <TextField fullWidth variant="filled" label="Expires At (optional)" type="datetime-local"
-                    InputLabelProps={{ shrink: true }}
-                    value={newAlert.expiresAt} onChange={(e) => setNewAlert({ ...newAlert, expiresAt: e.target.value })} />
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button variant="contained" onClick={handleCreateAlert} disabled={!newAlert.message.trim()}>Create</Button>
-                    <Button onClick={() => setShowAlertForm(false)}>Cancel</Button>
-                  </Box>
-                </Stack>
-              </Paper>
-            </Collapse>
-
-            {alerts.length === 0 ? (
-              <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No alerts</Typography>
-            ) : (
-              alerts.map((item, i) => (
-                <ItemCard key={item._id || i} item={item} theme={theme}
-                  fields={[
-                    { key: 'severity', label: 'Type' },
-                    { key: 'isActive', label: 'Active' },
-                    { key: 'expiresAt', label: 'Expires' },
-                    { key: 'createdAt', label: 'Created' },
-                  ]}
-                  onEdit={(item) => handleEditClick(item._id, 'alert', item)}
-                  onDelete={handleDeleteAlert}
-                />
-              ))
-            )}
-          </Box>
-        )}
 
         {/* Edit dialog */}
         <Dialog open={!!editingId} onClose={() => setEditingId(null)} maxWidth="md" fullWidth>
-          <DialogTitle sx={{ textTransform: 'capitalize' }}>Edit {editType}</DialogTitle>
-          <DialogContent>
-            {(editType === 'cafe' || editType === 'submission') && (
-              <CafeEditForm editData={editData} setEditData={setEditData} />
-            )}
+          <DialogTitle sx={{ textTransform: 'capitalize', fontWeight: 700 }}>Edit {editType}</DialogTitle>
+          <DialogContent dividers>
+            {(editType === 'cafe' || editType === 'submission') && <CafeEditForm editData={editData} setEditData={setEditData} />}
             {editType === 'tasting' && (
               <Stack spacing={2} sx={{ pt: 1 }}>
-                <TextField variant="filled" fullWidth label="Coffee Name" value={editData.coffeeName || ''}
-                  onChange={(e) => setEditData({ ...editData, coffeeName: e.target.value })} />
-                <TextField variant="filled" fullWidth label="Roaster" value={editData.coffeeRoaster || ''}
-                  onChange={(e) => setEditData({ ...editData, coffeeRoaster: e.target.value })} />
-                <TextField variant="filled" fullWidth label="Country of Origin" value={editData.coffeeOrigin || ''}
-                  onChange={(e) => setEditData({ ...editData, coffeeOrigin: e.target.value })} />
-                <TextField variant="filled" fullWidth label="Region" value={editData.coffeeOriginRegion || ''}
-                  onChange={(e) => setEditData({ ...editData, coffeeOriginRegion: e.target.value })} />
-                <TextField variant="filled" fullWidth select label="Brew Method" value={editData.brewMethod || ''}
-                  onChange={(e) => setEditData({ ...editData, brewMethod: e.target.value })}>
+                <TextField variant="filled" fullWidth label="Coffee Name" value={editData.coffeeName || ''} onChange={(e) => setEditData({ ...editData, coffeeName: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Roaster" value={editData.coffeeRoaster || ''} onChange={(e) => setEditData({ ...editData, coffeeRoaster: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Country of Origin" value={editData.coffeeOrigin || ''} onChange={(e) => setEditData({ ...editData, coffeeOrigin: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Region" value={editData.coffeeOriginRegion || ''} onChange={(e) => setEditData({ ...editData, coffeeOriginRegion: e.target.value })} />
+                <TextField variant="filled" fullWidth select label="Brew Method" value={editData.brewMethod || ''} onChange={(e) => setEditData({ ...editData, brewMethod: e.target.value })}>
                   {['espresso', 'filtered coffee', 'pour over', 'other'].map((m) => <MenuItem key={m} value={m}>{m}</MenuItem>)}
                 </TextField>
-                <TextField variant="filled" fullWidth select label="Roast Level" value={editData.roastLevel || ''}
-                  onChange={(e) => setEditData({ ...editData, roastLevel: e.target.value })}>
+                <TextField variant="filled" fullWidth select label="Roast Level" value={editData.roastLevel || ''} onChange={(e) => setEditData({ ...editData, roastLevel: e.target.value })}>
                   <MenuItem value="">—</MenuItem>
                   {['light', 'medium', 'dark'].map((m) => <MenuItem key={m} value={m}>{m}</MenuItem>)}
                 </TextField>
-                <TextField variant="filled" fullWidth select label="Acidity" value={editData.acidity || ''}
-                  onChange={(e) => setEditData({ ...editData, acidity: e.target.value })}>
+                <TextField variant="filled" fullWidth select label="Acidity" value={editData.acidity || ''} onChange={(e) => setEditData({ ...editData, acidity: e.target.value })}>
                   <MenuItem value="">—</MenuItem>
                   {['light', 'medium', 'high'].map((m) => <MenuItem key={m} value={m}>{m}</MenuItem>)}
                 </TextField>
-                <TextField variant="filled" fullWidth select label="Mouth Feel" value={editData.mouthFeel || ''}
-                  onChange={(e) => setEditData({ ...editData, mouthFeel: e.target.value })}>
+                <TextField variant="filled" fullWidth select label="Mouth Feel" value={editData.mouthFeel || ''} onChange={(e) => setEditData({ ...editData, mouthFeel: e.target.value })}>
                   <MenuItem value="">—</MenuItem>
                   {['mouth drying', 'metallic', 'oily', 'light', 'medium', 'full', 'other'].map((m) => <MenuItem key={m} value={m}>{m}</MenuItem>)}
                 </TextField>
                 <TextField variant="filled" fullWidth label="Tasting Notes (comma separated)"
                   value={(editData.tastingNotes || []).join(', ')}
                   onChange={(e) => setEditData({ ...editData, tastingNotes: e.target.value.split(',').map((n) => n.trim()).filter(Boolean) })} />
-                <TextField variant="filled" fullWidth label="Username" value={editData.username || ''}
-                  onChange={(e) => setEditData({ ...editData, username: e.target.value })} />
-                <TextField variant="filled" fullWidth label="Location" value={editData.location || ''}
-                  onChange={(e) => setEditData({ ...editData, location: e.target.value })} />
-                <TextField variant="filled" fullWidth multiline rows={3} label="Notes / Recipe" value={editData.notes || ''}
-                  onChange={(e) => setEditData({ ...editData, notes: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Username" value={editData.username || ''} onChange={(e) => setEditData({ ...editData, username: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Location" value={editData.location || ''} onChange={(e) => setEditData({ ...editData, location: e.target.value })} />
+                <TextField variant="filled" fullWidth multiline rows={3} label="Notes / Recipe" value={editData.notes || ''} onChange={(e) => setEditData({ ...editData, notes: e.target.value })} />
               </Stack>
             )}
             {editType === 'alert' && (
               <Stack spacing={2} sx={{ pt: 1 }}>
-                <TextField variant="filled" fullWidth multiline rows={2} label="Message" value={editData.message || ''}
-                  onChange={(e) => setEditData({ ...editData, message: e.target.value })} />
-                <TextField variant="filled" fullWidth select label="Severity" value={editData.severity || 'info'}
-                  onChange={(e) => setEditData({ ...editData, severity: e.target.value })}>
+                <TextField variant="filled" fullWidth multiline rows={2} label="Message" value={editData.message || ''} onChange={(e) => setEditData({ ...editData, message: e.target.value })} />
+                <TextField variant="filled" fullWidth select label="Severity" value={editData.severity || 'info'} onChange={(e) => setEditData({ ...editData, severity: e.target.value })}>
                   {['info', 'success', 'warning', 'error'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
-                <FormControlLabel
-                  control={<Switch checked={!!editData.isActive} onChange={(e) => setEditData({ ...editData, isActive: e.target.checked })} />}
-                  label="Active"
-                />
-                <TextField variant="filled" fullWidth label="Expires At (optional)" type="datetime-local"
-                  InputLabelProps={{ shrink: true }}
+                <FormControlLabel control={<Switch checked={!!editData.isActive} onChange={(e) => setEditData({ ...editData, isActive: e.target.checked })} />} label="Active" />
+                <TextField variant="filled" fullWidth label="Expires At (optional)" type="datetime-local" InputLabelProps={{ shrink: true }}
                   value={editData.expiresAt ? new Date(editData.expiresAt).toISOString().slice(0, 16) : ''}
                   onChange={(e) => setEditData({ ...editData, expiresAt: e.target.value || null })} />
               </Stack>
@@ -448,12 +382,10 @@ const AdminPage = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setEditingId(null)}>Cancel</Button>
-            <Button onClick={handleSaveEdit} variant="contained">Save</Button>
+            <Button onClick={handleSave} variant="contained">Save</Button>
           </DialogActions>
         </Dialog>
-
-        </Box> {/* end main content */}
-      </Box> {/* end flex row */}
+      </Box>
     </MuiTheme>
   );
 };
