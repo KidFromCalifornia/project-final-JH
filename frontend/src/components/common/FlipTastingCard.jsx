@@ -157,10 +157,16 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
       <IconButton
         size="small"
         onClick={handleFlip}
-        sx={{ position: 'absolute', top: 8, right: 8, color: 'inherit', opacity: 0.7, '&:hover': { opacity: 1 } }}
+        sx={{
+          position: 'fixed',
+          ...(isMobile
+            ? { bottom: 24, left: '50%', transform: 'translateX(-50%)', bgcolor: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)', width: 48, height: 48 }
+            : { top: 8, right: 8 }),
+          color: 'inherit', opacity: 0.85, '&:hover': { opacity: 1 },
+        }}
         aria-label="Flip card back"
       >
-        <CloseIcon fontSize="small" />
+        <CloseIcon fontSize={isMobile ? 'medium' : 'small'} />
       </IconButton>
 
       {/* Save roaster — commented out until more stable solution
