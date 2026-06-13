@@ -7,7 +7,9 @@ const usePageTracking = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Fire and forget — don't block the UI
+    // Don't track admin sessions
+    if (localStorage.getItem('admin') === 'true') return;
+
     fetch(`${API_BASE}/visits`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
