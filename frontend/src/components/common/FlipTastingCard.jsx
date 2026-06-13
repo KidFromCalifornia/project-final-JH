@@ -128,7 +128,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
                 {showNotes ? 'Hide notes' : 'Show tasting notes & recipe'}
               </Typography>
               {showNotes && (
-                <Typography sx={{ fontSize: '1rem', mt: 1, whiteSpace: 'pre-wrap', color: 'text.secondary', fontWeight: 700 }}>
+                <Typography sx={{ fontSize: '1rem', mt: 1, whiteSpace: 'pre-wrap', color: 'inherit', fontWeight: 700 }}>
                   {tasting.notes}
                 </Typography>
               )}
