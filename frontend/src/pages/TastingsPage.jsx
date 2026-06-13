@@ -101,7 +101,7 @@ const TastingsPage = () => {
       sx={{
         display: 'flex',
         width: '100%',
-        backgroundColor: theme.palette.textMuted?.main || theme.palette.background.default,
+        backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
         flexDirection: 'column',
         alignItems: 'center',
