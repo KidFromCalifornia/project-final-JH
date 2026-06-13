@@ -86,10 +86,10 @@ const AdminTable = ({ columns, rows, renderActions }) => {
   });
 
   return (
-    <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2, overflowX: 'auto' }}>
+    <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 2, overflowX: 'auto', bgcolor: '#ffffff' }}>
       <Table size="small">
         <TableHead>
-          <TableRow sx={{ bgcolor: 'action.hover' }}>
+          <TableRow sx={{ bgcolor: '#e8edf3' }}>
             {columns.map((c) => (
               <TableCell key={c.key}
                 onClick={() => handleSort(c.key)}
@@ -111,9 +111,9 @@ const AdminTable = ({ columns, rows, renderActions }) => {
               </TableCell>
             </TableRow>
           ) : sorted.map((row) => (
-            <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 } }}>
+            <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 }, '&:nth-of-type(even)': { bgcolor: '#f0f4f8' } }}>
               {columns.map((c) => (
-                <TableCell key={c.key} sx={{ fontSize: '0.85rem', fontWeight: 600, color: '#4a5568', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <TableCell key={c.key} sx={{ fontSize: '0.85rem', fontWeight: 600, color: '#1a2a3a', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {c.render ? c.render(row) : (row[c.key] ?? '—')}
                 </TableCell>
               ))}
