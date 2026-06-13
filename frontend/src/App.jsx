@@ -7,6 +7,9 @@ import LoadingLogo from './components/common/LoadingLogo.jsx';
 import MobileBottomNav from './components/layout/MobileBottomNav.jsx';
 import { AlertProvider } from './context/AlertContext.jsx';
 import { Box, useTheme, useMediaQuery } from '@mui/material';
+import { useCafeStore } from './stores/useCafeStore.js';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 const MapPage = lazy(() => import('./pages/MapPage.jsx'));
 const TastingsPage = lazy(() => import('./pages/TastingsPage.jsx'));
@@ -28,6 +31,15 @@ const App = () => {
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const setCafes = useCafeStore((state) => state.setCafes);
+  const cafes = useCafeStore((state) => state.cafes);
+
+  useEffect(() => {
+    if (cafes.length === 0) {
+      fetch(`${API_BASE}/cafes`).then((r) => r.json()).then((d) => { if (d?.data) setCafes(d.data); }).catch(() => {});
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('userToken');
