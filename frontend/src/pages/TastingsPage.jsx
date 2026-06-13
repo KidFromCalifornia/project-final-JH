@@ -164,7 +164,7 @@ const TastingsPage = () => {
         sx={{
           zIndex: 1300,
           '& .MuiDrawer-paper': {
-            width: { xs: '100%', sm: 480 },
+            width: { xs: '100%', sm: 480, md: 720, lg: 900 },
             maxWidth: '100%',
             overflowY: 'auto',
             boxShadow: '4px 0 24px rgba(0,0,0,0.3)',
