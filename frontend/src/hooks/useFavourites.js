@@ -25,6 +25,7 @@ const useFavourites = () => {
   }, []);
 
   const toggle = useCallback(async (type, refId, refName) => {
+    if (localStorage.getItem('admin') === 'true') return null;
     const key = `${type}:${refId}`;
     try {
       const res = await fetch(`${API_BASE}/favourites/toggle`, {
