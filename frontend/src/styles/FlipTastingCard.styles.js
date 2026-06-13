@@ -87,8 +87,9 @@ export const TypographyTitle = styled(Typography)(({ theme }) => ({
 export const RowAuthor = styled('div')(({ theme }) => ({
   display: 'flex',
   minWidth: 0,
-  padding: theme.spacing(2, 3, 3),
+  padding: theme.spacing(0, 2),
   margin: 0,
+  height: '25%',
   backgroundColor:
     theme.palette.mode === 'dark' ? theme.palette.textMuted.main : theme.palette.light.main,
   zIndex: 1,
@@ -102,7 +103,6 @@ export const RowAuthor = styled('div')(({ theme }) => ({
       : theme.palette.text.primary,
 
   '& .MuiTypography-root': {
-    // Ensure all text inherits proper color
     color: 'inherit',
   },
 }));
