@@ -65,7 +65,8 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
     return (
       <Box
         sx={{
-          width: 320,
+          width: '100%',
+          maxWidth: 320,
           height: 448,
           cursor: 'pointer',
           opacity: anyFlipped ? 0.25 : 1,
@@ -108,10 +109,10 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
           </BoxMain>
           <RowAuthor>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flex: 1, px: 0.5 }}>
-              <Typography textTransform="uppercase" sx={{ fontWeight: 500, color: theme.palette.text.primary, fontSize: 'clamp(0.55rem, 2vw, 0.9rem)', whiteSpace: 'nowrap' }}>
+              <Typography textTransform="uppercase" sx={{ fontWeight: 500, color: theme.palette.text.primary, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
                 {tasting.username || 'Anonymous'}
               </Typography>
-              <Typography sx={{ color: theme.palette.text.secondary, flexShrink: 0, fontSize: 'clamp(0.55rem, 2vw, 0.9rem)', whiteSpace: 'nowrap', pl: 3, pr: 2 }}>
+              <Typography sx={{ color: theme.palette.text.secondary, flexShrink: 0, fontSize: '0.85rem', whiteSpace: 'nowrap', pl: 3, pr: 2 }}>
                 {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
               </Typography>
             </Box>
