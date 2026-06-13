@@ -108,6 +108,7 @@ const TastingsPage = () => {
         justifyContent: 'flex-start',
         p: { xs: 2, sm: 3 },
         pt: { xs: 2, sm: 4 },
+        overflow: 'visible',
       }}
     >
       <Typography
@@ -186,7 +187,7 @@ const TastingsPage = () => {
               },
               gap: 3,
               mt: 2,
-              padding: { xs: '0 0.25rem 0.5rem 0.25rem', sm: '0 0.5rem 0.5rem 0.5rem' },
+              padding: { xs: '0.75rem 0.5rem 1rem 0.5rem', sm: '0.75rem 1rem 1rem 1rem' },
               overflow: 'visible',
               width: '100%',
             }}
