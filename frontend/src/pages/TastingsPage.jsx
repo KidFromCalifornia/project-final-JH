@@ -172,6 +172,11 @@ const TastingsPage = () => {
         }}
         SlotProps={{ backdrop: { sx: { backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(2px)' } } }}
       >
+        <Box sx={{ display: { xs: 'flex', sm: 'none' }, justifyContent: 'flex-end', p: 1.5, position: 'sticky', top: 0, zIndex: 10, bgcolor: 'background.paper' }}>
+          <Button size="small" variant="contained" startIcon={<CloseIcon />} onClick={() => setShowTastingForm(false)}>
+            Close
+          </Button>
+        </Box>
         <Suspense fallback={<LoadingLogo />}>
           <TastingForm
             onSubmit={handleTastingSubmit}
