@@ -113,7 +113,7 @@ const AdminTable = ({ columns, rows, renderActions }) => {
           ) : sorted.map((row) => (
             <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 }, '&:nth-of-type(even)': { bgcolor: '#f7f9fc' } }}>
               {columns.map((c) => (
-                <TableCell key={c.key} sx={{ fontSize: '0.85rem', color: 'text.primary', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <TableCell key={c.key} sx={{ fontSize: '0.85rem', color: '#6b7a8d', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {c.render ? c.render(row) : (row[c.key] ?? '—')}
                 </TableCell>
               ))}
