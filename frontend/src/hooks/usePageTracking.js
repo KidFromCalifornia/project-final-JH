@@ -18,6 +18,7 @@ const usePageTracking = () => {
   useEffect(() => {
     if (localStorage.getItem('admin') === 'true') return;
     if (location.pathname.startsWith('/admin')) return;
+    if (localStorage.getItem('trackingConsent') !== 'accepted') return;
 
     fetch(`${API_BASE}/visits`, {
       method: 'POST',

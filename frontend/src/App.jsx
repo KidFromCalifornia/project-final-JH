@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Suspense, useState, useEffect, lazy } from 'react';
 import usePageTracking from './hooks/usePageTracking.js';
+import ConsentBanner from './components/common/ConsentBanner.jsx';
 import DesktopNavBar from './components/layout/DesktopNavBar.jsx';
 import LoadingLogo from './components/common/LoadingLogo.jsx';
 import MobileBottomNav from './components/layout/MobileBottomNav.jsx';
@@ -41,6 +42,7 @@ const App = () => {
     <AlertProvider>
       <Router>
         <PageTracker />
+        <ConsentBanner />
         {isDesktop && (
           <Box component="header">
             <DesktopNavBar
