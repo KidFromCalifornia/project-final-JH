@@ -245,7 +245,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
 
         {/* Footer */}
         {locationDisplay && (
-          <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
+          <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}`, textAlign: 'right' }}>
             <Typography sx={{ fontSize: '0.75em', color: '#fff' }}>
               <strong>{locationDisplay}</strong>
               {neighbourhood && ` • ${toTitleCase(neighbourhood)}`}
