@@ -43,7 +43,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
   // ── Front ──────────────────────────────────────────────
   if (!isFlipped) {
     return (
-      <Box sx={{ width: '100%', maxWidth: CARD_W, height: CARD_H, cursor: 'pointer', opacity: anyFlipped ? 0.25 : 1, transition: 'opacity 0.3s', pointerEvents: anyFlipped ? 'none' : 'auto' }} onClick={handleFlip}>
+      <Box sx={{ width: '100%', maxWidth: CARD_W, height: CARD_H, cursor: 'pointer', opacity: anyFlipped ? 0.25 : 1, transition: 'opacity 0.3s', pointerEvents: anyFlipped ? 'none' : 'auto', overflow: 'visible' }} onClick={handleFlip}>
         <StyledCard>
           <BoxMain minHeight={288} position="relative">
             <StyledDivContent className="tasting-cd">
