@@ -370,6 +370,23 @@ const MobileBottomNav = () => {
 
           <ListItem disablePadding>
             <ListItemButton
+              component={Link}
+              to="/tastings"
+              onClick={closeDrawers}
+              sx={{
+                bgcolor: location.pathname === '/tastings' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                '&:hover': { bgcolor: location.pathname === '/tastings' ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)' },
+              }}
+            >
+              <ListItemIcon>
+                <RateReviewIcon sx={{ color: location.pathname === '/tastings' ? theme.palette.accent?.main || navIconColor : navIconColor }} />
+              </ListItemIcon>
+              <ListItemText primary="Tastings" />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <ListItemButton
               onClick={() => {
                 setShowAddCafe(!showAddCafe);
                 closeDrawers();
