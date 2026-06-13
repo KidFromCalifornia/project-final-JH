@@ -89,7 +89,7 @@ const AdminTable = ({ columns, rows, renderActions }) => {
     <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2, overflowX: 'auto' }}>
       <Table size="small">
         <TableHead>
-          <TableRow sx={{ bgcolor: 'grey.50' }}>
+          <TableRow sx={{ bgcolor: 'background.paper' }}>
             {columns.map((c) => (
               <TableCell key={c.key}
                 onClick={() => handleSort(c.key)}
@@ -113,7 +113,7 @@ const AdminTable = ({ columns, rows, renderActions }) => {
           ) : sorted.map((row) => (
             <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 } }}>
               {columns.map((c) => (
-                <TableCell key={c.key} sx={{ fontSize: '0.85rem', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <TableCell key={c.key} sx={{ fontSize: '0.85rem', color: 'text.primary', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {c.render ? c.render(row) : (row[c.key] ?? '—')}
                 </TableCell>
               ))}
