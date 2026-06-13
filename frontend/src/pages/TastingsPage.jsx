@@ -1,7 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { useCafeStore } from '../stores/useCafeStore';
 import Container from '@mui/material/Container';
-import { Box, Typography, Button, Alert, useTheme } from '@mui/material';
+import { Box, Typography, Button, Alert, useTheme, Drawer, Backdrop } from '@mui/material';
 import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
 import CafeSearchBar from '../components/common/CafeSearchBar';
 import FlipTastingCard from '../components/common/FlipTastingCard';
@@ -157,7 +157,21 @@ const TastingsPage = () => {
         <CafeSearchBar type="tastings" />
       </Box>
 
-      {showTastingForm && (
+      <Drawer
+        anchor="left"
+        open={showTastingForm}
+        onClose={() => setShowTastingForm(false)}
+        sx={{
+          zIndex: 1300,
+          '& .MuiDrawer-paper': {
+            width: { xs: '100%', sm: 480 },
+            maxWidth: '100%',
+            overflowY: 'auto',
+            boxShadow: '4px 0 24px rgba(0,0,0,0.3)',
+          },
+        }}
+        SlotProps={{ backdrop: { sx: { backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(2px)' } } }}
+      >
         <Suspense fallback={<LoadingLogo />}>
           <TastingForm
             onSubmit={handleTastingSubmit}
@@ -165,7 +179,7 @@ const TastingsPage = () => {
             onClose={() => setShowTastingForm(false)}
           />
         </Suspense>
-      )}
+      </Drawer>
 
       {filteredTastings.length === 0 ? (
         <Alert severity="info" sx={{ mt: 2 }}>
