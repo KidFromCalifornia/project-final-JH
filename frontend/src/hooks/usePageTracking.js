@@ -7,8 +7,9 @@ const usePageTracking = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Don't track admin sessions
+    // Don't track admin sessions or admin page
     if (localStorage.getItem('admin') === 'true') return;
+    if (location.pathname.startsWith('/admin')) return;
 
     fetch(`${API_BASE}/visits`, {
       method: 'POST',

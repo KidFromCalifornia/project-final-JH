@@ -30,23 +30,25 @@ router.get('/stats', authenticateToken, requireAdmin, async (req, res) => {
     const days = parseInt(req.query.days) || 30;
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
+    const baseMatch = { createdAt: { $gte: since }, page: { $not: /^\/admin/ } };
+
     const [total, byPage, byDevice, byDay] = await Promise.all([
-      Visit.countDocuments({ createdAt: { $gte: since } }),
+      Visit.countDocuments(baseMatch),
 
       Visit.aggregate([
-        { $match: { createdAt: { $gte: since } } },
+        { $match: baseMatch },
         { $group: { _id: '$page', count: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $limit: 10 },
       ]),
 
       Visit.aggregate([
-        { $match: { createdAt: { $gte: since } } },
+        { $match: baseMatch },
         { $group: { _id: '$device', count: { $sum: 1 } } },
       ]),
 
       Visit.aggregate([
-        { $match: { createdAt: { $gte: since } } },
+        { $match: baseMatch },
         {
           $group: {
             _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
