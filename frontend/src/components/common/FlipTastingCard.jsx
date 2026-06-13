@@ -6,7 +6,6 @@ import {
   Box,
   Chip,
   useTheme,
-  useMediaQuery,
   IconButton,
   Dialog,
   Tooltip,
@@ -33,7 +32,6 @@ const toTitleCase = (str) => {
 
 const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = false }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showNotes, setShowNotes] = useState(false);
   const cafes = useCafeStore((state) => state.cafes);
   // const { isSaved, toggle } = useFavourites();
@@ -128,21 +126,19 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
   return (
     <>
       {/* Placeholder keeps grid cell height */}
-      <Box sx={{ width: 320, height: 345, opacity: 0 }} />
+      <Box sx={{ width: 320, height: 448, opacity: 0 }} />
 
       <Dialog
         open={isFlipped}
         onClose={handleFlip}
         maxWidth={false}
-        fullScreen={isMobile}
         PaperProps={{
           sx: {
-            width: isMobile ? '100vw' : 400,
-            height: isMobile ? '100dvh' : 'auto',
+            width: 400,
+            height: 'auto',
             maxHeight: '92vh',
-            overflowY: 'visible',
-            overflow: 'visible',
-            borderRadius: isMobile ? 0 : `${theme.shape.borderRadius * 3}px`,
+            overflowY: 'auto',
+            borderRadius: `${theme.shape.borderRadius * 3}px`,
             background:
               theme.palette.mode === 'dark'
                 ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
@@ -158,16 +154,10 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
       <IconButton
         size="small"
         onClick={handleFlip}
-        sx={{
-          position: 'fixed',
-          ...(isMobile
-            ? { bottom: 24, left: '50%', transform: 'translateX(-50%)', bgcolor: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)', width: 48, height: 48 }
-            : { top: 8, right: 8 }),
-          color: 'inherit', opacity: 0.85, '&:hover': { opacity: 1 },
-        }}
+        sx={{ position: 'absolute', top: 8, right: 8, color: 'inherit', opacity: 0.85, '&:hover': { opacity: 1 } }}
         aria-label="Flip card back"
       >
-        <CloseIcon fontSize={isMobile ? 'medium' : 'small'} />
+        <CloseIcon fontSize="small" />
       </IconButton>
 
       {/* Save roaster — commented out until more stable solution
@@ -183,7 +173,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         </Tooltip>
       )} */}
 
-      <CardContent sx={{ p: 3, pt: isMobile ? 6 : 3, display: 'flex', flexDirection: 'column', gap: 2, fontSize: '125%', overflow: 'visible' }}>
+      <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2, fontSize: '125%', overflow: 'visible' }}>
 
         {/* Origin + Region */}
         <Box sx={{ textAlign: 'center' }}>
