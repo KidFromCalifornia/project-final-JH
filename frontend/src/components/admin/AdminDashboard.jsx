@@ -2,8 +2,8 @@ import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip,
   LineChart, Line, CartesianGrid, Legend, ResponsiveContainer,
 } from 'recharts';
-import { Box, Typography, Paper, Grid, MenuItem, TextField } from '@mui/material';
-import { useState } from 'react';
+import { Box, Typography, Paper, Grid, MenuItem, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { useState, useEffect } from 'react';
 
 const PALETTE = ['#194f84', '#2e7dc8', '#e57373', '#66bb6a', '#ffa726', '#ab47bc', '#26c6da', '#ec407a', '#d4e157', '#ff7043'];
 
@@ -70,8 +70,22 @@ const groupByMonth = (arr) => {
 const axisStyle = { fontSize: 11, fill: '#6b7280' };
 const gridStyle = { stroke: '#f0f0f0' };
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
   const [tastingChart, setTastingChart] = useState('brewMethod');
+  const [trafficDays, setTrafficDays] = useState(30);
+  const [traffic, setTraffic] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    fetch(`${API_BASE}/visits/stats?days=${trafficDays}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setTraffic(d.data); })
+      .catch(() => {});
+  }, [trafficDays]);
 
   const tastingOptions = [
     { value: 'brewMethod', label: 'Brew Method' },
@@ -124,6 +138,75 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
           <Grid item xs={6} md={3} key={s.label}><StatCard {...s} /></Grid>
         ))}
       </Grid>
+
+      {/* Site Traffic */}
+      <Paper elevation={0} sx={{ ...card, mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Typography sx={sectionTitle}>Site Traffic</Typography>
+          <ToggleButtonGroup size="small" exclusive value={trafficDays} onChange={(_, v) => v && setTrafficDays(v)}
+            sx={{ '& .MuiToggleButton-root': { py: 0.25, px: 1.5, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.06em' } }}>
+            {[7, 30, 90].map((d) => <ToggleButton key={d} value={d}>{d}d</ToggleButton>)}
+          </ToggleButtonGroup>
+        </Box>
+        {!traffic ? (
+          <Typography sx={{ color: '#9ca3af', textAlign: 'center', py: 3 }}>Loading…</Typography>
+        ) : (
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={8}>
+              <Typography sx={{ ...sectionTitle, mb: 1 }}>Visits Per Day</Typography>
+              {traffic.byDay.length === 0 ? (
+                <Typography sx={{ color: '#9ca3af', py: 2 }}>No visits recorded yet</Typography>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart data={traffic.byDay} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" {...gridStyle} />
+                    <XAxis dataKey="name" tick={axisStyle} />
+                    <YAxis allowDecimals={false} tick={axisStyle} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line type="monotone" dataKey="value" stroke="#2e7dc8" strokeWidth={2.5} dot={{ r: 3, fill: '#2e7dc8' }} name="Visits" />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Box sx={{ mb: 2 }}>
+                <Typography sx={{ ...sectionTitle, mb: 1 }}>By Device</Typography>
+                {traffic.byDevice.length === 0 ? <Typography sx={{ color: '#9ca3af' }}>No data</Typography> : (
+                  <ResponsiveContainer width="100%" height={120}>
+                    <PieChart>
+                      <Pie data={traffic.byDevice} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} labelLine={false} label={<PieLabel />}>
+                        {traffic.byDevice.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
+                      </Pie>
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend wrapperStyle={{ fontSize: 11 }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </Box>
+              <Box sx={{ p: 1.5, bgcolor: '#f8fafc', borderRadius: 1, textAlign: 'center' }}>
+                <Typography sx={{ fontSize: '1.8rem', fontWeight: 800, color: '#194f84', lineHeight: 1 }}>{traffic.total}</Typography>
+                <Typography sx={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', mt: 0.5 }}>
+                  Total visits ({trafficDays}d)
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography sx={{ ...sectionTitle, mb: 1 }}>Top Pages</Typography>
+              {traffic.byPage.length === 0 ? <Typography sx={{ color: '#9ca3af' }}>No data</Typography> : (
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={traffic.byPage} layout="vertical" margin={{ left: 80, right: 16 }}>
+                    <CartesianGrid strokeDasharray="3 3" {...gridStyle} />
+                    <XAxis type="number" allowDecimals={false} tick={axisStyle} />
+                    <YAxis type="category" dataKey="name" tick={axisStyle} width={80} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="value" name="Visits" fill="#194f84" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </Grid>
+          </Grid>
+        )}
+      </Paper>
 
       {/* Tastings over time */}
       <ChartCard title="Tastings Over Time">

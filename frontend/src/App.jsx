@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Suspense, useState, useEffect, lazy } from 'react';
+import usePageTracking from './hooks/usePageTracking.js';
 import DesktopNavBar from './components/layout/DesktopNavBar.jsx';
 import LoadingLogo from './components/common/LoadingLogo.jsx';
 import MobileBottomNav from './components/layout/MobileBottomNav.jsx';
@@ -11,6 +12,8 @@ const TastingsPage = lazy(() => import('./pages/TastingsPage.jsx'));
 const CafePage = lazy(() => import('./pages/CafePage.jsx'));
 const AdminPage = lazy(() => import('./pages/AdminPage.jsx'));
 const AboutMePage = lazy(() => import('./pages/AboutMePage.jsx'));
+
+const PageTracker = () => { usePageTracking(); return null; };
 
 const App = () => {
   const theme = useTheme();
@@ -37,6 +40,7 @@ const App = () => {
   return (
     <AlertProvider>
       <Router>
+        <PageTracker />
         {isDesktop && (
           <Box component="header">
             <DesktopNavBar
