@@ -111,7 +111,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
               <Typography textTransform="uppercase" sx={{ fontWeight: 500, color: theme.palette.text.primary, fontSize: 'clamp(0.55rem, 2vw, 0.9rem)', whiteSpace: 'nowrap' }}>
                 {tasting.username || 'Anonymous'}
               </Typography>
-              <Typography sx={{ color: theme.palette.text.secondary, flexShrink: 0, fontSize: 'clamp(0.55rem, 2vw, 0.9rem)', whiteSpace: 'nowrap' }}>
+              <Typography sx={{ color: theme.palette.text.secondary, flexShrink: 0, fontSize: 'clamp(0.55rem, 2vw, 0.9rem)', whiteSpace: 'nowrap', pl: 2 }}>
                 {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
               </Typography>
             </Box>
