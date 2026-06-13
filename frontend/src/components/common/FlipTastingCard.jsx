@@ -137,9 +137,10 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         PaperProps={{
           sx: {
             width: isMobile ? '100vw' : 475,
-            height: isMobile ? '100vh' : 430,
-            maxHeight: '100vh',
-            overflowY: 'auto',
+            height: isMobile ? '100vh' : 'auto',
+            maxHeight: '92vh',
+            overflowY: 'visible',
+            overflow: 'visible',
             borderRadius: isMobile ? 0 : `${theme.shape.borderRadius * 3}px`,
             background:
               theme.palette.mode === 'dark'
@@ -175,7 +176,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         </Tooltip>
       )} */}
 
-      <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2, fontSize: '125%' }}>
+      <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2, fontSize: '125%', overflow: 'visible' }}>
 
         {/* Origin + Region */}
         <Box sx={{ textAlign: 'center' }}>
