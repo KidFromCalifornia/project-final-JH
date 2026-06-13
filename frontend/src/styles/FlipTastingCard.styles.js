@@ -73,7 +73,7 @@ export const StyledDivTag = styled('div')(({ theme }) => ({
 
 export const TypographyTitle = styled(Typography)(({ theme }) => ({
   fontFamily: family,
-  fontSize: '20px',
+  fontSize: '2rem',
   fontWeight: theme.typography.h4.fontWeight,
   color: theme.palette.light.main,
   lineHeight: 1.2,
