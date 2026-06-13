@@ -132,12 +132,12 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
       <Dialog
         open={isFlipped}
         onClose={handleFlip}
-        maxWidth="sm"
-        fullWidth
+        maxWidth={false}
         PaperProps={{
           sx: {
-            width: isMobile ? '92vw' : undefined,
-            maxHeight: isMobile ? '90vh' : '80vh',
+            width: isMobile ? '92vw' : 380,
+            height: isMobile ? 'auto' : 345,
+            maxHeight: '92vh',
             overflowY: 'auto',
             borderRadius: `${theme.shape.borderRadius * 3}px`,
             background:
