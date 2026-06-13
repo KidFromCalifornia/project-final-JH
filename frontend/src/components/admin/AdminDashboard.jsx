@@ -132,7 +132,7 @@ const VBar = ({ data, height = 200 }) => {
 const Donut = ({ data, height = 240 }) => {
   const { labelColor } = useChartTheme();
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'center', sm: 'center' }, gap: 3 }}>
       <ResponsiveContainer width={height} height={height} style={{ flexShrink: 0 }}>
         <PieChart>
           <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
@@ -242,7 +242,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
         }
       >
         {!traffic ? <Typography sx={{ color: muted, py: 3, textAlign: 'center' }}>Loading…</Typography> : (
-          <Box sx={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 2 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr 1fr' }, gap: 2 }}>
             <Box>
               <Typography sx={labelSx}>Visits per Day</Typography>
               {traffic.byDay.length === 0
@@ -264,7 +264,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       {/* Interest / saves */}
       {interest && (interest.topRoasters.length > 0 || interest.topCafes.length > 0) && (
         <Section title="Customer Interest — Saves">
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
             <Box>
               <Typography sx={labelSx}>Most Saved Roasters</Typography>
               {interest.topRoasters.length === 0
@@ -298,7 +298,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       </Section>
 
       {/* Tastings over time + Cafes side by side */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2.5 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 2.5 }}>
         <Section title="Tastings Over Time">
           {byMonth.length === 0
             ? <Typography sx={{ color: muted }}>No data yet</Typography>
@@ -312,7 +312,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       </Box>
 
       {/* Neighbourhood + submissions side by side */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2.5 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 2.5 }}>
         <Section title="Cafes by Neighbourhood">
           {byNeigh.length === 0
             ? <Typography sx={{ color: muted }}>No data</Typography>
