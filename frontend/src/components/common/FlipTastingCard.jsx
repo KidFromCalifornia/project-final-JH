@@ -15,8 +15,8 @@ const tt = (str) => {
 
 const Field = ({ label, value }) => (
   <Box>
-    <Typography textTransform="uppercase" sx={{ fontWeight: 700, fontSize: '0.7em' }}>{label}:</Typography>
-    <Typography sx={{ pl: 1, fontSize: '0.9em' }}>{tt(value)}</Typography>
+    <Typography textTransform="uppercase" sx={{ fontWeight: 700, fontSize: '0.75rem' }}>{label}:</Typography>
+    <Typography sx={{ pl: 1, fontSize: '1rem' }}>{tt(value)}</Typography>
   </Box>
 );
 
@@ -67,10 +67,10 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
           </BoxMain>
           <RowAuthor>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', flex: 1, px: 1.5 }}>
-              <Typography textTransform="uppercase" sx={{ fontWeight: 500, fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Typography textTransform="uppercase" sx={{ fontWeight: 600, fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {tasting.username || 'Anonymous'}
               </Typography>
-              <Typography sx={{ fontSize: '0.8rem', whiteSpace: 'nowrap', color: theme.palette.text.secondary }}>
+              <Typography sx={{ fontSize: '0.875rem', whiteSpace: 'nowrap', color: theme.palette.text.secondary }}>
                 {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
               </Typography>
             </Box>
@@ -104,11 +104,11 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
           <CloseIcon fontSize="small" />
         </IconButton>
 
-        <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2, fontSize: '125%' }}>
+        <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box sx={{ textAlign: 'center' }}>
-            <Typography sx={{ fontWeight: 700, fontSize: '1.4em' }}>{tt(tasting.coffeeOrigin) || '—'}</Typography>
+            <Typography sx={{ fontWeight: 700, fontSize: '1.5rem' }}>{tt(tasting.coffeeOrigin) || '—'}</Typography>
             {tasting.coffeeOriginRegion && (
-              <Typography sx={{ color: theme.palette.accent.main, fontSize: '0.9em' }}>{tt(tasting.coffeeOriginRegion)}</Typography>
+              <Typography sx={{ color: theme.palette.accent.main, fontSize: '1rem' }}>{tt(tasting.coffeeOriginRegion)}</Typography>
             )}
           </Box>
 
@@ -116,19 +116,19 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
           {tasting.coffeeRoaster && <Field label="Roaster" value={tasting.coffeeRoaster} />}
 
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1 }}>
-            {tasting.roastLevel && <Box><Typography textTransform="uppercase" sx={{ fontWeight: 700, display: 'block', fontSize: '0.65em' }}>Roast:</Typography><Typography sx={{ fontSize: '0.9em' }}>{tt(tasting.roastLevel)}</Typography></Box>}
-            {tasting.acidity && <Box><Typography textTransform="uppercase" sx={{ fontWeight: 700, display: 'block', fontSize: '0.65em' }}>Acidity:</Typography><Typography sx={{ fontSize: '0.9em' }}>{tt(tasting.acidity)}</Typography></Box>}
-            {tasting.mouthFeel && <Box><Typography textTransform="uppercase" sx={{ fontWeight: 700, display: 'block', fontSize: '0.65em' }}>Body:</Typography><Typography sx={{ fontSize: '0.9em' }}>{tt(tasting.mouthFeel)}</Typography></Box>}
+            {tasting.roastLevel && <Box><Typography textTransform="uppercase" sx={{ fontWeight: 700, display: 'block', fontSize: '0.75rem' }}>Roast:</Typography><Typography sx={{ fontSize: '1rem' }}>{tt(tasting.roastLevel)}</Typography></Box>}
+            {tasting.acidity && <Box><Typography textTransform="uppercase" sx={{ fontWeight: 700, display: 'block', fontSize: '0.75rem' }}>Acidity:</Typography><Typography sx={{ fontSize: '1rem' }}>{tt(tasting.acidity)}</Typography></Box>}
+            {tasting.mouthFeel && <Box><Typography textTransform="uppercase" sx={{ fontWeight: 700, display: 'block', fontSize: '0.75rem' }}>Body:</Typography><Typography sx={{ fontSize: '1rem' }}>{tt(tasting.mouthFeel)}</Typography></Box>}
           </Box>
 
           {tasting.notes && (
             <Box>
               <Typography onClick={() => setShowNotes((v) => !v)}
-                sx={{ fontSize: '0.75em', cursor: 'pointer', color: theme.palette.accent.main, textDecoration: 'underline', textUnderlineOffset: '3px', userSelect: 'none', '&:hover': { opacity: 0.8 } }}>
+                sx={{ fontSize: '0.875rem', cursor: 'pointer', color: theme.palette.accent.main, textDecoration: 'underline', textUnderlineOffset: '3px', userSelect: 'none', '&:hover': { opacity: 0.8 } }}>
                 {showNotes ? 'Hide notes' : 'Show tasting notes & recipe'}
               </Typography>
               {showNotes && (
-                <Typography sx={{ fontSize: '0.85em', mt: 1, whiteSpace: 'pre-wrap', color: 'text.secondary', fontWeight: 700 }}>
+                <Typography sx={{ fontSize: '1rem', mt: 1, whiteSpace: 'pre-wrap', color: 'text.secondary', fontWeight: 700 }}>
                   {tasting.notes}
                 </Typography>
               )}
@@ -137,7 +137,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
 
           {locationDisplay && (
             <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}`, textAlign: 'right' }}>
-              <Typography sx={{ fontSize: '0.75em', color: '#fff' }}>
+              <Typography sx={{ fontSize: '0.875rem', color: '#fff' }}>
                 <strong>{locationDisplay}</strong>
                 {neighbourhood && ` • ${tt(neighbourhood)}`}
               </Typography>
