@@ -161,6 +161,19 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         <CloseIcon fontSize="small" />
       </IconButton>
 
+      {/* Save roaster — top left, opposite the close X */}
+      {tasting.coffeeRoaster && (
+        <Tooltip title={isSaved('roaster', tasting.coffeeRoaster) ? 'Unsave roaster' : 'Save roaster'}>
+          <IconButton
+            size="small"
+            onClick={(e) => { e.stopPropagation(); toggle('roaster', tasting.coffeeRoaster, tasting.coffeeRoaster); }}
+            sx={{ position: 'absolute', top: 8, left: 8, color: isSaved('roaster', tasting.coffeeRoaster) ? '#e57373' : 'rgba(255,255,255,0.5)', '&:hover': { color: '#e57373' } }}
+          >
+            {isSaved('roaster', tasting.coffeeRoaster) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+          </IconButton>
+        </Tooltip>
+      )}
+
       <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
 
         {/* Origin + Region */}
@@ -230,25 +243,14 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         )}
 
         {/* Footer */}
-        <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {locationDisplay && (
+        {locationDisplay && (
+          <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
             <Typography variant="caption" sx={{ color: '#fff' }}>
               <strong>{locationDisplay}</strong>
               {neighbourhood && ` • ${toTitleCase(neighbourhood)}`}
             </Typography>
-          )}
-          {tasting.coffeeRoaster && (
-            <Tooltip title={isSaved('roaster', tasting.coffeeRoaster) ? 'Unsave roaster' : 'Save roaster'}>
-              <IconButton
-                size="small"
-                onClick={(e) => { e.stopPropagation(); toggle('roaster', tasting.coffeeRoaster, tasting.coffeeRoaster); }}
-                sx={{ color: isSaved('roaster', tasting.coffeeRoaster) ? '#e57373' : 'rgba(255,255,255,0.5)', '&:hover': { color: '#e57373' } }}
-              >
-                {isSaved('roaster', tasting.coffeeRoaster) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
-              </IconButton>
-            </Tooltip>
-          )}
-        </Box>
+          </Box>
+        )}
 
       </CardContent>
       </Dialog>
