@@ -133,6 +133,16 @@ export default function CafeBottomSheet({
               href={selectedCafe.website}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                if (localStorage.getItem('trackingConsent') !== 'accepted') return;
+                const visitorId = localStorage.getItem('visitorId') || '';
+                const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+                fetch(`${API_BASE}/visits`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ page: `/cafe-website/${encodeURIComponent(selectedCafe.name)}`, visitorId }),
+                }).catch(() => {});
+              }}
               style={{
                 display: 'block', textAlign: 'center', padding: '10px 16px',
                 marginBottom: 8, borderRadius: 8, border: `1px solid ${mutedColor}`,
