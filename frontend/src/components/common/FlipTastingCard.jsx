@@ -5,7 +5,7 @@ import { useCafeStore } from '../../stores/useCafeStore';
 import { StyledCard, BoxMain, StyledDivContent, TypographyTitle, RowAuthor, Shadow, TastingNotesContainer } from '../../styles/FlipTastingCard.styles';
 
 const CARD_W = 320;
-const CARD_H = 448;
+const CARD_H = 400;
 const BACK_W = 400;
 
 const tt = (str) => {
@@ -45,7 +45,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
     return (
       <Box sx={{ width: '100%', maxWidth: CARD_W, height: CARD_H, cursor: 'pointer', opacity: anyFlipped ? 0.25 : 1, transition: 'opacity 0.3s', pointerEvents: anyFlipped ? 'none' : 'auto' }} onClick={handleFlip}>
         <StyledCard>
-          <BoxMain minHeight={336} position="relative">
+          <BoxMain minHeight={288} position="relative">
             <StyledDivContent className="tasting-cd">
               <TypographyTitle role="title" variant="h3">{tt(tasting.coffeeName)}</TypographyTitle>
               {Array.isArray(tasting.tastingNotes) && tasting.tastingNotes.length > 0 && (
