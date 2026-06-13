@@ -60,7 +60,17 @@ export default function CafeBottomSheet({
 
           {/* Close button */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <Box sx={{ flex: 1 }}>
+            <Tooltip title={isSaved('cafe', selectedCafe._id) ? 'Unsave cafe' : 'Save cafe'}>
+              <IconButton
+                size="small"
+                onClick={() => toggle('cafe', selectedCafe._id, selectedCafe.name)}
+                sx={{ color: '#fff', mt: -0.5, ml: -0.5, '&:hover': { color: 'rgba(255,255,255,0.7)' } }}
+                aria-label="Save cafe"
+              >
+                {isSaved('cafe', selectedCafe._id) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+              </IconButton>
+            </Tooltip>
+            <Box sx={{ flex: 1, mx: 1 }}>
               {selectedCafe.category && (
                 <Typography
                   variant="overline"
@@ -73,21 +83,9 @@ export default function CafeBottomSheet({
                 {selectedCafe.name}
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 1, mt: -0.5 }}>
-              <Tooltip title={isSaved('cafe', selectedCafe._id) ? 'Unsave cafe' : 'Save cafe'}>
-                <IconButton
-                  size="small"
-                  onClick={() => toggle('cafe', selectedCafe._id, selectedCafe.name)}
-                  sx={{ color: isSaved('cafe', selectedCafe._id) ? '#e57373' : mutedColor, '&:hover': { color: '#e57373' } }}
-                  aria-label="Save cafe"
-                >
-                  {isSaved('cafe', selectedCafe._id) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
-                </IconButton>
-              </Tooltip>
-              <IconButton onClick={() => setSelectedCafe(null)} size="small" sx={{ color: mutedColor }} aria-label="Close">
-                <CloseIcon />
-              </IconButton>
-            </Box>
+            <IconButton onClick={() => setSelectedCafe(null)} size="small" sx={{ color: mutedColor, mt: -0.5 }} aria-label="Close">
+              <CloseIcon />
+            </IconButton>
           </Box>
 
           {/* Address + neighbourhood */}

@@ -21,7 +21,8 @@ const SIDEBAR_W = 200;
 const SidebarNav = ({ tabs, tab, setTab, onRefresh, onLogout, loading }) => (
   <Box sx={{
     width: SIDEBAR_W, minWidth: SIDEBAR_W, bgcolor: '#0f2e4e', color: '#fff',
-    display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'sticky', top: 0,
+    display: 'flex', flexDirection: 'column', height: '100vh',
+    position: 'fixed', top: 0, left: 0, zIndex: 1200, overflowY: 'auto',
   }}>
     <Box sx={{ px: 2.5, py: 3 }}>
       <Typography variant="subtitle2" fontWeight={800} letterSpacing="0.15em" sx={{ color: 'rgba(255,255,255,0.5)', mb: 2 }}>
@@ -240,10 +241,10 @@ const AdminPage = () => {
   return (
     <MuiTheme>
       <CssBaseline />
-      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
+      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
         <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />
 
-        <Box sx={{ flex: 1, p: 3, overflowY: 'auto', minWidth: 0 }}>
+        <Box sx={{ flex: 1, p: 3, overflowY: 'auto', minWidth: 0, ml: `${SIDEBAR_W}px` }}>
 
           {/* Feedback banners */}
           {errorMessage && (
