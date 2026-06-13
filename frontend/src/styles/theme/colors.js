@@ -22,12 +22,12 @@ export const colorsDarkmode = {
   secondary: '#0c3054', // Deep Oxford Blue
   accent: '#fde112', // Vivid Yellow
   accentStrong: '#ffdf00', // High-Contrast Yellow
-  background: '#121c2b', // Dark Navy
+  background: '#0f1923', // Deep blue-black
   paper: '#184777', // Medium-dark blue for cards/panels
   light: '#ebf2fa', // Alice Blue (for light text)
   mainText: '#ebf2fa', // Alice Blue (text)
   versoText: '#b0d7ff', // Light Sky Blue (accent text)
-  textMuted: '#9ec4ebff', // Muted Blue Gray
+  textMuted: '#1a2a3a', // Dark slate for author row
   error: '#ff7b76', // Bright Bittersweet
   success: '#90c68f', // Soft Olivine
   info: '#48a4c0ff', // Soft Cyan
