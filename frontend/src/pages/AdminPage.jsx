@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   Box, Typography, Button, Paper, Stack, Chip, CssBaseline,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  MenuItem, Collapse, Badge, Switch, FormControlLabel, Divider,
+  MenuItem, Collapse, Switch, FormControlLabel,
   Table, TableBody, TableCell, TableHead, TableRow, TableContainer,
   IconButton, Tooltip,
 } from '@mui/material';
@@ -64,44 +64,57 @@ const SidebarNav = ({ tabs, tab, setTab, onRefresh, onLogout, loading }) => (
   </Box>
 );
 
-const AdminTable = ({ columns, rows, renderActions }) => (
-  <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2 }}>
-    <Table size="small">
-      <TableHead>
-        <TableRow sx={{ bgcolor: 'grey.50' }}>
-          {columns.map((c) => (
-            <TableCell key={c.key} sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary' }}>
-              {c.label}
-            </TableCell>
-          ))}
-          <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary' }}>
-            Actions
-          </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {rows.length === 0 ? (
-          <TableRow>
-            <TableCell colSpan={columns.length + 1} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
-              Nothing here yet
-            </TableCell>
-          </TableRow>
-        ) : rows.map((row) => (
-          <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 } }}>
+const AdminTable = ({ columns, rows, renderActions }) => {
+  const [confirmId, setConfirmId] = useState(null);
+  return (
+    <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2 }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow sx={{ bgcolor: 'grey.50' }}>
             {columns.map((c) => (
-              <TableCell key={c.key} sx={{ fontSize: '0.85rem', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {c.render ? c.render(row) : (row[c.key] ?? '—')}
+              <TableCell key={c.key} sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary' }}>
+                {c.label}
               </TableCell>
             ))}
-            <TableCell sx={{ whiteSpace: 'nowrap' }}>
-              {renderActions(row)}
+            <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary' }}>
+              Actions
             </TableCell>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </TableContainer>
-);
+        </TableHead>
+        <TableBody>
+          {rows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length + 1} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+                Nothing here yet
+              </TableCell>
+            </TableRow>
+          ) : rows.map((row) => (
+            <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 } }}>
+              {columns.map((c) => (
+                <TableCell key={c.key} sx={{ fontSize: '0.85rem', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {c.render ? c.render(row) : (row[c.key] ?? '—')}
+                </TableCell>
+              ))}
+              <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                {confirmId === row._id ? (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: 'error.main', fontWeight: 600 }}>Delete?</Typography>
+                    <Button size="small" color="error" variant="contained" sx={{ minWidth: 0, px: 1, py: 0.25, fontSize: '0.7rem' }}
+                      onClick={() => { renderActions(row, true); setConfirmId(null); }}>Yes</Button>
+                    <Button size="small" sx={{ minWidth: 0, px: 1, py: 0.25, fontSize: '0.7rem' }}
+                      onClick={() => setConfirmId(null)}>No</Button>
+                  </Box>
+                ) : (
+                  renderActions(row, false, () => setConfirmId(row._id))
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
 
 const AdminPage = () => {
   const [cafes, setCafes] = useState([]);
@@ -150,7 +163,6 @@ const AdminPage = () => {
   useEffect(() => { if (isAdmin) fetchAdminData(); }, [isAdmin]);
 
   const del = (endpoint, setItems) => async (id) => {
-    if (!window.confirm('Delete?')) return;
     const res = await fetch(`${API_URL}${endpoint}/${id}`, { method: 'DELETE', headers: getHeaders() });
     if (res.ok) setItems((prev) => prev.filter((i) => i._id !== id));
     else setErrorMessage('Delete failed');
@@ -212,13 +224,16 @@ const AdminPage = () => {
     { label: 'Alerts', badge: alerts.filter((a) => a.isActive).length },
   ];
 
-  const actions = (type, setItems, endpoint, showApprove) => (row) => (
+  const actions = (type, setItems, endpoint, showApprove) => (row, confirmed, onDeleteClick) => (
     <Box sx={{ display: 'flex', gap: 0.5 }}>
       {showApprove && (
         <Tooltip title="Approve"><IconButton size="small" color="success" onClick={() => handleApprove(row._id)}><CheckCircleIcon fontSize="small" /></IconButton></Tooltip>
       )}
       <Tooltip title="Edit"><IconButton size="small" color="primary" onClick={() => openEdit(type, row)}><EditIcon fontSize="small" /></IconButton></Tooltip>
-      <Tooltip title="Delete"><IconButton size="small" color="error" onClick={del(endpoint, setItems)(row._id)}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
+      {confirmed
+        ? (() => { del(endpoint, setItems)(row._id); return null; })()
+        : <Tooltip title="Delete"><IconButton size="small" color="error" onClick={onDeleteClick}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
+      }
     </Box>
   );
 
