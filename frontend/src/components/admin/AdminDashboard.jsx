@@ -219,6 +219,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
         <StatCard title="Active Alerts" value={alerts.filter((a) => a.isActive).length} sub={`${alerts.length} total`} color="#f5a623" />
         {interest && <StatCard title="Total Saves" value={interest.totalSaves} sub="roasters + cafes" color="#9b59b6" />}
         {traffic && <StatCard title={`Visits (${trafficDays}d)`} value={traffic.total} sub="excl. admin" color="#1abc9c" />}
+        {traffic && <StatCard title={`Unique Visitors (${trafficDays}d)`} value={traffic.uniqueVisitors} sub="by device ID" color="#3498db" />}
       </Box>
 
       {/* Traffic + top pages side by side */}

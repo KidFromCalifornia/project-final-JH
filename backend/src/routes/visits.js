@@ -13,11 +13,11 @@ const getDevice = (ua = '') => {
 // Public — record a visit (fire and forget)
 router.post('/', async (req, res) => {
   try {
-    const { page } = req.body;
+    const { page, visitorId } = req.body;
     if (!page) return res.status(400).json({ success: false });
     const device = getDevice(req.headers['user-agent']);
     const referrer = req.headers['referer'] || '';
-    await Visit.create({ page, device, referrer });
+    await Visit.create({ page, device, referrer, visitorId: visitorId || '' });
     res.status(201).json({ success: true });
   } catch {
     res.status(500).json({ success: false });
@@ -32,8 +32,14 @@ router.get('/stats', authenticateToken, requireAdmin, async (req, res) => {
 
     const baseMatch = { createdAt: { $gte: since }, page: { $not: /^\/admin/ } };
 
-    const [total, byPage, byDevice, byDay] = await Promise.all([
+    const [total, uniqueVisitors, byPage, byDevice, byDay] = await Promise.all([
       Visit.countDocuments(baseMatch),
+
+      Visit.aggregate([
+        { $match: { ...baseMatch, visitorId: { $ne: '' } } },
+        { $group: { _id: '$visitorId' } },
+        { $count: 'count' },
+      ]),
 
       Visit.aggregate([
         { $match: baseMatch },
@@ -43,8 +49,9 @@ router.get('/stats', authenticateToken, requireAdmin, async (req, res) => {
       ]),
 
       Visit.aggregate([
-        { $match: baseMatch },
-        { $group: { _id: '$device', count: { $sum: 1 } } },
+        { $match: { ...baseMatch, visitorId: { $ne: '' } } },
+        { $group: { _id: '$device', visitors: { $addToSet: '$visitorId' } } },
+        { $project: { _id: 1, count: { $size: '$visitors' } } },
       ]),
 
       Visit.aggregate([
@@ -63,6 +70,7 @@ router.get('/stats', authenticateToken, requireAdmin, async (req, res) => {
       success: true,
       data: {
         total,
+        uniqueVisitors: uniqueVisitors[0]?.count || 0,
         byPage: byPage.map((p) => ({ name: p._id, value: p.count })),
         byDevice: byDevice.map((d) => ({ name: d._id, value: d.count })),
         byDay: byDay.map((d) => ({ name: d._id, value: d.count })),
