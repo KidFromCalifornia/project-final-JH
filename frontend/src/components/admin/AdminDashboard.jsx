@@ -42,7 +42,7 @@ const StatCard = ({ title, value, sub, color }) => {
 const Section = ({ title, children, action }) => {
   const { labelColor, paperBg, border } = useChartTheme();
   return (
-    <Paper elevation={0} sx={{ border, bgcolor: paperBg, borderRadius: 2, p: 2.5, mb: 2.5, width: '100%' }}>
+    <Paper elevation={0} sx={{ border, bgcolor: paperBg, borderRadius: 2, p: 2.5, mb: 2.5, width: '100%', overflow: 'visible' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: labelColor, mb: 0, display: 'block' }}>{title}</Typography>
         {action}
@@ -133,7 +133,7 @@ const Donut = ({ data, height = 240 }) => {
   const { pieLabel } = useChartTheme();
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <PieChart margin={{ top: 20, bottom: 20, left: 40, right: 40 }}>
+      <PieChart margin={{ top: 30, bottom: 30, left: 60, right: 60 }}>
         <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
           innerRadius={55} outerRadius={90} labelLine
           label={(props) => <OuterLabel {...props} fill={pieLabel} />}>
