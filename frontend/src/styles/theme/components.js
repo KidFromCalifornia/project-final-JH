@@ -253,7 +253,7 @@ const createComponents = (customTheme, themeMode) => {
             },
             // Input text always contrasts with the filled background
             '& input, & textarea': {
-              color: c.mainText,
+              color: c.light,
               padding: '22px 14px 8px',
             },
             // ── Error state ─────────────────────────────────────────────
