@@ -44,7 +44,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
   if (!isFlipped) {
     return (
       <Box sx={{ width: CARD_W, height: CARD_H, cursor: 'pointer', opacity: anyFlipped ? 0.25 : 1, transition: 'opacity 0.3s', pointerEvents: anyFlipped ? 'none' : 'auto', overflow: 'visible', borderRadius: `${theme.shape.borderRadius * 3}px`, boxShadow: '6px 10px 18px rgba(10,31,51,0.35)' }} onClick={handleFlip}>
-        <StyledCard>
+        <StyledCard elevation={0}>
           <BoxMain minHeight={288} position="relative">
             <StyledDivContent className="tasting-cd">
               <TypographyTitle role="title" variant="h3">{tt(tasting.coffeeName)}</TypographyTitle>
