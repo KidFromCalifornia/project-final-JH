@@ -5,7 +5,12 @@ import {
 import { Box, Typography, Paper, Grid, MenuItem, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useState, useEffect } from 'react';
 
-const PALETTE = ['#194f84', '#2e7dc8', '#e57373', '#66bb6a', '#ffa726', '#ab47bc', '#26c6da', '#ec407a', '#d4e157', '#ff7043'];
+const PALETTE = [
+  '#2e7dc8', '#e05c5c', '#2ebc7a', '#f5a623', '#9b59b6',
+  '#1abc9c', '#e67e22', '#3498db', '#e91e8c', '#27ae60',
+  '#ff5722', '#00bcd4', '#8bc34a', '#ff9800', '#673ab7',
+  '#f06292', '#4db6ac', '#ffb300', '#5c6bc0', '#26a69a',
+];
 
 // Force light styling regardless of MUI theme mode
 const card = { bgcolor: '#fff', borderRadius: 2, p: 2, border: '1px solid #e0e0e0' };
@@ -35,14 +40,15 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-const PieLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, name, percent }) => {
-  if (percent < 0.06) return null;
-  const r = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + r * Math.cos(-midAngle * Math.PI / 180);
-  const y = cy + r * Math.sin(-midAngle * Math.PI / 180);
+const PieLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, name, percent, value }) => {
+  if (percent < 0.04) return null;
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius + 24;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
   return (
-    <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={700}>
-      {name}
+    <text x={x} y={y} fill="#374151" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={11} fontWeight={600}>
+      {name} ({value})
     </text>
   );
 };
@@ -183,7 +189,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
                 {traffic.byDevice.length === 0 ? <Typography sx={{ color: '#9ca3af' }}>No data</Typography> : (
                   <ResponsiveContainer width="100%" height={120}>
                     <PieChart>
-                      <Pie data={traffic.byDevice} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} labelLine={false} label={<PieLabel />}>
+                      <Pie data={traffic.byDevice} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={50} labelLine={true} label={<PieLabel />}>
                         {traffic.byDevice.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
                       </Pie>
                       <Tooltip content={<CustomTooltip />} />
@@ -294,7 +300,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
         ) : isPie ? (
           <ResponsiveContainer width="100%" height={240}>
             <PieChart>
-              <Pie data={selectedData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} labelLine={false} label={<PieLabel />}>
+              <Pie data={selectedData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} labelLine={true} label={<PieLabel />}>
                 {selectedData.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
@@ -342,7 +348,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
             {cafesByCat.length === 0 ? <Typography sx={{ color: '#9ca3af' }}>No data</Typography> : (
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
-                  <Pie data={cafesByCat} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} labelLine={false} label={<PieLabel />}>
+                  <Pie data={cafesByCat} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} labelLine={true} label={<PieLabel />}>
                     {cafesByCat.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
                   </Pie>
                   <Tooltip content={<CustomTooltip />} />
@@ -395,7 +401,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
                 <Typography sx={sectionTitle}>Active vs Inactive</Typography>
                 <ResponsiveContainer width="100%" height={180}>
                   <PieChart>
-                    <Pie data={alertsActive} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} labelLine={false} label={<PieLabel />}>
+                    <Pie data={alertsActive} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} labelLine={true} label={<PieLabel />}>
                       {alertsActive.map((_, i) => <Cell key={i} fill={i === 0 ? '#66bb6a' : '#e0e0e0'} />)}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
