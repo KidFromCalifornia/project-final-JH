@@ -65,7 +65,7 @@ export const StyledDivTag = styled('div')(({ theme }) => ({
   padding: theme.spacing(0.25, 1),
   color: theme.palette.secondary.contrastText,
   marginBottom: theme.spacing(1),
-  fontSize: theme.typography.caption.fontSize,
+  fontSize: '16px',
   fontWeight: theme.typography.fontWeightBold,
   textTransform: 'uppercase',
   letterSpacing: '0.5px',
@@ -73,7 +73,7 @@ export const StyledDivTag = styled('div')(({ theme }) => ({
 
 export const TypographyTitle = styled(Typography)(({ theme }) => ({
   fontFamily: family,
-  fontSize: theme.typography.h5.fontSize,
+  fontSize: '20px',
   fontWeight: theme.typography.h4.fontWeight,
   color: theme.palette.light.main,
   lineHeight: 1.2,
