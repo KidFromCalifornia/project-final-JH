@@ -12,9 +12,9 @@ import {
   Tooltip,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import useFavourites from '../../hooks/useFavourites';
+// import FavoriteIcon from '@mui/icons-material/Favorite';
+// import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+// import useFavourites from '../../hooks/useFavourites';
 import { useCafeStore } from '../../stores/useCafeStore';
 import {
   StyledCard,
@@ -36,7 +36,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showNotes, setShowNotes] = useState(false);
   const cafes = useCafeStore((state) => state.cafes);
-  const { isSaved, toggle } = useFavourites();
+  // const { isSaved, toggle } = useFavourites();
 
   const cafe = useMemo(() => {
     if (tasting?.cafeId && typeof tasting.cafeId === 'object' && tasting.cafeId.name) {
@@ -161,7 +161,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         <CloseIcon fontSize="small" />
       </IconButton>
 
-      {/* Save roaster — top left, opposite the close X */}
+      {/* Save roaster — commented out until more stable solution
       {tasting.coffeeRoaster && (
         <Tooltip title={isSaved('roaster', tasting.coffeeRoaster) ? 'Unsave roaster' : 'Save roaster'}>
           <IconButton
@@ -172,7 +172,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
             {isSaved('roaster', tasting.coffeeRoaster) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
           </IconButton>
         </Tooltip>
-      )}
+      )} */}
 
       <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
 

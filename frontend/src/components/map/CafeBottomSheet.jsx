@@ -3,10 +3,10 @@ import {
   Drawer, Box, Typography, Collapse, IconButton, Tooltip,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+// import FavoriteIcon from '@mui/icons-material/Favorite';
+// import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useTheme, alpha } from '@mui/material/styles';
-import useFavourites from '../../hooks/useFavourites';
+// import useFavourites from '../../hooks/useFavourites';
 
 const formatFeature = (f) => f.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -20,7 +20,7 @@ export default function CafeBottomSheet({
 }) {
   const theme = useTheme();
   const [featuresOpen, setFeaturesOpen] = useState(false);
-  const { isSaved, toggle } = useFavourites();
+  // const { isSaved, toggle } = useFavourites();
 
   useEffect(() => {
     setFeaturesOpen(false);
@@ -60,17 +60,7 @@ export default function CafeBottomSheet({
 
           {/* Close button */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <Tooltip title={isSaved('cafe', selectedCafe._id) ? 'Unsave cafe' : 'Save cafe'}>
-              <IconButton
-                size="small"
-                onClick={() => toggle('cafe', selectedCafe._id, selectedCafe.name)}
-                sx={{ color: isSaved('cafe', selectedCafe._id) ? '#e57373' : mutedColor, mt: -0.5, ml: -0.5, '&:hover': { color: '#e57373' } }}
-                aria-label="Save cafe"
-              >
-                {isSaved('cafe', selectedCafe._id) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
-              </IconButton>
-            </Tooltip>
-            <Box sx={{ flex: 1, mx: 1 }}>
+            <Box sx={{ flex: 1 }}>
               {selectedCafe.category && (
                 <Typography
                   variant="overline"
