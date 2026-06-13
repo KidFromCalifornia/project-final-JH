@@ -64,7 +64,7 @@ export default function CafeBottomSheet({
               <IconButton
                 size="small"
                 onClick={() => toggle('cafe', selectedCafe._id, selectedCafe.name)}
-                sx={{ color: '#fff', mt: -0.5, ml: -0.5, '&:hover': { color: 'rgba(255,255,255,0.7)' } }}
+                sx={{ color: isSaved('cafe', selectedCafe._id) ? '#e57373' : mutedColor, mt: -0.5, ml: -0.5, '&:hover': { color: '#e57373' } }}
                 aria-label="Save cafe"
               >
                 {isSaved('cafe', selectedCafe._id) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}

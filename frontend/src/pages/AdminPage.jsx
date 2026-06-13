@@ -16,13 +16,14 @@ import AdminDashboard from '../components/admin/AdminDashboard.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-const SIDEBAR_W = 200;
+const NAV_W = 72; // app's left desktop nav bar
+const SIDEBAR_W = 180;
 
 const SidebarNav = ({ tabs, tab, setTab, onRefresh, onLogout, loading }) => (
   <Box sx={{
     width: SIDEBAR_W, minWidth: SIDEBAR_W, bgcolor: '#0f2e4e', color: '#fff',
     display: 'flex', flexDirection: 'column', height: '100vh',
-    position: 'fixed', top: 0, left: 0, zIndex: 1200, overflowY: 'auto',
+    position: 'fixed', top: 0, left: NAV_W, zIndex: 1100, overflowY: 'auto',
   }}>
     <Box sx={{ px: 2.5, py: 3 }}>
       <Typography variant="subtitle2" fontWeight={800} letterSpacing="0.15em" sx={{ color: 'rgba(255,255,255,0.5)', mb: 2 }}>
@@ -244,7 +245,7 @@ const AdminPage = () => {
       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
         <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />
 
-        <Box sx={{ flex: 1, p: 3, overflowY: 'auto', minWidth: 0, ml: `${SIDEBAR_W}px` }}>
+        <Box sx={{ flex: 1, p: 3, overflowY: 'auto', minWidth: 0, ml: `${SIDEBAR_W}px` , width: `calc(100% - ${SIDEBAR_W}px)` }}>
 
           {/* Feedback banners */}
           {errorMessage && (

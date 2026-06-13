@@ -17,16 +17,14 @@ const useChartTheme = () => {
   const theme = useTheme();
   const dark = theme.palette.mode === 'dark';
   return {
-    bg: theme.palette.background.paper,
-    border: `1px solid ${theme.palette.divider}`,
-    labelColor: theme.palette.text.secondary,
+    border: dark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e8edf2',
+    labelColor: dark ? '#94a3b8' : '#64748b',
     axisColor: dark ? '#94a3b8' : '#64748b',
-    gridColor: dark ? '#334155' : '#f1f5f9',
-    tooltipBg: dark ? '#1e293b' : '#0f172a',
-    pieLabel: theme.palette.text.primary,
-    subColor: theme.palette.text.secondary,
-    paperBg: theme.palette.background.paper,
-    tooltipCursor: dark ? '#1e293b' : '#f8fafc',
+    gridColor: dark ? '#2d3748' : '#f1f5f9',
+    pieLabel: dark ? '#e2e8f0' : '#1e293b',
+    subColor: dark ? '#94a3b8' : '#64748b',
+    paperBg: dark ? '#1a2744' : '#ffffff',
+    tooltipCursor: dark ? 'rgba(255,255,255,0.05)' : '#f8fafc',
   };
 };
 
