@@ -14,10 +14,9 @@ import {
   TextField,
   MenuItem,
   Collapse,
-  Tabs,
-  Tab,
   Badge,
   Switch,
+  Divider,
   FormControlLabel,
   useTheme,
 } from '@mui/material';
@@ -192,18 +191,63 @@ const AdminPage = () => {
   return (
     <MuiTheme>
       <CssBaseline />
-      <Box sx={{ maxWidth: 1100, mx: 'auto', px: 3, pb: 6 }}>
+      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
 
-        {/* Header */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 3 }}>
-          <Typography variant="h4" fontWeight={700}>Admin</Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button onClick={fetchAdminData} variant="outlined" disabled={loading} size="small">
-              {loading ? 'Refreshing…' : 'Refresh'}
-            </Button>
-            <Button onClick={handleLogout} variant="contained" size="small">Logout</Button>
-          </Box>
+        {/* Sidebar */}
+        <Box sx={{
+          width: 220,
+          flexShrink: 0,
+          bgcolor: 'primary.main',
+          color: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          p: 2,
+          gap: 1,
+        }}>
+          <Typography variant="h6" fontWeight={700} sx={{ mb: 2, px: 1 }}>Admin</Typography>
+
+          {TABS.map((t, i) => (
+            <Box
+              key={t.label}
+              onClick={() => setTab(i)}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                px: 2,
+                py: 1.2,
+                borderRadius: 2,
+                cursor: 'pointer',
+                fontWeight: tab === i ? 700 : 400,
+                bgcolor: tab === i ? 'rgba(255,255,255,0.2)' : 'transparent',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' },
+                transition: 'background 0.15s',
+              }}
+            >
+              <Typography variant="body2" fontWeight="inherit" sx={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {t.label}
+              </Typography>
+              {t.badge > 0 && (
+                <Chip label={t.badge} size="small" color={i === 0 ? 'error' : 'default'}
+                  sx={{ height: 20, fontSize: '0.7rem', fontWeight: 700 }} />
+              )}
+            </Box>
+          ))}
+
+          <Box sx={{ flexGrow: 1 }} />
+          <Divider sx={{ borderColor: 'rgba(255,255,255,0.2)', my: 1 }} />
+          <Button onClick={fetchAdminData} variant="outlined" disabled={loading} size="small"
+            sx={{ color: '#fff', borderColor: 'rgba(255,255,255,0.4)', '&:hover': { borderColor: '#fff' } }}>
+            {loading ? 'Refreshing…' : 'Refresh'}
+          </Button>
+          <Button onClick={handleLogout} variant="contained" size="small"
+            sx={{ bgcolor: 'rgba(255,255,255,0.15)', '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' } }}>
+            Logout
+          </Button>
         </Box>
+
+        {/* Main content */}
+        <Box sx={{ flex: 1, p: 3, overflowY: 'auto' }}>
 
         {errorMessage && (
           <Paper sx={{ p: 2, mb: 2, bgcolor: 'error.light' }}>
@@ -212,38 +256,7 @@ const AdminPage = () => {
           </Paper>
         )}
 
-        {/* Tabs */}
-        <Paper elevation={2} sx={{ mb: 3 }}>
-          <Tabs
-            value={tab}
-            onChange={(_, v) => setTab(v)}
-            variant="fullWidth"
-            sx={{
-              '& .MuiTab-root': {
-                minWidth: 0,
-                flex: 1,
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                py: 2,
-              },
-            }}
-          >
-            {TABS.map((t, i) => (
-              <Tab
-                key={t.label}
-                label={
-                  t.badge ? (
-                    <Badge badgeContent={t.badge} color={i === 0 ? 'error' : 'primary'} sx={{ pr: 1.5 }}>
-                      {t.label}
-                    </Badge>
-                  ) : t.label
-                }
-              />
-            ))}
-          </Tabs>
-        </Paper>
+        <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>{TABS[tab].label}</Typography>
 
         {/* Tab: Submissions */}
         {tab === 0 && (
@@ -432,7 +445,8 @@ const AdminPage = () => {
           </DialogActions>
         </Dialog>
 
-      </Box>
+        </Box> {/* end main content */}
+      </Box> {/* end flex row */}
     </MuiTheme>
   );
 };
