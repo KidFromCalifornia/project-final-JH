@@ -65,8 +65,8 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
     return (
       <Box
         sx={{
-          width: '100%',
-          height: 345,
+          width: 320,
+          height: 448,
           cursor: 'pointer',
           opacity: anyFlipped ? 0.25 : 1,
           transition: 'opacity 0.3s ease',
@@ -75,7 +75,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         onClick={handleFlip}
       >
         <StyledCard>
-          <BoxMain minHeight={280} position="relative">
+          <BoxMain minHeight={370} position="relative">
             <StyledDivContent className="tasting-cd">
               <TypographyTitle role="title" variant="h3">
                 {toTitleCase(tasting.coffeeName)}
@@ -127,7 +127,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
   return (
     <>
       {/* Placeholder keeps grid cell height */}
-      <Box sx={{ width: '100%', height: 345, opacity: 0 }} />
+      <Box sx={{ width: 320, height: 345, opacity: 0 }} />
 
       <Dialog
         open={isFlipped}
@@ -136,8 +136,8 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         fullScreen={isMobile}
         PaperProps={{
           sx: {
-            width: isMobile ? '100vw' : 475,
-            height: isMobile ? '100vh' : 'auto',
+            width: isMobile ? '100vw' : 400,
+            height: isMobile ? '100dvh' : 'auto',
             maxHeight: '92vh',
             overflowY: 'visible',
             overflow: 'visible',
