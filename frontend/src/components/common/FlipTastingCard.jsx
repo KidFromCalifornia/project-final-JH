@@ -133,13 +133,14 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         open={isFlipped}
         onClose={handleFlip}
         maxWidth={false}
+        fullScreen={isMobile}
         PaperProps={{
           sx: {
-            width: isMobile ? '92vw' : 380,
-            height: isMobile ? 'auto' : 345,
-            maxHeight: '92vh',
+            width: isMobile ? '100vw' : 475,
+            height: isMobile ? '100vh' : 430,
+            maxHeight: '100vh',
             overflowY: 'auto',
-            borderRadius: `${theme.shape.borderRadius * 3}px`,
+            borderRadius: isMobile ? 0 : `${theme.shape.borderRadius * 3}px`,
             background:
               theme.palette.mode === 'dark'
                 ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.background.paper} 100%)`
