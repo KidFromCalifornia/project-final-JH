@@ -4,8 +4,9 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
   MenuItem, Collapse, Switch, FormControlLabel,
   Table, TableBody, TableCell, TableHead, TableRow, TableContainer,
-  IconButton, Tooltip,
+  IconButton, Tooltip, Tabs, Tab, useMediaQuery,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -69,7 +70,7 @@ const SidebarNav = ({ tabs, tab, setTab, onRefresh, onLogout, loading }) => (
 const AdminTable = ({ columns, rows, renderActions }) => {
   const [confirmId, setConfirmId] = useState(null);
   return (
-    <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2 }}>
+    <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2, overflowX: 'auto' }}>
       <Table size="small">
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -215,6 +216,9 @@ const AdminPage = () => {
     if (window.confirm('Logout?')) { localStorage.removeItem('admin'); localStorage.removeItem('userToken'); setIsAdmin(false); }
   };
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   if (!isAdmin) return <LoginForm setIsAdmin={setIsAdmin} onClose={() => {}} />;
   if (loading) return <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh"><Typography>Loading…</Typography></Box>;
 
@@ -243,9 +247,42 @@ const AdminPage = () => {
     <MuiTheme>
       <CssBaseline />
       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-        <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />
+        {!isMobile && <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />}
 
-        <Box sx={{ flex: 1, p: 3, overflowY: 'auto', minWidth: 0, ml: `${SIDEBAR_W}px` , width: `calc(100% - ${SIDEBAR_W}px)` }}>
+        <Box sx={{ flex: 1, overflowY: 'auto', minWidth: 0, ml: isMobile ? 0 : `${SIDEBAR_W}px`, width: isMobile ? '100%' : `calc(100% - ${SIDEBAR_W}px)` }}>
+
+          {/* Mobile top tab bar */}
+          {isMobile && (
+            <Box sx={{ bgcolor: '#0f2e4e', position: 'sticky', top: 0, zIndex: 100 }}>
+              <Tabs
+                value={tab}
+                onChange={(_, v) => setTab(v)}
+                variant="scrollable"
+                scrollButtons="auto"
+                sx={{
+                  '& .MuiTab-root': { color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem', minWidth: 72, py: 1.5 },
+                  '& .Mui-selected': { color: '#fff' },
+                  '& .MuiTabs-indicator': { bgcolor: '#fff' },
+                }}
+              >
+                {TABS.map((t, i) => (
+                  <Tab key={t.label} label={t.badge > 0 ? `${t.label} (${t.badge})` : t.label} value={i} />
+                ))}
+              </Tabs>
+              <Box sx={{ display: 'flex', gap: 1, px: 1.5, pb: 1 }}>
+                <Button size="small" onClick={fetchAdminData} disabled={loading}
+                  sx={{ color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.2)', fontSize: '0.65rem' }}>
+                  {loading ? 'Loading…' : 'Refresh'}
+                </Button>
+                <Button size="small" onClick={handleLogout}
+                  sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>
+                  Logout
+                </Button>
+              </Box>
+            </Box>
+          )}
+
+          <Box sx={{ p: { xs: 2, sm: 3 } }}>
 
           {/* Feedback banners */}
           {errorMessage && (
@@ -261,7 +298,7 @@ const AdminPage = () => {
             </Paper>
           )}
 
-          <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>{TABS[tab].label}</Typography>
+          <Typography variant="h5" fontWeight={700} sx={{ mb: 3, display: { xs: 'none', sm: 'block' } }}>{TABS[tab].label}</Typography>
 
           {tab === 0 && <AdminDashboard cafes={cafes} tastings={tastings} submissions={submissions} alerts={alerts} />}
 
@@ -348,6 +385,8 @@ const AdminPage = () => {
               />
             </>
           )}
+        </Box>
+
         </Box>
 
         {/* Edit dialog */}
