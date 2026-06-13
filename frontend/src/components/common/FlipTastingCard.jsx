@@ -66,11 +66,11 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
             </StyledDivContent>
           </BoxMain>
           <RowAuthor>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flex: 1, px: 0.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', flex: 1, px: 1.5 }}>
               <Typography textTransform="uppercase" sx={{ fontWeight: 500, fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {tasting.username || 'Anonymous'}
               </Typography>
-              <Typography sx={{ flexShrink: 0, fontSize: '0.85rem', whiteSpace: 'nowrap', pl: 3, pr: 2, color: theme.palette.text.secondary }}>
+              <Typography sx={{ fontSize: '0.8rem', whiteSpace: 'nowrap', color: theme.palette.text.secondary }}>
                 {new Date(tasting.createdAt || tasting.date).toLocaleDateString()}
               </Typography>
             </Box>
