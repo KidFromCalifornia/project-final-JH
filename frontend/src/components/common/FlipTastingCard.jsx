@@ -176,7 +176,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         </Tooltip>
       )} */}
 
-      <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2, fontSize: '125%', overflow: 'visible' }}>
+      <CardContent sx={{ p: 3, pt: isMobile ? 6 : 3, display: 'flex', flexDirection: 'column', gap: 2, fontSize: '125%', overflow: 'visible' }}>
 
         {/* Origin + Region */}
         <Box sx={{ textAlign: 'center' }}>
