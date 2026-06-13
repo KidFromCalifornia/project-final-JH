@@ -91,7 +91,7 @@ export const RowAuthor = styled('div')(({ theme }) => ({
   margin: 0,
   height: 112,
   backgroundColor:
-    theme.palette.mode === 'dark' ? theme.palette.textMuted.main : theme.palette.light.main,
+    theme.palette.mode === 'dark' ? theme.palette.textMuted.main : '#ffffff',
   zIndex: 1,
   position: 'relative',
   borderBottomLeftRadius: theme.shape.borderRadius * 3,
