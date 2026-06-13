@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import {
-  Drawer, Box, Typography, Collapse, IconButton,
+  Drawer, Box, Typography, Collapse, IconButton, Tooltip,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useTheme, alpha } from '@mui/material/styles';
+import useFavourites from '../../hooks/useFavourites';
 
 const formatFeature = (f) => f.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -17,6 +20,7 @@ export default function CafeBottomSheet({
 }) {
   const theme = useTheme();
   const [featuresOpen, setFeaturesOpen] = useState(false);
+  const { isSaved, toggle } = useFavourites();
 
   useEffect(() => {
     setFeaturesOpen(false);
@@ -69,14 +73,21 @@ export default function CafeBottomSheet({
                 {selectedCafe.name}
               </Typography>
             </Box>
-            <IconButton
-              onClick={() => setSelectedCafe(null)}
-              size="small"
-              sx={{ color: mutedColor, ml: 1, mt: -0.5 }}
-              aria-label="Close"
-            >
-              <CloseIcon />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 1, mt: -0.5 }}>
+              <Tooltip title={isSaved('cafe', selectedCafe._id) ? 'Unsave cafe' : 'Save cafe'}>
+                <IconButton
+                  size="small"
+                  onClick={() => toggle('cafe', selectedCafe._id, selectedCafe.name)}
+                  sx={{ color: isSaved('cafe', selectedCafe._id) ? '#e57373' : mutedColor, '&:hover': { color: '#e57373' } }}
+                  aria-label="Save cafe"
+                >
+                  {isSaved('cafe', selectedCafe._id) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+                </IconButton>
+              </Tooltip>
+              <IconButton onClick={() => setSelectedCafe(null)} size="small" sx={{ color: mutedColor }} aria-label="Close">
+                <CloseIcon />
+              </IconButton>
+            </Box>
           </Box>
 
           {/* Address + neighbourhood */}

@@ -76,6 +76,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
   const [tastingChart, setTastingChart] = useState('brewMethod');
   const [trafficDays, setTrafficDays] = useState(30);
   const [traffic, setTraffic] = useState(null);
+  const [interest, setInterest] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('userToken');
@@ -86,6 +87,14 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       .then((d) => { if (d.success) setTraffic(d.data); })
       .catch(() => {});
   }, [trafficDays]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    fetch(`${API_BASE}/favourites/stats`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setInterest(d.data); })
+      .catch(() => {});
+  }, []);
 
   const tastingOptions = [
     { value: 'brewMethod', label: 'Brew Method' },
@@ -225,6 +234,52 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
         )}
       </ChartCard>
 
+      {/* Interest / Saves */}
+      {interest && (
+        <Paper elevation={0} sx={{ ...card, mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Typography sx={sectionTitle}>Customer Interest (Saves)</Typography>
+            <Box sx={{ px: 1.5, py: 0.5, bgcolor: '#f0f9ff', borderRadius: 1, fontSize: '0.75rem', fontWeight: 700, color: '#194f84' }}>
+              {interest.totalSaves} total saves
+            </Box>
+          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Typography sx={{ ...sectionTitle, mb: 1 }}>Most Saved Roasters</Typography>
+              {interest.topRoasters.length === 0 ? (
+                <Typography sx={{ color: '#9ca3af' }}>No saves yet</Typography>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={interest.topRoasters} layout="vertical" margin={{ left: 120, right: 16 }}>
+                    <CartesianGrid strokeDasharray="3 3" {...gridStyle} />
+                    <XAxis type="number" allowDecimals={false} tick={axisStyle} />
+                    <YAxis type="category" dataKey="name" tick={axisStyle} width={120} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="value" name="Saves" fill="#e57373" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography sx={{ ...sectionTitle, mb: 1 }}>Most Saved Cafes</Typography>
+              {interest.topCafes.length === 0 ? (
+                <Typography sx={{ color: '#9ca3af' }}>No saves yet</Typography>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={interest.topCafes} layout="vertical" margin={{ left: 120, right: 16 }}>
+                    <CartesianGrid strokeDasharray="3 3" {...gridStyle} />
+                    <XAxis type="number" allowDecimals={false} tick={axisStyle} />
+                    <YAxis type="category" dataKey="name" tick={axisStyle} width={120} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="value" name="Saves" fill="#194f84" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </Grid>
+          </Grid>
+        </Paper>
+      )}
+
       {/* Tasting breakdown */}
       <Paper elevation={0} sx={{ ...card, mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -260,6 +315,23 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
           </ResponsiveContainer>
         )}
       </Paper>
+
+      {/* Roaster leaderboard */}
+      {countBy(tastings, 'coffeeRoaster').length > 0 && (
+        <ChartCard title="Roaster Leaderboard — by Tasting Count">
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={countBy(tastings, 'coffeeRoaster').slice(0, 10)} layout="vertical" margin={{ left: 120, right: 16 }}>
+              <CartesianGrid strokeDasharray="3 3" {...gridStyle} />
+              <XAxis type="number" allowDecimals={false} tick={axisStyle} />
+              <YAxis type="category" dataKey="name" tick={axisStyle} width={120} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="value" name="Tastings" radius={[0, 4, 4, 0]}>
+                {countBy(tastings, 'coffeeRoaster').slice(0, 10).map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      )}
 
       {/* Cafes */}
       <Typography sx={{ ...sectionTitle, mb: 2 }}>Cafes</Typography>

@@ -19,6 +19,7 @@ import tastingRoutes from './routes/UserTastings.js';
 import metadataRoutes from './routes/metadata.js';
 import alertRoutes from './routes/alerts.js';
 import visitRoutes from './routes/visits.js';
+import favouriteRoutes from './routes/favourites.js';
 
 dotenv.config();
 
@@ -130,6 +131,7 @@ connectDB()
     app.use('/api/metadata', metadataRoutes);
     app.use('/api/alerts', alertRoutes);
     app.use('/api/visits', visitRoutes);
+    app.use('/api/favourites', favouriteRoutes);
 
     // Seed cafes
     app.get('/api/seed', async (_, res) => {

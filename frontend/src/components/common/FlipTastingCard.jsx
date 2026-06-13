@@ -9,8 +9,12 @@ import {
   useMediaQuery,
   IconButton,
   Dialog,
+  Tooltip,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import useFavourites from '../../hooks/useFavourites';
 import { useCafeStore } from '../../stores/useCafeStore';
 import {
   StyledCard,
@@ -32,6 +36,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showNotes, setShowNotes] = useState(false);
   const cafes = useCafeStore((state) => state.cafes);
+  const { isSaved, toggle } = useFavourites();
 
   const cafe = useMemo(() => {
     if (tasting?.cafeId && typeof tasting.cafeId === 'object' && tasting.cafeId.name) {
@@ -229,14 +234,25 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         )}
 
         {/* Footer */}
-        {locationDisplay && (
-          <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}`, display: 'flex', justifyContent: 'flex-end' }}>
+        <Box sx={{ pt: 2, borderTop: `1px solid ${theme.palette.divider}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {locationDisplay && (
             <Typography variant="caption" sx={{ color: '#fff' }}>
               <strong>{locationDisplay}</strong>
               {neighbourhood && ` • ${toTitleCase(neighbourhood)}`}
             </Typography>
-          </Box>
-        )}
+          )}
+          {tasting.coffeeRoaster && (
+            <Tooltip title={isSaved('roaster', tasting.coffeeRoaster) ? 'Unsave roaster' : 'Save roaster'}>
+              <IconButton
+                size="small"
+                onClick={(e) => { e.stopPropagation(); toggle('roaster', tasting.coffeeRoaster, tasting.coffeeRoaster); }}
+                sx={{ color: isSaved('roaster', tasting.coffeeRoaster) ? '#e57373' : 'rgba(255,255,255,0.5)', '&:hover': { color: '#e57373' } }}
+              >
+                {isSaved('roaster', tasting.coffeeRoaster) ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
 
       </CardContent>
       </Dialog>
