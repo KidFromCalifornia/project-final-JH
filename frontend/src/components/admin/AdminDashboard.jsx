@@ -132,7 +132,7 @@ const VBar = ({ data, height = 200 }) => {
 const Donut = ({ data, height = 240 }) => {
   const { pieLabel } = useChartTheme();
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
       <PieChart margin={{ top: 30, bottom: 30, left: 60, right: 60 }}>
         <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
           innerRadius={55} outerRadius={90} labelLine
