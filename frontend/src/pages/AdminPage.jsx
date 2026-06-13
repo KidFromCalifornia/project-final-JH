@@ -86,10 +86,10 @@ const AdminTable = ({ columns, rows, renderActions }) => {
   });
 
   return (
-    <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2, overflowX: 'auto' }}>
+    <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 2, overflowX: 'auto', bgcolor: '#ffffff' }}>
       <Table size="small">
         <TableHead>
-          <TableRow sx={{ bgcolor: 'background.paper' }}>
+          <TableRow sx={{ bgcolor: '#e8edf3' }}>
             {columns.map((c) => (
               <TableCell key={c.key}
                 onClick={() => handleSort(c.key)}
@@ -111,7 +111,7 @@ const AdminTable = ({ columns, rows, renderActions }) => {
               </TableCell>
             </TableRow>
           ) : sorted.map((row) => (
-            <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 } }}>
+            <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 }, '&:nth-of-type(even)': { bgcolor: '#f7f9fc' } }}>
               {columns.map((c) => (
                 <TableCell key={c.key} sx={{ fontSize: '0.85rem', color: 'text.primary', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {c.render ? c.render(row) : (row[c.key] ?? '—')}
