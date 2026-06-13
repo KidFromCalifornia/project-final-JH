@@ -241,7 +241,7 @@ const AdminPage = () => {
   return (
     <MuiTheme>
       <CssBaseline />
-      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
+      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
         <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />
 
         <Box sx={{ flex: 1, p: 3, overflowY: 'auto', minWidth: 0, ml: `${SIDEBAR_W}px` }}>

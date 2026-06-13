@@ -3,6 +3,7 @@ import {
   LineChart, Line, CartesianGrid, Legend, ResponsiveContainer,
 } from 'recharts';
 import { Box, Typography, Paper, MenuItem, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
 
 const PALETTE = [
@@ -12,45 +13,63 @@ const PALETTE = [
   '#37474f', '#880e4f', '#1b5e20', '#bf360c', '#4a148c',
 ];
 
-const C = { bg: '#fff', border: '1px solid #e8edf2', radius: 2, p: 2.5 };
-const label = { fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8', mb: 1.5, display: 'block' };
-const axis = { fontSize: 11, fill: '#94a3b8' };
-const grid = { stroke: '#f1f5f9' };
+const useChartTheme = () => {
+  const theme = useTheme();
+  const dark = theme.palette.mode === 'dark';
+  return {
+    bg: theme.palette.background.paper,
+    border: `1px solid ${theme.palette.divider}`,
+    labelColor: theme.palette.text.secondary,
+    axisColor: dark ? '#94a3b8' : '#64748b',
+    gridColor: dark ? '#334155' : '#f1f5f9',
+    tooltipBg: dark ? '#1e293b' : '#0f172a',
+    pieLabel: theme.palette.text.primary,
+    subColor: theme.palette.text.secondary,
+    paperBg: theme.palette.background.paper,
+    tooltipCursor: dark ? '#1e293b' : '#f8fafc',
+  };
+};
 
-const StatCard = ({ title, value, sub, color }) => (
-  <Paper elevation={0} sx={{ ...C, flex: 1, minWidth: 0, borderTop: `3px solid ${color}` }}>
-    <Typography sx={label}>{title}</Typography>
-    <Typography sx={{ fontSize: '2.2rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</Typography>
-    {sub && <Typography sx={{ fontSize: '0.72rem', color: '#94a3b8', mt: 0.75 }}>{sub}</Typography>}
-  </Paper>
-);
+const StatCard = ({ title, value, sub, color }) => {
+  const { labelColor, subColor, paperBg, border } = useChartTheme();
+  return (
+    <Paper elevation={0} sx={{ border, bgcolor: paperBg, flex: 1, minWidth: 0, borderRadius: 2, p: 2.5, borderTop: `3px solid ${color}` }}>
+      <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: labelColor, mb: 1.5, display: 'block' }}>{title}</Typography>
+      <Typography sx={{ fontSize: '2.2rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</Typography>
+      {sub && <Typography sx={{ fontSize: '0.72rem', color: subColor, mt: 0.75 }}>{sub}</Typography>}
+    </Paper>
+  );
+};
 
-const Section = ({ title, children, action }) => (
-  <Paper elevation={0} sx={{ ...C, mb: 2.5, width: '100%' }}>
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-      <Typography sx={{ ...label, mb: 0 }}>{title}</Typography>
-      {action}
-    </Box>
-    {children}
-  </Paper>
-);
+const Section = ({ title, children, action }) => {
+  const { labelColor, paperBg, border } = useChartTheme();
+  return (
+    <Paper elevation={0} sx={{ border, bgcolor: paperBg, borderRadius: 2, p: 2.5, mb: 2.5, width: '100%' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+        <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: labelColor, mb: 0, display: 'block' }}>{title}</Typography>
+        {action}
+      </Box>
+      {children}
+    </Paper>
+  );
+};
 
 const Tip = ({ active, payload, label: l }) => {
   if (!active || !payload?.length) return null;
   return (
-    <Paper elevation={4} sx={{ px: 1.5, py: 1, fontSize: '0.78rem', bgcolor: '#1e293b', color: '#fff', borderRadius: 1 }}>
+    <Paper elevation={4} sx={{ px: 1.5, py: 1, fontSize: '0.78rem', bgcolor: '#0f172a', color: '#f1f5f9', borderRadius: 1 }}>
       <strong>{l || payload[0]?.name}</strong>: {payload[0]?.value}
     </Paper>
   );
 };
 
-const OuterLabel = ({ cx, cy, midAngle, outerRadius, name, percent, value }) => {
+const OuterLabel = ({ cx, cy, midAngle, outerRadius, name, percent, value, fill }) => {
   if (percent < 0.04) return null;
   const r = outerRadius + 28;
   const x = cx + r * Math.cos(-midAngle * Math.PI / 180);
   const y = cy + r * Math.sin(-midAngle * Math.PI / 180);
   return (
-    <text x={x} y={y} fill="#1e293b" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={11} fontWeight={700}>
+    <text x={x} y={y} fill={fill || '#1e293b'} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={11} fontWeight={700}>
       {name} ({value})
     </text>
   );
@@ -76,61 +95,81 @@ const groupByMonth = (arr) => {
   return Object.entries(map).sort(([a], [b]) => a.localeCompare(b)).map(([name, value]) => ({ name, value }));
 };
 
-const HBar = ({ data, height = 220 }) => (
-  <ResponsiveContainer width="100%" height={height}>
-    <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24, top: 4, bottom: 4 }}>
-      <CartesianGrid strokeDasharray="3 3" {...grid} horizontal={false} />
-      <XAxis type="number" allowDecimals={false} tick={axis} axisLine={false} tickLine={false} />
-      <YAxis type="category" dataKey="name" tick={axis} width={130} axisLine={false} tickLine={false} />
-      <Tooltip content={<Tip />} cursor={{ fill: '#f8fafc' }} />
-      <Bar dataKey="value" radius={[0, 6, 6, 0]} maxBarSize={22}>
-        {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
-      </Bar>
-    </BarChart>
-  </ResponsiveContainer>
-);
+const HBar = ({ data, height = 220 }) => {
+  const { axisColor, gridColor, tooltipCursor } = useChartTheme();
+  const tick = { fontSize: 11, fill: axisColor };
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24, top: 4, bottom: 4 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+        <XAxis type="number" allowDecimals={false} tick={tick} axisLine={false} tickLine={false} />
+        <YAxis type="category" dataKey="name" tick={tick} width={130} axisLine={false} tickLine={false} />
+        <Tooltip content={<Tip />} cursor={{ fill: tooltipCursor }} />
+        <Bar dataKey="value" radius={[0, 6, 6, 0]} maxBarSize={22}>
+          {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
 
-const VBar = ({ data, height = 200, color = '#2e7dc8' }) => (
-  <ResponsiveContainer width="100%" height={height}>
-    <BarChart data={data} margin={{ left: 0, right: 8, top: 4, bottom: 4 }}>
-      <CartesianGrid strokeDasharray="3 3" {...grid} vertical={false} />
-      <XAxis dataKey="name" tick={axis} axisLine={false} tickLine={false} />
-      <YAxis allowDecimals={false} tick={axis} axisLine={false} tickLine={false} />
-      <Tooltip content={<Tip />} cursor={{ fill: '#f8fafc' }} />
-      <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={40}>
-        {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
-      </Bar>
-    </BarChart>
-  </ResponsiveContainer>
-);
+const VBar = ({ data, height = 200 }) => {
+  const { axisColor, gridColor, tooltipCursor } = useChartTheme();
+  const tick = { fontSize: 11, fill: axisColor };
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <BarChart data={data} margin={{ left: 0, right: 8, top: 4, bottom: 4 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+        <XAxis dataKey="name" tick={tick} axisLine={false} tickLine={false} />
+        <YAxis allowDecimals={false} tick={tick} axisLine={false} tickLine={false} />
+        <Tooltip content={<Tip />} cursor={{ fill: tooltipCursor }} />
+        <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={40}>
+          {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
 
-const Donut = ({ data, height = 240 }) => (
-  <ResponsiveContainer width="100%" height={height}>
-    <PieChart margin={{ top: 20, bottom: 20, left: 40, right: 40 }}>
-      <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
-        innerRadius={55} outerRadius={90} labelLine label={<OuterLabel />}>
-        {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
-      </Pie>
-      <Tooltip content={<Tip />} />
-    </PieChart>
-  </ResponsiveContainer>
-);
+const Donut = ({ data, height = 240 }) => {
+  const { pieLabel } = useChartTheme();
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <PieChart margin={{ top: 20, bottom: 20, left: 40, right: 40 }}>
+        <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
+          innerRadius={55} outerRadius={90} labelLine
+          label={(props) => <OuterLabel {...props} fill={pieLabel} />}>
+          {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
+        </Pie>
+        <Tooltip content={<Tip />} />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+};
 
-const Trend = ({ data, color, height = 200 }) => (
-  <ResponsiveContainer width="100%" height={height}>
-    <LineChart data={data} margin={{ left: 0, right: 8, top: 4, bottom: 4 }}>
-      <CartesianGrid strokeDasharray="3 3" {...grid} vertical={false} />
-      <XAxis dataKey="name" tick={axis} axisLine={false} tickLine={false} />
-      <YAxis allowDecimals={false} tick={axis} axisLine={false} tickLine={false} />
-      <Tooltip content={<Tip />} />
-      <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2.5} dot={{ r: 4, fill: color, strokeWidth: 0 }} />
-    </LineChart>
-  </ResponsiveContainer>
-);
+const Trend = ({ data, color, height = 200 }) => {
+  const { axisColor, gridColor } = useChartTheme();
+  const tick = { fontSize: 11, fill: axisColor };
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <LineChart data={data} margin={{ left: 0, right: 8, top: 4, bottom: 4 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+        <XAxis dataKey="name" tick={tick} axisLine={false} tickLine={false} />
+        <YAxis allowDecimals={false} tick={tick} axisLine={false} tickLine={false} />
+        <Tooltip content={<Tip />} />
+        <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2.5} dot={{ r: 4, fill: color, strokeWidth: 0 }} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+};
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
+  const theme = useTheme();
+  const muted = theme.palette.text.secondary;
+  const labelSx = { fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: muted, mb: 1.5, display: 'block' };
+
   const [tastingChart, setTastingChart] = useState('brewMethod');
   const [trafficDays, setTrafficDays] = useState(30);
   const [traffic, setTraffic] = useState(null);
@@ -193,20 +232,20 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
           </ToggleButtonGroup>
         }
       >
-        {!traffic ? <Typography sx={{ color: '#94a3b8', py: 3, textAlign: 'center' }}>Loading…</Typography> : (
+        {!traffic ? <Typography sx={{ color: muted, py: 3, textAlign: 'center' }}>Loading…</Typography> : (
           <Box sx={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 2 }}>
             <Box>
-              <Typography sx={label}>Visits per Day</Typography>
+              <Typography sx={labelSx}>Visits per Day</Typography>
               {traffic.byDay.length === 0
-                ? <Typography sx={{ color: '#94a3b8' }}>No data yet</Typography>
+                ? <Typography sx={{ color: muted }}>No data yet</Typography>
                 : <Trend data={traffic.byDay} color="#2e7dc8" height={180} />}
             </Box>
             <Box>
-              <Typography sx={label}>Top Pages</Typography>
+              <Typography sx={labelSx}>Top Pages</Typography>
               <HBar data={traffic.byPage} height={180} />
             </Box>
             <Box>
-              <Typography sx={label}>By Device</Typography>
+              <Typography sx={labelSx}>By Device</Typography>
               <Donut data={traffic.byDevice} height={180} />
             </Box>
           </Box>
@@ -218,15 +257,15 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
         <Section title="Customer Interest — Saves">
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
             <Box>
-              <Typography sx={label}>Most Saved Roasters</Typography>
+              <Typography sx={labelSx}>Most Saved Roasters</Typography>
               {interest.topRoasters.length === 0
-                ? <Typography sx={{ color: '#94a3b8' }}>No saves yet</Typography>
+                ? <Typography sx={{ color: muted }}>No saves yet</Typography>
                 : <HBar data={interest.topRoasters} height={200} />}
             </Box>
             <Box>
-              <Typography sx={label}>Most Saved Cafes</Typography>
+              <Typography sx={labelSx}>Most Saved Cafes</Typography>
               {interest.topCafes.length === 0
-                ? <Typography sx={{ color: '#94a3b8' }}>No saves yet</Typography>
+                ? <Typography sx={{ color: muted }}>No saves yet</Typography>
                 : <HBar data={interest.topCafes} height={200} />}
             </Box>
           </Box>
@@ -243,7 +282,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
         }
       >
         {selectedData.length === 0
-          ? <Typography sx={{ color: '#94a3b8', py: 3, textAlign: 'center' }}>No data</Typography>
+          ? <Typography sx={{ color: muted, py: 3, textAlign: 'center' }}>No data</Typography>
           : isPie
             ? <Donut data={selectedData} height={280} />
             : <HBar data={selectedData} height={Math.max(200, selectedData.length * 32)} />}
@@ -253,12 +292,12 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2.5 }}>
         <Section title="Tastings Over Time">
           {byMonth.length === 0
-            ? <Typography sx={{ color: '#94a3b8' }}>No data yet</Typography>
+            ? <Typography sx={{ color: muted }}>No data yet</Typography>
             : <Trend data={byMonth} color="#2e7dc8" height={180} />}
         </Section>
         <Section title="Cafes by Category">
           {byCat.length === 0
-            ? <Typography sx={{ color: '#94a3b8' }}>No data</Typography>
+            ? <Typography sx={{ color: muted }}>No data</Typography>
             : <Donut data={byCat} height={220} />}
         </Section>
       </Box>
@@ -267,7 +306,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2.5 }}>
         <Section title="Cafes by Neighbourhood">
           {byNeigh.length === 0
-            ? <Typography sx={{ color: '#94a3b8' }}>No data</Typography>
+            ? <Typography sx={{ color: muted }}>No data</Typography>
             : <HBar data={byNeigh} height={Math.max(200, byNeigh.length * 30)} />}
         </Section>
         {subByMonth.length > 0 && (
