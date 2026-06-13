@@ -178,11 +178,11 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
 
         {/* Origin + Region */}
         <Box sx={{ textAlign: 'center' }}>
-          <Typography sx={{ fontWeight: 700, fontSize: 'clamp(1.1rem, 3vw, 1.6rem)' }}>
+          <Typography sx={{ fontWeight: 700, fontSize: '1.4rem' }}>
             {toTitleCase(tasting.coffeeOrigin) || '—'}
           </Typography>
           {tasting.coffeeOriginRegion && (
-            <Typography sx={{ color: theme.palette.accent.main, fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)' }}>
+            <Typography sx={{ color: theme.palette.accent.main, fontSize: '0.9rem' }}>
               {toTitleCase(tasting.coffeeOriginRegion)}
             </Typography>
           )}
@@ -191,14 +191,14 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         {/* Brew Method + Roaster */}
         {tasting.brewMethod && (
           <Box>
-            <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', fontSize: 'clamp(0.65rem, 1.2vw, 0.8rem)' }}>Brew Method:</Typography>
-            <Typography sx={{ pl: 1, fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)' }}>{toTitleCase(tasting.brewMethod)}</Typography>
+            <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', fontSize: '0.7rem' }}>Brew Method:</Typography>
+            <Typography sx={{ pl: 1, fontSize: '0.9rem' }}>{toTitleCase(tasting.brewMethod)}</Typography>
           </Box>
         )}
         {tasting.coffeeRoaster && (
           <Box>
-            <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', fontSize: 'clamp(0.65rem, 1.2vw, 0.8rem)' }}>Roaster:</Typography>
-            <Typography sx={{ pl: 1, fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)' }}>{toTitleCase(tasting.coffeeRoaster)}</Typography>
+            <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', fontSize: '0.7rem' }}>Roaster:</Typography>
+            <Typography sx={{ pl: 1, fontSize: '0.9rem' }}>{toTitleCase(tasting.coffeeRoaster)}</Typography>
           </Box>
         )}
 
@@ -206,20 +206,20 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1 }}>
           {tasting.roastLevel && (
             <Box>
-              <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', display: 'block', fontSize: 'clamp(0.6rem, 1.1vw, 0.75rem)' }}>Roast:</Typography>
-              <Typography sx={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)' }}>{toTitleCase(tasting.roastLevel)}</Typography>
+              <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', display: 'block', fontSize: '0.65rem' }}>Roast:</Typography>
+              <Typography sx={{ fontSize: '0.9rem' }}>{toTitleCase(tasting.roastLevel)}</Typography>
             </Box>
           )}
           {tasting.acidity && (
             <Box>
-              <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', display: 'block', fontSize: 'clamp(0.6rem, 1.1vw, 0.75rem)' }}>Acidity:</Typography>
-              <Typography sx={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)' }}>{toTitleCase(tasting.acidity)}</Typography>
+              <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', display: 'block', fontSize: '0.65rem' }}>Acidity:</Typography>
+              <Typography sx={{ fontSize: '0.9rem' }}>{toTitleCase(tasting.acidity)}</Typography>
             </Box>
           )}
           {tasting.mouthFeel && (
             <Box>
-              <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', display: 'block', fontSize: 'clamp(0.6rem, 1.1vw, 0.75rem)' }}>Body:</Typography>
-              <Typography sx={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)' }}>{toTitleCase(tasting.mouthFeel)}</Typography>
+              <Typography textTransform="uppercase" sx={{ fontWeight: 'bold', display: 'block', fontSize: '0.65rem' }}>Body:</Typography>
+              <Typography sx={{ fontSize: '0.9rem' }}>{toTitleCase(tasting.mouthFeel)}</Typography>
             </Box>
           )}
         </Box>
