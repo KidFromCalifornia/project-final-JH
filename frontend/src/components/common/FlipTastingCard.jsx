@@ -74,7 +74,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         onClick={handleFlip}
       >
         <StyledCard>
-          <BoxMain minHeight={0} height="75%" position="relative">
+          <BoxMain minHeight={336} position="relative">
             <StyledDivContent className="tasting-cd">
               <TypographyTitle role="title" variant="h3">
                 {toTitleCase(tasting.coffeeName)}
