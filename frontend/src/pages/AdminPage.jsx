@@ -69,14 +69,33 @@ const SidebarNav = ({ tabs, tab, setTab, onRefresh, onLogout, loading }) => (
 
 const AdminTable = ({ columns, rows, renderActions }) => {
   const [confirmId, setConfirmId] = useState(null);
+  const [sortKey, setSortKey] = useState(null);
+  const [sortDir, setSortDir] = useState('asc');
+
+  const handleSort = (key) => {
+    if (sortKey === key) setSortDir((d) => d === 'asc' ? 'desc' : 'asc');
+    else { setSortKey(key); setSortDir('asc'); }
+  };
+
+  const sorted = [...rows].sort((a, b) => {
+    if (!sortKey) return 0;
+    const av = a[sortKey] ?? '';
+    const bv = b[sortKey] ?? '';
+    const cmp = String(av).localeCompare(String(bv), undefined, { numeric: true });
+    return sortDir === 'asc' ? cmp : -cmp;
+  });
+
   return (
     <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2, overflowX: 'auto' }}>
       <Table size="small">
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.50' }}>
             {columns.map((c) => (
-              <TableCell key={c.key} sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary' }}>
-                {c.label}
+              <TableCell key={c.key}
+                onClick={() => handleSort(c.key)}
+                sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
+                  '&:hover': { color: 'text.primary' } }}>
+                {c.label} {sortKey === c.key ? (sortDir === 'asc' ? '↑' : '↓') : ''}
               </TableCell>
             ))}
             <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', py: 1.5, color: 'text.secondary' }}>
@@ -85,13 +104,13 @@ const AdminTable = ({ columns, rows, renderActions }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.length === 0 ? (
+          {sorted.length === 0 ? (
             <TableRow>
               <TableCell colSpan={columns.length + 1} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
                 Nothing here yet
               </TableCell>
             </TableRow>
-          ) : rows.map((row) => (
+          ) : sorted.map((row) => (
             <TableRow key={row._id} hover sx={{ '&:last-child td': { border: 0 } }}>
               {columns.map((c) => (
                 <TableCell key={c.key} sx={{ fontSize: '0.85rem', maxWidth: c.maxWidth || 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
