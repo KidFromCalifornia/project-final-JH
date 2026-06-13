@@ -130,18 +130,28 @@ const VBar = ({ data, height = 200 }) => {
 };
 
 const Donut = ({ data, height = 240 }) => {
-  const { pieLabel } = useChartTheme();
+  const { labelColor } = useChartTheme();
   return (
-    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
-      <PieChart margin={{ top: 30, bottom: 30, left: 60, right: 60 }}>
-        <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
-          innerRadius={55} outerRadius={90} labelLine
-          label={(props) => <OuterLabel {...props} fill={pieLabel} />}>
-          {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
-        </Pie>
-        <Tooltip content={<Tip />} />
-      </PieChart>
-    </ResponsiveContainer>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+      <ResponsiveContainer width={height} height={height} style={{ flexShrink: 0 }}>
+        <PieChart>
+          <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
+            innerRadius={55} outerRadius={90} labelLine={false} label={false}>
+            {data.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
+          </Pie>
+          <Tooltip content={<Tip />} />
+        </PieChart>
+      </ResponsiveContainer>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, minWidth: 0, flex: 1 }}>
+        {data.map((entry, i) => (
+          <Box key={entry.name} sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+            <Box sx={{ width: 10, height: 10, borderRadius: '50%', flexShrink: 0, bgcolor: PALETTE[i % PALETTE.length] }} />
+            <Typography noWrap sx={{ fontSize: '0.78rem', color: labelColor, flex: 1 }}>{entry.name}</Typography>
+            <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, flexShrink: 0 }}>{entry.value}</Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
   );
 };
 
