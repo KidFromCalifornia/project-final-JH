@@ -31,7 +31,7 @@ const useChartTheme = () => {
 const StatCard = ({ title, value, sub, color }) => {
   const { labelColor, subColor, paperBg, border } = useChartTheme();
   return (
-    <Paper elevation={0} sx={{ border, bgcolor: paperBg, flex: 1, minWidth: 0, borderRadius: 2, p: 2.5, borderTop: `3px solid ${color}` }}>
+    <Paper elevation={0} sx={{ border, bgcolor: paperBg, flex: 1, minWidth: 0, borderRadius: 2, p: 3.5, borderTop: `3px solid ${color}` }}>
       <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: labelColor, mb: 1.5, display: 'block' }}>{title}</Typography>
       <Typography sx={{ fontSize: '2.2rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</Typography>
       {sub && <Typography sx={{ fontSize: '0.72rem', color: subColor, mt: 0.75 }}>{sub}</Typography>}
