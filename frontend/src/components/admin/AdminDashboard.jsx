@@ -6,10 +6,10 @@ import { Box, Typography, Paper, MenuItem, TextField, ToggleButton, ToggleButton
 import { useState, useEffect } from 'react';
 
 const PALETTE = [
-  '#2e7dc8', '#e05c5c', '#2ebc7a', '#f5a623', '#9b59b6',
-  '#1abc9c', '#e67e22', '#e91e8c', '#27ae60', '#ff5722',
-  '#00bcd4', '#8bc34a', '#ff9800', '#673ab7', '#f06292',
-  '#4db6ac', '#ffb300', '#5c6bc0', '#26a69a', '#ef5350',
+  '#1565c0', '#c62828', '#2e7d32', '#e65100', '#6a1b9a',
+  '#00838f', '#f9a825', '#ad1457', '#558b2f', '#4527a0',
+  '#0277bd', '#6d4c41', '#00695c', '#d84315', '#283593',
+  '#37474f', '#880e4f', '#1b5e20', '#bf360c', '#4a148c',
 ];
 
 const C = { bg: '#fff', border: '1px solid #e8edf2', radius: 2, p: 2.5 };
@@ -50,7 +50,7 @@ const OuterLabel = ({ cx, cy, midAngle, outerRadius, name, percent, value }) => 
   const x = cx + r * Math.cos(-midAngle * Math.PI / 180);
   const y = cy + r * Math.sin(-midAngle * Math.PI / 180);
   return (
-    <text x={x} y={y} fill="#475569" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={11} fontWeight={600}>
+    <text x={x} y={y} fill="#1e293b" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={11} fontWeight={700}>
       {name} ({value})
     </text>
   );
