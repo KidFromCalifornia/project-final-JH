@@ -23,6 +23,7 @@ import {
 import LoginForm from '../components/forms/LoginForm.jsx';
 import MuiTheme from '../components/layout/MuiTheme.jsx';
 import CafeEditForm from '../components/admin/CafeEditForm.jsx';
+import AdminDashboard from '../components/admin/AdminDashboard.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -182,6 +183,7 @@ const AdminPage = () => {
   if (loading) return <Box textAlign="center" mt={4}><Typography variant="h6">Loading…</Typography></Box>;
 
   const TABS = [
+    { label: 'Dashboard', badge: null },
     { label: 'Submissions', badge: submissions.length },
     { label: 'Cafes', badge: null },
     { label: 'Tastings', badge: null },
@@ -258,8 +260,13 @@ const AdminPage = () => {
 
         <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>{TABS[tab].label}</Typography>
 
-        {/* Tab: Submissions */}
+        {/* Tab: Dashboard */}
         {tab === 0 && (
+          <AdminDashboard cafes={cafes} tastings={tastings} submissions={submissions} alerts={alerts} />
+        )}
+
+        {/* Tab: Submissions */}
+        {tab === 1 && (
           <Box>
             {submissions.length === 0 ? (
               <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No pending submissions</Typography>
@@ -282,7 +289,7 @@ const AdminPage = () => {
         )}
 
         {/* Tab: Cafes */}
-        {tab === 1 && (
+        {tab === 2 && (
           <Box>
             {cafes.length === 0 ? (
               <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No cafes</Typography>
@@ -303,7 +310,7 @@ const AdminPage = () => {
         )}
 
         {/* Tab: Tastings */}
-        {tab === 2 && (
+        {tab === 3 && (
           <Box>
             {tastings.length === 0 ? (
               <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>No tastings</Typography>
@@ -325,7 +332,7 @@ const AdminPage = () => {
         )}
 
         {/* Tab: Alerts */}
-        {tab === 3 && (
+        {tab === 4 && (
           <Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
               <Button variant="contained" size="small" onClick={() => setShowAlertForm((v) => !v)}>
