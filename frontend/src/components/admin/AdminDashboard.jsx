@@ -215,7 +215,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 10);
   })();
 
-  const isPie = ['brewMethod', 'roastLevel', 'acidity', 'mouthFeel'].includes(tastingChart);
+  const isPie = false;
   const selectedData = countBy(tastings, tastingChart).slice(0, 12);
 
   return (
