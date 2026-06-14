@@ -254,7 +254,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                   <TextField
                     label="Coffee Name *"
                     name="coffeeName"
@@ -268,7 +268,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                   <TextField
                     label="Roaster *"
                     name="coffeeRoaster"
@@ -282,7 +282,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                   <TextField
                     label="Country"
                     name="coffeeOrigin"
@@ -294,7 +294,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                   <TextField
                     label="Region"
                     name="coffeeOriginRegion"
@@ -306,7 +306,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                   <TextField
                     label="Process"
                     name="process"

@@ -428,6 +428,7 @@ const AdminPage = () => {
                 <TextField variant="filled" fullWidth label="Roaster" value={editData.coffeeRoaster || ''} onChange={(e) => setEditData({ ...editData, coffeeRoaster: e.target.value })} />
                 <TextField variant="filled" fullWidth label="Country of Origin" value={editData.coffeeOrigin || ''} onChange={(e) => setEditData({ ...editData, coffeeOrigin: e.target.value })} />
                 <TextField variant="filled" fullWidth label="Region" value={editData.coffeeOriginRegion || ''} onChange={(e) => setEditData({ ...editData, coffeeOriginRegion: e.target.value })} />
+                <TextField variant="filled" fullWidth label="Process" value={editData.process || ''} onChange={(e) => setEditData({ ...editData, process: e.target.value })} />
                 <TextField variant="filled" fullWidth select label="Brew Method" value={editData.brewMethod || ''} onChange={(e) => setEditData({ ...editData, brewMethod: e.target.value })}>
                   {['espresso', 'filtered coffee', 'pour over', 'other'].map((m) => <MenuItem key={m} value={m}>{m}</MenuItem>)}
                 </TextField>
