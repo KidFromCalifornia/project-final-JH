@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -6,12 +6,30 @@ import {
   Paper,
   Link,
   Divider,
+  Dialog,
 } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import { Instagram as InstagramIcon } from '@mui/icons-material';
+import LoginForm from '../components/forms/LoginForm.jsx';
 
 const AboutMePage = () => {
   const theme = useTheme();
+  const [tapCount, setTapCount] = useState(0);
+  const [showLogin, setShowLogin] = useState(false);
+  const tapTimer = useRef(null);
+
+  const handleLogoTap = () => {
+    setTapCount((prev) => {
+      const next = prev + 1;
+      if (next >= 3) {
+        setShowLogin(true);
+        return 0;
+      }
+      clearTimeout(tapTimer.current);
+      tapTimer.current = setTimeout(() => setTapCount(0), 2000);
+      return next;
+    });
+  };
 
   useEffect(() => {
     document.title = 'About — Stockholm Coffee Club';
@@ -73,10 +91,13 @@ const AboutMePage = () => {
             component="h2"
             gutterBottom
             color={theme.palette.light.main}
+            onClick={handleLogoTap}
             sx={{
               textTransform: 'uppercase',
               fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem' },
               textAlign: { xs: 'center', sm: 'left' },
+              cursor: 'default',
+              userSelect: 'none',
             }}
           >
             Stockholm's Coffee Club
@@ -156,6 +177,10 @@ const AboutMePage = () => {
         </Typography>
       </Paper>
     </Container>
+
+    <Dialog open={showLogin} onClose={() => setShowLogin(false)} maxWidth="xs" fullWidth>
+      <LoginForm setIsAdmin={(val) => { localStorage.setItem('admin', val); setShowLogin(false); window.location.href = '/admin'; }} onClose={() => setShowLogin(false)} />
+    </Dialog>
   );
 };
 
