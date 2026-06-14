@@ -44,7 +44,7 @@ const LoadingLogo = ({ message } = {}) => {
             width: 300,
             height: 300,
             animation: `${spin} 8s ease-in-out infinite`,
-            filter: isDarkMode ? 'brightness(0) invert(1)' : undefined,
+            filter: 'brightness(0) invert(1)',
             transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
             '&:hover': { animationPlayState: 'paused' },
