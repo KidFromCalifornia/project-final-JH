@@ -73,11 +73,10 @@ router.post('/', async (req, res) => {
     if (!tastingData.cafeId) delete tastingData.cafeId;
     const trimmedSignature = (signature || '').trim();
 
-    // Rate limit: max 5 tastings per hour per username (or IP for anonymous)
-    const rateLimitKey = trimmedSignature || req.ip;
+    // Rate limit: max 5 tastings per hour per IP
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const recentCount = await CoffeeTasting.countDocuments({
-      username: trimmedSignature || 'Anonymous',
+      submitterIp: req.ip,
       createdAt: { $gte: oneHourAgo },
     });
     if (recentCount >= 5) {
@@ -110,6 +109,7 @@ router.post('/', async (req, res) => {
       userId,
       username,
       isPublic: true,
+      submitterIp: req.ip,
     });
     const savedTastingNote = await newTastingNote.save();
 
