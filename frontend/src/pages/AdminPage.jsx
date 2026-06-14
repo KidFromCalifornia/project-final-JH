@@ -243,7 +243,7 @@ const AdminPage = () => {
   };
 
   if (!isAdmin) return <LoginForm setIsAdmin={setIsAdmin} onClose={() => {}} />;
-  if (loading) return <LoadingLogo message="Loading admin data…" />;
+  if (loading) return <LoadingLogo message="Please wait, coffee is brewing…" />;
 
   const TABS = [
     { label: 'Dashboard', badge: null },

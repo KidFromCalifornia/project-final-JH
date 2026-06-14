@@ -166,7 +166,7 @@ const MapPage = () => {
       {/* Cold start overlay */}
       {loadingSlow && (
         <Box sx={{ position: 'fixed', inset: 0, zIndex: 1500, bgcolor: 'background.default' }}>
-          <LoadingLogo message="Waking up the server, hang tight…" />
+          <LoadingLogo message="Please wait, coffee is brewing…" />
         </Box>
       )}
 
