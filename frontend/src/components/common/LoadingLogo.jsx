@@ -22,6 +22,7 @@ const LoadingLogo = ({ message } = {}) => {
       alignItems="center"
       justifyContent="center"
       minHeight="100vh"
+      sx={{ bgcolor: '#0f1923' }}
     >
       <Box
         sx={{
@@ -45,7 +46,7 @@ const LoadingLogo = ({ message } = {}) => {
             width: 300,
             height: 300,
             animation: 'spin 8s ease-in-out infinite',
-            filter: isDarkMode ? 'brightness(0) invert(1)' : undefined,
+            filter: 'brightness(0) invert(1)',
             transform: 'translateZ(0)', // Force hardware acceleration
             backfaceVisibility: 'hidden', // Reduce motion blur
             '&:hover': {
@@ -64,7 +65,7 @@ const LoadingLogo = ({ message } = {}) => {
           }}
         />
       </Box>
-      <Typography variant="subtitle1" mt={2} sx={{ color: theme.palette.text.primary }}>
+      <Typography variant="subtitle1" mt={2} sx={{ color: '#ffffff' }}>
         {message || 'Currently Brewing...'}
       </Typography>
     </Box>
