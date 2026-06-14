@@ -132,8 +132,9 @@ const VBar = ({ data, height = 200 }) => {
 const Donut = ({ data, height = 240 }) => {
   const { labelColor } = useChartTheme();
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'center', sm: 'center' }, gap: 3 }}>
-      <ResponsiveContainer width={height} height={height} style={{ flexShrink: 0 }}>
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'center', sm: 'center' }, gap: 3, minWidth: 0 }}>
+      <Box sx={{ width: { xs: '100%', sm: height }, flexShrink: 0 }}>
+      <ResponsiveContainer width="100%" height={height}>
         <PieChart>
           <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
             innerRadius={55} outerRadius={90} labelLine={false} label={false}>
@@ -142,6 +143,7 @@ const Donut = ({ data, height = 240 }) => {
           <Tooltip content={<Tip />} />
         </PieChart>
       </ResponsiveContainer>
+      </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, minWidth: 0, flex: 1 }}>
         {data.map((entry, i) => (
           <Box key={entry.name} sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
