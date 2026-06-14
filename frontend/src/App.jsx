@@ -30,7 +30,14 @@ const App = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showAddCafe, setShowAddCafe] = useState(false);
   const [liveAlerts, setLiveAlerts] = useState([]);
-  const [dismissedAlerts, setDismissedAlerts] = useState([]);
+  const [dismissedAlerts, setDismissedAlerts] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('dismissedAlerts') || '{}');
+      const now = Date.now();
+      const threeDays = 3 * 24 * 60 * 60 * 1000;
+      return Object.fromEntries(Object.entries(stored).filter(([, ts]) => now - ts < threeDays));
+    } catch { return {}; }
+  });
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,7 +72,13 @@ const App = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const visibleAlerts = liveAlerts.filter((a) => !dismissedAlerts.includes(a._id));
+  const visibleAlerts = liveAlerts.filter((a) => !dismissedAlerts[a._id]);
+
+  const dismissAlert = (id) => {
+    const updated = { ...dismissedAlerts, [id]: Date.now() };
+    setDismissedAlerts(updated);
+    try { localStorage.setItem('dismissedAlerts', JSON.stringify(updated)); } catch {}
+  };
 
   return (
     <AlertProvider>
@@ -73,19 +86,36 @@ const App = () => {
         <PageTracker />
         <ConsentBanner />
         {visibleAlerts.length > 0 && (
-          <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 2000, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            {visibleAlerts.map((alert) => (
+          <Box sx={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 2000,
+            width: '80%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+          }}>
+            {visibleAlerts.map((a) => (
               <Alert
-                key={alert._id}
-                severity={alert.severity || 'info'}
+                key={a._id}
+                severity={a.severity || 'info'}
+                variant="outlined"
                 action={
-                  <IconButton size="small" onClick={() => setDismissedAlerts((prev) => [...prev, alert._id])}>
+                  <IconButton size="small" onClick={() => dismissAlert(a._id)}>
                     <CloseIcon fontSize="inherit" />
                   </IconButton>
                 }
-                sx={{ borderRadius: 0, width: '100%' }}
+                sx={{
+                  borderWidth: 2,
+                  borderRadius: 2,
+                  backdropFilter: 'blur(6px)',
+                  backgroundColor: 'background.paper',
+                  '& .MuiAlert-message': { fontWeight: 700, fontSize: '1rem' },
+                }}
               >
-                {alert.message}
+                {a.message}
               </Alert>
             ))}
           </Box>
