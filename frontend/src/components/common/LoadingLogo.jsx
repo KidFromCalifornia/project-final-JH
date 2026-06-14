@@ -22,6 +22,7 @@ const LoadingLogo = ({ message } = {}) => {
       alignItems="center"
       justifyContent="center"
       minHeight="100vh"
+      sx={{ bgcolor: 'background.default' }}
     >
       <Box
         sx={{
@@ -65,7 +66,7 @@ const LoadingLogo = ({ message } = {}) => {
           }}
         />
       </Box>
-      <Typography variant="subtitle1" mt={2} sx={{ color: '#ffffff' }}>
+      <Typography variant="subtitle1" mt={2} sx={{ color: 'text.primary' }}>
         {message || 'Currently Brewing...'}
       </Typography>
     </Box>
