@@ -123,7 +123,14 @@ app.get('/api', (_, res) => {
 
 // Connect to DB and then register routes + start server
 connectDB()
-  .then(() => {
+  .then(async () => {
+    // Fix non-sparse email index that causes duplicate null errors
+    try {
+      await User.collection.dropIndex('email_1');
+      console.log('ℹ️  Dropped old email_1 index — will be recreated as sparse');
+    } catch (_) { /* index may not exist or already correct */ }
+    await User.syncIndexes();
+
     // Register routes only after DB connection
     app.use('/api/cafes', cafeRoutes);
     app.use('/api/auth', authRoutes);
