@@ -310,7 +310,7 @@ const AdminPage = () => {
           </>
         )}
 
-        <Box sx={{ flex: 1, p: { xs: 2, sm: 3 }, overflowY: 'auto', minWidth: 0, ml: isMobile ? 0 : `${SIDEBAR_W}px`, width: isMobile ? '100dvw' : undefined }}>
+        <Box sx={{ flex: 1, p: { xs: 2, sm: 3 }, overflowY: 'auto', overflowX: 'hidden', minWidth: 0, ml: isMobile ? 0 : `${SIDEBAR_W}px`, width: isMobile ? '100dvw' : `calc(100dvw - ${NAV_W}px - ${SIDEBAR_W}px)` }}>
 
           {/* Feedback banners */}
           {errorMessage && (
