@@ -43,6 +43,7 @@ import {
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
   FilterList as FilterListIcon,
+  AddCircleOutline as AddCircleOutlineIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
   Info as InfoIcon,
   Search as SearchIcon,
@@ -69,6 +70,8 @@ const MobileBottomNav = () => {
   const setSearchResults = useCafeStore((state) => state.setSearchResults);
   const hasActiveFilters = (cafeTypeQuery && cafeTypeQuery !== 'all') || (neighborhoodQuery && neighborhoodQuery !== 'all');
   const isMapPage = location.pathname === '/';
+  const isTastingsPage = location.pathname === '/tastings';
+  const setTastingFormOpen = useCafeStore((state) => state.setTastingFormOpen);
 
   const categories = Array.from(new Set(cafes.map((cafe) => cafe.category).filter(Boolean)));
   const neighborhoods = Array.from(
@@ -247,6 +250,20 @@ const MobileBottomNav = () => {
                     fontSize="medium"
                     sx={{ color: searchOpen ? theme.palette.accent?.main || navIconColor : navIconColor, transition: 'color 200ms ease' }}
                   />
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {isTastingsPage && (
+              <Tooltip title="Add Tasting" arrow>
+                <IconButton
+                  color="inherit"
+                  size="large"
+                  aria-label="Add tasting"
+                  sx={{ p: 0.75, '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}
+                  onClick={() => setTastingFormOpen(true)}
+                >
+                  <AddCircleOutlineIcon fontSize="medium" sx={{ color: navIconColor }} />
                 </IconButton>
               </Tooltip>
             )}

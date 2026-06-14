@@ -20,7 +20,8 @@ const TastingsPage = () => {
   const fetchTastings = useCafeStore((state) => state.fetchTastings);
   const clearFilters = useCafeStore((state) => state.clearFilters);
 
-  const [showTastingForm, setShowTastingForm] = React.useState(false);
+  const showTastingForm = useCafeStore((state) => state.tastingFormOpen);
+  const setShowTastingForm = useCafeStore((state) => state.setTastingFormOpen);
   const [displayedCount, setDisplayedCount] = React.useState(12);
   const [flippedCardId, setFlippedCardId] = React.useState(null);
 
@@ -149,7 +150,7 @@ const TastingsPage = () => {
           }
           onClick={() => setShowTastingForm((prev) => !prev)}
           aria-label={showTastingForm ? 'Close tasting form' : 'Add new coffee tasting'}
-          sx={{ minWidth: '8rem' }}
+          sx={{ minWidth: '8rem', display: { xs: 'none', sm: 'flex' } }}
         >
           {showTastingForm ? 'Close' : 'Add Tasting'}
         </Button>

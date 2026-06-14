@@ -28,6 +28,9 @@ export const useCafeStore = create((set, get) => ({
     set({ themeMode: mode });
   },
 
+  tastingFormOpen: false,
+  setTastingFormOpen: (open) => set({ tastingFormOpen: open }),
+
   cafes: [],
   setCafes: (cafes) =>
     set((state) => {
