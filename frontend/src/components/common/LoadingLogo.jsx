@@ -61,6 +61,7 @@ const LoadingLogo = ({ message } = {}) => {
             position: 'absolute',
             width: 150,
             height: 150,
+            filter: isDarkMode ? 'brightness(0) invert(1)' : undefined,
           }}
         />
       </Box>
