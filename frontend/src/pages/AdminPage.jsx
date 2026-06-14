@@ -241,9 +241,6 @@ const AdminPage = () => {
     if (window.confirm('Logout?')) { localStorage.removeItem('admin'); localStorage.removeItem('userToken'); setIsAdmin(false); }
   };
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
   if (!isAdmin) return <LoginForm setIsAdmin={setIsAdmin} onClose={() => {}} />;
   if (loading) return <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh"><Typography>Loading…</Typography></Box>;
 
