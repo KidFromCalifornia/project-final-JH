@@ -205,6 +205,7 @@ const TastingsPage = () => {
                 sm: 'repeat(auto-fit, minmax(280px, 1fr))',
                 md: 'repeat(auto-fit, minmax(320px, 1fr))',
               },
+              justifyItems: 'center',
               gap: 3,
               mt: 2,
               padding: { xs: '0.75rem 0.5rem 1rem 0.5rem', sm: '0.75rem 1rem 1rem 1rem' },
