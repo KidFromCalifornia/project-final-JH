@@ -366,7 +366,7 @@ const AdminPage = () => {
 
           {tab === 4 && (
             <>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2, pr: { xs: 1, sm: 0 } }}>
                 <Button variant="contained" size="small" onClick={() => setShowAlertForm((v) => !v)}>
                   {showAlertForm ? 'Cancel' : '+ New Alert'}
                 </Button>
