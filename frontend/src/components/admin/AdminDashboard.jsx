@@ -217,7 +217,6 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 10);
   })();
 
-  const isPie = false;
   const selectedData = countBy(tastings, tastingChart).slice(0, 12);
 
   return (
@@ -294,9 +293,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       >
         {selectedData.length === 0
           ? <Typography sx={{ color: muted, py: 3, textAlign: 'center' }}>No data</Typography>
-          : isPie
-            ? <Donut data={selectedData} height={280} />
-            : <HBar data={selectedData} height={Math.max(200, selectedData.length * 32)} />}
+          : <HBar data={selectedData} height={Math.max(200, selectedData.length * 32)} />}
       </Section>
 
       {/* Tastings over time + Cafes side by side */}
