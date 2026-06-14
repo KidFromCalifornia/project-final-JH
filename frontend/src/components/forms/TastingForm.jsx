@@ -86,7 +86,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
         handleApiError(error, showSnackbar, "Couldn't load form options. Please try again.");
       }
     };
-    if (!cafes || cafes.length === 0) fetchData();
+    if (!cafes || cafes.length === 0 || !options || Object.keys(options).length === 0) fetchData();
   }, [setCafes, setOptions]);
 
   // Seed selectedCafe from initialValues
