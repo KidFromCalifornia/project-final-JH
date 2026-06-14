@@ -112,7 +112,8 @@ const App = () => {
                   borderRadius: 2,
                   backdropFilter: 'blur(6px)',
                   backgroundColor: 'background.paper',
-                  '& .MuiAlert-message': { fontWeight: 700, fontSize: '1rem' },
+                  '& .MuiAlert-message': { fontWeight: 700, fontSize: '1rem', color: theme.palette.text.primary },
+                  '& .MuiAlert-icon': { opacity: 1 },
                 }}
               >
                 {a.message}
