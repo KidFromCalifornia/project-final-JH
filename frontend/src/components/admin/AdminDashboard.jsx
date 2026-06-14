@@ -31,7 +31,7 @@ const useChartTheme = () => {
 const StatCard = ({ title, value, sub, color }) => {
   const { labelColor, subColor, paperBg, border } = useChartTheme();
   return (
-    <Paper elevation={0} sx={{ border, bgcolor: paperBg, flex: 1, minWidth: 0, borderRadius: 2, p: 3.5, borderTop: `3px solid ${color}` }}>
+    <Paper elevation={0} sx={{ border, bgcolor: paperBg, borderRadius: 2, p: 3.5, borderTop: `3px solid ${color}` }}>
       <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: labelColor, mb: 1.5, display: 'block' }}>{title}</Typography>
       <Typography sx={{ fontSize: '2.2rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</Typography>
       {sub && <Typography sx={{ fontSize: '0.72rem', color: subColor, mt: 0.75 }}>{sub}</Typography>}
@@ -222,7 +222,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
     <Box sx={{ width: '100%' }}>
 
       {/* Stat row */}
-      <Box sx={{ display: 'flex', gap: 2, mb: 2.5, flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(7, 1fr)' }, gap: 2, mb: 2.5 }}>
         <StatCard title="Cafes" value={cafes.length} sub={`${byCat[0]?.name || '—'} most common`} color="#2e7dc8" />
         <StatCard title="Tastings" value={tastings.length} sub={`${byMonth.at(-1)?.value ?? 0} this month`} color="#2ebc7a" />
         <StatCard title="Pending" value={submissions.length} sub="awaiting approval" color={submissions.length > 0 ? '#e05c5c' : '#2ebc7a'} />
