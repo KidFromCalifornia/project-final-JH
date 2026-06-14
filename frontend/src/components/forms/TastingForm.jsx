@@ -58,6 +58,7 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
     coffeeRoaster: initialValues.coffeeRoaster || '',
     coffeeOrigin: initialValues.coffeeOrigin || '',
     coffeeOriginRegion: initialValues.coffeeOriginRegion || '',
+    process: initialValues.process || '',
     brewMethod: initialValues.brewMethod || '',
     tastingNotes: initialValues.tastingNotes || [],
     acidity: initialValues.acidity || '',
@@ -302,6 +303,19 @@ const TastingForm = ({ onSubmit, initialValues = {}, onClose }) => {
                     fullWidth
                     variant="filled"
                     sx={inputSx}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Process"
+                    name="process"
+                    value={form.process}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="filled"
+                    sx={inputSx}
+                    placeholder="e.g. Washed, Natural, Honey"
                   />
                 </Grid>
               </Grid>

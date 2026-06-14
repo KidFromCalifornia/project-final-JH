@@ -37,6 +37,10 @@ const coffeeTastingSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    process: {
+      type: String,
+      required: false,
+    },
     coffeeName: {
       type: String,
       required: true,
