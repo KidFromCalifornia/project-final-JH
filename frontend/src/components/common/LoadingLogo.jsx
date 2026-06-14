@@ -22,7 +22,6 @@ const LoadingLogo = ({ message } = {}) => {
       alignItems="center"
       justifyContent="center"
       minHeight="100vh"
-      sx={{ bgcolor: '#0f1923' }}
     >
       <Box
         sx={{
@@ -46,7 +45,7 @@ const LoadingLogo = ({ message } = {}) => {
             height: 300,
             animation: 'spin 8s ease-in-out infinite',
             ...spinKeyframes,
-            filter: 'brightness(0) invert(1)',
+            filter: isDarkMode ? 'brightness(0) invert(1)' : undefined,
             transform: 'translateZ(0)', // Force hardware acceleration
             backfaceVisibility: 'hidden', // Reduce motion blur
             '&:hover': {
@@ -62,7 +61,6 @@ const LoadingLogo = ({ message } = {}) => {
             position: 'absolute',
             width: 150,
             height: 150,
-            filter: 'brightness(0) invert(1)',
           }}
         />
       </Box>
