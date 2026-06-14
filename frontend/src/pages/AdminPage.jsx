@@ -268,7 +268,7 @@ const AdminPage = () => {
       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
         {!isMobile && <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />}
 
-        <Box sx={{ flex: 1, overflowY: 'auto', minWidth: 0, ml: isMobile ? 0 : `${SIDEBAR_W}px` }}>
+        <Box sx={{ flex: 1, overflowY: 'auto', minWidth: 0, ml: isMobile ? 0 : `${SIDEBAR_W}px`, width: isMobile ? '100dvw' : `calc(100dvw - ${SIDEBAR_W}px - ${NAV_W}px)`, maxWidth: '100%' }}>
 
           {/* Mobile top tab bar */}
           {isMobile && (
