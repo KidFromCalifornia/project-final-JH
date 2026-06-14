@@ -21,6 +21,7 @@ import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
+import Typography from '@mui/material/Typography';
 
 import LoadingLogo from '../common/LoadingLogo';
 
@@ -255,17 +256,13 @@ const MobileBottomNav = () => {
             )}
 
             {isTastingsPage && (
-              <Tooltip title="Add Tasting" arrow>
-                <IconButton
-                  color="inherit"
-                  size="large"
-                  aria-label="Add tasting"
-                  sx={{ p: 0.75, '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}
-                  onClick={() => setTastingFormOpen(true)}
-                >
-                  <AddCircleOutlineIcon fontSize="medium" sx={{ color: navIconColor }} />
-                </IconButton>
-              </Tooltip>
+              <Box
+                onClick={() => setTastingFormOpen(true)}
+                sx={{ display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer', px: 1, py: 0.75, borderRadius: 1, '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}
+              >
+                <AddCircleOutlineIcon fontSize="medium" sx={{ color: navIconColor }} />
+                <Typography sx={{ color: navIconColor, fontSize: '0.75rem', fontWeight: 600, whiteSpace: 'nowrap' }}>Add Tasting</Typography>
+              </Box>
             )}
 
             <Tooltip title="Filter Options" arrow>
