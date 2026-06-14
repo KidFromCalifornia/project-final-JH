@@ -4,9 +4,12 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
   MenuItem, Collapse, Switch, FormControlLabel,
   Table, TableBody, TableCell, TableHead, TableRow, TableContainer,
-  IconButton, Tooltip, Tabs, Tab, useMediaQuery,
+  IconButton, Tooltip, Drawer, Fab, List, ListItemButton, ListItemText,
+  useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -139,12 +142,15 @@ const AdminTable = ({ columns, rows, renderActions }) => {
 };
 
 const AdminPage = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [cafes, setCafes] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [tastings, setTastings] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState(0);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('admin') === 'true');
   const [editingId, setEditingId] = useState(null);
   const [editType, setEditType] = useState(null);
@@ -266,42 +272,48 @@ const AdminPage = () => {
     <MuiTheme>
       <CssBaseline />
       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-        {!isMobile && <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />}
+        {!isMobile && (
+          <SidebarNav tabs={TABS} tab={tab} setTab={setTab} onRefresh={fetchAdminData} onLogout={handleLogout} loading={loading} />
+        )}
 
-        <Box sx={{ flex: 1, overflowY: 'auto', minWidth: 0, ml: isMobile ? 0 : `${SIDEBAR_W}px`, width: isMobile ? '100dvw' : `calc(100dvw - ${SIDEBAR_W}px - ${NAV_W}px)`, maxWidth: '100%' }}>
-
-          {/* Mobile top tab bar */}
-          {isMobile && (
-            <Box sx={{ bgcolor: '#0f2e4e', position: 'sticky', top: 0, zIndex: 100 }}>
-              <Tabs
-                value={tab}
-                onChange={(_, v) => setTab(v)}
-                variant="scrollable"
-                scrollButtons="auto"
-                sx={{
-                  '& .MuiTab-root': { color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem', minWidth: 72, py: 1.5 },
-                  '& .Mui-selected': { color: '#fff' },
-                  '& .MuiTabs-indicator': { bgcolor: '#fff' },
-                }}
-              >
+        {/* Mobile FAB + slide-out nav */}
+        {isMobile && (
+          <>
+            <Fab size="medium" onClick={() => setMobileNavOpen(true)}
+              sx={{ position: 'fixed', bottom: 80, right: 16, zIndex: 1300, bgcolor: '#0f2e4e', color: '#fff', '&:hover': { bgcolor: '#1a3f6f' } }}>
+              <MenuIcon />
+            </Fab>
+            <Drawer anchor="left" open={mobileNavOpen} onClose={() => setMobileNavOpen(false)}
+              PaperProps={{ sx: { width: 220, bgcolor: '#0f2e4e', color: '#fff' } }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, py: 2, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <Typography sx={{ fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Admin</Typography>
+                <IconButton size="small" onClick={() => setMobileNavOpen(false)} sx={{ color: '#fff' }}><CloseIcon fontSize="small" /></IconButton>
+              </Box>
+              <List disablePadding>
                 {TABS.map((t, i) => (
-                  <Tab key={t.label} label={t.badge > 0 ? `${t.label} (${t.badge})` : t.label} value={i} />
+                  <ListItemButton key={t.label} selected={tab === i}
+                    onClick={() => { setTab(i); setMobileNavOpen(false); }}
+                    sx={{ py: 1.5, px: 2, '&.Mui-selected': { bgcolor: 'rgba(255,255,255,0.15)' }, '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' } }}>
+                    <ListItemText primary={t.badge > 0 ? `${t.label} (${t.badge})` : t.label}
+                      primaryTypographyProps={{ fontSize: '0.85rem', color: tab === i ? '#fff' : 'rgba(255,255,255,0.7)', fontWeight: tab === i ? 700 : 400 }} />
+                  </ListItemButton>
                 ))}
-              </Tabs>
-              <Box sx={{ display: 'flex', gap: 1, px: 1.5, pb: 1 }}>
-                <Button size="small" onClick={fetchAdminData} disabled={loading}
-                  sx={{ color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.2)', fontSize: '0.65rem' }}>
+              </List>
+              <Box sx={{ mt: 'auto', px: 2, py: 2, borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Button fullWidth size="small" onClick={() => { fetchAdminData(); setMobileNavOpen(false); }} disabled={loading}
+                  sx={{ color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.2)', fontSize: '0.7rem' }}>
                   {loading ? 'Loading…' : 'Refresh'}
                 </Button>
-                <Button size="small" onClick={handleLogout}
-                  sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>
+                <Button fullWidth size="small" onClick={handleLogout}
+                  sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>
                   Logout
                 </Button>
               </Box>
-            </Box>
-          )}
+            </Drawer>
+          </>
+        )}
 
-          <Box sx={{ p: { xs: 2, sm: 3 } }}>
+        <Box sx={{ flex: 1, p: { xs: 2, sm: 3 }, overflowY: 'auto', minWidth: 0, ml: isMobile ? 0 : `${SIDEBAR_W}px`, width: isMobile ? '100dvw' : undefined }}>
 
           {/* Feedback banners */}
           {errorMessage && (
