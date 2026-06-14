@@ -1,4 +1,5 @@
 import React, { useEffect, Suspense } from 'react';
+import { useAlert } from '../context/AlertContext';
 import { useCafeStore } from '../stores/useCafeStore';
 import Container from '@mui/material/Container';
 import { Box, Typography, Button, Alert, useTheme, Drawer, Backdrop } from '@mui/material';
@@ -11,6 +12,7 @@ import LoadingLogo from '../components/common/LoadingLogo';
 const TastingForm = React.lazy(() => import('../components/forms/TastingForm'));
 
 const TastingsPage = () => {
+  const { showSnackbar } = useAlert();
   const tastings = useCafeStore((state) => state.tastings);
   const setTastings = useCafeStore((state) => state.setTastings);
   const searchQuery = useCafeStore((state) => state.searchQuery);
@@ -36,7 +38,7 @@ const TastingsPage = () => {
       }
     } catch (error) {
       console.error('Error saving tasting:', error.message || error);
-      alert(`Could not save tasting: ${error.message || 'Unknown error'}`);
+      showSnackbar(`Could not save tasting: ${error.message || 'Unknown error'}`, 'error');
     }
   };
 
