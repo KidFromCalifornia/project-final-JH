@@ -47,7 +47,7 @@ const FlipTastingCard = ({ tasting, isFlipped = false, onFlip, anyFlipped = fals
         <StyledCard elevation={0}>
           <BoxMain minHeight={288} position="relative">
             <StyledDivContent className="tasting-cd">
-              <TypographyTitle role="title" variant="h3">{tt(tasting.coffeeName)}</TypographyTitle>
+              <TypographyTitle role="title" component="h3">{tt(tasting.coffeeName)}</TypographyTitle>
               {tasting.process && (
                 <Typography sx={{ fontSize: '13px', fontWeight: 500, opacity: 0.7, mt: 0.25, color: theme.palette.card.main, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   {tasting.process}
