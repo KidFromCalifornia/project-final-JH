@@ -301,7 +301,7 @@ const AdminPage = () => {
             </Box>
           )}
 
-          <Box sx={{ p: { xs: 2, sm: 3 } }}>
+          <Box sx={{ p: { xs: 2, sm: 3 }, overflowX: 'hidden' }}>
 
           {/* Feedback banners */}
           {errorMessage && (

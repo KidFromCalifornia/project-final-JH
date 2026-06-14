@@ -219,7 +219,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
   const selectedData = countBy(tastings, tastingChart).slice(0, 12);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', overflowX: 'hidden' }}>
 
       {/* Stat row */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(7, 1fr)' }, gap: 2, mb: 2.5 }}>
