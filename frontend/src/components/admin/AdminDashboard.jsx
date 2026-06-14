@@ -42,7 +42,7 @@ const StatCard = ({ title, value, sub, color }) => {
 const Section = ({ title, children, action }) => {
   const { labelColor, paperBg, border } = useChartTheme();
   return (
-    <Paper elevation={0} sx={{ border, bgcolor: paperBg, borderRadius: 2, p: 2.5, mb: 2.5, width: '100%', overflow: 'hidden', minWidth: 0 }}>
+    <Paper elevation={0} sx={{ border, bgcolor: paperBg, borderRadius: 2, p: 2.5, mb: 2.5, minWidth: 0 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: labelColor, mb: 0, display: 'block' }}>{title}</Typography>
         {action}
@@ -221,7 +221,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
   const selectedData = countBy(tastings, tastingChart).slice(0, 12);
 
   return (
-    <Box sx={{ width: '100%', overflowX: 'hidden', px: { xs: 1, sm: 0 } }}>
+    <Box sx={{ width: '100%' }}>
 
       {/* Stat row */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(7, 1fr)' }, gap: 2, mb: 2.5 }}>
