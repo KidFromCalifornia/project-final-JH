@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Suspense } from 'react';
+import { useAlert } from '../context/AlertContext';
 import { Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CafeEditForm from '../components/admin/CafeEditForm';
@@ -22,6 +23,7 @@ import { cafeAPI } from '../services/api';
 const MapLibreMap = React.lazy(() => import('../components/map/MapLibreMap'));
 
 const MapPage = () => {
+  const { showSnackbar } = useAlert();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const cafes = useCafeStore((state) => state.cafes);
@@ -67,10 +69,10 @@ const MapPage = () => {
           setUser({ location: { lat: latitude, lng: longitude } });
           setShowUserPin(true);
         },
-        () => alert('Could not get your location')
+        () => showSnackbar('Could not get your location', 'error')
       );
     } else {
-      alert('Geolocation not supported');
+      showSnackbar('Geolocation not supported by your browser', 'warning');
     }
   };
 
