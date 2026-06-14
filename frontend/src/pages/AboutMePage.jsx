@@ -47,6 +47,7 @@ const AboutMePage = () => {
   }, []);
 
   return (
+    <>
     <Container component="section" maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}>
       <Paper
         elevation={3}
@@ -181,6 +182,7 @@ const AboutMePage = () => {
     <Dialog open={showLogin} onClose={() => setShowLogin(false)} maxWidth="xs" fullWidth>
       <LoginForm setIsAdmin={(val) => { localStorage.setItem('admin', val); setShowLogin(false); window.location.href = '/admin'; }} onClose={() => setShowLogin(false)} />
     </Dialog>
+    </>
   );
 };
 
