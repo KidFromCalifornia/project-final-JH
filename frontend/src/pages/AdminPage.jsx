@@ -469,7 +469,6 @@ const AdminPage = () => {
             <Button onClick={handleSave} variant="contained">Save</Button>
           </DialogActions>
         </Dialog>
-      </Box>
     </MuiTheme>
   );
 };
