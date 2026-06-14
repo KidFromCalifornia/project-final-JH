@@ -42,7 +42,7 @@ const StatCard = ({ title, value, sub, color }) => {
 const Section = ({ title, children, action }) => {
   const { labelColor, paperBg, border } = useChartTheme();
   return (
-    <Paper elevation={0} sx={{ border, bgcolor: paperBg, borderRadius: 2, p: 2.5, mb: 2.5, width: '100%', overflow: 'visible' }}>
+    <Paper elevation={0} sx={{ border, bgcolor: paperBg, borderRadius: 2, p: 2.5, mb: 2.5, width: '100%', overflow: 'hidden', minWidth: 0 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Typography sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: labelColor, mb: 0, display: 'block' }}>{title}</Typography>
         {action}
@@ -242,7 +242,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
         }
       >
         {!traffic ? <Typography sx={{ color: muted, py: 3, textAlign: 'center' }}>Loading…</Typography> : (
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr 1fr' }, gap: 2 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr 1fr' }, gap: 2, minWidth: 0 }}>
             <Box>
               <Typography sx={labelSx}>Visits per Day</Typography>
               {traffic.byDay.length === 0
@@ -298,7 +298,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       </Section>
 
       {/* Tastings over time + Cafes side by side */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 2.5 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 2.5, minWidth: 0 }}>
         <Section title="Tastings Over Time">
           {byMonth.length === 0
             ? <Typography sx={{ color: muted }}>No data yet</Typography>
@@ -312,7 +312,7 @@ const AdminDashboard = ({ cafes, tastings, submissions, alerts }) => {
       </Box>
 
       {/* Neighbourhood + submissions side by side */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 2.5 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, mb: 2.5, minWidth: 0 }}>
         <Section title="Cafes by Neighbourhood">
           {byNeigh.length === 0
             ? <Typography sx={{ color: muted }}>No data</Typography>
