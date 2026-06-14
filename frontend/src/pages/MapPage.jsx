@@ -163,14 +163,10 @@ const MapPage = () => {
         Stockholm&apos;s Coffee Club Map
       </Typography>
 
-      {/* Cold start banner */}
+      {/* Cold start overlay */}
       {loadingSlow && (
-        <Box sx={{
-          position: 'fixed', top: 72, left: '50%', transform: 'translateX(-50%)',
-          zIndex: 1500, backgroundColor: 'rgba(0,0,0,0.75)', color: '#fff',
-          px: 2.5, py: 1, borderRadius: 2, fontSize: '0.85rem', textAlign: 'center',
-        }}>
-          Waking up the server, hang tight…
+        <Box sx={{ position: 'fixed', inset: 0, zIndex: 1500, bgcolor: 'background.default' }}>
+          <LoadingLogo message="Waking up the server, hang tight…" />
         </Box>
       )}
 

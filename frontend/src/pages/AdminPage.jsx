@@ -17,6 +17,7 @@ import LoginForm from '../components/forms/LoginForm.jsx';
 import MuiTheme from '../components/layout/MuiTheme.jsx';
 import CafeEditForm from '../components/admin/CafeEditForm.jsx';
 import AdminDashboard from '../components/admin/AdminDashboard.jsx';
+import LoadingLogo from '../components/common/LoadingLogo.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -242,7 +243,7 @@ const AdminPage = () => {
   };
 
   if (!isAdmin) return <LoginForm setIsAdmin={setIsAdmin} onClose={() => {}} />;
-  if (loading) return <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh"><Typography>Loading…</Typography></Box>;
+  if (loading) return <LoadingLogo message="Loading admin data…" />;
 
   const TABS = [
     { label: 'Dashboard', badge: null },

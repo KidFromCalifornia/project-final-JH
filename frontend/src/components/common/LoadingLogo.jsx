@@ -11,7 +11,7 @@ const spinKeyframes = {
     '100%': { transform: 'rotate(360deg)' },
   },
 };
-const LoadingLogo = () => {
+const LoadingLogo = ({ message } = {}) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
@@ -65,7 +65,7 @@ const LoadingLogo = () => {
         />
       </Box>
       <Typography variant="subtitle1" mt={2} sx={{ color: theme.palette.text.primary }}>
-        Currently Brewing...
+        {message || 'Currently Brewing...'}
       </Typography>
     </Box>
   );
