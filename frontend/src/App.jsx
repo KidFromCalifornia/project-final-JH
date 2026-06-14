@@ -6,7 +6,8 @@ import DesktopNavBar from './components/layout/DesktopNavBar.jsx';
 import LoadingLogo from './components/common/LoadingLogo.jsx';
 import MobileBottomNav from './components/layout/MobileBottomNav.jsx';
 import { AlertProvider } from './context/AlertContext.jsx';
-import { Box, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Alert, IconButton, useTheme, useMediaQuery } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { useCafeStore } from './stores/useCafeStore.js';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
@@ -28,6 +29,8 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [showAddCafe, setShowAddCafe] = useState(false);
+  const [liveAlerts, setLiveAlerts] = useState([]);
+  const [dismissedAlerts, setDismissedAlerts] = useState([]);
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,11 +53,43 @@ const App = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchAlerts = () => {
+      fetch(`${API_BASE}/alerts`)
+        .then((r) => r.json())
+        .then((d) => { if (d?.data) setLiveAlerts(d.data); })
+        .catch(() => {});
+    };
+    fetchAlerts();
+    const interval = setInterval(fetchAlerts, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const visibleAlerts = liveAlerts.filter((a) => !dismissedAlerts.includes(a._id));
+
   return (
     <AlertProvider>
       <Router>
         <PageTracker />
         <ConsentBanner />
+        {visibleAlerts.length > 0 && (
+          <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 2000, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            {visibleAlerts.map((alert) => (
+              <Alert
+                key={alert._id}
+                severity={alert.severity || 'info'}
+                action={
+                  <IconButton size="small" onClick={() => setDismissedAlerts((prev) => [...prev, alert._id])}>
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ borderRadius: 0, width: '100%' }}
+              >
+                {alert.message}
+              </Alert>
+            ))}
+          </Box>
+        )}
         {isDesktop && (
           <Box component="header">
             <DesktopNavBar
