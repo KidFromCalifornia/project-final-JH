@@ -1,8 +1,17 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 import { CoffeeTasting } from '../models/TastingsModel.js';
 import { User } from '../models/User.js';
 import { validateObjectId } from '../middleware/validateObjectId.js';
+
+const searchLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: { success: false, error: 'Too many requests. Please slow down.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const router = express.Router();
 
@@ -131,7 +140,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/search', async (req, res) => {
+router.get('/search', searchLimiter, async (req, res) => {
   const { query, brewMethod, minRating, maxRating, origin } = req.query;
 
   if (!query && !brewMethod && !minRating && !origin) {

@@ -1,16 +1,24 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 import { User } from '../models/User.js';
 import { validateRegister, validateLogin } from '../middleware/validation.js';
 
 const router = express.Router();
 
-// Helper function to escape regex special characters
 const escapeRegex = (string) => {
   if (!string || typeof string !== 'string') return '';
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
+
+const userSearchLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  message: { success: false, error: 'Too many requests. Please slow down.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Register new user
 router.post('/register', validateRegister, async (req, res) => {
@@ -112,16 +120,19 @@ router.post('/login', validateLogin, async (req, res) => {
 });
 
 // Username search for signature autocomplete — returns matching non-admin usernames
-router.get('/users/search', async (req, res) => {
+router.get('/users/search', userSearchLimiter, async (req, res) => {
   const { q } = req.query;
-  if (!q || q.trim().length < 1) {
+  const trimmed = (q || '').trim();
+  if (!trimmed || trimmed.length < 1) {
     return res.json({ success: true, data: [] });
+  }
+  if (trimmed.length > 30) {
+    return res.status(400).json({ success: false, error: 'Query too long' });
   }
   try {
     const users = await User.find({
-      username: { $regex: q.trim(), $options: 'i' },
+      username: { $regex: escapeRegex(trimmed), $options: 'i' },
       role: { $ne: 'admin' },
-      username: { $ne: 'Anonymous' },
     })
       .select('username')
       .limit(8)

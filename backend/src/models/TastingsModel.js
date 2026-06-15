@@ -122,6 +122,8 @@ coffeeTastingSchema.index({
   coffeeOriginRegion: 'text',
 });
 
+coffeeTastingSchema.index({ isPublic: 1, createdAt: -1 });
+
 export const CoffeeTasting = mongoose.model('CoffeeTasting', coffeeTastingSchema);
 
 export default CoffeeTasting;

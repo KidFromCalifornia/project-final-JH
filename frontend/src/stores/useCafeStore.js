@@ -83,25 +83,20 @@ export const useCafeStore = create((set, get) => ({
   setLoading: (loading) => set({ loading }),
 
   fetchTastings: async () => {
-    set({ loading: true });
+    set({ loading: true, fetchError: '' });
     try {
       const publicTastings = await tastingAPI.getPublic();
       const allTastings = publicTastings.data || [];
-
-      // Deduplicate tastings by _id to prevent duplicate keys in React
       const uniqueTastings = Array.isArray(allTastings)
         ? allTastings.filter(
             (tasting, index, self) => index === self.findIndex((t) => t._id === tasting._id)
           )
         : [];
-
-      set({ tastings: uniqueTastings });
+      set({ tastings: uniqueTastings, loading: false });
     } catch (error) {
       console.error('Error fetching tastings:', error);
-      // Only set empty array if we have no tastings at all
-      set({ tastings: [] });
+      set({ fetchError: error.message || 'Failed to load tastings', loading: false });
     }
-    set({ loading: false });
   },
 
   // Form options

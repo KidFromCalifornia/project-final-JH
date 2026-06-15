@@ -146,6 +146,8 @@ const cafeSchema = new mongoose.Schema(
 );
 
 cafeSchema.index({ 'locations.coordinates': '2dsphere' }, { sparse: true });
+cafeSchema.index({ isApproved: 1 });
+cafeSchema.index({ isApproved: 1, name: 1 });
 
 export const Cafe = mongoose.model('Cafe', cafeSchema);
 export const CafeSubmission = mongoose.model('CafeSubmission', cafeSchema);

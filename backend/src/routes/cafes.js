@@ -5,9 +5,17 @@ import { validateObjectId } from '../middleware/validateObjectId.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const submitLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 60 * 60 * 1000,
   max: 5,
   message: { success: false, error: 'Too many submissions. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const searchLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: { success: false, error: 'Too many requests. Please slow down.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -156,7 +164,7 @@ router.get('/filters/options', async (req, res) => {
 });
 
 // GET /search/suggestions — must be before /:id
-router.get('/search/suggestions', async (req, res) => {
+router.get('/search/suggestions', searchLimiter, async (req, res) => {
   try {
     const { q } = req.query;
 

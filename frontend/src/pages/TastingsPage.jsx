@@ -21,6 +21,8 @@ const TastingsPage = () => {
   const neighborhoodFilter = useCafeStore((state) => state.neighborhoodFilter);
   const fetchTastings = useCafeStore((state) => state.fetchTastings);
   const clearFilters = useCafeStore((state) => state.clearFilters);
+  const loading = useCafeStore((state) => state.loading);
+  const fetchError = useCafeStore((state) => state.fetchError);
 
   const showTastingForm = useCafeStore((state) => state.tastingFormOpen);
   const setShowTastingForm = useCafeStore((state) => state.setTastingFormOpen);
@@ -189,7 +191,13 @@ const TastingsPage = () => {
         </Suspense>
       </Drawer>
 
-      {filteredTastings.length === 0 ? (
+      {loading ? (
+        <LoadingLogo message="Loading tastings..." />
+      ) : fetchError ? (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          Could not load tastings: {fetchError}
+        </Alert>
+      ) : filteredTastings.length === 0 ? (
         <Alert severity="info" sx={{ mt: 2 }}>
           No tastings found. {searchQuery && 'Try adjusting your search terms.'}
         </Alert>
