@@ -108,7 +108,6 @@ const cafeSchema = new mongoose.Schema(
           'bathroom_available',
           'quiet_environment',
         ],
-        required: true,
       },
     ],
     icon: {
