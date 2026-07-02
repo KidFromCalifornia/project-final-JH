@@ -18,7 +18,7 @@ router.post('/toggle', async (req, res) => {
     await Favourite.create({ type, refId, refName: refName || refId, sessionId });
     res.json({ success: true, saved: true });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message });
   }
 });
 
@@ -28,7 +28,7 @@ router.get('/session/:sessionId', async (req, res) => {
     const items = await Favourite.find({ sessionId: req.params.sessionId });
     res.json({ success: true, data: items });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message });
   }
 });
 
@@ -71,7 +71,7 @@ router.get('/stats', authenticateToken, requireAdmin, async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message });
   }
 });
 

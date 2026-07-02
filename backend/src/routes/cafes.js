@@ -126,7 +126,7 @@ router.get('/', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching cafes:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message });
   }
 });
 

@@ -17,10 +17,10 @@ router.post('/', async (req, res) => {
     });
   }
 
-  if (!category || !features || !Array.isArray(features)) {
+  if (!category) {
     return res.status(400).json({
       success: false,
-      error: 'Category and features are required',
+      error: 'Category is required',
     });
   }
 
@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
     console.error('Error creating submission:', error);
     res.status(400).json({
       success: false,
-      error: error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Bad request' : error.message,
     });
   }
 });
@@ -96,7 +96,7 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
     console.error('Error fetching submissions:', error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });
@@ -147,7 +147,7 @@ router.put('/:id/approve', authenticateToken, requireAdmin, async (req, res) => 
     console.error('Error approving submission:', error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });
@@ -182,7 +182,7 @@ router.delete('/:id/reject', authenticateToken, requireAdmin, async (req, res) =
     console.error('Error rejecting submission:', error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });
@@ -202,7 +202,7 @@ router.get('/my-submissions', authenticateToken, async (req, res) => {
     console.error('Error fetching user submissions:', error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });
@@ -237,7 +237,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     console.error('Error fetching submission:', error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     });
   }
 });

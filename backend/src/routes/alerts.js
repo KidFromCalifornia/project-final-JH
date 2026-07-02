@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     }).sort({ createdAt: -1 });
     res.json({ success: true, data: alerts });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message });
   }
 });
 
@@ -24,7 +24,7 @@ router.get('/all', authenticateToken, requireAdmin, async (req, res) => {
     const alerts = await Alert.find().sort({ createdAt: -1 });
     res.json({ success: true, data: alerts });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message });
   }
 });
 
@@ -34,7 +34,7 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
     const alert = await Alert.create(req.body);
     res.status(201).json({ success: true, data: alert });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    res.status(400).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Bad request' : error.message });
   }
 });
 
@@ -45,7 +45,7 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
     if (!alert) return res.status(404).json({ success: false, error: 'Alert not found' });
     res.json({ success: true, data: alert });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    res.status(400).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Bad request' : error.message });
   }
 });
 
@@ -56,7 +56,7 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
     if (!alert) return res.status(404).json({ success: false, error: 'Alert not found' });
     res.json({ success: true, message: 'Alert deleted' });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message });
   }
 });
 

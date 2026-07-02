@@ -139,7 +139,7 @@ router.get('/users/search', userSearchLimiter, async (req, res) => {
       .lean();
     res.json({ success: true, data: users.map((u) => u.username) });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message });
   }
 });
 
